@@ -14,6 +14,12 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.function.Function;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ */
 @Service
 public class JwtService {
 

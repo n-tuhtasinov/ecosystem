@@ -16,6 +16,12 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import uz.technocorp.ecosystem.security.JwtAuthenticationEntryPoint;
 import uz.technocorp.ecosystem.security.JwtAuthenticationFilter;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity

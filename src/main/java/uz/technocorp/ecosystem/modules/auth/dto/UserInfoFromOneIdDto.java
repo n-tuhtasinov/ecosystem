@@ -7,6 +7,12 @@ import uz.technocorp.ecosystem.modules.auth.enums.AuthMethod;
 
 import java.util.List;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

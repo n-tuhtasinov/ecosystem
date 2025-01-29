@@ -28,6 +28,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {

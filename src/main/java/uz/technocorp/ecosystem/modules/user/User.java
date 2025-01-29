@@ -15,6 +15,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
@@ -32,12 +38,6 @@ public class User extends AuditEntity implements UserDetails {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
-    private String fullName;
-
-    @Column(nullable = false, unique = true)
-    private Long pin;
 
     private boolean enabled = true;
 

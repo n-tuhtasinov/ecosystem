@@ -10,6 +10,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ */
 public class ApiIntegrator<T> {
 
     public T getData(Class<T> tClass, Map<String, String> params, String url){

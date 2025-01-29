@@ -11,6 +11,12 @@ import uz.technocorp.ecosystem.modules.auth.dto.LoginDto;
 import uz.technocorp.ecosystem.modules.auth.dto.OneIdDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
