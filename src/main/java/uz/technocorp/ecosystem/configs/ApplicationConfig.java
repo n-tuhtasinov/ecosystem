@@ -20,6 +20,13 @@ import uz.technocorp.ecosystem.modules.user.UserRepository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ * @description all configs used throughout the project
+ */
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {

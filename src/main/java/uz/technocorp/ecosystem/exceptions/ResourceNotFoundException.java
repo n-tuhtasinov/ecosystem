@@ -9,7 +9,8 @@ import java.util.NoSuchElementException;
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
  * @since 1.0
- * to throw ResourceNotFoundException (when it is not possible to find the item from DataBase, because of its deletion or not creation)
+ * @created 29.01.2025
+ * @description throw exception when it is not possible to find the item from DataBase, because of its deletion or not creation
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends NoSuchElementException {

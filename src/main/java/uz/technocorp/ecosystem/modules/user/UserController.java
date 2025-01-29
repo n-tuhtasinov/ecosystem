@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor

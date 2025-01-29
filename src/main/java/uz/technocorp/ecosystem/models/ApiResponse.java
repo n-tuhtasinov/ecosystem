@@ -6,6 +6,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ * @description custom template for response to any request
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

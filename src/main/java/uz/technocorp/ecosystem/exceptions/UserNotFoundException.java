@@ -4,6 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ */
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
 public class UserNotFoundException extends UsernameNotFoundException {
 

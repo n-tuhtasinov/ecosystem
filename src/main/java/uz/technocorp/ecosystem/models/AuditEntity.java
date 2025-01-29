@@ -16,6 +16,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 29.01.2025
+ * @since v1.0
+ * @description automatically audit while creating and updating the entity
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
