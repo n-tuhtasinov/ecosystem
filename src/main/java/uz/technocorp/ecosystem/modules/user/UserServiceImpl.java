@@ -1,9 +1,13 @@
 package uz.technocorp.ecosystem.modules.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.user.dto.DepartmentalUserDto;
+import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -12,15 +16,21 @@ import java.util.Map;
  * @since v1.0
  */
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final UserRepository userRepository;
+    private final ProfileService profileService;
+
     @Override
-    public Map<String, Object> getMe(User user) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", user.getId());
-        map.put("fullName",user.getFullName());
-        map.put("pin", user.getPin());
-        map.put("role", user.getRole());
-        return map;
+    public UserMeDto getMe(User user) {
+        return new UserMeDto(user.getId(), user.getName(), user.getRole().name(), user.getDirections());
+    }
+
+    @Override
+    @Transactional
+    public void saveDepartmentalUser(DepartmentalUserDto user) {
+        UUID profileId = profileService.save(user);
+
     }
 }

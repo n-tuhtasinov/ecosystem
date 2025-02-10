@@ -19,6 +19,7 @@ import uz.technocorp.ecosystem.modules.auth.dto.OneIdDto;
 import uz.technocorp.ecosystem.modules.auth.dto.UserInfoFromOneIdDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
+import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.security.JwtService;
 import uz.technocorp.ecosystem.utils.ApiIntegrator;
@@ -42,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserService userService;
 
     @Value("${app.one-id.client_id}")
     private String oneIdClientId;
@@ -57,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
         TokenResponse tokenResponse = generateToken(dto.username(), dto.password());
         setTokenToCookie(tokenResponse, response);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new UserMeDto(user.getId(), user.getFullName(), user.getPin(), user.getRole().name());
+        return new UserMeDto(user.getId(), user.getName(), user.getRole().name(), user.getDirections());
     }
 
     @Override
@@ -68,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
 
         //check whether the user is legal, if yes it is not allowed
         if (userInfoFromOneIdDto.getAuth_method().name().equals("LEPKCSMETHOD")){
-            throw new RuntimeException("Yuridik shaxslar tizimdan foydalana olmaydi.");
+            // TODO: yuridiklar uchun logika yozish kerak
         }
 
         //find user by username
@@ -111,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
         setTokenToCookie(tokenResponse, response);
 
         // return userMeDto
-        return new UserMeDto(user.getId(), user.getFullName(), user.getPin(), user.getRole().name());
+        return new UserMeDto(user.getId(), user.getName(), user.getRole().name(), user.getDirections());
     }
 
     public void setTokenToCookie(TokenResponse tokenResponse, HttpServletResponse response) {
