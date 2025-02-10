@@ -1,5 +1,9 @@
 package uz.technocorp.ecosystem.modules.user;
 
+import jakarta.validation.Valid;
+import uz.technocorp.ecosystem.modules.user.dto.DepartmentalUserDto;
+import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
+
 import java.util.Map;
 
 /**
@@ -9,5 +13,7 @@ import java.util.Map;
  * @since v1.0
  */
 public interface UserService {
-    Map<String, Object> getMe(User user);
+    UserMeDto getMe(User user);
+
+    void saveDepartmentalUser(@Valid DepartmentalUserDto user);
 }

@@ -1,14 +1,13 @@
 package uz.technocorp.ecosystem.modules.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.user.converter.DirectionConverter;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.util.Collection;
@@ -22,16 +21,13 @@ import java.util.UUID;
  * @since v1.0
  */
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class User extends AuditEntity implements UserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -39,11 +35,24 @@ public class User extends AuditEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    private boolean enabled = true;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Convert(converter = DirectionConverter.class)
+    private List<String> directions;
+
+    private boolean enabled = true;
+
+    @OneToOne(targetEntity = Profile.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id", updatable = false, insertable = false)
+    private Profile profile;
+
+    @Column(name = "profile_id", nullable = false)
+    private UUID profileId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -52,33 +61,21 @@ public class User extends AuditEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.username;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
+        return UserDetails.super.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return UserDetails.super.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return UserDetails.super.isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
         return this.enabled;
     }
-
-
 }

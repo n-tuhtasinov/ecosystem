@@ -1,12 +1,15 @@
 package uz.technocorp.ecosystem.modules.user;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.models.ApiResponse;
+import uz.technocorp.ecosystem.modules.user.dto.DepartmentalUserDto;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
 /**
@@ -29,4 +32,12 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("Siz avtorizatsiyadan o'tmagansiz"));
     }
+
+    @PostMapping("/departmental")
+    ResponseEntity<?> saveDepartmentalUser(@Valid DepartmentalUserDto user){
+        userService.saveDepartmentalUser(user);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Hodim muvaffaqiyatli qo'shildi"));
+    }
+
+
 }
