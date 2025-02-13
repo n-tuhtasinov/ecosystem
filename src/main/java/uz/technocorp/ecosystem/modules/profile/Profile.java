@@ -21,6 +21,7 @@ public class Profile extends AuditEntity {
 
     private Long tin;
     private String legalName;
+    private String legalAddress;
     private String fullName;
     private Long pin;
 
