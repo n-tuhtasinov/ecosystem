@@ -10,7 +10,6 @@ import java.util.UUID;
  */
 public record AppealDangerousObjectDto(
 
-        String legalAddress,
         String phoneNumber,
         String email,
         String upperOrganization,

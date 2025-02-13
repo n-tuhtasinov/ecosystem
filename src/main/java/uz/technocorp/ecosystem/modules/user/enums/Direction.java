@@ -10,5 +10,5 @@ public enum Direction {
     CERTIFICATE,
     ATTESTAT,
     ATTESTATION,
-    ACCREDITATION
+    ACCREDITATION;
 }

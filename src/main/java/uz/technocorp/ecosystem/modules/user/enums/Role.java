@@ -8,7 +8,8 @@ package uz.technocorp.ecosystem.modules.user.enums;
  */
 public enum Role {
     ADMIN,
-    EXTERNAL,
+    LEGAL,
+    INDIVIDUAL,
     CHAIRMAN,
     HEAD,
     MANAGER,

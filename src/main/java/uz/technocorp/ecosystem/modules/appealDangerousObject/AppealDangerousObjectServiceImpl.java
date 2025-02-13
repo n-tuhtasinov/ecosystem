@@ -15,7 +15,6 @@ import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.publics.AttachmentDto;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -64,7 +63,7 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
                         dto.districtId(),
                         district.getName(),
                         user.getProfileId(),
-                        dto.legalAddress(),
+                        profile.getLegalAddress(),
                         dto.phoneNumber(),
                         dto.email(),
                         dto.upperOrganization(),
@@ -108,7 +107,6 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
         appealDangerousObject.setDescription(dto.description());
         appealDangerousObject.setObjectNumber(dto.objectNumber());
         appealDangerousObject.setExtraArea(dto.extraArea());
-        appealDangerousObject.setLegalAddress(dto.legalAddress());
         appealDangerousObject.setUpperOrganization(dto.upperOrganization());
         appealDangerousObject.setName(dto.name());
         appealDangerousObject.setPhoneNumber(dto.phoneNumber());

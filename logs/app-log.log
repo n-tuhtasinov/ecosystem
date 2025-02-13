@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2025-02-12T21:04:05.995+05:00  INFO 3280 --- [main] u.t.ecosystem.EcosystemApplication       : Starting EcosystemApplication using Java 21.0.6 with PID 3280 (C:\projects\ecosystem\target\classes started by User in C:\projects\ecosystem)
 2025-02-12T21:04:06.000+05:00 DEBUG 3280 --- [main] u.t.ecosystem.EcosystemApplication       : Running with Spring Boot v3.4.2, Spring v6.2.2
 2025-02-12T21:04:06.001+05:00  INFO 3280 --- [main] u.t.ecosystem.EcosystemApplication       : The following 1 profile is active: "dev"
@@ -265,3 +266,5 @@ Caused by: org.hibernate.MappingException: Column 'cadastral_passport_id' is dup
 2025-02-12T21:10:26.526+05:00  INFO 12808 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-02-12T21:10:26.529+05:00  INFO 12808 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-02-12T21:10:26.532+05:00  INFO 12808 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+=======
+>>>>>>> 464fb11e5f6347317611898bb9588faa008751e7
