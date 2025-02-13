@@ -5,6 +5,12 @@ import uz.technocorp.ecosystem.modules.dangerousObjectType.dto.DangerousObjectTy
 
 import java.util.List;
 
+/**
+ * @author Rasulov Komil
+ * @version 1.0
+ * @created 12.02.2025
+ * @since v1.0
+ */
 public interface DangerousObjectTypeService {
 
     void create(DangerousObjectTypeDto dto);

@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.appeal;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appealType.AppealType;
 import uz.technocorp.ecosystem.modules.district.District;
+import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+/**
+ * @author Rasulov Komil
+ * @version 1.0
+ * @created 12.02.2025
+ * @since v1.0
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
@@ -33,7 +40,7 @@ public class Appeal extends AuditEntity {
     private String orderNumber;
 
     @Column(nullable = false)
-    private String legal_tin;
+    private Long legal_tin;
 
     @Column(nullable = false)
     private String legalName;
@@ -56,5 +63,27 @@ public class Appeal extends AuditEntity {
 
     private String districtName;
 
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
+    @JoinColumn(name = "profile_id", insertable = false, updatable = false)
+    private Profile profile;
+
+    @Column(name = "profile_id")
     private UUID profileId;
+
+    @Column(nullable = false)
+    private UUID mainId;
+
+    public Appeal(Integer appealTypeId, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, UUID mainId) {
+        this.appealTypeId = appealTypeId;
+        this.number = number;
+        this.orderNumber = orderNumber;
+        this.legal_tin = legal_tin;
+        this.legalName = legalName;
+        this.regionId = regionId;
+        this.regionName = regionName;
+        this.districtId = districtId;
+        this.districtName = districtName;
+        this.profileId = profileId;
+        this.mainId = mainId;
+    }
 }
