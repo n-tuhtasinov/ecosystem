@@ -6,6 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * @author Rasulov Komil
+ * @version 1.0
+ * @created 12.02.2025
+ * @since v1.0
+ */
 public interface AppealTypeRepository extends JpaRepository<AppealType, Integer> {
 
     List<AppealType> findAllByName(String name);

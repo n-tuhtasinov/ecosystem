@@ -9,8 +9,14 @@ import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.dangerousObjectType.dto.DangerousObjectTypeDto;
 
+/**
+ * @author Rasulov Komil
+ * @version 1.0
+ * @created 12.02.2025
+ * @since v1.0
+ */
 @RestController
-@RequestMapping("/api/dangerous-object-types")
+@RequestMapping("/api/v1/dangerous-object-types")
 @RequiredArgsConstructor
 public class DangerousObjectTypeController {
 

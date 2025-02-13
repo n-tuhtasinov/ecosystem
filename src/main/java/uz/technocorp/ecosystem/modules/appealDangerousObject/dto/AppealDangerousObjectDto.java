@@ -2,6 +2,12 @@ package uz.technocorp.ecosystem.modules.appealDangerousObject.dto;
 
 import java.util.UUID;
 
+/**
+ * @author Rasulov Komil
+ * @version 1.0
+ * @created 12.02.2025
+ * @since v1.0
+ */
 public record AppealDangerousObjectDto(
 
         String legalAddress,
@@ -10,7 +16,6 @@ public record AppealDangerousObjectDto(
         String upperOrganization,
         String name,
         String address,
-        UUID appealId,
         Integer dangerousObjectTypeId,
         String extraArea,
         String description,
@@ -18,9 +23,9 @@ public record AppealDangerousObjectDto(
         Integer appealTypeId,
         String number,
         String orderNumber,
-        String legal_tin,
-        String legalName,
         Integer regionId,
-        Integer districtId
+        Integer districtId,
+        UUID identificationCardId,
+        UUID receiptId
 ) {
 }

@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal;
+package uz.technocorp.ecosystem.modules.appealDangerousObject;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,5 +10,6 @@ import java.util.UUID;
  * @created 12.02.2025
  * @since v1.0
  */
-public interface AppealRepository extends JpaRepository<Appeal, UUID> {
+public interface AppealDangerousObjectRepository extends JpaRepository<AppealDangerousObject, UUID> {
+
 }
