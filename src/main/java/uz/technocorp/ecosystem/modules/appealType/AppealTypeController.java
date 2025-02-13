@@ -9,8 +9,14 @@ import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.publics.dto.SimpleDto;
 
+/**
+ * @author Rasulov Komil
+ * @version 1.0
+ * @created 12.02.2025
+ * @since v1.0
+ */
 @RestController
-@RequestMapping("/api/appeal-types")
+@RequestMapping("/api/v1/appeal-types")
 @RequiredArgsConstructor
 public class AppealTypeController {
 
