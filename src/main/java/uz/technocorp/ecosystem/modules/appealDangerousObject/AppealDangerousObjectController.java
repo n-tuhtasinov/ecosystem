@@ -38,9 +38,9 @@ public class AppealDangerousObjectController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> setFile(@RequestPart(name = "file") MultipartFile file, @Valid @RequestPart("dto") AttachmentDto dto) throws IOException {
-        service.setAttachments(dto, file);
+    @PatchMapping("/attachment")
+    public ResponseEntity<?> setFile(@Valid @RequestPart("dto") AttachmentDto dto) throws IOException {
+        service.setAttachments(dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 

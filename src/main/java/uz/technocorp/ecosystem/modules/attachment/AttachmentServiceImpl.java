@@ -1,15 +1,18 @@
 package uz.technocorp.ecosystem.modules.attachment;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import uz.technocorp.ecosystem.configs.FileConfig;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -19,6 +22,7 @@ import java.util.UUID;
  * @since v1.0
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AttachmentServiceImpl implements AttachmentService {
 
@@ -27,9 +31,35 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public String create(MultipartFile file, String folder) throws IOException {
         if (file != null) {
-            LocalDate localDate = LocalDate.now();
-            Path path = FileConfig.path(folder, localDate.toString(), file.getOriginalFilename());
-            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            LocalDate now = LocalDate.now();
+            int year = now.getYear();
+            String month = now.getMonth().toString().toLowerCase();
+            int day = now.getDayOfMonth();
+
+            //create folder
+            Path attachmentFilesPath = Paths
+                    .get(String.format("files/%s/%s/%s/%s", folder, year, month, day));
+
+            try {
+                Files.createDirectories(attachmentFilesPath);
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                throw new RuntimeException("files/... papkani ochishda xatolik yuz berdi");
+            }
+
+            String originalFilename = file.getOriginalFilename();
+            int index = Objects.requireNonNull(originalFilename).lastIndexOf(".");
+            String extension = Objects.requireNonNull(originalFilename).substring(index);
+            long randomName = System.currentTimeMillis();
+
+            Path path = Paths.get(attachmentFilesPath + File.separator + randomName + extension);
+            try {
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                throw new RuntimeException("Faylni papkaga saqlashda xatolik yuz berdi");
+            }
+
             Attachment attachment = repository.save(
                     new Attachment(
                             path.toString().replace("\\", "/")

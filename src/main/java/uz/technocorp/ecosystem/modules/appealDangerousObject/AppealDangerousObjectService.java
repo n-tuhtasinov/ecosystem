@@ -21,6 +21,6 @@ public interface AppealDangerousObjectService {
     void create(User user, AppealDangerousObjectDto dto);
     void update(UUID id, AppealDangerousObjectDto dto);
     AppealDangerousObjectProjection getById(UUID id);
-    void setAttachments(AttachmentDto dto, MultipartFile file) throws IOException;
+    void setAttachments(AttachmentDto dto);
 
 }

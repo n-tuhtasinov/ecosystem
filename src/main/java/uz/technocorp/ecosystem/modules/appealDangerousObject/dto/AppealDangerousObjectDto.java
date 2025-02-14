@@ -24,7 +24,7 @@ public record AppealDangerousObjectDto(
         String orderNumber,
         Integer regionId,
         Integer districtId,
-        UUID identificationCardId,
-        UUID receiptId
+        String identificationCardPath,
+        String receiptPath
 ) {
 }
