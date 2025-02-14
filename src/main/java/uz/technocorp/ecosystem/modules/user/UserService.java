@@ -1,10 +1,9 @@
 package uz.technocorp.ecosystem.modules.user;
 
-import jakarta.validation.Valid;
-import uz.technocorp.ecosystem.modules.user.dto.DepartmentalUserDto;
+import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 
-import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -13,7 +12,14 @@ import java.util.Map;
  * @since v1.0
  */
 public interface UserService {
+
     UserMeDto getMe(User user);
 
-    void saveDepartmentalUser(@Valid DepartmentalUserDto user);
+    void create(UserDto dto);
+
+    void update(UUID userId, UserDto dto);
+
+    void deleteById(UUID userId);
+
+    void changeUserEnabled(UUID userId, Boolean enabled);
 }

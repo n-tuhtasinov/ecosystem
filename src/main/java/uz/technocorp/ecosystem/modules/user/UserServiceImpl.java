@@ -1,11 +1,13 @@
 package uz.technocorp.ecosystem.modules.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
-import uz.technocorp.ecosystem.modules.user.dto.DepartmentalUserDto;
+import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.modules.user.enums.Direction;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
@@ -20,6 +22,7 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -33,19 +36,54 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveDepartmentalUser(DepartmentalUserDto user) {
-        UUID profileId = profileService.save(user);
+    public void create(UserDto dto) {
 
+        //update profile
+        UUID profileId = profileService.create(dto);
 
-        User user1 = User.builder()
-                .username(user.pin().toString())
-                .password(passwordEncoder.encode(UUID.randomUUID().toString().substring(24)))
-                .role(Role.valueOf(user.role()))
-                .name(user.fullName())
-                .directions(user.directions())
-                .profileId(profileId)
-                .enabled(true)
-                .build();
+        //check list of string by Direction
+        dto.getDirections().forEach(Direction::valueOf);
 
+        User user = new User(
+                dto.getUsername(),
+                passwordEncoder.encode(UUID.randomUUID().toString().substring(24)),
+                Role.valueOf(dto.getRole()),
+                dto.getName(),
+                dto.getDirections(),
+                true,
+                profileId);
+        userRepository.save(user);
     }
+
+    @Override
+    @Transactional
+    public void update(UUID userId, UserDto dto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        //check list of string by Direction
+        dto.getDirections().forEach(Direction::valueOf);
+
+        //update profile
+        profileService.update(user.getProfileId(), dto);
+
+        user.setUsername(dto.getUsername());
+        user.setRole(Role.valueOf(dto.getRole()));
+        user.setName(dto.getName());
+        user.setDirections(dto.getDirections());
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deleteById(UUID userId) {
+        userRepository.deleteById(userId);
+    }
+
+    @Override
+    public void changeUserEnabled(UUID userId, Boolean enabled) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        user.setEnabled(enabled);
+        userRepository.save(user);
+    }
+
+
 }

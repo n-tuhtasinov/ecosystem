@@ -1,7 +1,7 @@
 package uz.technocorp.ecosystem.modules.profile;
 
 
-import uz.technocorp.ecosystem.modules.user.dto.DepartmentalUserDto;
+import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 
 import java.util.UUID;
 
@@ -12,5 +12,6 @@ import java.util.UUID;
  * @since v1.0
  */
 public interface ProfileService {
-    UUID save(DepartmentalUserDto user);
+    UUID create(UserDto dto);
+    void update(UUID profileId, UserDto dto);
 }

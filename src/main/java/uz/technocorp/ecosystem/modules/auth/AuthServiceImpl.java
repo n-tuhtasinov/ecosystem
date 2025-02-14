@@ -68,9 +68,16 @@ public class AuthServiceImpl implements AuthService {
         AccessDataDto accessData = getAccessData(dto);
         UserInfoFromOneIdDto userInfoFromOneIdDto = getUserInfoByAccessData(accessData);
 
-        //check whether the user is legal, if yes it is not allowed
+        //check whether the user is legal or not
         if (userInfoFromOneIdDto.getAuth_method().name().equals("LEPKCSMETHOD")){
-            // TODO: yuridiklar uchun logika yozish kerak
+            String legalTin = userInfoFromOneIdDto.getPkcs_legal_tin();
+
+            //it is needed to find the user, not, then it should be created
+            Optional<User> optional = userRepository.findByUsername(legalTin);
+            if (optional.isPresent()){
+                User user = optional.get();
+                return getUserMeWithToken(user, accessData.getAccess_token(), response);
+            }
         }
 
         //find user by username
