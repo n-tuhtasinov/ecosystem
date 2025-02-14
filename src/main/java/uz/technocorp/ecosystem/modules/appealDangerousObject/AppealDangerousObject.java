@@ -105,105 +105,49 @@ public class AppealDangerousObject extends AuditEntity {
 
     private String objectNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "identification_card_id", insertable = false, updatable = false)
-    private Attachment identificationCard;
+    //Identifikatsiya varag'i
+    private String identificationCardPath;
 
-    @Column(name = "identification_card_id")
-    private UUID identificationCardId;
+    //XICHOni ro'yxatga olish uchun to'lov kvitansiyasi
+    private String receiptPath;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "receipt_id", insertable = false, updatable = false)
-    private Attachment receipt;
+    //Ekspertiza xulosasi
+    private String expertOpinionPath;
 
-    @Column(name = "receipt_id")
-    private UUID receiptId;
+    //Loyiha hujjatlari
+    private String projectDocumentationPath;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "expert_opinion_id", insertable = false, updatable = false)
-    private Attachment expertOpinion;
+    //XICHO kadastr pasporti
+    private String cadastralPassportPath;
 
-    @Column(name = "expert_opinion_id")
-    private UUID expertOpinionId;
+    //Sanoat xavfsizligi deklaratsiyasi
+    private String industrialSafetyDeclarationPath;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "project_documentation_id", insertable = false, updatable = false)
-    private Attachment projectDocumentation;
+    //Sug'urta polisi
+    private String insurancePolicyPath;
 
-    @Column(name = "project_documentation_id")
-    private UUID projectDocumentationId;
+    //Litsenziya
+    private String licensePath;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "cadastral_passport_id", insertable = false, updatable = false)
-    private Attachment cadastralPassport;
+    //Ruxsatnoma
+    private String permitPath;
 
-    @Column(name = "cadastral_passport_id")
-    private UUID cadastralPassportId;
+    //XICHO xodimlarining sanoat xavfsizligi bo'yicha attestatsiyadan o'tganligi
+    private String certificationPath;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "industrial_safety_declaration_id", insertable = false, updatable = false)
-    private Attachment industrialSafetyDeclaration;
+    //Yong'in xavfsizligi xulosasi
+    private String fireSafetyReportPath;
 
-    @Column(name = "industrial_safety_declaration_id")
-    private UUID industrialSafetyDeclarationId;
+    //Qurilmalarni sinovdan o'tganligi
+    private String deviceTestingPath;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "insurance_policy_id", insertable = false, updatable = false)
-    private Attachment insurancePolicy;
+    //Mas'ul xodim tayinlanganligi buyrug'i
+    private String appointmentOrderPath;
 
-    @Column(name = "insurance_policy_id")
-    private UUID incidentPassportId;
+    //Ekologiya qo'mitasi xulosasi
+    private String ecologicalConclusionPath;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "license_id", insertable = false, updatable = false)
-    private Attachment license;
-
-    @Column(name = "license_id")
-    private UUID licenseId;
-
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "permit_id", insertable = false, updatable = false)
-    private Attachment permit;
-
-    @Column(name = "permit_id")
-    private UUID permitId;
-
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "certification_id", insertable = false, updatable = false)
-    private Attachment certification;
-
-    @Column(name = "certification_id")
-    private UUID certificationId;
-
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "fire_safety_report_id", insertable = false, updatable = false)
-    private Attachment fireSafetyReport;
-
-    @Column(name = "fire_safety_report_id")
-    private UUID fireSafetyReportId;
-
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "device_testing_id", insertable = false, updatable = false)
-    private Attachment deviceTesting;
-
-    @Column(name = "device_testing_id")
-    private UUID deviceTestingId;
-
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "appointment_order_id", insertable = false, updatable = false)
-    private Attachment appointmentOrder;
-
-    @Column(name = "appointment_order_id")
-    private UUID appointmentOrderId;
-
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
-    @JoinColumn(name = "ecological_conclusion_id", insertable = false, updatable = false)
-    private Attachment ecologicalConclusion;
-
-    @Column(name = "ecological_conclusion_id")
-    private UUID ecologicalConclusionId;
-
-    public AppealDangerousObject(Integer appealTypeId, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, String legalAddress, String phoneNumber, String email, String upperOrganization, String name, String address, Integer dangerousObjectTypeId, String extraArea, String description, String objectNumber, UUID identificationCardId, UUID receiptId) {
+    public AppealDangerousObject(Integer appealTypeId, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, String legalAddress, String phoneNumber, String email, String upperOrganization, String name, String address, Integer dangerousObjectTypeId, String extraArea, String description, String objectNumber, String identificationCardPath, String receiptPath) {
         this.appealTypeId = appealTypeId;
         this.number = number;
         this.orderNumber = orderNumber;
@@ -224,7 +168,7 @@ public class AppealDangerousObject extends AuditEntity {
         this.extraArea = extraArea;
         this.description = description;
         this.objectNumber = objectNumber;
-        this.identificationCardId = identificationCardId;
-        this.receiptId = receiptId;
+        this.identificationCardPath = identificationCardPath;
+        this.receiptPath = receiptPath;
     }
 }
