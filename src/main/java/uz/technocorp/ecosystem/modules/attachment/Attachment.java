@@ -24,12 +24,4 @@ public class Attachment extends AuditEntity {
     @Column(unique = true, nullable = false)
     private String path;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String contentType;
-
-    private long size;
-
 }

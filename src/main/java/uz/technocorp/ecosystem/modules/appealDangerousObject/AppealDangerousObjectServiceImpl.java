@@ -2,10 +2,16 @@ package uz.technocorp.ecosystem.modules.appealDangerousObject;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import uz.technocorp.ecosystem.configs.FileConfig;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appealDangerousObject.dto.AppealDangerousObjectDto;
+import uz.technocorp.ecosystem.modules.appealDangerousObject.projection.AppealDangerousObjectProjection;
+import uz.technocorp.ecosystem.modules.attachment.Attachment;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -15,6 +21,10 @@ import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.publics.AttachmentDto;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,6 +43,7 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
     private final ProfileRepository profileRepository;
+    private final AttachmentRepository attachmentRepository;
 
     @Override
     public void create(User user, AppealDangerousObjectDto dto) {
@@ -142,19 +153,51 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
     }
 
     @Override
-    public void getById(UUID id) {
-
+    public AppealDangerousObjectProjection getById(UUID id) {
+        return repository
+                .getFullInfoById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Xicho arizasi", "Id", id));
     }
 
     @Override
-    public void setAttachments(AttachmentDto dto) {
+    public void setAttachments(AttachmentDto dto, MultipartFile file) throws IOException {
+
         AppealDangerousObject appealDangerousObject = repository
                 .findById(dto.objectId())
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho arizasi", "Id", dto.objectId()));
 
-        switch (dto.attachmentName()) {
-            case "identificationCardId" -> appealDangerousObject.setIdentificationCardId(dto.attachmentId());
-            case "receiptId" -> appealDangerousObject.setReceiptId(dto.attachmentId());
+        Path path = FileConfig.path("Registry", "AppealDangerousObjects", file.getOriginalFilename());
+        try {
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException(ResponseMessage.FILE_NOT_CREATED);
         }
+        Attachment attachment = attachmentRepository.save(
+                new Attachment(
+                        path.toString().replace("\\", "/"),
+                        file.getOriginalFilename(),
+                        file.getContentType(),
+                        file.getSize()
+                )
+        );
+        switch (dto.attachmentName()) {
+            case "identificationCardId" -> appealDangerousObject.setIdentificationCardId(attachment.getId());
+            case "receiptId" -> appealDangerousObject.setReceiptId(attachment.getId());
+            case "licenseId" -> appealDangerousObject.setLicenseId(attachment.getId());
+            case "appointmentOrderId" -> appealDangerousObject.setAppointmentOrderId(attachment.getId());
+            case "cadastralPassportId" -> appealDangerousObject.setCadastralPassportId(attachment.getId());
+            case "certificationId" -> appealDangerousObject.setCertificationId(attachment.getId());
+            case "deviceTestingId" -> appealDangerousObject.setDeviceTestingId(attachment.getId());
+            case "ecologicalConclusionId" -> appealDangerousObject.setEcologicalConclusionId(attachment.getId());
+            case "expertOpinionId" -> appealDangerousObject.setExpertOpinionId(attachment.getId());
+            case "fireSafetyReportId" -> appealDangerousObject.setFireSafetyReportId(attachment.getId());
+            case "industrialSafetyDeclarationId" -> appealDangerousObject.setIndustrialSafetyDeclarationId(attachment.getId());
+            case "insurancePolicyId" -> appealDangerousObject.setInsurancePolicyId(attachment.getId());
+            case "permitId" -> appealDangerousObject.setPermitId(attachment.getId());
+            case "projectDocumentationId" -> appealDangerousObject.setProjectDocumentationId(attachment.getId());
+            default -> throw new ResourceNotFoundException("Fayl nomi", "nomlanish", dto.attachmentName());
+        }
+        repository.save(appealDangerousObject);
     }
 }

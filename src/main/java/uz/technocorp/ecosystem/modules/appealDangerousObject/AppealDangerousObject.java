@@ -109,6 +109,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "identification_card_id", insertable = false, updatable = false)
     private Attachment identificationCard;
 
+    //Identifikatsiya varag'i
     @Column(name = "identification_card_id")
     private UUID identificationCardId;
 
@@ -116,6 +117,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "receipt_id", insertable = false, updatable = false)
     private Attachment receipt;
 
+    //XICHOni ro'yxatga olish uchun to'lov kvitansiyasi
     @Column(name = "receipt_id")
     private UUID receiptId;
 
@@ -123,6 +125,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "expert_opinion_id", insertable = false, updatable = false)
     private Attachment expertOpinion;
 
+    //Ekspertiza xulosasi
     @Column(name = "expert_opinion_id")
     private UUID expertOpinionId;
 
@@ -130,6 +133,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "project_documentation_id", insertable = false, updatable = false)
     private Attachment projectDocumentation;
 
+    //Loyiha hujjatlari
     @Column(name = "project_documentation_id")
     private UUID projectDocumentationId;
 
@@ -137,6 +141,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "cadastral_passport_id", insertable = false, updatable = false)
     private Attachment cadastralPassport;
 
+    //XICHO kadastr pasporti
     @Column(name = "cadastral_passport_id")
     private UUID cadastralPassportId;
 
@@ -144,6 +149,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "industrial_safety_declaration_id", insertable = false, updatable = false)
     private Attachment industrialSafetyDeclaration;
 
+    //Sanoat xavfsizligi deklaratsiyasi
     @Column(name = "industrial_safety_declaration_id")
     private UUID industrialSafetyDeclarationId;
 
@@ -151,13 +157,15 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "insurance_policy_id", insertable = false, updatable = false)
     private Attachment insurancePolicy;
 
+    //Sug'urta polisi
     @Column(name = "insurance_policy_id")
-    private UUID incidentPassportId;
+    private UUID insurancePolicyId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Attachment.class)
     @JoinColumn(name = "license_id", insertable = false, updatable = false)
     private Attachment license;
 
+    //Litsenziya
     @Column(name = "license_id")
     private UUID licenseId;
 
@@ -165,6 +173,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "permit_id", insertable = false, updatable = false)
     private Attachment permit;
 
+    //Ruxsatnoma
     @Column(name = "permit_id")
     private UUID permitId;
 
@@ -172,6 +181,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "certification_id", insertable = false, updatable = false)
     private Attachment certification;
 
+    //XICHO xodimlarining sanoat xavfsizligi bo'yicha attestatsiyadan o'tganligi
     @Column(name = "certification_id")
     private UUID certificationId;
 
@@ -179,6 +189,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "fire_safety_report_id", insertable = false, updatable = false)
     private Attachment fireSafetyReport;
 
+    //Yong'in xavfsizligi xulosasi
     @Column(name = "fire_safety_report_id")
     private UUID fireSafetyReportId;
 
@@ -186,6 +197,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "device_testing_id", insertable = false, updatable = false)
     private Attachment deviceTesting;
 
+    //Qurilmalarni sinovdan o'tganligi
     @Column(name = "device_testing_id")
     private UUID deviceTestingId;
 
@@ -193,6 +205,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "appointment_order_id", insertable = false, updatable = false)
     private Attachment appointmentOrder;
 
+    //Mas'ul xodim tayinlanganligi buyrug'i
     @Column(name = "appointment_order_id")
     private UUID appointmentOrderId;
 
@@ -200,6 +213,7 @@ public class AppealDangerousObject extends AuditEntity {
     @JoinColumn(name = "ecological_conclusion_id", insertable = false, updatable = false)
     private Attachment ecologicalConclusion;
 
+    //Ekologiya qo'mitasi xulosasi
     @Column(name = "ecological_conclusion_id")
     private UUID ecologicalConclusionId;
 
