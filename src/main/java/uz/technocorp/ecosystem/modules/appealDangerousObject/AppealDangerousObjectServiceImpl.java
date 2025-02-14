@@ -2,10 +2,14 @@ package uz.technocorp.ecosystem.modules.appealDangerousObject;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appealDangerousObject.dto.AppealDangerousObjectDto;
+import uz.technocorp.ecosystem.modules.appealDangerousObject.projection.AppealDangerousObjectProjection;
+import uz.technocorp.ecosystem.modules.attachment.Attachment;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -15,6 +19,8 @@ import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.publics.AttachmentDto;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,6 +39,7 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
     private final ProfileRepository profileRepository;
+    private final AttachmentRepository attachmentRepository;
 
     @Override
     public void create(User user, AppealDangerousObjectDto dto) {
@@ -50,6 +57,12 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
                 .findById(user.getProfileId())
                 .orElseThrow(() -> new ResourceNotFoundException("Profil", "Id", user.getProfileId()));
 
+        Attachment identificationAttachment = attachmentRepository
+                .findByPath(dto.identificationCardPath())
+                .orElseThrow(() -> new ResourceNotFoundException("Fayl", "havola", dto.identificationCardPath()));
+        Attachment receiptAttachment = attachmentRepository
+                .findByPath(dto.receiptPath())
+                .orElseThrow(() -> new ResourceNotFoundException("Fayl", "havola", dto.receiptPath()));
 
         AppealDangerousObject appealDangerousObject = repository.save(
                 new AppealDangerousObject(
@@ -73,8 +86,8 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
                         dto.extraArea(),
                         dto.description(),
                         dto.objectNumber(),
-                        dto.identificationCardId(),
-                        dto.receiptId()
+                        identificationAttachment.getPath(),
+                        receiptAttachment.getPath()
                 )
         );
         Appeal appeal = appealRepository.save(
@@ -94,6 +107,8 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
         );
         appealDangerousObject.setAppealId(appeal.getId());
         repository.save(appealDangerousObject);
+        attachmentRepository.deleteById(identificationAttachment.getId());
+        attachmentRepository.deleteById(receiptAttachment.getId());
     }
 
     @Override
@@ -142,19 +157,40 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
     }
 
     @Override
-    public void getById(UUID id) {
-
+    public AppealDangerousObjectProjection getById(UUID id) {
+        return repository
+                .getFullInfoById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Xicho arizasi", "Id", id));
     }
 
     @Override
     public void setAttachments(AttachmentDto dto) {
+
         AppealDangerousObject appealDangerousObject = repository
                 .findById(dto.objectId())
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho arizasi", "Id", dto.objectId()));
+        Attachment attachment = attachmentRepository
+                .findByPath(dto.path())
+                .orElseThrow(() -> new ResourceNotFoundException("Fayl", "havola", dto.path()));
 
         switch (dto.attachmentName()) {
-            case "identificationCardId" -> appealDangerousObject.setIdentificationCardId(dto.attachmentId());
-            case "receiptId" -> appealDangerousObject.setReceiptId(dto.attachmentId());
+            case "identificationCardId" -> appealDangerousObject.setIdentificationCardPath(dto.path());
+            case "receiptId" -> appealDangerousObject.setReceiptPath(dto.path());
+            case "licenseId" -> appealDangerousObject.setLicensePath(dto.path());
+            case "appointmentOrderId" -> appealDangerousObject.setAppointmentOrderPath(dto.path());
+            case "cadastralPassportId" -> appealDangerousObject.setCadastralPassportPath(dto.path());
+            case "certificationId" -> appealDangerousObject.setCertificationPath(dto.path());
+            case "deviceTestingId" -> appealDangerousObject.setDeviceTestingPath(dto.path());
+            case "ecologicalConclusionId" -> appealDangerousObject.setEcologicalConclusionPath(dto.path());
+            case "expertOpinionId" -> appealDangerousObject.setExpertOpinionPath(dto.path());
+            case "fireSafetyReportId" -> appealDangerousObject.setFireSafetyReportPath(dto.path());
+            case "industrialSafetyDeclarationId" -> appealDangerousObject.setIndustrialSafetyDeclarationPath(dto.path());
+            case "insurancePolicyId" -> appealDangerousObject.setInsurancePolicyPath(dto.path());
+            case "permitId" -> appealDangerousObject.setPermitPath(dto.path());
+            case "projectDocumentationId" -> appealDangerousObject.setProjectDocumentationPath(dto.path());
+            default -> throw new ResourceNotFoundException("Fayl nomi", "nomlanish", dto.attachmentName());
         }
+        repository.save(appealDangerousObject);
+        attachmentRepository.deleteById(attachment.getId());
     }
 }
