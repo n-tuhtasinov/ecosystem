@@ -4,13 +4,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
-import uz.technocorp.ecosystem.modules.user.dto.DepartmentalUserDto;
+import uz.technocorp.ecosystem.modules.user.dto.ChairmanUserDto;
+import uz.technocorp.ecosystem.modules.user.dto.CommitteeUserDto;
+import uz.technocorp.ecosystem.modules.user.dto.OfficeUserDto;
 import uz.technocorp.ecosystem.security.CurrentUser;
+
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -33,11 +34,54 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("Siz avtorizatsiyadan o'tmagansiz"));
     }
 
-    @PostMapping("/departmental")
-    ResponseEntity<?> saveDepartmentalUser(@Valid DepartmentalUserDto user){
-        userService.saveDepartmentalUser(user);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Hodim muvaffaqiyatli qo'shildi"));
+    @PostMapping("/committee")
+    ResponseEntity<?> saveCommitteeUser(@Valid @RequestBody CommitteeUserDto dto){
+        userService.create(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita hodimi muvaffaqiyatli qo'shildi"));
     }
+
+    @PostMapping("/chairman")
+    ResponseEntity<?> saveChairmanUser(@Valid @RequestBody ChairmanUserDto dto){
+        userService.create(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita raisi muvaffaqiyatli qo'shildi"));
+    }
+
+    @PostMapping("/office")
+    ResponseEntity<?> saveOfficeUser(@Valid @RequestBody OfficeUserDto dto){
+        userService.create(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Hududiy boshqarma hodimi muvaffaqiyatli qo'shildi"));
+    }
+
+    @PostMapping("/committee/{userId}")
+    ResponseEntity<?> updateCommitteeUser(@PathVariable UUID userId, @Valid @RequestBody CommitteeUserDto dto){
+        userService.update(userId, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita hodimi muvaffaqiyatli o'zgartirildi"));
+    }
+
+    @PostMapping("/chairman/{userId}")
+    ResponseEntity<?> updateChairmanUser(@PathVariable UUID userId, @Valid @RequestBody ChairmanUserDto dto){
+        userService.update(userId, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita raisi muvaffaqiyatli o'zgartirildi"));
+    }
+
+    @PostMapping("/office/{userId}")
+    ResponseEntity<?> updateOfficeUser(@PathVariable UUID userId, @Valid @RequestBody OfficeUserDto dto){
+        userService.update(userId, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Hududiy boshqarma hodimi muvaffaqiyatli o'zgartirildi"));
+    }
+
+    @DeleteMapping("/{userId}")
+    ResponseEntity<?> deleteUser(@PathVariable UUID userId) {
+        userService.deleteById(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi muvaffaqiyatli o'chirildi"));
+    }
+
+    @PatchMapping("/{userId}")
+    ResponseEntity<?> changeUserEnabled(@PathVariable UUID userId, @RequestParam Boolean enabled) {
+        userService.changeUserEnabled(userId, enabled);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi holati muvaffaqiyatli o'zgartirildi"));
+    }
+
 
 
 }
