@@ -34,37 +34,37 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("Siz avtorizatsiyadan o'tmagansiz"));
     }
 
-    @PostMapping("/committee")
+    @PostMapping("/committee-users")
     ResponseEntity<?> saveCommitteeUser(@Valid @RequestBody CommitteeUserDto dto){
         userService.create(dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita hodimi muvaffaqiyatli qo'shildi"));
     }
 
-    @PostMapping("/chairman")
+    @PostMapping("/chairman-user")
     ResponseEntity<?> saveChairmanUser(@Valid @RequestBody ChairmanUserDto dto){
         userService.create(dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita raisi muvaffaqiyatli qo'shildi"));
     }
 
-    @PostMapping("/office")
+    @PostMapping("/office-users")
     ResponseEntity<?> saveOfficeUser(@Valid @RequestBody OfficeUserDto dto){
         userService.create(dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Hududiy boshqarma hodimi muvaffaqiyatli qo'shildi"));
     }
 
-    @PostMapping("/committee/{userId}")
+    @PostMapping("/committee-users/{userId}")
     ResponseEntity<?> updateCommitteeUser(@PathVariable UUID userId, @Valid @RequestBody CommitteeUserDto dto){
         userService.update(userId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita hodimi muvaffaqiyatli o'zgartirildi"));
     }
 
-    @PostMapping("/chairman/{userId}")
+    @PostMapping("/chairman-user/{userId}")
     ResponseEntity<?> updateChairmanUser(@PathVariable UUID userId, @Valid @RequestBody ChairmanUserDto dto){
         userService.update(userId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita raisi muvaffaqiyatli o'zgartirildi"));
     }
 
-    @PostMapping("/office/{userId}")
+    @PostMapping("/office-users/{userId}")
     ResponseEntity<?> updateOfficeUser(@PathVariable UUID userId, @Valid @RequestBody OfficeUserDto dto){
         userService.update(userId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Hududiy boshqarma hodimi muvaffaqiyatli o'zgartirildi"));
@@ -81,7 +81,5 @@ public class UserController {
         userService.changeUserEnabled(userId, enabled);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi holati muvaffaqiyatli o'zgartirildi"));
     }
-
-
 
 }
