@@ -90,6 +90,7 @@ public class AuthServiceImpl implements AuthService {
             District district = districtRepository.findBySoato(1111).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", 1111));
             LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId());
             userService.create(legalUserDto);
+
         }
 
         //find user by username, if there is not, should create a new one
@@ -100,7 +101,6 @@ public class AuthServiceImpl implements AuthService {
         }
 
         //create individual user
-        user
         return getUserMeWithToken(new User(), accessData.getAccess_token(), response);
     }
 
