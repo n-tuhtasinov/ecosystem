@@ -7,6 +7,7 @@ package uz.technocorp.ecosystem.modules.user.enums;
  * @since v1.0
  */
 public enum Direction {
+    APPEAL,
     CERTIFICATE,
     ATTESTAT,
     ATTESTATION,
