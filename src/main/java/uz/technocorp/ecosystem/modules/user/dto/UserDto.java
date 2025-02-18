@@ -23,4 +23,5 @@ public interface UserDto {
     Integer getRegionId();
     Integer getDistrictId();
     String getPosition();
+    String getPhoneNumber();
 }
