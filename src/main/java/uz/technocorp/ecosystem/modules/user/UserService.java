@@ -15,7 +15,7 @@ public interface UserService {
 
     UserMeDto getMe(User user);
 
-    void create(UserDto dto);
+    User create(UserDto dto);
 
     void update(UUID userId, UserDto dto);
 

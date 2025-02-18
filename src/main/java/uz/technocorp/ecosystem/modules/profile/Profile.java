@@ -59,7 +59,9 @@ public class Profile extends AuditEntity {
 
     private String position;
 
-    public Profile(Long tin, String legalName, String legalAddress, String fullName, Long pin, Integer departmentId, Integer officeId, Integer regionId, Integer districtId, String position) {
+    private String phoneNumber;
+
+    public Profile(Long tin, String legalName, String legalAddress, String fullName, Long pin, Integer departmentId, Integer officeId, Integer regionId, Integer districtId, String position, String phoneNumber) {
         this.tin = tin;
         this.legalName = legalName;
         this.legalAddress = legalAddress;
@@ -70,5 +72,6 @@ public class Profile extends AuditEntity {
         this.regionId = regionId;
         this.districtId = districtId;
         this.position = position;
+        this.phoneNumber = phoneNumber;
     }
 }

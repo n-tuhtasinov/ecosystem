@@ -34,6 +34,9 @@ public class ChairmanUserDto implements UserDto {
         @NotBlank(message = "Hodim lavozimi jo'natilmadi")
         private String position;
 
+        @NotBlank(message = "Hodim telefon raqami jo'natilmadi")
+        private String phoneNumber;
+
         @Override
         public String getUsername() {
                 return this.pin.toString();

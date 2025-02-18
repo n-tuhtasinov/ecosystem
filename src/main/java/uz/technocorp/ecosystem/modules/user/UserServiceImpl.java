@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void create(UserDto dto) {
+    public User create(UserDto dto) {
 
         //update profile
         UUID profileId = profileService.create(dto);
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
                 dto.getDirections(),
                 true,
                 profileId);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override

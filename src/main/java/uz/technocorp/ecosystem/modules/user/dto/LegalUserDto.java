@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.user.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,8 @@ public class LegalUserDto implements UserDto{
     private Integer regionId;
 
     private Integer districtId;
+
+    private String phoneNumber;
 
     @Override
     public String getUsername() {

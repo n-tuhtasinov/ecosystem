@@ -30,7 +30,8 @@ public class ProfileServiceImpl implements ProfileService {
                 dto.getOfficeId(),
                 dto.getRegionId(),
                 dto.getDistrictId(),
-                dto.getPosition());
+                dto.getPosition(),
+                dto.getPhoneNumber());
         Profile saved = profileRepository.save(profile);
         return saved.getId();
     }
