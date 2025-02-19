@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.department.Department;
+import uz.technocorp.ecosystem.modules.district.District;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.region.Region;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -12,17 +15,18 @@ import uz.technocorp.ecosystem.modules.department.Department;
  * @since v1.0
  */
 @Entity
-@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Profile extends AuditEntity {
 
+    @Column(unique = true)
     private Long tin;
     private String legalName;
     private String legalAddress;
     private String fullName;
+    @Column(unique = true)
     private Long pin;
 
     @ManyToOne(targetEntity = Department.class, fetch = FetchType.LAZY )
@@ -32,8 +36,42 @@ public class Profile extends AuditEntity {
     @Column(name = "department_id")
     private Integer departmentId;
 
+    @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY )
+    @JoinColumn(name = "office_id", insertable = false, updatable = false)
+    private Office office;
 
+    @Column(name = "office_id")
+    private Integer officeId;
 
+    @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY )
+    @JoinColumn(name = "region_id", insertable = false, updatable = false)
+    private Region region;
 
+    @Column(name = "region_id")
+    private Integer regionId;
 
+    @ManyToOne(targetEntity = District.class, fetch = FetchType.LAZY )
+    @JoinColumn(name = "district_id", insertable = false, updatable = false)
+    private District district;
+
+    @Column(name = "district_id")
+    private Integer districtId;
+
+    private String position;
+
+    private String phoneNumber;
+
+    public Profile(Long tin, String legalName, String legalAddress, String fullName, Long pin, Integer departmentId, Integer officeId, Integer regionId, Integer districtId, String position, String phoneNumber) {
+        this.tin = tin;
+        this.legalName = legalName;
+        this.legalAddress = legalAddress;
+        this.fullName = fullName;
+        this.pin = pin;
+        this.departmentId = departmentId;
+        this.officeId = officeId;
+        this.regionId = regionId;
+        this.districtId = districtId;
+        this.position = position;
+        this.phoneNumber = phoneNumber;
+    }
 }

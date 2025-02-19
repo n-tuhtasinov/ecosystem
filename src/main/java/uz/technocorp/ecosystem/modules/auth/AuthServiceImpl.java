@@ -9,17 +9,21 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.models.TokenResponse;
 import uz.technocorp.ecosystem.modules.auth.dto.AccessDataDto;
 import uz.technocorp.ecosystem.modules.auth.dto.LoginDto;
 import uz.technocorp.ecosystem.modules.auth.dto.OneIdDto;
 import uz.technocorp.ecosystem.modules.auth.dto.UserInfoFromOneIdDto;
+import uz.technocorp.ecosystem.modules.district.District;
+import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.UserService;
+import uz.technocorp.ecosystem.modules.user.dto.IndividualUserDto;
+import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.security.JwtService;
 import uz.technocorp.ecosystem.utils.ApiIntegrator;
@@ -41,9 +45,9 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserService userService;
+    private final DistrictRepository districtRepository;
 
     @Value("${app.one-id.client_id}")
     private String oneIdClientId;
@@ -68,33 +72,36 @@ public class AuthServiceImpl implements AuthService {
         AccessDataDto accessData = getAccessData(dto);
         UserInfoFromOneIdDto userInfoFromOneIdDto = getUserInfoByAccessData(accessData);
 
-        //check whether the user is legal, if yes it is not allowed
+        //check whether the user is legal or not
         if (userInfoFromOneIdDto.getAuth_method().name().equals("LEPKCSMETHOD")){
-            // TODO: yuridiklar uchun logika yozish kerak
+            String legalTin = userInfoFromOneIdDto.getPkcs_legal_tin();
+
+            //find user by username, if there is not, should create a new one
+            Optional<User> optional = userRepository.findByUsername(legalTin);
+            if (optional.isPresent()){
+                User user = optional.get();
+                return getUserMeWithToken(user, accessData.getAccess_token(), response);
+            }
+
+            //create a new legal user. The legal user has only "appeal" in the direction list when it is first created
+            //TODO: soliq bilan integratsiya qilib tashkilot INN bo'yicha to'liq ma'lumotlarni olib kelish kerak.
+            //Hozircha testvoviy ma'lumotlar yozib qo'yganman
+            District district = districtRepository.findBySoato(1111).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", 1111));
+            LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId(), userInfoFromOneIdDto.getMob_phone_no());
+            User user = userService.create(legalUserDto);
+            return getUserMeWithToken(user, accessData.getAccess_token(), response);
         }
 
-        //find user by username
+        //find individual user by username, if there is not, should create a new one
         Optional<User> optional = userRepository.findByUsername(userInfoFromOneIdDto.getPin());
         if (optional.isPresent()) {
             User user = optional.get();
             return getUserMeWithToken(user, accessData.getAccess_token(), response);
         }
 
-        // generate password
-        String password = generatePasswordFromOneIdToken(accessData.getAccess_token());
-
-        // create user
-//        User user = userRepository.save(
-//                User.builder()
-//                        .username(userInfoFromOneIdDto.getPin())
-//                        .password(passwordEncoder.encode("root1234")) //TODO: keyinchalik default passwordni o'rniga tepadagi passwordni set qilish kerak
-//                        .pin(Long.parseLong(userInfoFromOneIdDto.getPin()))
-//                        .fullName(userInfoFromOneIdDto.getFull_name())
-//                        .role(Role.CLIENT)
-//                        .enabled(true)
-//                        .build()
-//        );
-        return getUserMeWithToken(new User(), accessData.getAccess_token(), response);
+        //create individual user
+        User user = userService.create(new IndividualUserDto());
+        return getUserMeWithToken(user, accessData.getAccess_token(), response);
     }
 
     private UserMeDto getUserMeWithToken(User user, String tokenFromOneId, HttpServletResponse response) {
