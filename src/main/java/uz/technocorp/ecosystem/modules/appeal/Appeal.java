@@ -1,7 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import uz.technocorp.ecosystem.models.AuditEntity;
-import uz.technocorp.ecosystem.modules.appealType.AppealType;
+import uz.technocorp.ecosystem.modules.appealtype.AppealType;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
