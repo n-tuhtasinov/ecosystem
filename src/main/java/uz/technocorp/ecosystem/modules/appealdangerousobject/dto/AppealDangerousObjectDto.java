@@ -17,7 +17,7 @@ public record AppealDangerousObjectDto(
         String extraArea,
         String description,
         String objectNumber,
-        Integer appealTypeId,
+        String appealType,
         String number,
         String orderNumber,
         Integer regionId,

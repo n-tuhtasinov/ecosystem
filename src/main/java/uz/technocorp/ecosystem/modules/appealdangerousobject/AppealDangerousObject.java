@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.appealtype.AppealType;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.dangerousobjecttype.DangerousObjectType;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -28,12 +28,8 @@ import java.util.UUID;
 @Entity
 public class AppealDangerousObject extends AuditEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = AppealType.class)
-    @JoinColumn(name = "appeal_type_id", insertable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private AppealType appealType;
-
-    @Column(name = "appeal_type_id")
-    private Integer appealTypeId;
 
     @Column(nullable = false)
     private String number;
@@ -146,8 +142,8 @@ public class AppealDangerousObject extends AuditEntity {
     //Ekologiya qo'mitasi xulosasi -> Qurilmalar ekspertizasi
     private String ecologicalConclusionPath;
 
-    public AppealDangerousObject(Integer appealTypeId, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, String legalAddress, String phoneNumber, String email, String upperOrganization, String name, String address, Integer dangerousObjectTypeId, String extraArea, String description, String objectNumber, String identificationCardPath, String receiptPath) {
-        this.appealTypeId = appealTypeId;
+    public AppealDangerousObject(AppealType appealType, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, String legalAddress, String phoneNumber, String email, String upperOrganization, String name, String address, Integer dangerousObjectTypeId, String extraArea, String description, String objectNumber, String identificationCardPath, String receiptPath) {
+        this.appealType = appealType;
         this.number = number;
         this.orderNumber = orderNumber;
         this.legal_tin = legal_tin;
