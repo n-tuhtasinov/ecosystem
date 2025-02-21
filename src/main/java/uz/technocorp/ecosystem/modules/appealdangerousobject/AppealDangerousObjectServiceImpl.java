@@ -5,18 +5,17 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appealdangerousobject.dto.AppealDangerousObjectDto;
 import uz.technocorp.ecosystem.modules.appealdangerousobject.helper.AppealDangerousObjectInfo;
 import uz.technocorp.ecosystem.modules.appealdangerousobject.projection.AppealDangerousObjectProjection;
 import uz.technocorp.ecosystem.modules.applicationexecutionprocess.AppealExecutionProcessRepository;
-import uz.technocorp.ecosystem.modules.applicationexecutionprocess.AppealExecutionProcessServiceImpl;
 import uz.technocorp.ecosystem.modules.applicationexecutionprocess.projection.AppealExecutionProcessProjection;
 import uz.technocorp.ecosystem.modules.attachment.Attachment;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.document.DocumentRepository;
-import uz.technocorp.ecosystem.modules.document.DocumentServiceImpl;
 import uz.technocorp.ecosystem.modules.document.projection.DocumentProjection;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
@@ -73,7 +72,7 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
 
         AppealDangerousObject appealDangerousObject = repository.save(
                 new AppealDangerousObject(
-                        dto.appealTypeId(),
+                        AppealType.valueOf(dto.appealType()),
                         dto.number(),
                         dto.orderNumber(),
                         profile.getTin(),
@@ -99,7 +98,7 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
         );
         Appeal appeal = appealRepository.save(
                 new Appeal(
-                        dto.appealTypeId(),
+                        AppealType.valueOf(dto.appealType()),
                         dto.number(),
                         dto.orderNumber(),
                         profile.getTin(),
@@ -133,12 +132,12 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
         appealDangerousObject.setName(dto.name());
         appealDangerousObject.setPhoneNumber(dto.phoneNumber());
         appealDangerousObject.setNumber(dto.number());
-        appealDangerousObject.setAppealTypeId(dto.appealTypeId());
+        appealDangerousObject.setAppealType(AppealType.valueOf(dto.appealType()));
         appealDangerousObject.setOrderNumber(dto.orderNumber());
         Appeal appeal = appealRepository
                 .findById(appealDangerousObject.getAppealId())
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho arizasi", "Id", appealDangerousObject.getAppealId()));
-        appeal.setAppealTypeId(dto.appealTypeId());
+        appeal.setAppealType(AppealType.valueOf(dto.appealType()));
         appeal.setNumber(dto.number());
         appeal.setOrderNumber(dto.orderNumber());
         if (!Objects.equals(appeal.getRegionId(), dto.regionId())) {

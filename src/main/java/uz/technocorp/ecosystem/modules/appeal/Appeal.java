@@ -1,7 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import uz.technocorp.ecosystem.models.AuditEntity;
-import uz.technocorp.ecosystem.modules.appealtype.AppealType;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -26,12 +26,8 @@ import java.util.UUID;
 @Entity
 public class Appeal extends AuditEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = AppealType.class)
-    @JoinColumn(name = "appeal_type_id", insertable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
     private AppealType appealType;
-
-    @Column(name = "appeal_type_id")
-    private Integer appealTypeId;
 
     @Column(nullable = false)
     private String number;
@@ -73,8 +69,8 @@ public class Appeal extends AuditEntity {
     @Column(nullable = false)
     private UUID mainId;
 
-    public Appeal(Integer appealTypeId, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, UUID mainId) {
-        this.appealTypeId = appealTypeId;
+    public Appeal(AppealType appealType, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, UUID mainId) {
+        this.appealType = appealType;
         this.number = number;
         this.orderNumber = orderNumber;
         this.legal_tin = legal_tin;
