@@ -7,10 +7,7 @@ package uz.technocorp.ecosystem.enums;
  * @since v1.0
  */
 public enum SuspensionType {
-    SuspensionBridgeRoad("Osma ko'prik yo'l"),
-    SuspensionLiftRoad("Osma ko'tarma yo'l");
+    SuspensionBridgeRoad,
+    SuspensionLiftRoad
 
-    SuspensionType(String s) {
-
-    }
 }

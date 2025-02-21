@@ -71,5 +71,5 @@ public enum AppealType {
     DeregisterINM,
 
     // Boshqa yo‘nalishlar
-    Other;
+    Other
 }

@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
+
 import java.util.UUID;
 
 /**
@@ -32,15 +34,15 @@ public class Document extends AuditEntity {
     @Column(name = "appeal_id")
     private UUID appealId;
 
-    @Column(nullable = false)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private DocumentType documentType;
 
     private boolean agreed;
 
-    public Document(String path, UUID appealId, String name, boolean agreed) {
+    public Document(String path, UUID appealId, DocumentType documentType, boolean agreed) {
         this.path = path;
         this.appealId = appealId;
-        this.name = name;
+        this.documentType = documentType;
         this.agreed = agreed;
     }
 }

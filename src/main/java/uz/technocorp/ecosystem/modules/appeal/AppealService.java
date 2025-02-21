@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
+import java.util.UUID;
+
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -8,4 +10,5 @@ package uz.technocorp.ecosystem.modules.appeal;
  */
 public interface AppealService {
 
+    void setInspector(UUID inspector_id, UUID appeal_id);
 }

@@ -8,6 +8,6 @@ import java.util.UUID;
  * @created 17.02.2025
  * @since v1.0
  */
-public record DocumentDto(Integer documentTypeId, UUID appealId, String path) {
+public record DocumentDto(String documentType, UUID appealId, String path) {
 
 }

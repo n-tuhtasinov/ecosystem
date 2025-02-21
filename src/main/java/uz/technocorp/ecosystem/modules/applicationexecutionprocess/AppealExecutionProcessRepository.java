@@ -23,6 +23,7 @@ public interface AppealExecutionProcessRepository extends JpaRepository<AppealEx
                         from appeal_execution_process aep
                         join users u on u.id = aep.created_by
             where appeal_id = :appealId
+            order by aep.created_at
             """, nativeQuery = true)
     List<AppealExecutionProcessProjection> getAllByAppealId(UUID appealId);
 }

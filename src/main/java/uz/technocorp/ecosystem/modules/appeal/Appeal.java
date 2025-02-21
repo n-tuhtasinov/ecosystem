@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.UUID;
 
@@ -68,6 +69,13 @@ public class Appeal extends AuditEntity {
 
     @Column(nullable = false)
     private UUID mainId;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
+    @JoinColumn(name = "inspector_id", insertable = false, updatable = false)
+    private User user;
+
+    @Column(name = "inspector_id")
+    private UUID inspectorId;
 
     public Appeal(AppealType appealType, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, UUID mainId) {
         this.appealType = appealType;
