@@ -17,6 +17,8 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.document.DocumentRepository;
 import uz.technocorp.ecosystem.modules.document.projection.DocumentProjection;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -24,6 +26,7 @@ import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.publics.AttachmentDto;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -46,6 +49,7 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
     private final AttachmentRepository attachmentRepository;
     private final DocumentRepository documentRepository;
     private final AppealExecutionProcessRepository appealExecutionProcessRepository;
+    private final OfficeRepository officeRepository;
 
     @Override
     public void create(User user, AppealDangerousObjectDto dto) {
@@ -96,6 +100,9 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
                         receiptAttachment.getPath()
                 )
         );
+        Office office = officeRepository
+                .findById(profile.getOfficeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Office", "Id", profile.getOfficeId()));
         Appeal appeal = appealRepository.save(
                 new Appeal(
                         AppealType.valueOf(dto.appealType()),
@@ -103,12 +110,18 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
                         dto.orderNumber(),
                         profile.getTin(),
                         profile.getLegalName(),
-                        dto.regionId(),
-                        region.getName(),
+                        profile.getRegionId(),
+                        profile.getRegionName(),
                         dto.districtId(),
-                        district.getName(),
+                        profile.getDistrictName(),
                         user.getProfileId(),
-                        appealDangerousObject.getId()
+                        profile.getOfficeId(),
+                        office.getName(),
+                        appealDangerousObject.getId(),
+                        dto.address(),
+                        dto.email(),
+                        dto.phoneNumber(),
+                        LocalDate.now()
                 )
         );
         appealDangerousObject.setAppealId(appeal.getId());
@@ -198,6 +211,7 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
             case "insurancePolicyPath" -> appealDangerousObject.setInsurancePolicyPath(dto.path());
             case "permitPath" -> appealDangerousObject.setPermitPath(dto.path());
             case "projectDocumentationPath" -> appealDangerousObject.setProjectDocumentationPath(dto.path());
+            case "replyLetterPath" -> appealDangerousObject.setReplyLetterPath(dto.path());
             default -> throw new ResourceNotFoundException("Fayl nomi", "nomlanish", dto.attachmentName());
         }
         repository.save(appealDangerousObject);

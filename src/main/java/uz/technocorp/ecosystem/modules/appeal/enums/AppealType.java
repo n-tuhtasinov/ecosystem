@@ -71,5 +71,10 @@ public enum AppealType {
     DeregisterINM,
 
     // Boshqa yo‘nalishlar
-    Other
-}
+    Other,
+
+    // Ekspert tashkiloti akkreditatsiyasi
+    ReaccreditExpertOrganization,
+    ExpandAccreditationScope
+
+    }

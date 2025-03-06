@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
-import java.util.UUID;
+import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 
 /**
  * @author Rasulov Komil
@@ -10,5 +11,6 @@ import java.util.UUID;
  */
 public interface AppealService {
 
-    void setInspector(UUID inspector_id, UUID appeal_id);
+    void setInspector(SetInspectorDto dto);
+    void changeAppealStatus(AppealStatusDto dto);
 }

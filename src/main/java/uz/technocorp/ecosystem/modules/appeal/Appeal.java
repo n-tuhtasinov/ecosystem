@@ -1,8 +1,10 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.district.District;
+import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 import jakarta.persistence.*;
@@ -12,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import uz.technocorp.ecosystem.modules.user.User;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -37,7 +40,7 @@ public class Appeal extends AuditEntity {
     private String orderNumber;
 
     @Column(nullable = false)
-    private Long legal_tin;
+    private Long legalTin;
 
     @Column(nullable = false)
     private String legalName;
@@ -67,6 +70,16 @@ public class Appeal extends AuditEntity {
     @Column(name = "profile_id")
     private UUID profileId;
 
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Office.class)
+    @JoinColumn(name = "office_id", insertable = false, updatable = false)
+    private Office office;
+
+    @Column(name = "office_id")
+    private Integer officeId;
+
+    @Column(nullable = false)
+    private String officeName;
+
     @Column(nullable = false)
     private UUID mainId;
 
@@ -77,17 +90,41 @@ public class Appeal extends AuditEntity {
     @Column(name = "inspector_id")
     private UUID inspectorId;
 
-    public Appeal(AppealType appealType, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, UUID mainId) {
+    private String inspectorName;
+
+    @Enumerated(EnumType.STRING)
+    private AppealStatus status;
+
+    private String address;
+
+    private String email;
+
+    private String phoneNumber;
+
+    private LocalDate deadline;
+
+    private LocalDate date;
+
+    public Appeal(AppealType appealType, String number, String orderNumber, Long legalTin, String legalName,
+                  Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId,
+                  Integer officeId, String officeName, UUID mainId, String address, String email, String phoneNumber, LocalDate date) {
         this.appealType = appealType;
         this.number = number;
         this.orderNumber = orderNumber;
-        this.legal_tin = legal_tin;
+        this.legalTin = legalTin;
         this.legalName = legalName;
         this.regionId = regionId;
         this.regionName = regionName;
         this.districtId = districtId;
         this.districtName = districtName;
         this.profileId = profileId;
+        this.officeId = officeId;
+        this.officeName = officeName;
         this.mainId = mainId;
+        this.address = address;
+        this.email = address;
+        this.phoneNumber = address;
+        this.date = date;
+        this.status = AppealStatus.New;
     }
 }
