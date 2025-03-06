@@ -1,5 +1,8 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
+import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
+
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -8,4 +11,6 @@ package uz.technocorp.ecosystem.modules.appeal;
  */
 public interface AppealService {
 
+    void setInspector(SetInspectorDto dto);
+    void changeAppealStatus(AppealStatusDto dto);
 }

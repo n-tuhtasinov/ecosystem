@@ -142,6 +142,9 @@ public class AppealDangerousObject extends AuditEntity {
     //Ekologiya qo'mitasi xulosasi -> Qurilmalar ekspertizasi
     private String ecologicalConclusionPath;
 
+    //Arizaga javob xati
+    private String replyLetterPath;
+
     public AppealDangerousObject(AppealType appealType, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, String legalAddress, String phoneNumber, String email, String upperOrganization, String name, String address, Integer dangerousObjectTypeId, String extraArea, String description, String objectNumber, String identificationCardPath, String receiptPath) {
         this.appealType = appealType;
         this.number = number;

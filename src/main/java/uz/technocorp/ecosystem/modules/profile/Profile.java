@@ -50,6 +50,8 @@ public class Profile extends AuditEntity {
     @Column(name = "region_id")
     private Integer regionId;
 
+    private String regionName;
+
     @ManyToOne(targetEntity = District.class, fetch = FetchType.LAZY )
     @JoinColumn(name = "district_id", insertable = false, updatable = false)
     private District district;
@@ -57,11 +59,13 @@ public class Profile extends AuditEntity {
     @Column(name = "district_id")
     private Integer districtId;
 
+    private String districtName;
+
     private String position;
 
     private String phoneNumber;
 
-    public Profile(Long tin, String legalName, String legalAddress, String fullName, Long pin, Integer departmentId, Integer officeId, Integer regionId, Integer districtId, String position, String phoneNumber) {
+    public Profile(Long tin, String legalName, String legalAddress, String fullName, Long pin, Integer departmentId, Integer officeId, Integer regionId, String regionName, Integer districtId, String districtName, String position, String phoneNumber) {
         this.tin = tin;
         this.legalName = legalName;
         this.legalAddress = legalAddress;
