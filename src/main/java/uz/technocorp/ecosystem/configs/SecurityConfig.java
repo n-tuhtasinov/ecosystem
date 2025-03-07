@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.security.JwtAuthenticationEntryPoint;
 import uz.technocorp.ecosystem.security.JwtAuthenticationFilter;
 
@@ -61,6 +62,10 @@ public class SecurityConfig {
                 .build();
     }
 
-    //                 .httpBasic(Customizer.withDefaults())
+    // TODO: Controllersiz security ga yozib logout qilishni sinab ko'rish uchun
+    //           .logout(logout -> logout
+    //                        .logoutUrl("/api/v1/auth/logout")
+    //                        .logoutSuccessUrl("/login")
+    //                        .deleteCookies(AppConstants.ACCESS_TOKEN, AppConstants.REFRESH_TOKEN))
 
 }

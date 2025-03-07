@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.modules.user.enums.Direction;
@@ -83,6 +84,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         user.setEnabled(enabled);
         userRepository.save(user);
+    }
+
+    @Override
+    public void updateLegalUser(UUID userId, LegalUserDto dto) {
+        //TODO: Legal userni ma'lumotlarini soliq bilan integratsiya orqali yangilab qo'yish
     }
 
 
