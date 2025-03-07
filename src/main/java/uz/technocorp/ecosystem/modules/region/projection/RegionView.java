@@ -1,0 +1,13 @@
+package uz.technocorp.ecosystem.modules.region.projection;
+
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 18.02.2025
+ * @since v1.0
+ */
+public interface RegionView {
+    Integer getId();
+    String getName();
+    Integer getSoato();
+}

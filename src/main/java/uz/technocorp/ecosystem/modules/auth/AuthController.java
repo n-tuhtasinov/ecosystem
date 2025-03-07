@@ -36,11 +36,9 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse(userMeDto));
     }
 
-    @GetMapping(value = "/logout")
+    @PostMapping(value = "/logout")
     public HttpEntity<?> logout(HttpServletResponse response) {
         authService.logout(response);
         return ResponseEntity.ok(new ApiResponse("Siz tizimdan chiqdingiz"));
     }
-
-
 }
