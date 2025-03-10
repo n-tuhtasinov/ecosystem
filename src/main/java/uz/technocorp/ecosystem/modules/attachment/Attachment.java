@@ -2,10 +2,7 @@ package uz.technocorp.ecosystem.modules.attachment;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
 
 /**
@@ -14,8 +11,8 @@ import uz.technocorp.ecosystem.models.AuditEntity;
  * @created 12.02.2025
  * @since v1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

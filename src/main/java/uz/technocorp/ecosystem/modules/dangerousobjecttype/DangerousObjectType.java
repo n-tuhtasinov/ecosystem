@@ -1,9 +1,7 @@
 package uz.technocorp.ecosystem.modules.dangerousobjecttype;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * @author Rasulov Komil
@@ -11,7 +9,8 @@ import lombok.NoArgsConstructor;
  * @created 12.02.2025
  * @since v1.0
  */
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
