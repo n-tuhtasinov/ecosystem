@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.profile;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.department.Department;
 import uz.technocorp.ecosystem.modules.district.District;
@@ -19,13 +20,16 @@ import uz.technocorp.ecosystem.modules.region.Region;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Profile extends AuditEntity {
 
     @Column(unique = true)
     private Long tin;
+
     private String legalName;
     private String legalAddress;
     private String fullName;
+
     @Column(unique = true)
     private Long pin;
 
@@ -64,18 +68,4 @@ public class Profile extends AuditEntity {
     private String position;
 
     private String phoneNumber;
-
-    public Profile(Long tin, String legalName, String legalAddress, String fullName, Long pin, Integer departmentId, Integer officeId, Integer regionId, String regionName, Integer districtId, String districtName, String position, String phoneNumber) {
-        this.tin = tin;
-        this.legalName = legalName;
-        this.legalAddress = legalAddress;
-        this.fullName = fullName;
-        this.pin = pin;
-        this.departmentId = departmentId;
-        this.officeId = officeId;
-        this.regionId = regionId;
-        this.districtId = districtId;
-        this.position = position;
-        this.phoneNumber = phoneNumber;
-    }
 }

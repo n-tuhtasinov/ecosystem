@@ -1,14 +1,17 @@
 package uz.technocorp.ecosystem.modules.office;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.department.dto.DepartmentDto;
+import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.modules.office.dto.OfficeDto;
+import uz.technocorp.ecosystem.modules.office.projection.OfficeView;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +39,7 @@ public class OfficeServiceImpl implements OfficeService {
     }
 
     @Override
+    @Transactional
     public void update(Integer officeId, OfficeDto dto) {
         Office office = officeRepository.findById(officeId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "officeId", officeId));
         office.setName(dto.name());
@@ -59,6 +63,23 @@ public class OfficeServiceImpl implements OfficeService {
 
         //delete office by id
         officeRepository.deleteById(officeId);
+    }
+
+    @Override
+    public Page<OfficeView> getAll(Map<String, String> params) {
+
+        Pageable pageable= PageRequest.of(
+                Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER))-1,
+                Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
+                Sort.Direction.DESC,
+                "name");
+
+        return officeRepository.getAll(pageable);
+    }
+
+    @Override
+    public List<Office> getAllBySelect() {
+        return officeRepository.findAll();
     }
 
 }
