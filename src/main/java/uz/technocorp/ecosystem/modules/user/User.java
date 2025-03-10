@@ -20,7 +20,6 @@ import java.util.UUID;
  * @created 29.01.2025
  * @since v1.0
  */
-@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @AllArgsConstructor

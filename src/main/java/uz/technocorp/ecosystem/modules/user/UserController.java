@@ -36,19 +36,19 @@ public class UserController {
     }
 
     @PostMapping("/committee-users")
-    ResponseEntity<?> saveCommitteeUser(@Valid @RequestBody CommitteeUserDto dto){
+    ResponseEntity<?> createCommitteeUser(@Valid @RequestBody CommitteeUserDto dto){
         userService.create(dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita hodimi muvaffaqiyatli qo'shildi"));
     }
 
     @PostMapping("/chairman-user")
-    ResponseEntity<?> saveChairmanUser(@Valid @RequestBody ChairmanUserDto dto){
+    ResponseEntity<?> createChairmanUser(@Valid @RequestBody ChairmanUserDto dto){
         userService.create(dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita raisi muvaffaqiyatli qo'shildi"));
     }
 
     @PostMapping("/office-users")
-    ResponseEntity<?> saveOfficeUser(@Valid @RequestBody OfficeUserDto dto){
+    ResponseEntity<?> createOfficeUser(@Valid @RequestBody OfficeUserDto dto){
         userService.create(dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Hududiy boshqarma hodimi muvaffaqiyatli qo'shildi"));
     }

@@ -1,10 +1,7 @@
 package uz.technocorp.ecosystem.modules.dangerousobject;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appealdangerousobject.AppealDangerousObject;
 import uz.technocorp.ecosystem.modules.dangerousobjecttype.DangerousObjectType;
@@ -20,8 +17,8 @@ import java.util.UUID;
  * @created 04.03.2025
  * @since v1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

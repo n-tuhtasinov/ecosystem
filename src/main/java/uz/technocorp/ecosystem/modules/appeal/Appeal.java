@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
+import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
@@ -8,10 +9,6 @@ import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
@@ -23,8 +20,8 @@ import java.util.UUID;
  * @created 12.02.2025
  * @since v1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
