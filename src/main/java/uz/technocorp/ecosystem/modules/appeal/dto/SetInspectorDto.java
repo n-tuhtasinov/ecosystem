@@ -8,5 +8,5 @@ import java.util.UUID;
  * @created 21.02.2025
  * @since v1.0
  */
-public record SetInspectorDto(UUID appeal_id, UUID inspector_id, String deadline) {
+public record SetInspectorDto(UUID appealId, UUID inspectorId, String deadline) {
 }
