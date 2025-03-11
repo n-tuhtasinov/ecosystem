@@ -27,28 +27,30 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public UUID create(UserDto dto) {
-        Region region = regionRepository
-                .findById(dto.getRegionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", dto.getRegionId()));
-        District district = districtRepository
-                .findById(dto.getDistrictId())
-                .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", dto.getDistrictId()));
 
-        Profile profile = new Profile(
-                dto.getTin(),
-                dto.getLegalName(),
-                dto.getLegalAddress(),
-                dto.getFullName(),
-                dto.getPin(),
-                dto.getDepartmentId(),
-                dto.getOfficeId(),
-                dto.getRegionId(),
-                region.getName(),
-                dto.getDistrictId(),
-                district.getName(),
-                dto.getPosition(),
-                dto.getPhoneNumber());
-        Profile saved = profileRepository.save(profile);
+        //get region
+        Region region = getRegion(dto.getRegionId());
+
+        //get district
+        District district = getDistrict(dto.getDistrictId());
+
+        Profile saved = profileRepository.save(Profile.builder()
+
+                .tin(dto.getTin())
+                .legalName(dto.getLegalName())
+                .legalAddress(dto.getLegalAddress())
+                .fullName(dto.getFullName())
+                .pin(dto.getPin())
+                .departmentId(dto.getDepartmentId())
+                .officeId(dto.getOfficeId())
+                .regionId(dto.getRegionId())
+                .regionName(region != null ? region.getName() : null)
+                .districtId(dto.getDistrictId())
+                .districtName(district != null ? district.getName() : null)
+                .position(dto.getPosition())
+                .phoneNumber(dto.getPhoneNumber())
+                .build());
+
         return saved.getId();
     }
 
@@ -64,26 +66,45 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setPin(dto.getPin());
         profile.setDepartmentId(dto.getDepartmentId());
         profile.setOfficeId(dto.getOfficeId());
-        if (!dto.getRegionId().equals(profile.getRegionId())) {
-            Region region = regionRepository
-                    .findById(dto.getRegionId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", dto.getRegionId()));
-            profile.setRegionId(dto.getRegionId());
-            profile.setRegionName(region.getName());
-            District district = districtRepository
-                    .findById(dto.getDistrictId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", dto.getDistrictId()));
-            profile.setDistrictId(dto.getDistrictId());
-            profile.setDistrictName(district.getName());
-        }
-        if (!dto.getDistrictId().equals(profile.getDistrictId())) {
-            District district = districtRepository
-                    .findById(dto.getDistrictId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", dto.getDistrictId()));
-            profile.setDistrictId(dto.getDistrictId());
-            profile.setDistrictName(district.getName());
-        }
+        setRegion(dto.getRegionId(), profile); //set region
+        setDistrict(dto.getDistrictId(), profile); //set district
         profile.setPosition(dto.getPosition());
         profileRepository.save(profile);
+    }
+
+    private void setRegion(Integer regionId, Profile profile) {
+        if (!regionId.equals(profile.getRegionId())) {
+            Region region = getRegion(regionId);
+            profile.setRegionId(regionId);
+            profile.setRegionName(region!=null? region.getName():null);
+        }
+    }
+
+    private void setDistrict(Integer districtId, Profile profile) {
+        if (!districtId.equals(profile.getDistrictId())) {
+            District district = getDistrict(districtId);
+            profile.setDistrictId(districtId);
+            profile.setDistrictName(district!=null? district.getName():null);
+        }
+    }
+
+    private Region getRegion(Integer regionId) {
+        Region region = null;
+        if (regionId != null) {
+            region = regionRepository
+                    .findById(regionId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", regionId));
+        }
+        return region;
+    }
+
+    private District getDistrict(Integer districtId) {
+        District district = null;
+        if (districtId != null) {
+            district = districtRepository
+                    .findById(districtId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", districtId));
+        }
+        return district;
     }
 }

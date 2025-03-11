@@ -83,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
                 return getUserMeWithToken(user, accessData.getAccess_token(), response);
             }
 
-            //create a new legal user. The legal user has only "appeal" in the direction list when it is first created
+            //create a new legal user. The legal user has only "appeal" in the direction list when he is first created
             //TODO: soliq bilan integratsiya qilib tashkilot INN bo'yicha to'liq ma'lumotlarni olib kelish kerak.
             //Hozircha testvoviy ma'lumotlar yozib qo'yganman
             District district = districtRepository.findBySoato(1111).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", 1111));
@@ -100,7 +100,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         //create individual user
-        User user = userService.create(new IndividualUserDto());
+        User user = userService.create(new IndividualUserDto(userInfoFromOneIdDto.getFull_name(), Long.valueOf(userInfoFromOneIdDto.getPin()), userInfoFromOneIdDto.getMob_phone_no()));
         return getUserMeWithToken(user, accessData.getAccess_token(), response);
     }
 

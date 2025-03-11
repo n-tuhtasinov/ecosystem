@@ -1,5 +1,8 @@
 package uz.technocorp.ecosystem.modules.user.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import uz.technocorp.ecosystem.modules.user.enums.Direction;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
@@ -11,7 +14,11 @@ import java.util.List;
  * @created 15.02.2025
  * @since v1.0
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class IndividualUserDto implements UserDto{
+
     private String fullName;
     private Long pin;
     private String phoneNumber;

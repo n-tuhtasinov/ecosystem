@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.user;
 
+import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 
@@ -22,4 +23,6 @@ public interface UserService {
     void deleteById(UUID userId);
 
     void changeUserEnabled(UUID userId, Boolean enabled);
+
+    void updateLegalUser(UUID userId, LegalUserDto dto);
 }

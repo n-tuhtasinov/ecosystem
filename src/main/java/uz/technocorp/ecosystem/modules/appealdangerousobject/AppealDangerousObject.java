@@ -1,10 +1,7 @@
 package uz.technocorp.ecosystem.modules.appealdangerousobject;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
@@ -21,8 +18,8 @@ import java.util.UUID;
  * @created 12.02.2025
  * @since v1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
