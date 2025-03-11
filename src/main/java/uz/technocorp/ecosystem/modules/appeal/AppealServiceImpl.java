@@ -8,8 +8,8 @@ import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
-import uz.technocorp.ecosystem.modules.applicationexecutionprocess.AppealExecutionProcess;
-import uz.technocorp.ecosystem.modules.applicationexecutionprocess.AppealExecutionProcessRepository;
+import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcess;
+import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 
@@ -35,19 +35,19 @@ public class AppealServiceImpl implements AppealService {
     @Transactional
     public void setInspector(SetInspectorDto dto) {
         User user = userRepository
-                .findById(dto.inspector_id())
-                .orElseThrow(() -> new ResourceNotFoundException("Inspektor", "Id", dto.inspector_id()));
+                .findById(dto.inspectorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Inspektor", "Id", dto.inspectorId()));
         Appeal appeal = repository
-                .findById(dto.appeal_id())
-                .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.appeal_id()));
-        appeal.setInspectorId(dto.inspector_id());
+                .findById(dto.appealId())
+                .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.appealId()));
+        appeal.setInspectorId(dto.inspectorId());
         appeal.setInspectorName(user.getName());
         appeal.setDeadline(LocalDate.parse(dto.deadline()));
         repository.save(appeal);
         repository.flush();
         appealExecutionProcessRepository.save(
                 new AppealExecutionProcess(
-                        dto.appeal_id(),
+                        dto.appealId(),
                         "Ariza inspektorga biriktirildi!"
                 )
         );
