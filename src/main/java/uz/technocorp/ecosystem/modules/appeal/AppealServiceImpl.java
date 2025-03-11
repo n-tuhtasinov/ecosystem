@@ -1,19 +1,20 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.applicationexecutionprocess.AppealExecutionProcess;
 import uz.technocorp.ecosystem.modules.applicationexecutionprocess.AppealExecutionProcessRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 
 import java.time.LocalDate;
-import java.util.UUID;
+import java.util.Map;
 
 /**
  * @author Rasulov Komil
@@ -28,6 +29,7 @@ public class AppealServiceImpl implements AppealService {
     private final AppealRepository repository;
     private final AppealExecutionProcessRepository appealExecutionProcessRepository;
     private final UserRepository userRepository;
+    private final AppealRepository appealRepository;
 
     @Override
     @Transactional
@@ -66,5 +68,10 @@ public class AppealServiceImpl implements AppealService {
                         dto.description()
                 )
         );
+    }
+
+    @Override
+    public Page<AppealCustom> getAppealCustoms(Map<String, String> params) {
+        return appealRepository.getAppealCustoms(params);
     }
 }

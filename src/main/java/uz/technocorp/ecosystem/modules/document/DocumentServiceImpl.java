@@ -33,7 +33,7 @@ public class DocumentServiceImpl implements DocumentService {
                 new Document(
                         dto.path(),
                         dto.appealId(),
-                        DocumentType.toEnum(dto.documentType()),
+                        DocumentType.valueOf(dto.documentType()),
                         false
                 )
         );

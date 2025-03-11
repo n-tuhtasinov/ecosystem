@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal;
+package uz.technocorp.ecosystem.modules.appeal.helper;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
