@@ -37,16 +37,12 @@ public class DangerousObject extends AuditEntity {
     @Column(name = "region_id")
     private Integer regionId;
 
-    private String regionName;
-
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class)
     @JoinColumn(name = "district_id", insertable = false, updatable = false)
     private District district;
 
     @Column(name = "district_id")
     private Integer districtId;
-
-    private String districtName;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
     @JoinColumn(name = "profile_id", insertable = false, updatable = false)
@@ -86,4 +82,23 @@ public class DangerousObject extends AuditEntity {
     private String description;
 
     private String objectNumber;
+
+    public DangerousObject(Long legal_tin, String legalName, Integer regionId, Integer districtId, UUID profileId, String legalAddress, String phoneNumber, String email, String upperOrganization, String name, String address, UUID appealId, Integer dangerousObjectTypeId, String extraArea, String description, String objectNumber) {
+        this.legal_tin = legal_tin;
+        this.legalName = legalName;
+        this.regionId = regionId;
+        this.districtId = districtId;
+        this.profileId = profileId;
+        this.legalAddress = legalAddress;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.upperOrganization = upperOrganization;
+        this.name = name;
+        this.address = address;
+        this.appealId = appealId;
+        this.dangerousObjectTypeId = dangerousObjectTypeId;
+        this.extraArea = extraArea;
+        this.description = description;
+        this.objectNumber = objectNumber;
+    }
 }

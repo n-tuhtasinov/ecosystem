@@ -57,6 +57,7 @@ public class AppealServiceImpl implements AppealService {
         Appeal appeal = repository
                 .findById(dto.appealId())
                 .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.appealId()));
+
         appeal.setStatus(dto.status());
         repository.save(appeal);
         appealExecutionProcessRepository.save(

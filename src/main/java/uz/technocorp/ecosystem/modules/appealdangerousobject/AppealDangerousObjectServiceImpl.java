@@ -43,8 +43,6 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
 
     private final AppealDangerousObjectRepository repository;
     private final AppealRepository appealRepository;
-    private final RegionRepository regionRepository;
-    private final DistrictRepository districtRepository;
     private final ProfileRepository profileRepository;
     private final AttachmentRepository attachmentRepository;
     private final DocumentRepository documentRepository;
@@ -53,15 +51,6 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
 
     @Override
     public void create(User user, AppealDangerousObjectDto dto) {
-
-        Region region = regionRepository
-                .findById(dto.regionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", dto.regionId()));
-
-        District district = districtRepository
-                .findById(dto.districtId())
-                .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", dto.districtId()));
-
 
         Profile profile = profileRepository
                 .findById(user.getProfileId())
@@ -82,9 +71,7 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
                         profile.getTin(),
                         profile.getLegalName(),
                         dto.regionId(),
-                        region.getName(),
                         dto.districtId(),
-                        district.getName(),
                         user.getProfileId(),
                         profile.getLegalAddress(),
                         dto.phoneNumber(),
@@ -154,22 +141,10 @@ public class AppealDangerousObjectServiceImpl implements AppealDangerousObjectSe
         appeal.setNumber(dto.number());
         appeal.setOrderNumber(dto.orderNumber());
         if (!Objects.equals(appeal.getRegionId(), dto.regionId())) {
-            appeal.setRegionId(dto.regionId());
             appealDangerousObject.setRegionId(dto.regionId());
-            Region region = regionRepository
-                    .findById(dto.regionId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", dto.regionId()));
-            appeal.setRegionName(region.getName());
-            appealDangerousObject.setRegionName(region.getName());
         }
         if (!Objects.equals(appeal.getDistrictId(), dto.districtId())) {
-            appeal.setDistrictId(dto.districtId());
             appealDangerousObject.setDistrictId(dto.districtId());
-            District district = districtRepository
-                    .findById(dto.regionId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", dto.districtId()));
-            appeal.setDistrictName(district.getName());
-            appealDangerousObject.setDistrictName(district.getName());
         }
         appealRepository.save(appeal);
         repository.save(appealDangerousObject);
