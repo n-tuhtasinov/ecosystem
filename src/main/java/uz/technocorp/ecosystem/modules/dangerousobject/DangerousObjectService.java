@@ -10,5 +10,5 @@ import java.util.UUID;
  */
 public interface DangerousObjectService {
 
-
+    void create(UUID id);
 }

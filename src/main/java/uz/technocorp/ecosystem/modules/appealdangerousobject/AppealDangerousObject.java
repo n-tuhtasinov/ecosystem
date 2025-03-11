@@ -50,16 +50,12 @@ public class AppealDangerousObject extends AuditEntity {
     @Column(name = "region_id")
     private Integer regionId;
 
-    private String regionName;
-
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class)
     @JoinColumn(name = "district_id", insertable = false, updatable = false)
     private District district;
 
     @Column(name = "district_id")
     private Integer districtId;
-
-    private String districtName;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
     @JoinColumn(name = "profile_id", insertable = false, updatable = false)
@@ -145,16 +141,14 @@ public class AppealDangerousObject extends AuditEntity {
     //Arizaga javob xati
     private String replyLetterPath;
 
-    public AppealDangerousObject(AppealType appealType, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId, String legalAddress, String phoneNumber, String email, String upperOrganization, String name, String address, Integer dangerousObjectTypeId, String extraArea, String description, String objectNumber, String identificationCardPath, String receiptPath) {
+    public AppealDangerousObject(AppealType appealType, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, Integer districtId, UUID profileId, String legalAddress, String phoneNumber, String email, String upperOrganization, String name, String address, Integer dangerousObjectTypeId, String extraArea, String description, String objectNumber, String identificationCardPath, String receiptPath) {
         this.appealType = appealType;
         this.number = number;
         this.orderNumber = orderNumber;
         this.legal_tin = legal_tin;
         this.legalName = legalName;
         this.regionId = regionId;
-        this.regionName = regionName;
         this.districtId = districtId;
-        this.districtName = districtName;
         this.profileId = profileId;
         this.legalAddress = legalAddress;
         this.phoneNumber = phoneNumber;
