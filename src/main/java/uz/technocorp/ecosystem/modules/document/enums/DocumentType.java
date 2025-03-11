@@ -28,11 +28,4 @@ public enum DocumentType {
         this.displayName = displayName;
     }
 
-    public static DocumentType toEnum(String text) {
-        return Arrays
-                .stream(DocumentType.values())
-                .filter(e -> e.displayName.equals(text))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Hujjat turi", "qiymat", text));
-    }
 }

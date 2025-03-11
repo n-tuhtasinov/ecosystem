@@ -10,6 +10,6 @@ import java.util.UUID;
  * @created 12.02.2025
  * @since v1.0
  */
-public interface AppealRepository extends JpaRepository<Appeal, UUID> {
+public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRepo {
 
 }

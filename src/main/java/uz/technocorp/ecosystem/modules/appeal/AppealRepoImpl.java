@@ -7,16 +7,16 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealSearchCriteria;
+import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rasulov Komil
@@ -26,33 +26,39 @@ import java.util.List;
  */
 @Repository
 @RequiredArgsConstructor
-public class AppealCustomRepositoryImpl implements AppealCustomRepository {
+public class AppealRepoImpl implements AppealRepo {
 
     private EntityManager em;
+
     @Override
-    public Page<AppealCustom> appealCustoms(Pageable pageable, AppealSearchCriteria criteria) {
+    public Page<AppealCustom> getAppealCustoms(Map<String, String> params) {
+        Pageable pageable= PageRequest.of(
+                Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER))-1,
+                Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
+                Sort.Direction.DESC,
+                "createdAt");
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<AppealCustom> cq = cb.createQuery(AppealCustom.class);
         Root<Appeal> appeal = cq.from(Appeal.class);
         List<Predicate> predicates = new ArrayList<>();
 
         // Dinamik qidiruv shartlarini qo'shish
-        if (criteria.getStatus()!= null && !criteria.getStatus().isEmpty()) {
-            predicates.add(cb.equal(appeal.get("status"), AppealStatus.valueOf(criteria.getStatus())));
+        if (params.get("status")!= null && !params.get("status").isEmpty()) {
+            predicates.add(cb.equal(appeal.get("status"), AppealStatus.valueOf(params.get("status"))));
         }
-        if (criteria.getAppealType()!= null && !criteria.getAppealType().isEmpty()) {
-            predicates.add(cb.equal(appeal.get("appealType"), AppealType.valueOf(criteria.getAppealType())));
+        if (params.get("appealType") != null && !params.get("appealType").isEmpty()) {
+            predicates.add(cb.equal(appeal.get("appealType"), AppealType.valueOf(params.get("params"))));
         }
-        if (criteria.getLegalTin()!= null && !criteria.getLegalTin().isEmpty()) {
-            predicates.add(cb.equal(appeal.get("legalTin"), criteria.getLegalTin()));
-        }
-
-        if (criteria.getDate() != null && !criteria.getDate().isEmpty()) {
-            predicates.add(cb.equal(appeal.get("date"), criteria.getDate()));
+        if (params.get("legalTin")!= null && !params.get("legalTin").isEmpty()) {
+            predicates.add(cb.equal(appeal.get("legalTin"), params.get("legalTin")));
         }
 
-        if (criteria.getOfficeId() != null) {
-            predicates.add(cb.equal(appeal.get("officeId"), criteria.getOfficeId()));
+        if (params.get("date") != null && !params.get("date").isEmpty()) {
+            predicates.add(cb.equal(appeal.get("date"), params.get("date")));
+        }
+
+        if (params.get("officeId") != null) {
+            predicates.add(cb.equal(appeal.get("officeId"), params.get("officeId")));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
