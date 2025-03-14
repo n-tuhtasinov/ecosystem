@@ -1,0 +1,31 @@
+package uz.technocorp.ecosystem.modules.childequipmenttype;
+
+import jakarta.persistence.*;
+import lombok.*;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 12.03.2025
+ * @since v1.0
+ */
+@Entity
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ChildEquipmentType {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AppealType appealType;
+}
