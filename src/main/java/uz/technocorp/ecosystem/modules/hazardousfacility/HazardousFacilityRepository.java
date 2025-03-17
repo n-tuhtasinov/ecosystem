@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.hazardousfacility;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.UUID;
 
@@ -12,4 +13,6 @@ import java.util.UUID;
  */
 public interface HazardousFacilityRepository extends JpaRepository<HazardousFacility, UUID> {
 
+    @Query("SELECT h.serialNumber FROM HazardousFacility h ORDER BY h.serialNumber DESC LIMIT 1")
+    Integer findMaxSerialNumber();
 }

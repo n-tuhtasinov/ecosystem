@@ -2,13 +2,11 @@ package uz.technocorp.ecosystem.modules.hazardousfacility;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -28,5 +26,15 @@ public class HazardousFacilityController {
     public ResponseEntity<?> create(@PathVariable UUID id) {
         service.create(id);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> deActivate(@PathVariable UUID id, @RequestBody Map<String, String> dto) {
+        try {
+            service.deActivate(id, dto);
+            return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

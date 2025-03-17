@@ -3,7 +3,7 @@ package uz.technocorp.ecosystem.modules.hazardousfacility;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
-import uz.technocorp.ecosystem.modules.hazardousfacilityappeal.HazardousFacilityAppeal;
+import uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal.HazardousFacilityRegistrationAppeal;
 import uz.technocorp.ecosystem.modules.hazardousfacilitytype.HazardousFacilityType;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -25,10 +25,16 @@ import java.util.UUID;
 public class HazardousFacility extends AuditEntity {
 
     @Column(nullable = false)
-    private Long legal_tin;
+    private Long legalTin;
 
     @Column(nullable = false)
     private String legalName;
+
+    @Column(nullable = false)
+    private Long serialNumber;
+
+    @Column(nullable = false, unique = true)
+    private String registryNumber;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class)
     @JoinColumn(name = "region_id", insertable = false, updatable = false)
@@ -63,9 +69,9 @@ public class HazardousFacility extends AuditEntity {
 
     private String address;
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = HazardousFacilityAppeal.class)
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = HazardousFacilityRegistrationAppeal.class)
     @JoinColumn(name = "registration_appeal_id", insertable = false, updatable = false)
-    private HazardousFacilityAppeal appeal;
+    private HazardousFacilityRegistrationAppeal appeal;
 
     @Column(name = "registration_appeal_id")
     private UUID appealId;
@@ -79,16 +85,27 @@ public class HazardousFacility extends AuditEntity {
 
     private String extraArea;
 
+    @Column(columnDefinition = "text")
     private String description;
 
-    private String objectNumber;
+    @Column(columnDefinition = "text")
+    private String deregistrationReason;
 
-    public HazardousFacility(Long legal_tin, String legalName, Integer regionId, Integer districtId,
+    private String deregistrationFilePath;
+
+    @Column(columnDefinition = "text")
+    private String periodicUpdateReason;
+
+    private String periodicUpdateFilePath;
+
+    private boolean active;
+
+    public HazardousFacility(Long legalTin, String legalName, Integer regionId, Integer districtId,
                              UUID profileId, String legalAddress, String phoneNumber, String email,
                              String upperOrganization, String name, String address, UUID appealId,
                              Integer hazardousFacilityTypeId, String extraArea, String description,
-                             String objectNumber) {
-        this.legal_tin = legal_tin;
+                             String registryNumber) {
+        this.legalTin = legalTin;
         this.legalName = legalName;
         this.regionId = regionId;
         this.districtId = districtId;
@@ -103,6 +120,7 @@ public class HazardousFacility extends AuditEntity {
         this.hazardousFacilityTypeId = hazardousFacilityTypeId;
         this.extraArea = extraArea;
         this.description = description;
-        this.objectNumber = objectNumber;
+        this.registryNumber = registryNumber;
+        this.active = true;
     }
 }
