@@ -38,7 +38,6 @@ public class EquipmentAppeal extends AuditEntity {
     private String number;
 
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderNumber;
 
     @Column(nullable = false)
@@ -99,7 +98,6 @@ public class EquipmentAppeal extends AuditEntity {
     @Column(nullable = false)
     private String factory;
 
-    @Column(nullable = false)
     private String owner;
 
     @Column(nullable = false)
@@ -111,33 +109,31 @@ public class EquipmentAppeal extends AuditEntity {
     @Column(nullable = false)
     private LocalDate manufacturedAt;
 
-    @Column(nullable = false)
-    private LocalDate partialCheckDate;
+    private LocalDate partialCheckDate; // qisman texnik ko'rik / tashqi va ichki ko'rik
 
     @Column(nullable = false)
-    private LocalDate fullCheckDate;
+    private LocalDate fullCheckDate;  // to'liq texnik ko'rik / gidrosinov/ keyimgi tekshirish (100ming)
 
     //previous registration number.
     //it is used when the device is re-registered
-    @Column
     private String oldNumber;
 
     private Double boomLength; //strelasining uzunligi (kran)
 
     private Double liftingCapacity; //yuk ko'tarishi (kran, lift, yuk ko'targich)
 
-    private Double capacity; // hajmi (sosud)
+    private Double capacity; // hajmi (sosud, kimyoviy idish, qozon, sug, 100ming)
 
-    private Double environment; // muhit (sosud, quvur)
+    private Double environment; // muhit (sosud, quvur, qozon, sug, )
 
-    private Double pressure; // ruxsat etilgan bosim (sosud, quvur)
+    private Double pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug)
 
     @Enumerated(EnumType.STRING)
     private Sphere sphere;  // foydalanish sohasi (lift)
 
     private Integer stopCount; // to'xtashlar soni (lift)
 
-    private Double length; // uzunligi (eskalator, osma yo'l, quvur)
+    private Double length; // uzunligi (eskalator, osma yo'l, quvur, bug' va issiq suv quvuri)
 
     private Double speed; // tezligi (eskalator, osma yo'l)
 
@@ -147,13 +143,13 @@ public class EquipmentAppeal extends AuditEntity {
 
     private Integer passengerCount; // karakatlanuvchi sostav soni (osma yo'l)
 
-    private Double diameter; // diametr (quvur)
+    private Double diameter; // diametr (quvur, bug' va issiq suv quvuri)
 
-    private Double thickness; // devor qalinligi (quvur)
+    private Double thickness; // devor qalinligi (quvur, bug' va issiq suv quvuri)
 
     private String rideName; // attraksion nomi (attraksion)
 
-    private LocalDate acceptedAt; // foydalanishga qabul qilingan sana (attraksion)
+    private LocalDate acceptedAt; // foydalanishga qabul qilingan sana (attraksion pasporti)
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChildEquipmentSort.class)
     @JoinColumn(name = "child_equipment_sort_id", insertable = false, updatable = false)
@@ -164,19 +160,17 @@ public class EquipmentAppeal extends AuditEntity {
 
     private String country; // ishlab chiqargan mamlakat (attraksion)
 
-    private Integer servicePeriod; // hizmat muddati (attraksion)
+    private Integer servicePeriod; // hizmat muddati (attraksion pasporti)
 
-    private RiskLevel riskLevel; // havf darajasi (attraksion)
+    private RiskLevel riskLevel; // havf darajasi (attraksion pasporti)
 
+    private String parentOrganization; // yuqori turuvchi tashkilot (attraksion)
 
+    private LocalDate nonDestructiveCheckDate; // putur yetkazmaydigan nazoratda ko'rikdan o'tkazish (sosud, bug'qozon, quvur, osma yo'l, kimyoviy idish, qozon, sug, )
 
+    private Double temperature; //temperatura (bug' va issiq suv quvuri, qozon)
 
-
-
-
-
-
-
+    private Double density; // zichligi (qozon)
 
     @Column(nullable = false)
     private String labelPath; // birka rasmi
@@ -208,12 +202,23 @@ public class EquipmentAppeal extends AuditEntity {
 
     private String additionalFilePath; // qo'shimcha ma'lumotlar fayli
 
-    private String passportPath; // pasporti fayli (attraksion)
+    private String passportPath; // pasporti fayli (attraksion pasporti)
 
-    private String techReadinessActPath; // texnik tayyorlilik dalolatnomasi (attraksion)
+    private String techReadinessActPath; // texnik tayyorlilik dalolatnomasi (attraksion pasporti)
 
-    private String seasonalReadinessActPath; // mavsumiy tayyorlilik dalolatnomasi (attraksion)
+    private String seasonalReadinessActPath; // mavsumiy tayyorlilik dalolatnomasi (attraksion pasporti)
 
-    private String safetyDecreePath; // havfsiz foydalanish bo'yicha masul shaxs buyrug'i (attraksion)
+    private String safetyDecreePath; // havfsiz foydalanish bo'yicha masul shaxs buyrug'i (attraksion pasporti)
 
+    private String rideFile1Path;
+    private String rideFile2Path;
+    private String rideFile3Path;
+    private String rideFile4Path;
+    private String rideFile5Path;
+    private String rideFile6Path;
+    private String rideFile7Path;
+    private String rideFile8Path;
+    private String rideFile9Path;
+    private String rideFile10Path;
+    private String rideFile11Path;
 }
