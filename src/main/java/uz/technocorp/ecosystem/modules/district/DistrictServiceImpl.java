@@ -33,6 +33,7 @@ public class DistrictServiceImpl implements DistrictService {
         districtRepository.save(District.builder()
                 .name(dto.name())
                 .soato(dto.soato())
+                .number(dto.number())
                 .regionId(dto.regionId())
                 .build());
     }

@@ -28,6 +28,9 @@ public class Region {
     @Column(nullable = false,unique = true)
     private Integer soato;
 
+    @Column(nullable = false, unique = true)
+    private Integer number;
+
     @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(nullable = false, name = "office_id", updatable = false, insertable = false)
     private Office office;

@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilityappeal;
+package uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
-import uz.technocorp.ecosystem.modules.hazardousfacilityappeal.dto.HazardousFacilityAppealDto;
+import uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal.dto.HazardousFacilityRegistrationAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.publics.AttachmentDto;
 import uz.technocorp.ecosystem.security.CurrentUser;
@@ -23,15 +23,15 @@ import java.util.UUID;
  * @since v1.0
  */
 @RestController
-@RequestMapping("/api/v1/hazardous-facility-appeals")
+@RequestMapping("/api/v1/hazardous-facility-registration-appeals")
 @RequiredArgsConstructor
-public class HazardousFacilityAppealController {
+public class HazardousFacilityRegistrationAppealController {
 
-    private final HazardousFacilityAppealService service;
+    private final HazardousFacilityRegistrationAppealService service;
 
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> create(@CurrentUser User user, @Valid @RequestBody HazardousFacilityAppealDto dto, BindingResult result) {
+    public ResponseEntity<?> create(@CurrentUser User user, @Valid @RequestBody HazardousFacilityRegistrationAppealDto dto, BindingResult result) {
         service.create(user, dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
@@ -48,7 +48,7 @@ public class HazardousFacilityAppealController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @Valid @RequestBody HazardousFacilityAppealDto dto) {
+    public ResponseEntity<?> update(@PathVariable UUID id, @Valid @RequestBody HazardousFacilityRegistrationAppealDto dto) {
         service.update(id, dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }

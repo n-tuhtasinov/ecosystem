@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilityappeal.dto;
+package uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal.dto;
 
 /**
  * @author Rasulov Komil
@@ -6,20 +6,17 @@ package uz.technocorp.ecosystem.modules.hazardousfacilityappeal.dto;
  * @created 12.02.2025
  * @since v1.0
  */
-public record HazardousFacilityAppealDto(
+public record HazardousFacilityRegistrationAppealDto(
 
         String phoneNumber,
         String email,
         String upperOrganization,
         String name,
         String address,
-        Integer dangerousObjectTypeId,
+        Integer hazardousFacilityTypeId,
         String extraArea,
         String description,
-        String objectNumber,
         String appealType,
-        String number,
-        String orderNumber,
         Integer regionId,
         Integer districtId,
         String identificationCardPath,

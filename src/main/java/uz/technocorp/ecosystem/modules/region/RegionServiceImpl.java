@@ -33,6 +33,7 @@ public class RegionServiceImpl implements RegionService {
         regionRepository.save(Region.builder()
                 .name(dto.name())
                 .soato(dto.soato())
+                .number(dto.number())
                 .build());
     }
 

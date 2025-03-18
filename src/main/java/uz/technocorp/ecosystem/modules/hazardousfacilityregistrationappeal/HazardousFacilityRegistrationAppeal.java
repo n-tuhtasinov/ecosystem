@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilityappeal;
+package uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,7 +23,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class HazardousFacilityAppeal extends AuditEntity {
+@Builder
+public class HazardousFacilityRegistrationAppeal extends AuditEntity {
 
     @Enumerated(EnumType.STRING)
     private AppealType appealType;
@@ -32,10 +33,10 @@ public class HazardousFacilityAppeal extends AuditEntity {
     private String number;
 
     @Column(nullable = false)
-    private String orderNumber;
+    private Integer orderNumber;
 
     @Column(nullable = false)
-    private Long legal_tin;
+    private Long legalTin;
 
     @Column(nullable = false)
     private String legalName;
@@ -81,17 +82,16 @@ public class HazardousFacilityAppeal extends AuditEntity {
     private UUID appealId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = HazardousFacilityType.class)
-    @JoinColumn(name = "dangerous_object_type_id", insertable = false, updatable = false)
+    @JoinColumn(name = "hazardous_facility_type_id", insertable = false, updatable = false)
     private HazardousFacilityType hazardousFacilityType;
 
-    @Column(name = "dangerous_object_type_id")
-    private Integer dangerousObjectTypeId;
+    @Column(name = "hazardous_facility_type_id")
+    private Integer hazardousFacilityTypeId;
 
     private String extraArea;
 
+    @Column(columnDefinition = "text")
     private String description;
-
-    private String objectNumber;
 
     //Identifikatsiya varag'i
     private String identificationCardPath;
@@ -138,26 +138,4 @@ public class HazardousFacilityAppeal extends AuditEntity {
     //Arizaga javob xati
     private String replyLetterPath;
 
-    public HazardousFacilityAppeal(AppealType appealType, String number, String orderNumber, Long legal_tin, String legalName, Integer regionId, Integer districtId, UUID profileId, String legalAddress, String phoneNumber, String email, String upperOrganization, String name, String address, Integer dangerousObjectTypeId, String extraArea, String description, String objectNumber, String identificationCardPath, String receiptPath) {
-        this.appealType = appealType;
-        this.number = number;
-        this.orderNumber = orderNumber;
-        this.legal_tin = legal_tin;
-        this.legalName = legalName;
-        this.regionId = regionId;
-        this.districtId = districtId;
-        this.profileId = profileId;
-        this.legalAddress = legalAddress;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.upperOrganization = upperOrganization;
-        this.name = name;
-        this.address = address;
-        this.dangerousObjectTypeId = dangerousObjectTypeId;
-        this.extraArea = extraArea;
-        this.description = description;
-        this.objectNumber = objectNumber;
-        this.identificationCardPath = identificationCardPath;
-        this.receiptPath = receiptPath;
-    }
 }

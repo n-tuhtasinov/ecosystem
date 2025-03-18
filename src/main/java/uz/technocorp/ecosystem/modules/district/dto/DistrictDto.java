@@ -14,6 +14,8 @@ public record DistrictDto(
         String name,
         @NotNull(message = "Tuman soatosi jo'natilmadi")
         Integer soato,
+        @NotNull(message = "Tuman raqami jo'natilmadi")
+        Integer number,
         @NotNull(message = "Viloyat IDsi jo'natilmadi")
         Integer regionId
 ) {

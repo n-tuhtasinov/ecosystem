@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.hazardousfacility;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -11,4 +12,6 @@ import java.util.UUID;
 public interface HazardousFacilityService {
 
     void create(UUID id);
+    void deActivate(UUID id, Map<String, String> dto);
+    void periodicUpdate(UUID id, Map<String, String> dto);
 }

@@ -25,6 +25,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class Appeal extends AuditEntity {
 
     @Enumerated(EnumType.STRING)
@@ -32,9 +33,6 @@ public class Appeal extends AuditEntity {
 
     @Column(nullable = false)
     private String number;
-
-    @Column(nullable = false)
-    private String orderNumber;
 
     @Column(nullable = false)
     private Long legalTin;
@@ -77,9 +75,6 @@ public class Appeal extends AuditEntity {
     @Column(nullable = false)
     private String officeName;
 
-    @Column(nullable = false)
-    private UUID mainId;
-
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "inspector_id", insertable = false, updatable = false)
     private User user;
@@ -101,27 +96,4 @@ public class Appeal extends AuditEntity {
     private LocalDate deadline;
 
     private LocalDate date;
-
-    public Appeal(AppealType appealType, String number, String orderNumber, Long legalTin, String legalName,
-                  Integer regionId, String regionName, Integer districtId, String districtName, UUID profileId,
-                  Integer officeId, String officeName, UUID mainId, String address, String email, String phoneNumber, LocalDate date) {
-        this.appealType = appealType;
-        this.number = number;
-        this.orderNumber = orderNumber;
-        this.legalTin = legalTin;
-        this.legalName = legalName;
-        this.regionId = regionId;
-        this.regionName = regionName;
-        this.districtId = districtId;
-        this.districtName = districtName;
-        this.profileId = profileId;
-        this.officeId = officeId;
-        this.officeName = officeName;
-        this.mainId = mainId;
-        this.address = address;
-        this.email = address;
-        this.phoneNumber = address;
-        this.date = date;
-        this.status = AppealStatus.New;
-    }
 }

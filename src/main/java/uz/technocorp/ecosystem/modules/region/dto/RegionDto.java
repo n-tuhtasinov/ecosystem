@@ -13,6 +13,8 @@ public record RegionDto(
         @NotBlank(message = "Viloyat nomi jo'natilmadi")
         String name,
         @NotNull(message = "Viloyat soatosi jo'natilmadi")
-        Integer soato
+        Integer soato,
+        @NotNull(message = "Viloyat raqami jo'natilmadi")
+        Integer number
 ) {
 }

@@ -27,6 +27,9 @@ public class District {
     @Column(nullable = false,unique = true)
     private Integer soato;
 
+    @Column(nullable = false,unique = true)
+    private Integer number;
+
     @ManyToOne(targetEntity = Region.class, optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", updatable = false, insertable = false)
     private Region region;
