@@ -45,15 +45,15 @@ public class UserServiceImpl implements UserService {
         //check list of string by Direction
         dto.getDirections().forEach(Direction::valueOf);
 
-        User user = new User(
-                dto.getUsername(),
-                passwordEncoder.encode(UUID.randomUUID().toString().substring(24)),
-                Role.valueOf(dto.getRole()),
-                dto.getName(),
-                dto.getDirections(),
-                true,
-                profileId);
-        return userRepository.save(user);
+        return userRepository.save(User.builder()
+                .username(dto.getUsername())
+                .password(passwordEncoder.encode(UUID.randomUUID().toString().substring(24)))
+                .role(Role.valueOf(dto.getRole()))
+                .name(dto.getName())
+                .directions(dto.getDirections())
+                .enabled(true)
+                .profileId(profileId)
+                .build());
     }
 
     @Override

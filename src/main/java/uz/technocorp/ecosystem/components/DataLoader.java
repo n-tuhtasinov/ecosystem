@@ -3,6 +3,9 @@ package uz.technocorp.ecosystem.components;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.UserRepository;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -14,12 +17,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataLoader implements CommandLineRunner {
 
+    private final UserRepository userRepository;
+
     @Value("${spring.sql.init.mode}")
     private String initialMode;
+
+    public DataLoader(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public void run(String... args) throws Exception {
         if (initialMode.equals("always")) {
+            userRepository.save(User.builder().username("superadmin").password("root1234").role(Role.ADMIN).name("Super Admin").enabled(true).build());
         }
     }
 }
