@@ -64,7 +64,7 @@ public class ApplicationConfig {
     @Bean
     public CorsConfigurationSource corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://192.168.1.55:3000", "https://online.archive.uz", "https://kff.technocorp.uz", "http://localhost:8081"));
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

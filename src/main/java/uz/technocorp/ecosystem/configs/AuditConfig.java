@@ -1,9 +1,12 @@
 package uz.technocorp.ecosystem.configs;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.Optional;
