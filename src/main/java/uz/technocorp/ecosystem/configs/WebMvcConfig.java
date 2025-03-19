@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.configs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -42,4 +43,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .setCachePeriod(60*60) // 1 hour
                 .resourceChain(true); // true - automatically cached by browser
     }
+
+
 }

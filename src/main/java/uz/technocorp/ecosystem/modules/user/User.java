@@ -2,7 +2,6 @@ package uz.technocorp.ecosystem.modules.user;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,8 +20,8 @@ import java.util.UUID;
  * @created 29.01.2025
  * @since v1.0
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -52,18 +51,8 @@ public class User extends AuditEntity implements UserDetails {
     @JoinColumn(name = "profile_id", updatable = false, insertable = false)
     private Profile profile;
 
-    @Column(name = "profile_id", nullable = false)
+    @Column(name = "profile_id")
     private UUID profileId;
-
-    //    public User(String username, String password, Role role, String name, List<String> directions, boolean enabled, UUID profileId) {
-//        this.username = username;
-//        this.password = password;
-//        this.role = role;
-//        this.name = name;
-//        this.directions = directions;
-//        this.enabled = enabled;
-//        this.profileId = profileId;
-//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
