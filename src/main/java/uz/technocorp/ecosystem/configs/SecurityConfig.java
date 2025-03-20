@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->authorize
                         .requestMatchers(HttpMethod.GET,
                                 "/",
+                                "/index.html",
                                 "/favicon.ico",
                                 "/files/**",
                                 "/public/**",
@@ -61,11 +62,5 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-    // TODO: Controllersiz security ga yozib logout qilishni sinab ko'rish uchun
-    //           .logout(logout -> logout
-    //                        .logoutUrl("/api/v1/auth/logout")
-    //                        .logoutSuccessUrl("/login")
-    //                        .deleteCookies(AppConstants.ACCESS_TOKEN, AppConstants.REFRESH_TOKEN))
 
 }
