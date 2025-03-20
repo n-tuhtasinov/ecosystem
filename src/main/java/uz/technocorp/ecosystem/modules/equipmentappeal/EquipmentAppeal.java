@@ -51,7 +51,7 @@ public class EquipmentAppeal extends AuditEntity {
 
     private LocalDate deadline;
 
-
+    //save all fields of the equipment as json in database
 //    @Column(columnDefinition = "jsonb", nullable = false)
 //    private JsonNode data;
 

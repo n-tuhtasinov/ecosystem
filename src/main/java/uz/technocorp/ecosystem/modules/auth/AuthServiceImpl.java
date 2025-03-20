@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.models.AppConstants;
@@ -48,6 +49,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final UserService userService;
     private final DistrictRepository districtRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.one-id.client_id}")
     private String oneIdClientId;
@@ -107,14 +109,14 @@ public class AuthServiceImpl implements AuthService {
     private UserMeDto getUserMeWithToken(User user, String tokenFromOneId, HttpServletResponse response) {
 
         String password = generatePasswordFromOneIdToken(tokenFromOneId);
-        String tempPassword = "root1234"; //TODO: keyinchalik bu tempPasswordni udalit qilish kerak
+        password = "root1234"; //TODO: keyinchalik bu tempPasswordni udalit qilish kerak
 
         // TODO: keyinchalik userga password ni set qilish uchun bu commentni ochib qo'yish kerak
-//        user.setPassword(passwordEncoder.encode(password));
-//        userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
 
         // generate token
-        TokenResponse tokenResponse = generateToken(user.getUsername(), tempPassword);
+        TokenResponse tokenResponse = generateToken(user.getUsername(), password);
 
         // set generated token to cookie
         setTokenToCookie(tokenResponse, response);
