@@ -88,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
             //create a new legal user. The legal user has only "appeal" in the direction list when he is first created
             //TODO: soliq bilan integratsiya qilib tashkilot INN bo'yicha to'liq ma'lumotlarni olib kelish kerak.
             //Hozircha testvoviy ma'lumotlar yozib qo'yganman
-            District district = districtRepository.findBySoato(1111).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", 1111));
+            District district = districtRepository.findBySoato(17215896).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", 1111));
             LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId(), userInfoFromOneIdDto.getMob_phone_no());
             User user = userService.create(legalUserDto);
             return getUserMeWithToken(user, accessData.getAccess_token(), response);
@@ -147,7 +147,7 @@ public class AuthServiceImpl implements AuthService {
                 .path("/")
                 .maxAge(maxAgeInSeconds)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .sameSite("None")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
