@@ -64,11 +64,10 @@ public enum AppealType {
     RegisterSafetyDeclaration,
     DeregisterSafetyDeclaration,
 
-    // INM (Individual Number for Manufacturing)
-    ObtainINM,
-    IssueINM,
-    RegisterINM,
-    DeregisterINM,
+    // INM - IRS (Ionizing Radiation Source )
+    registerIrs,
+    acceptIrs,
+    presentIrs,
 
     // Boshqa yo‘nalishlar
     Other,

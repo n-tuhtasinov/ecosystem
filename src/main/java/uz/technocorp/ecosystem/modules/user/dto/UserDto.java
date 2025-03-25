@@ -24,4 +24,6 @@ public interface UserDto {
     Integer getDistrictId();
     String getPosition();
     String getPhoneNumber();
+    String getLegalOwnershipType();
+    String getLegalForm();
 }

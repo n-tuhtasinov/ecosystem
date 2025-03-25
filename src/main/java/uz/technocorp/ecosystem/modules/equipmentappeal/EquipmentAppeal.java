@@ -34,6 +34,7 @@ import java.util.UUID;
 @Builder
 public class EquipmentAppeal extends AuditEntity {
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AppealType appealType;
 
@@ -46,6 +47,7 @@ public class EquipmentAppeal extends AuditEntity {
     @Column(nullable = false)
     private Long legalTin;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AppealStatus status;
 

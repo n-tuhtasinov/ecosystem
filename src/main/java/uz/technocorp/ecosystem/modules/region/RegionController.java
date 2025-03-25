@@ -50,6 +50,12 @@ public class RegionController {
         return ResponseEntity.ok(new ApiResponse(regions));
     }
 
+    @GetMapping("/{regionId}")
+    public ResponseEntity<?> getById (@PathVariable Integer regionId) {
+        Region region = regionService.getById(regionId);
+        return ResponseEntity.ok(new ApiResponse(region));
+    }
+
     @GetMapping("/select")
     public ResponseEntity<?> getAllBySelect () {
         List<RegionViewBySelect> regions = regionService.getAllBySelect();
