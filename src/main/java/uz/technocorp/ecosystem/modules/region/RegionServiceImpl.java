@@ -65,4 +65,9 @@ public class RegionServiceImpl implements RegionService {
     public List<RegionViewBySelect> getAllBySelect() {
         return regionRepository.getAllBySelect();
     }
+
+    @Override
+    public Region getById(Integer regionId) {
+        return regionRepository.findById(regionId).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", regionId));
+    }
 }

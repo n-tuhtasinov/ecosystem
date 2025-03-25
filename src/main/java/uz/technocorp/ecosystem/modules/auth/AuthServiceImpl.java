@@ -89,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
             //TODO: soliq bilan integratsiya qilib tashkilot INN bo'yicha to'liq ma'lumotlarni olib kelish kerak.
             //Hozircha testvoviy ma'lumotlar yozib qo'yganman
             District district = districtRepository.findBySoato(17215896).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", 1111));
-            LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId(), userInfoFromOneIdDto.getMob_phone_no());
+            LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId(), userInfoFromOneIdDto.getMob_phone_no(), "Tashkilot mulkchilik shakli", "Tashkilot tashkiliy-huquqiy shakli");
             User user = userService.create(legalUserDto);
             return getUserMeWithToken(user, accessData.getAccess_token(), response);
         }
@@ -201,7 +201,7 @@ public class AuthServiceImpl implements AuthService {
         params.put("grant_type", "one_authorization_code");
         params.put("client_id", oneIdClientId); // oneIdClientId was given to us by OneID
         params.put("client_secret", oneIdClientSecret); // oneIdClientSecret was given to us by OneID
-        params.put("code", dto.getCode());
+        params.put("code", dto.code());
 
         ApiIntegrator<AccessDataDto> apiIntegrator = new ApiIntegrator<>();
         return apiIntegrator.getData(AccessDataDto.class, params, oneIdUrl);

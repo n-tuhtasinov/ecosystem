@@ -68,4 +68,8 @@ public class Profile extends AuditEntity {
     private String position;
 
     private String phoneNumber;
+
+    private String legalOwnershipType; //for only legal (mulkchilik shakli)
+
+    private String legalForm; //for only legal (tashkiliy-huquqiy shakli)
 }

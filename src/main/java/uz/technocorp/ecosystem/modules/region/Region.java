@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.region;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -31,10 +32,12 @@ public class Region {
     @Column(nullable = false, unique = true)
     private Integer number;
 
-    @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY, optional = false)
+    @JsonIgnore
+    @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "office_id", updatable = false, insertable = false)
     private Office office;
 
-    @Column(nullable = false, name = "office_id")
+    @JsonIgnore
+    @Column(name = "office_id")
     private Integer officeId;
 }

@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.user.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -96,5 +97,15 @@ public class IndividualUserDto implements UserDto{
     @Override
     public String getPhoneNumber() {
         return this.phoneNumber;
+    }
+
+    @Override
+    public String getLegalOwnershipType() {
+        return null;
+    }
+
+    @Override
+    public String getLegalForm() {
+        return null;
     }
 }

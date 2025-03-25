@@ -35,6 +35,10 @@ public class LegalUserDto implements UserDto{
 
     private String phoneNumber;
 
+    private String legalOwnershipType;  // mulkchilik shakli
+
+    private String legalForm; // tashkiliy-huquqiy shakli
+
     @Override
     public String getUsername() {
         return this.tin.toString();
@@ -73,5 +77,15 @@ public class LegalUserDto implements UserDto{
     @Override
     public String getPosition() {
         return null;
+    }
+
+    @Override
+    public String getLegalOwnershipType() {
+        return this.legalOwnershipType;
+    }
+
+    @Override
+    public String getLegalForm() {
+        return this.legalForm;
     }
 }

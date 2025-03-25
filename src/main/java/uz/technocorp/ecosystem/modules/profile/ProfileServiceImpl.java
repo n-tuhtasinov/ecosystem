@@ -49,6 +49,8 @@ public class ProfileServiceImpl implements ProfileService {
                 .districtName(district != null ? district.getName() : null)
                 .position(dto.getPosition())
                 .phoneNumber(dto.getPhoneNumber())
+                .legalOwnershipType(dto.getLegalOwnershipType())
+                .legalForm(dto.getLegalForm())
                 .build());
 
         return saved.getId();

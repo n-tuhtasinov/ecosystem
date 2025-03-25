@@ -11,11 +11,7 @@ import lombok.NoArgsConstructor;
  * @created 29.01.2025
  * @since v1.0
  */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class OneIdDto {
-
-    @NotBlank(message = "OneId tomonidan olingan kod jo'natilmadi")
-    private String code;
-}
+public record OneIdDto(
+        @NotBlank(message = "OneId tomonidan olingan kod jo'natilmadi")
+        String code
+) {}
