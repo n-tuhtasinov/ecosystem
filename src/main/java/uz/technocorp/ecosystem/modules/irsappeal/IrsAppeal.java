@@ -1,10 +1,16 @@
 package uz.technocorp.ecosystem.modules.irsappeal;
 
+import com.fasterxml.jackson.annotation.JsonTypeId;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
@@ -45,7 +51,8 @@ public class IrsAppeal extends AuditEntity {
 
     private LocalDate deadline;
 
-//    @Column(columnDefinition = "jsonb", nullable = false)
-//    private JsonNode data;
+    @Column(columnDefinition = "jsonb", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonNode data;
 
 }

@@ -9,71 +9,40 @@ package uz.technocorp.ecosystem.modules.appeal.enums;
 public enum AppealType {
 
     // Xavfli Ishlab Chiqarish Obyektini ro‘yxatga olish va chiqarish
-    RegisterHPO,
-    DeregisterHPO,
+    REGISTER_HF,
+    DEREGISTER_HF,
 
-    // Xavfli ishlab chiqarish qurilmalarini ro‘yxatdan o‘tkazish
-    RegisterCrane,
-    RegisterVessel,
-    RegisterBoiler,
-    RegisterLift,
-    RegisterEscalator,
-    RegisterBridgeOrRoad,
-    RegisterElevator,
-    RegisterPipeline,
-    RegisterAttractionPassport,
-    RegisterAttraction,
-    RegisterPressureVesselChemical,
-    RegisterSteamAndHotWaterPipeline,
-    RegisterBoilerUtilizer,
-    RegisterPressureVesselLPG,
-    RegisterHighGasUsageEquipment,
-
-    // Xavfli ishlab chiqarish qurilmalarini ro‘yxatdan chiqarish
-    DeregisterCrane,
-    DeregisterVessel,
-    DeregisterBoiler,
-    DeregisterLift,
-    DeregisterEscalator,
-    DeregisterBridgeOrRoad,
-    DeregisterElevator,
-    DeregisterPipeline,
-    DeregisterAttractionPassport,
-    DeregisterAttraction,
+    // Qurilmalar
+    REGISTER_EQUIPMENT,
+    DEREGISTER_EQUIPMENT,
+    RE_REGISTER_EQUIPMENT,
 
     // Xavfli ishlab chiqarish obyektlari xodimlarini attestatsiyadan o‘tkazish
-    CertifyHPOEmployee,
+    CERTIFY_HF_EMPLOYEE,
 
     // Ekspert tashkilotini akkreditatsiya qilish
-    AccreditExpertOrganization,
+    ACCREDIT_EXPERT_ORGANIZATION,
+    EXPEND_ACCREDITATION_SCOPE,
 
     // Sanoat xavfsizligi bo‘yicha ekspertiza xulosalari
-    RegisterSafetyExpertConclusion,
-    DeregisterSafetyExpertConclusion,
+    REGISTER_EXPERTISE_CONCLUSION,
+    DEREGISTER_EXPERTISE_CONCLUSION,
 
     // Litsenziya va ruxsatnomalar
-    ObtainLicense,
-    ObtainPermit,
-    ObtainConclusion,
+    OBTAIN_LICENSE,
+    OBTAIN_PERMIT,
+    OBTAIN_CONCLUSION,
 
     // Xavfli ishlab chiqarish obyektlari kadastr pasporti
-    RegisterHPOCadastrePassport,
-    DeregisterHPOCadastrePassport,
+    REGISTER_HF_CADASTRE_PASSPORT,
+    DEREGISTER_HF_CADASTRE_PASSPORT,
 
     // Sanoat xavfsizligi deklaratsiyasi
-    RegisterSafetyDeclaration,
-    DeregisterSafetyDeclaration,
+    REGISTER_DECLARATION,
+    DEREGISTER_DECLARATION,
 
     // INM - IRS (Ionizing Radiation Source )
-    registerIrs,
-    acceptIrs,
-    presentIrs,
-
-    // Boshqa yo‘nalishlar
-    Other,
-
-    // Ekspert tashkiloti akkreditatsiyasi
-    ReaccreditExpertOrganization,
-    ExpandAccreditationScope
-
+    REGISTER_IRS,
+    ACCEPT_IRS,
+    PRESENT_IRS,
     }

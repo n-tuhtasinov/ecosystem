@@ -23,14 +23,14 @@ public interface DistrictRepository extends JpaRepository<District, Integer> {
 
     @Query(nativeQuery = true,
             value = """
-                    SELECT d.id as id, d.name as name, r.name as region
+                    SELECT d.id as id, d.name as name, r.name as region, d.soato
                     FROM district d
                              JOIN public.region r ON r.id = d.region_id
                     WHERE (:regionId IS NULL OR d.region_id = :regionId)
                       AND (:search IS NULL OR d.name ILIKE '%' || :search || '%')
                     """)
-    Page<DistrictView> getAllByRegionIdAndName(Pageable pageable, String regionId, String search);
+    Page<DistrictView> getAllByRegionIdAndName(Pageable pageable, Integer regionId, String search);
 
-    @Query("SELECT d.id, d.name FROM District d WHERE :regionId IS NULL OR d.regionId = :regionId")
+    @Query("SELECT d FROM District d WHERE :regionId IS NULL OR d.regionId = :regionId")
     List<DistrictViewBySelect> getAllBySelect(Integer regionId);
 }
