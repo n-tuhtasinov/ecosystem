@@ -10,6 +10,5 @@ public interface DistrictView {
     Integer getId();
     String getName();
     Integer getSoato();
-    Integer getRegionId();
     String getRegion();
 }

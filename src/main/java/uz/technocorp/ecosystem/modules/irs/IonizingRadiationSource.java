@@ -1,14 +1,13 @@
 package uz.technocorp.ecosystem.modules.irs;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
+import uz.technocorp.ecosystem.modules.region.Region;
 
 import java.time.LocalDate;
 
@@ -82,7 +81,7 @@ public class IonizingRadiationSource extends AuditEntity {
     private String acceptedFrom; // INM olingan tashkilot
 
     @Column(nullable = false)
-    private String acceptedAt; // INM olingan sana
+    private LocalDate acceptedAt; // INM olingan sana
 
     @Column(nullable = false)
     private Boolean isValid; // INM xolati
@@ -100,5 +99,19 @@ public class IonizingRadiationSource extends AuditEntity {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "region_id", updatable = false, insertable = false)
+    private Region region;
+
+    @Column(nullable = false, name = "region_id")
+    private Integer regionId;
+
+    @ManyToOne(targetEntity = District.class, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "district_id", updatable = false, insertable = false)
+    private District district;
+
+    @Column(nullable = false, name = "district_id")
+    private Integer districtId;
 
 }
