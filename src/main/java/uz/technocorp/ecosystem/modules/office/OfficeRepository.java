@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeView;
+import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
+
+import java.util.Optional;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -17,4 +20,6 @@ public interface OfficeRepository extends JpaRepository<Office, Integer> {
 
     @Query("select o from Office o")
     Page<OfficeView> getAll(Pageable pageable);
+
+    Optional<OfficeViewById> getOfficeById(Integer officeId);
 }

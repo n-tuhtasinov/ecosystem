@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.irs.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.apache.catalina.User;
 
 /**
  * @author Nurmuhammad Tuhtasinov

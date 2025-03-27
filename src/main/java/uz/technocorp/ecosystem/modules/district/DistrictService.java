@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.district.dto.DistrictDto;
 import uz.technocorp.ecosystem.modules.district.projection.DistrictView;
+import uz.technocorp.ecosystem.modules.district.projection.DistrictViewById;
 import uz.technocorp.ecosystem.modules.district.projection.DistrictViewBySelect;
 
 import java.util.List;
@@ -26,4 +27,7 @@ public interface DistrictService {
     Page<DistrictView> getAll(Map<String, String> params);
 
     List<DistrictViewBySelect> getAllBySelect(Integer regionId);
+
+    DistrictViewById getById(Integer districtId);
+
 }

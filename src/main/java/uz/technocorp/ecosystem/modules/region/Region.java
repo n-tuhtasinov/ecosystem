@@ -34,7 +34,7 @@ public class Region {
 
     @JsonIgnore
     @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "office_id", updatable = false, insertable = false)
+    @JoinColumn(name = "office_id", updatable = false, insertable = false)
     private Office office;
 
     @JsonIgnore

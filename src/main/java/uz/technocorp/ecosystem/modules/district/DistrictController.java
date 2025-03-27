@@ -9,6 +9,7 @@ import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.district.dto.DistrictDto;
 import uz.technocorp.ecosystem.modules.district.projection.DistrictView;
+import uz.technocorp.ecosystem.modules.district.projection.DistrictViewById;
 import uz.technocorp.ecosystem.modules.district.projection.DistrictViewBySelect;
 
 import java.util.List;
@@ -55,5 +56,11 @@ public class DistrictController {
     public ResponseEntity<?> getAllBySelect (@RequestParam(required = false) Integer regionId) {
         List<DistrictViewBySelect> districts = districtService.getAllBySelect(regionId);
         return ResponseEntity.ok(new ApiResponse(districts));
+    }
+
+    @GetMapping("{districtId}")
+    public ResponseEntity<?> getById (@PathVariable Integer districtId) {
+        DistrictViewById byId = districtService.getById(districtId);
+        return ResponseEntity.ok(new ApiResponse(byId));
     }
 }

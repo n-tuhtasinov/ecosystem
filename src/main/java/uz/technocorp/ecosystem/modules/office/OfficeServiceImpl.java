@@ -8,11 +8,13 @@ import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.modules.office.dto.OfficeDto;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeView;
+import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -80,6 +82,11 @@ public class OfficeServiceImpl implements OfficeService {
     @Override
     public List<Office> getAllBySelect() {
         return officeRepository.findAll();
+    }
+
+    @Override
+    public OfficeViewById getById(Integer officeId) {
+        return officeRepository.getOfficeById(officeId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "officeId", officeId));
     }
 
 }

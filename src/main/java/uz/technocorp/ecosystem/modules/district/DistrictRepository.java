@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.district.projection.DistrictView;
+import uz.technocorp.ecosystem.modules.district.projection.DistrictViewById;
 import uz.technocorp.ecosystem.modules.district.projection.DistrictViewBySelect;
 
 import java.util.List;
@@ -33,4 +34,8 @@ public interface DistrictRepository extends JpaRepository<District, Integer> {
 
     @Query("SELECT d FROM District d WHERE :regionId IS NULL OR d.regionId = :regionId")
     List<DistrictViewBySelect> getAllBySelect(Integer regionId);
+
+    Optional<DistrictViewById> getDistrictById(Integer districtId);
+
+
 }

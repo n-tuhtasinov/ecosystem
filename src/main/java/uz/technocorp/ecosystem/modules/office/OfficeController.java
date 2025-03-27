@@ -9,6 +9,7 @@ import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.office.dto.OfficeDto;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeView;
+import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class OfficeController {
     @DeleteMapping("/{officeId}")
     public ResponseEntity<?> deleteById(@PathVariable Integer officeId){
         officeService.deleteById(officeId);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.DELETED));
     }
 
     @GetMapping
@@ -53,6 +54,12 @@ public class OfficeController {
     public ResponseEntity<?> getAllBySelect (){
         List<Office> offices = officeService.getAllBySelect();
         return ResponseEntity.ok(new ApiResponse(offices));
+    }
+
+    @GetMapping("/{officeId}")
+    public ResponseEntity<?> getById(@PathVariable Integer officeId){
+        OfficeViewById byId = officeService.getById(officeId);
+        return ResponseEntity.ok(new ApiResponse(byId));
     }
 
 }

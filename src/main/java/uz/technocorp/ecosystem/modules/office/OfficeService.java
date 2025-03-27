@@ -4,6 +4,7 @@ package uz.technocorp.ecosystem.modules.office;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.office.dto.OfficeDto;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeView;
+import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
 
 import java.util.List;
 import java.util.Map;
@@ -24,4 +25,6 @@ public interface OfficeService {
     Page<OfficeView> getAll(Map<String, String> params);
 
     List<Office> getAllBySelect();
+
+    OfficeViewById getById(Integer officeId);
 }
