@@ -28,10 +28,20 @@ public class HazardousFacilityController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/de-activate/{id}")
     public ResponseEntity<?> deActivate(@PathVariable UUID id, @RequestBody Map<String, String> dto) {
         try {
             service.deActivate(id, dto);
+            return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PatchMapping("/periodic-update{id}")
+    public ResponseEntity<?> periodicUpdate(@PathVariable UUID id, @RequestBody Map<String, String> dto) {
+        try {
+            service.periodicUpdate(id, dto);
             return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
         } catch (Exception e) {
             throw new RuntimeException(e);
