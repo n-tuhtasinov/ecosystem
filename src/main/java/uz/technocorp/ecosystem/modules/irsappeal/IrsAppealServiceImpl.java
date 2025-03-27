@@ -41,7 +41,7 @@ public class IrsAppealServiceImpl implements IrsAppealService {
                 .appealType(AppealType.REGISTER_IRS)
                 .number(number)
                 .orderNumber(orderNumber)
-                .status(AppealStatus.New)
+                .status(AppealStatus.NEW)
                 .deadline(LocalDate.now().plusDays(15))
                 .data(data)
                 .build();
