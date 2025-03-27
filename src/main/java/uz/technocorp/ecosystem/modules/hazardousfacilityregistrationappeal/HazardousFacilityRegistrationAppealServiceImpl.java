@@ -106,7 +106,7 @@ public class HazardousFacilityRegistrationAppealServiceImpl implements Hazardous
                         .email(dto.email())
                         .date(LocalDate.now())
                         .address(dto.address())
-                        .status(AppealStatus.New)
+                        .status(AppealStatus.NEW)
                         .build()
         );
         hazardousFacilityRegistrationAppeal.setAppealId(appeal.getId());
