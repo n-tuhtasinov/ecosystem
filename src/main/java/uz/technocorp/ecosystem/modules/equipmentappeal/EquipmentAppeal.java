@@ -38,7 +38,7 @@ public class EquipmentAppeal extends AuditEntity {
     private String number;
 
     @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderNumber;
 
     @Column(nullable = false)
