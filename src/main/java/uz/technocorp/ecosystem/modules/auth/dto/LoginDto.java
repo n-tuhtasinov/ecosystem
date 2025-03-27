@@ -10,12 +10,12 @@ import jakarta.validation.constraints.Size;
  * @since v1.0
  */
 public record LoginDto(
-        @NotBlank(message = "Username jo'natilmadi")
-        @Size(min = 5, message = "username 5 ta belgidan kam bo'lishi mumkin emas")
+        @NotBlank(message = "Login jo'natilmadi")
+        @Size(min = 5, message = "Login 5 ta belgidan kam bo'lishi mumkin emas")
         String username,
 
-        @NotBlank(message = "password jo'natilmadi")
-        @Size(min = 8, message = "Parol 8 belgidan kam bo'lishi mumkin emas")
+        @NotBlank(message = "Parol jo'natilmadi")
+        @Size(min = 8, message = "Parol 8 ta belgidan kam bo'lishi mumkin emas")
         String password
 ) {
 }

@@ -60,7 +60,9 @@ public class DistrictServiceImpl implements DistrictService {
                 Sort.Direction.DESC,
                 "name");
 
-        return districtRepository.getAllByRegionIdAndName(pageable, params.getOrDefault("regionId", null), params.getOrDefault("search", null));
+        return districtRepository.getAllByRegionIdAndName(pageable,
+                params.getOrDefault("regionId", null)!=null? Integer.parseInt(params.get("regionId")) : null,
+                params.getOrDefault("search", null));
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.models.AppConstants;
@@ -48,6 +49,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final UserService userService;
     private final DistrictRepository districtRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.one-id.client_id}")
     private String oneIdClientId;
@@ -86,8 +88,8 @@ public class AuthServiceImpl implements AuthService {
             //create a new legal user. The legal user has only "appeal" in the direction list when he is first created
             //TODO: soliq bilan integratsiya qilib tashkilot INN bo'yicha to'liq ma'lumotlarni olib kelish kerak.
             //Hozircha testvoviy ma'lumotlar yozib qo'yganman
-            District district = districtRepository.findBySoato(1111).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", 1111));
-            LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId(), userInfoFromOneIdDto.getMob_phone_no());
+            District district = districtRepository.findBySoato(17215896).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", 1111));
+            LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId(), userInfoFromOneIdDto.getMob_phone_no(), "Tashkilot mulkchilik shakli", "Tashkilot tashkiliy-huquqiy shakli");
             User user = userService.create(legalUserDto);
             return getUserMeWithToken(user, accessData.getAccess_token(), response);
         }
@@ -107,14 +109,14 @@ public class AuthServiceImpl implements AuthService {
     private UserMeDto getUserMeWithToken(User user, String tokenFromOneId, HttpServletResponse response) {
 
         String password = generatePasswordFromOneIdToken(tokenFromOneId);
-        String tempPassword = "root1234"; //TODO: keyinchalik bu tempPasswordni udalit qilish kerak
+        password = "root1234"; //TODO: keyinchalik bu tempPasswordni udalit qilish kerak
 
         // TODO: keyinchalik userga password ni set qilish uchun bu commentni ochib qo'yish kerak
-//        user.setPassword(passwordEncoder.encode(password));
-//        userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
 
         // generate token
-        TokenResponse tokenResponse = generateToken(user.getUsername(), tempPassword);
+        TokenResponse tokenResponse = generateToken(user.getUsername(), password);
 
         // set generated token to cookie
         setTokenToCookie(tokenResponse, response);
@@ -199,7 +201,7 @@ public class AuthServiceImpl implements AuthService {
         params.put("grant_type", "one_authorization_code");
         params.put("client_id", oneIdClientId); // oneIdClientId was given to us by OneID
         params.put("client_secret", oneIdClientSecret); // oneIdClientSecret was given to us by OneID
-        params.put("code", dto.getCode());
+        params.put("code", dto.code());
 
         ApiIntegrator<AccessDataDto> apiIntegrator = new ApiIntegrator<>();
         return apiIntegrator.getData(AccessDataDto.class, params, oneIdUrl);

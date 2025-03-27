@@ -26,6 +26,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
+@Builder
 public class User extends AuditEntity implements UserDetails {
 
     @Column(nullable = false, unique = true)
@@ -50,18 +51,8 @@ public class User extends AuditEntity implements UserDetails {
     @JoinColumn(name = "profile_id", updatable = false, insertable = false)
     private Profile profile;
 
-    @Column(name = "profile_id", nullable = false)
+    @Column(name = "profile_id")
     private UUID profileId;
-
-    public User(String username, String password, Role role, String name, List<String> directions, boolean enabled, UUID profileId) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.name = name;
-        this.directions = directions;
-        this.enabled = enabled;
-        this.profileId = profileId;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

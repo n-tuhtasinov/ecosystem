@@ -7,10 +7,10 @@ package uz.technocorp.ecosystem.modules.appeal.enums;
  * @since v1.0
  */
 public enum AppealStatus {
-    New,
-    InProcess,
-    InAgreement,
-    InApproval,
-    Completed,
-    Rejected
+    NEW,
+    IN_PROCESS,
+    IN_AGREEMENT,
+    IN_APPROVAL,
+    COMPLETED,
+    REJECTED
 }

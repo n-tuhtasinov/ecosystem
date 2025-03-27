@@ -79,4 +79,14 @@ public class CommitteeUserDto implements UserDto {
         public Integer getDistrictId() {
                 return null;
         }
+
+        @Override
+        public String getLegalOwnershipType() {
+                return null;
+        }
+
+        @Override
+        public String getLegalForm() {
+                return null;
+        }
 }
