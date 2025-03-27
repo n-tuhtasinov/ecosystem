@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal.dto;
 
+
 /**
  * @author Rasulov Komil
  * @version 1.0

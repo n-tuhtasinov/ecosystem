@@ -12,6 +12,8 @@ import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -27,8 +29,8 @@ public class IrsAppealController {
     private final IrsAppealService irsAppealService;
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody IrsDto irsDto) {
-        irsAppealService.create(irsDto);
+    public ResponseEntity<?> create(@CurrentUser User user, @Valid @RequestBody IrsDto irsDto) {
+        irsAppealService.create(user, irsDto);
         return ResponseEntity.ok().body(new ApiResponse(ResponseMessage.CREATED));
     }
 }

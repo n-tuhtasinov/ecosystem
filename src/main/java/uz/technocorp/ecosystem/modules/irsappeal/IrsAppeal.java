@@ -1,21 +1,17 @@
 package uz.technocorp.ecosystem.modules.irsappeal;
 
-import com.fasterxml.jackson.annotation.JsonTypeId;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -54,5 +50,12 @@ public class IrsAppeal extends AuditEntity {
     @Column(columnDefinition = "jsonb", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode data;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class, optional = false)
+    @JoinColumn(name = "appeal_id", insertable = false, updatable = false)
+    private Appeal appeal;
+
+    @Column(name = "appeal_id", nullable = false)
+    private UUID appealId;
 
 }

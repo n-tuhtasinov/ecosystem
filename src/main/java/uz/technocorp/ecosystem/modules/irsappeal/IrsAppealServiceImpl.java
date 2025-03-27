@@ -5,13 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
+import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
+import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -25,10 +30,11 @@ public class IrsAppealServiceImpl implements IrsAppealService {
 
     private final IrsAppealRepository irsAppealRepository;
     private final AppealService appealService;
+    private final ProfileRepository profileRepository;
 
     @Override
     @Transactional
-    public void create(IrsDto dto) {
+    public void create(User user, IrsDto dto) {
 
         Integer maxNumber = irsAppealRepository.getMaxSequence();
         int orderNumber = (maxNumber == null ? 0 : maxNumber) + 1;
@@ -37,19 +43,22 @@ public class IrsAppealServiceImpl implements IrsAppealService {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode data = mapper.valueToTree(dto);
 
-        IrsAppeal build = IrsAppeal.builder()
+        Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", user.getProfileId()));
+
+
+        //save appeal
+        UUID appealId = appealService.create(dto, user.getProfileId(), number);
+
+        irsAppealRepository.save(
+                IrsAppeal.builder()
                 .appealType(AppealType.REGISTER_IRS)
                 .number(number)
                 .orderNumber(orderNumber)
+                .legalTin(profile.getTin())
                 .status(AppealStatus.NEW)
                 .deadline(LocalDate.now().plusDays(15))
                 .data(data)
-                .build();
-
-        irsAppealRepository.save(build);
-
-//        appealService.create()
-
-
+                .appealId(appealId)
+                .build());
     }
 }

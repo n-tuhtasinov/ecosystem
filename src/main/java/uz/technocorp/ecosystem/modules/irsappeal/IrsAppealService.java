@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.irsappeal;
 
 import jakarta.validation.Valid;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
+import uz.technocorp.ecosystem.modules.user.User;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -11,5 +12,5 @@ import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
  */
 public interface IrsAppealService {
 
-    void create(IrsDto irsDto);
+    void create(User user, IrsDto irsDto);
 }
