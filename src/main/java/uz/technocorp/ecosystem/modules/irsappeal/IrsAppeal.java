@@ -36,11 +36,11 @@ public class IrsAppeal extends AuditEntity {
     @Enumerated(EnumType.STRING)
     private AppealType appealType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String number;
 
     @Column(nullable = false)
-    private Long orderNumber;
+    private Integer orderNumber;
 
     @Column(nullable = false)
     private Long legalTin;
