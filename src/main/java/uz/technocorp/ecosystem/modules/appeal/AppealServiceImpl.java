@@ -1,5 +1,8 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcess;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
@@ -25,7 +29,6 @@ import uz.technocorp.ecosystem.modules.user.UserRepository;
 
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -91,18 +94,15 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public UUID create(AppealDto dto, UUID profileId, String number) {
+    public void create(AppealDto dto, User user) {
 
-        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", profileId));
+        Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
         Region region = regionRepository.findById(dto.getRegionId()).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId()));
         District district = districtRepository.findById(dto.getDistrictId()).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId()));
         Office office = officeRepository.findById(region.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "ID", region.getOfficeId()));
-        String executorName = null;
-        switch (dto.getAppealType()){
-            case REGISTER_IRS, ACCEPT_IRS, PRESENT_IRS -> executorName = "INM ijrochi ismi"; //TODO: Ijrochi shaxs kimligini logikasini yozish kerak
-            case ACCREDIT_EXPERT_ORGANIZATION -> executorName = "kimdir";
-            case REGISTER_DECLARATION -> executorName = "yana kimdir"; // har bir ariza turi uchun yozish kerak
-        }
+        String executorName = getExecutorName(dto.getAppealType());
+        String number = makeNumber(dto.getAppealType());
+        JsonNode data = makeJsonData(dto);
 
         Appeal appeal = Appeal.builder()
                 .appealType(dto.getAppealType())
@@ -126,9 +126,39 @@ public class AppealServiceImpl implements AppealService {
                 .deadline(dto.getDeadline())
                 .date(LocalDate.now())
                 .executorName(executorName)
+                .data(data)
                 .build();
-        Appeal savedAppeal = repository.save(appeal);
+        repository.save(appeal);
+    }
 
-        return savedAppeal.getId();
+    private JsonNode makeJsonData(AppealDto dto) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper.valueToTree(dto);
+    }
+
+    private String makeNumber(AppealType appealType) {
+        Integer maxNum = appealRepository.getMax();
+        int orderNumber = (maxNum == null ? 0 : maxNum) + 1;
+        String number=null;
+
+        switch (appealType){
+            case REGISTER_IRS, ACCEPT_IRS, PRESENT_IRS -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
+            case REGISTER_HF, DEREGISTER_HF -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
+            // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
+        }
+        return number;
+    }
+
+    private String getExecutorName(AppealType appealType) {
+        String executorName = null;
+
+        switch (appealType){
+            case REGISTER_IRS, ACCEPT_IRS, PRESENT_IRS -> executorName = "INM ijrochi ismi";
+            case ACCREDIT_EXPERT_ORGANIZATION -> executorName = "kimdir";
+            case REGISTER_DECLARATION -> executorName = "yana kimdir";
+            //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
+        }
+        return executorName;
     }
 }

@@ -1,6 +1,9 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
@@ -32,8 +35,10 @@ public class Appeal extends AuditEntity {
     @Enumerated(EnumType.STRING)
     private AppealType appealType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String number;
+
+    private Integer sequenceNumber;
 
     @Column(nullable = false)
     private Long legalTin;
@@ -41,9 +46,9 @@ public class Appeal extends AuditEntity {
     @Column(nullable = false)
     private String legalName;
 
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class, optional = false)
-//    @JoinColumn(name = "legal_region_id", insertable = false, updatable = false)
-//    private Region legalRegion;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class, optional = false)
+    @JoinColumn(name = "legal_region_id", insertable = false, updatable = false)
+    private Region legalRegion;
 
     @Column(name = "legal_region_id", nullable = false)
     private Integer legalRegionId;
@@ -51,18 +56,18 @@ public class Appeal extends AuditEntity {
     @Column(nullable = false)
     private String legalRegionName;
 
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class)
-//    @JoinColumn(name = "region_id", insertable = false, updatable = false)
-//    private Region region;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class)
+    @JoinColumn(name = "region_id", insertable = false, updatable = false)
+    private Region region;
 
     @Column(name = "region_id")
     private Integer regionId;
 
     private String regionName;
 
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class, optional = false)
-//    @JoinColumn(name = "legal_district_id", insertable = false, updatable = false)
-//    private District legalDistrict;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class, optional = false)
+    @JoinColumn(name = "legal_district_id", insertable = false, updatable = false)
+    private District legalDistrict;
 
     @Column(name = "legal_district_id", nullable = false)
     private Integer legalDistrictId;
@@ -70,34 +75,34 @@ public class Appeal extends AuditEntity {
     @Column(nullable = false)
     private String legalDistrictName;
 
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class)
-//    @JoinColumn(name = "district_id", insertable = false, updatable = false)
-//    private District district;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class)
+    @JoinColumn(name = "district_id", insertable = false, updatable = false)
+    private District district;
 
     @Column(name = "district_id")
     private Integer districtId;
 
     private String districtName;
 
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
-//    @JoinColumn(name = "profile_id", insertable = false, updatable = false)
-//    private Profile profile;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
+    @JoinColumn(name = "profile_id", insertable = false, updatable = false)
+    private Profile profile;
 
-//    @Column(name = "profile_id")
-//    private UUID profileId;
+    @Column(name = "profile_id")
+    private UUID profileId;
 
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Office.class)
-//    @JoinColumn(name = "office_id", insertable = false, updatable = false)
-//    private Office office;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Office.class)
+    @JoinColumn(name = "office_id", insertable = false, updatable = false)
+    private Office office;
 
     @Column(name = "office_id")
     private Integer officeId;
 
     private String officeName;
 
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
-//    @JoinColumn(name = "inspector_id", insertable = false, updatable = false)
-//    private User inspector;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
+    @JoinColumn(name = "inspector_id", insertable = false, updatable = false)
+    private User inspector;
 
     @Column(name = "inspector_id")
     private UUID inspectorId;
@@ -119,4 +124,9 @@ public class Appeal extends AuditEntity {
     private LocalDate deadline;
 
     private LocalDate date;
+
+    @Column(columnDefinition = "jsonb", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonNode data;
+
 }
