@@ -18,6 +18,7 @@ import java.time.LocalDate;
  * @version 1.0
  * @created 26.03.2025
  * @since v1.0
+ * @description IRS - ionizing radiation source (INM)
  */
 @Setter
 @Getter
