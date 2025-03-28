@@ -25,4 +25,5 @@ public interface DepartmentService {
 
     List<Department> getAllBySelect();
 
+    Department getById(Integer departmentId);
 }

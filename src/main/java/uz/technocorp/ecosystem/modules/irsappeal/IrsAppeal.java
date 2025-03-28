@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.irsappeal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +36,7 @@ public class IrsAppeal extends AuditEntity {
     @Column(nullable = false, unique = true)
     private String number;
 
+    @JsonIgnore
     @Column(nullable = false)
     private Integer orderNumber;
 
@@ -51,10 +53,12 @@ public class IrsAppeal extends AuditEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode data;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class, optional = false)
     @JoinColumn(name = "appeal_id", insertable = false, updatable = false)
     private Appeal appeal;
 
+    @JsonIgnore
     @Column(name = "appeal_id", nullable = false)
     private UUID appealId;
 

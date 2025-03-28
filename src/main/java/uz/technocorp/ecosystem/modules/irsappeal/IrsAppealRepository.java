@@ -15,4 +15,6 @@ public interface IrsAppealRepository extends JpaRepository<IrsAppeal, UUID> {
 
     @Query("select a from IrsAppeal a order by a.orderNumber desc limit 1")
     Integer getMaxSequence();
+
+    IrsAppeal findByAppealId(UUID appealId);
 }

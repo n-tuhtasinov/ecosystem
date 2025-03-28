@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
+import java.util.UUID;
+
 /**
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
@@ -13,4 +15,6 @@ import uz.technocorp.ecosystem.modules.user.User;
 public interface IrsAppealService {
 
     void create(User user, IrsDto irsDto);
+
+    IrsAppeal getByAppealId(UUID appealId);
 }
