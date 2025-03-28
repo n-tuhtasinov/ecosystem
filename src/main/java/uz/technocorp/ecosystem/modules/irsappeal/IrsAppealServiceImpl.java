@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.irsappeal;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,7 @@ public class IrsAppealServiceImpl implements IrsAppealService {
         String number = orderNumber + "-INM-" + LocalDate.now().getYear();
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         JsonNode data = mapper.valueToTree(dto);
 
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", user.getProfileId()));
@@ -60,5 +62,10 @@ public class IrsAppealServiceImpl implements IrsAppealService {
                 .data(data)
                 .appealId(appealId)
                 .build());
+    }
+
+    @Override
+    public IrsAppeal getByAppealId(UUID appealId) {
+        return irsAppealRepository.findByAppealId(appealId);
     }
 }

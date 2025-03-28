@@ -3,10 +3,7 @@ package uz.technocorp.ecosystem.modules.irsappeal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.models.ResponseMessage;
@@ -14,6 +11,8 @@ import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
+
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -33,4 +32,12 @@ public class IrsAppealController {
         irsAppealService.create(user, irsDto);
         return ResponseEntity.ok().body(new ApiResponse(ResponseMessage.CREATED));
     }
+
+    @GetMapping("/{appealId}")
+    public ResponseEntity<?> getByAppealId(@PathVariable UUID appealId) {
+        IrsAppeal byId = irsAppealService.getByAppealId(appealId);
+        return ResponseEntity.ok().body(new ApiResponse(byId));
+    }
+
+
 }
