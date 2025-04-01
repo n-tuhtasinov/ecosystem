@@ -53,4 +53,10 @@ public class DepartmentController {
         List<Department> departments = departmentService.getAllBySelect();
         return ResponseEntity.ok(new ApiResponse(departments));
     }
+
+    @GetMapping("/{departmentId}")
+    public ResponseEntity<?> getById (@PathVariable Integer departmentId) {
+        Department department = departmentService.getById(departmentId);
+        return ResponseEntity.ok(new ApiResponse(department));
+    }
 }

@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.irs.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
  * @version 1.0
  * @created 26.03.2025
  * @since v1.0
+ * @description IRS - ionizing radiation source (INM)
  */
 @Setter
 @Getter
@@ -64,7 +66,7 @@ public class IrsDto implements AppealDto {
         @NotBlank(message = "Seriya raqami kiritilmadi")
         private String serialNumber;
 
-        @NotBlank(message = "Ativligi kiritilmadi")
+        @NotNull(message = "Ativligi kiritilmadi")
         private Integer activity;
 
         @NotBlank(message = "Tipi kiritilmadi")

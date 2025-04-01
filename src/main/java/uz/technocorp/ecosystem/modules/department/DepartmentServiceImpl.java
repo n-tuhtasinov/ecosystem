@@ -57,4 +57,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     public List<Department> getAllBySelect() {
         return departmentRepository.findAll();
     }
+
+    @Override
+    public Department getById(Integer departmentId) {
+        return departmentRepository.findById(departmentId).orElseThrow(()-> new ResourceNotFoundException("Bo'lim yoki departament", "ID", departmentId));
+    }
 }
