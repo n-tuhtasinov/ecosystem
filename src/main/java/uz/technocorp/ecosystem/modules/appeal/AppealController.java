@@ -36,7 +36,7 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.COMPLETED));
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> getAllAppeals(@RequestParam Map<String, String> params) {
         return ResponseEntity.ok(service.getAppealCustoms(params));
 
