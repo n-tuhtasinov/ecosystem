@@ -29,6 +29,7 @@ import uz.technocorp.ecosystem.modules.user.UserRepository;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -128,6 +129,15 @@ public class AppealServiceImpl implements AppealService {
                 .executorName(executorName)
                 .data(data)
                 .build();
+        repository.save(appeal);
+    }
+
+    @Override
+    public void update(UUID id, AppealDto dto, User user) {
+        Appeal appeal = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Xicho arizasi", "Id", id));
+        appeal.setData(makeJsonData(dto));
         repository.save(appeal);
     }
 

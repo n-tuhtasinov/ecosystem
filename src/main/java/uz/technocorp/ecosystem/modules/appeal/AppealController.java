@@ -6,14 +6,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.HfModificationAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -34,17 +36,29 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-//    @PostMapping("/hf")
-//    public ResponseEntity<?> createHfAppeal(@CurrentUser User user, @Valid @RequestBody HfDto hfDto) {
-//        service.create(hfDto,user);
-//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-//    }
+    @PostMapping("/hf")
+    public ResponseEntity<?> createHfAppeal(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
+        service.create(hfDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
 
-//    @PutMapping("/hf")
-//    public ResponseEntity<?> modifyHfAppeal(@CurrentUser User user, @Valid @RequestBody HfDto hfDto) {
-//        service.update(hfDto,user);
-//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-//    }
+    @PutMapping("/hf/{id}")
+    public ResponseEntity<?> updateHfAppeal(@PathVariable UUID id, @CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
+        service.update(id, hfDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+    }
+
+    @PostMapping("/hf-modify")
+    public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfDto) {
+        service.create(hfDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PutMapping("/hf-modify/{id}")
+    public ResponseEntity<?> updateHfModificationAppeal(@PathVariable UUID id, @CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfDto) {
+        service.update(id, hfDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+    }
 
 
     @PatchMapping("/set-inspector")
