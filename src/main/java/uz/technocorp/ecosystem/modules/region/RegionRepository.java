@@ -24,7 +24,7 @@ public interface RegionRepository extends JpaRepository<Region, Integer> {
     @Query("SELECT r FROM Region r")
     List<RegionViewBySelect> getAllBySelect();
 
-    @Query("select r.name from Region r where r.officeId = :officeId")
+    @Query("select r.name from Region r where r.officeId = 1")
     List<String> getRegionNamesByOfficeId(Integer officeId);
 
     @Query("select r.id from Region r where r.officeId = :officeId")
