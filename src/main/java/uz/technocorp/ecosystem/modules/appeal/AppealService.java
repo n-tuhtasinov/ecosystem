@@ -8,6 +8,7 @@ import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -21,5 +22,6 @@ public interface AppealService {
     void changeAppealStatus(AppealStatusDto dto);
     Page<AppealCustom> getAppealCustoms(Map<String, String> params);
     void create(AppealDto dto, User user);
+    void update(UUID id, AppealDto dto, User user);
 
 }
