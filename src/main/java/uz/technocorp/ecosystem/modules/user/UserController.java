@@ -12,6 +12,7 @@ import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.OfficeUserDto;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -88,5 +89,13 @@ public class UserController {
         userService.updateLegalUser(userId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi holati muvaffaqiyatli o'zgartirildi"));
     }
+
+    @GetMapping("/committee-users")
+    ResponseEntity<?> getCommitteeUsers(@RequestParam Map<String, String> params) {
+//        userService.getCommitteeUsers(params);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita hodimi muvaffaqiyatli qo'shildi"));
+    }
+
+
 
 }
