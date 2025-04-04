@@ -1,7 +1,7 @@
 //package uz.technocorp.ecosystem.modules.irsappeal;
 //
 //import jakarta.validation.Valid;
-//import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
+//import uz.technocorp.ecosystem.modules.appeal.dto.IrsDto;
 //import uz.technocorp.ecosystem.modules.user.User;
 //
 //import java.util.UUID;

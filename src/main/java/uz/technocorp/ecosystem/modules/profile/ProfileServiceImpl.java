@@ -75,18 +75,30 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     private void setRegion(Integer regionId, Profile profile) {
+        if (regionId==null){
+            profile.setRegionId(null);
+            profile.setRegionName(null);
+            return;
+        }
+
         if (!regionId.equals(profile.getRegionId())) {
-            Region region = getRegion(regionId);
+            Region region = regionRepository.findById(regionId).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", regionId));
             profile.setRegionId(regionId);
-            profile.setRegionName(region!=null? region.getName():null);
+            profile.setRegionName(region.getName());
         }
     }
 
     private void setDistrict(Integer districtId, Profile profile) {
+        if (districtId==null){
+            profile.setDistrictId(null);
+            profile.setDistrictName(null);
+            return;
+        }
+
         if (!districtId.equals(profile.getDistrictId())) {
-            District district = getDistrict(districtId);
+            District district = districtRepository.findById(districtId).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", districtId));
             profile.setDistrictId(districtId);
-            profile.setDistrictName(district!=null? district.getName():null);
+            profile.setDistrictName(district.getName());
         }
     }
 

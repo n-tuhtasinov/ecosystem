@@ -1,14 +1,11 @@
-package uz.technocorp.ecosystem.modules.irs.dto;
+package uz.technocorp.ecosystem.modules.appeal.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.catalina.User;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
@@ -24,7 +21,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class IrsDto implements AppealDto {
+public class IrsAppealDto implements AppealDto {
 
         @NotBlank(message = "Tashkilot bilan bog'lanish uchun telefon raqam kiritilmadi")
         private String phoneNumber;
