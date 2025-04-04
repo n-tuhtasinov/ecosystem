@@ -10,7 +10,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.HfModificationAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.HfAppealDto;
-import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
@@ -31,7 +31,7 @@ public class AppealController {
     private final AppealService service;
 
     @PostMapping("/irs")
-    public ResponseEntity<?> createIrsAppeal(@CurrentUser User user, @Valid @RequestBody IrsDto irsDto) {
+    public ResponseEntity<?> createIrsAppeal(@CurrentUser User user, @Valid @RequestBody IrsAppealDto irsDto) {
         service.create(irsDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }

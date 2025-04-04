@@ -16,6 +16,6 @@ public interface OfficeView {
 
     String getName();
 
-    @Value("#{regionRepository.getRegionNamesByOfficeId(target.id)}")
+    @Value("#{@regionRepository.getRegionNamesByOfficeId(target.id)}")
     List<String> getRegions();
 }

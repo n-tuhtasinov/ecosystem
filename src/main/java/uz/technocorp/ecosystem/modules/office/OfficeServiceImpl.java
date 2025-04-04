@@ -45,8 +45,14 @@ public class OfficeServiceImpl implements OfficeService {
     public void update(Integer officeId, OfficeDto dto) {
         Office office = officeRepository.findById(officeId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "officeId", officeId));
         office.setName(dto.name());
-        office.setRegions(null); //remove all regions
-        officeRepository.save(office);
+
+        //remove all regions
+        regionRepository.findAll().forEach(region -> {
+            if (region.getOfficeId()!=null && region.getOfficeId().equals(officeId)) {
+                region.setOfficeId(null);
+                regionRepository.save(region);
+            }
+        });
 
         //update for new regions
         dto.regionIds().forEach(regionId -> {

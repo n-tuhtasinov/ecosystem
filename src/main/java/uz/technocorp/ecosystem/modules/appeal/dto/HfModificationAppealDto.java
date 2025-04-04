@@ -37,8 +37,8 @@ public class HfModificationAppealDto implements AppealDto {
         String actPath;
         @NotBlank(message = "Ariza fayli biriktirilmadi!")
         String appealPath;
-        @NotBlank(message = "Ariza turi tanlanmadi!")
-        String appealType;
+
+        Integer regionId;
 
         @Override
         public AppealType getAppealType() {
@@ -47,22 +47,17 @@ public class HfModificationAppealDto implements AppealDto {
 
         @Override
         public Integer getRegionId() {
-                return 0;
+                return null;
         }
 
         @Override
         public Integer getDistrictId() {
-                return 0;
+                return null;
         }
 
         @Override
         public String getAddress() {
-                return "";
-        }
-
-        @Override
-        public String getPhoneNumber() {
-                return "";
+                return null;
         }
 
         @Override

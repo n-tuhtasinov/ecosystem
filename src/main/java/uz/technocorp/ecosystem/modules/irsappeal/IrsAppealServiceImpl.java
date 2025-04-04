@@ -11,7 +11,7 @@
 //import uz.technocorp.ecosystem.modules.appeal.AppealService;
 //import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 //import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-//import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
+//import uz.technocorp.ecosystem.modules.appeal.dto.IrsDto;
 //import uz.technocorp.ecosystem.modules.profile.Profile;
 //import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 //import uz.technocorp.ecosystem.modules.user.User;

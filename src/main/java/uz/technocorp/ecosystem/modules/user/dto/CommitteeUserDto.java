@@ -31,7 +31,6 @@ public class CommitteeUserDto implements UserDto {
         @NotEmpty(message = "Hodim bajaradigan ishlar tanlanmadi")
         private List<@NotBlank(message = "Directionga bo'sh String qo'shish mumkin emas") String> directions;
 
-        @NotNull(message = "Hodim bo'limi yoki departamenti tanlanmadi")
         private Integer departmentId;
 
         @NotBlank(message = "Hodim lavozimi jo'natilmadi")
