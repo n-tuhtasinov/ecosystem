@@ -68,6 +68,20 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .description(hfAppealDto.getDescription())
                         .registryNumber(registryNumber)
                         .active(true)
+                        .appointmentOrderPath(hfAppealDto.getAppointmentOrderPath())
+                        .cadastralPassportPath(hfAppealDto.getCadastralPassportPath())
+                        .certificationPath(hfAppealDto.getCertificationPath())
+                        .permitPath(hfAppealDto.getPermitPath())
+                        .deviceTestingPath(hfAppealDto.getDeviceTestingPath())
+                        .licensePath(hfAppealDto.getLicensePath())
+                        .ecologicalConclusionPath(hfAppealDto.getEcologicalConclusionPath())
+                        .expertOpinionPath(hfAppealDto.getExpertOpinionPath())
+                        .industrialSafetyDeclarationPath(hfAppealDto.getIndustrialSafetyDeclarationPath())
+                        .insurancePolicyPath(hfAppealDto.getInsurancePolicyPath())
+                        .projectDocumentationPath(hfAppealDto.getProjectDocumentationPath())
+                        .replyLetterPath(hfAppealDto.getReplyLetterPath())
+                        .identificationCardPath(hfAppealDto.getIdentificationCardPath())
+                        .receiptPath(hfAppealDto.getReceiptPath())
                         .build());
     }
 
