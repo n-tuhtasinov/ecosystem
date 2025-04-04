@@ -1,8 +1,13 @@
 package uz.technocorp.ecosystem.modules.user;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -14,4 +19,7 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByUsername(String username);
+
+    @Query("select u from User u where u.role in :roles")
+    Page<User> findAllByRoles(Pageable pageable, Set<Role> roles);
 }

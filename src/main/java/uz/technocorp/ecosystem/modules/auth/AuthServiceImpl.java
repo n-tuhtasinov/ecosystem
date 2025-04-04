@@ -94,16 +94,22 @@ public class AuthServiceImpl implements AuthService {
             return getUserMeWithToken(user, accessData.getAccess_token(), response);
         }
 
+        UserMeDto user1 = getUserMeDto(response, userInfoFromOneIdDto, accessData);
+        if (user1 != null) return user1;
+
+        //create individual user
+        User user = userService.create(new IndividualUserDto(userInfoFromOneIdDto.getFull_name(), Long.valueOf(userInfoFromOneIdDto.getPin()), userInfoFromOneIdDto.getMob_phone_no()));
+        return getUserMeWithToken(user, accessData.getAccess_token(), response);
+    }
+
+    private UserMeDto getUserMeDto(HttpServletResponse response, UserInfoFromOneIdDto userInfoFromOneIdDto, AccessDataDto accessData) {
         //find individual user by username, if there is not, should create a new one
         Optional<User> optional = userRepository.findByUsername(userInfoFromOneIdDto.getPin());
         if (optional.isPresent()) {
             User user = optional.get();
             return getUserMeWithToken(user, accessData.getAccess_token(), response);
         }
-
-        //create individual user
-        User user = userService.create(new IndividualUserDto(userInfoFromOneIdDto.getFull_name(), Long.valueOf(userInfoFromOneIdDto.getPin()), userInfoFromOneIdDto.getMob_phone_no()));
-        return getUserMeWithToken(user, accessData.getAccess_token(), response);
+        return null;
     }
 
     private UserMeDto getUserMeWithToken(User user, String tokenFromOneId, HttpServletResponse response) {

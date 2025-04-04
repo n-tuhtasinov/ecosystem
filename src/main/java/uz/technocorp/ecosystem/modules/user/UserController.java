@@ -2,14 +2,18 @@ package uz.technocorp.ecosystem.modules.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
-import uz.technocorp.ecosystem.modules.user.dto.ChairmanUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.CommitteeUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.OfficeUserDto;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
+import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
+import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
+import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
 import java.util.Map;
@@ -38,14 +42,13 @@ public class UserController {
 
     @PostMapping("/committee-users")
     ResponseEntity<?> createCommitteeUser(@Valid @RequestBody CommitteeUserDto dto){
+        if (!dto.getRole().equals(Role.CHAIRMAN.name())){
+            if (dto.getDepartmentId()==null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Departament yoki bo'lim jo'natilmadi"));
+            }
+        }
         userService.create(dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita hodimi muvaffaqiyatli qo'shildi"));
-    }
-
-    @PostMapping("/chairman-user")
-    ResponseEntity<?> createChairmanUser(@Valid @RequestBody ChairmanUserDto dto){
-        userService.create(dto);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita raisi muvaffaqiyatli qo'shildi"));
     }
 
     @PostMapping("/office-users")
@@ -56,14 +59,13 @@ public class UserController {
 
     @PutMapping("/committee-users/{userId}")
     ResponseEntity<?> updateCommitteeUser(@PathVariable UUID userId, @Valid @RequestBody CommitteeUserDto dto){
+        if (!dto.getRole().equals(Role.CHAIRMAN.name())){
+            if (dto.getDepartmentId()==null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Departament yoki bo'lim jo'natilmadi"));
+            }
+        }
         userService.update(userId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita hodimi muvaffaqiyatli o'zgartirildi"));
-    }
-
-    @PutMapping("/chairman-user/{userId}")
-    ResponseEntity<?> updateChairmanUser(@PathVariable UUID userId, @Valid @RequestBody ChairmanUserDto dto){
-        userService.update(userId, dto);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita raisi muvaffaqiyatli o'zgartirildi"));
     }
 
     @PutMapping("/office-users/{userId}")
@@ -91,11 +93,20 @@ public class UserController {
     }
 
     @GetMapping("/committee-users")
-    ResponseEntity<?> getCommitteeUsers(@RequestParam Map<String, String> params) {
-//        userService.getCommitteeUsers(params);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Qo'mita hodimi muvaffaqiyatli qo'shildi"));
+    ResponseEntity<?> getCommitteeUsers(@RequestParam(required = false) Map<String, String> params) {
+        Page<CommitteeUserHelper> page = userService.getCommitteeUsers(params);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(page));
     }
 
+    @GetMapping("/office-users")
+    ResponseEntity<?> getOfficeUsers(@RequestParam(required = false) Map<String, String> params) {
+        Page<OfficeUserHelper> page = userService.getOfficeUsers(params);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(page));
+    }
 
-
+    @GetMapping("/{userId}")
+    ResponseEntity<?> getUserById(@PathVariable UUID userId) {
+        UserHelperById byId = userService.getById(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(byId));
+    }
 }
