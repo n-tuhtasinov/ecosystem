@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
+import uz.technocorp.ecosystem.modules.hazardousfacility.dto.HfDto;
 
 import java.util.Map;
 import java.util.UUID;
@@ -25,6 +26,18 @@ public class HazardousFacilityController {
     @PostMapping("/{id}")
     public ResponseEntity<?> create(@PathVariable UUID id) {
         service.create(id);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody HfDto dto) {
+        service.create(dto);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody HfDto dto) {
+        service.update(id, dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
