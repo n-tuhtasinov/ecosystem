@@ -75,6 +75,6 @@ public class HfAppealDto implements AppealDto {
 
     @Override
     public LocalDate getDeadline() {
-        return LocalDate.now().plusDays(15);
+        return null;
     }
 }

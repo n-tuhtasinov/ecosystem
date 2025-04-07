@@ -8,7 +8,7 @@
 //import uz.technocorp.ecosystem.models.AppConstants;
 //import uz.technocorp.ecosystem.models.ResponseMessage;
 //import uz.technocorp.ecosystem.modules.appeal.Appeal;
-//import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
+//import uz.technocorp.ecosystem.modules.appeal.dto.IrsDto;
 //import uz.technocorp.ecosystem.modules.user.User;
 //import uz.technocorp.ecosystem.security.CurrentUser;
 //

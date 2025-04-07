@@ -8,11 +8,11 @@ package uz.technocorp.ecosystem.modules.user.enums;
  */
 public enum Role {
     ADMIN,
-    LEGAL,
-    INDIVIDUAL,
-    CHAIRMAN,
-    HEAD,
-    MANAGER,
-    REGIONAL,
+    LEGAL, // yuridik shaxs
+    INDIVIDUAL, // jismoniy shaxs
+    CHAIRMAN, // rais
+    HEAD, // ma'sul bo'lim boshlig'i
+    MANAGER, // mas'ul hodim
+    REGIONAL, // hududiy bo'lim boshlig'i
     INSPECTOR
 }

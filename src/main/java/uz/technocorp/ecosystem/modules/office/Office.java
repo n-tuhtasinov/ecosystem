@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.office;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -26,6 +27,7 @@ public class Office {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "office", fetch = FetchType.LAZY)
     private List<Region> regions;
 }
