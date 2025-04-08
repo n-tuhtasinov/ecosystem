@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.hazardousfacility.enums.HFSphere;
 import uz.technocorp.ecosystem.modules.hazardousfacilitytype.HazardousFacilityType;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -88,6 +90,9 @@ public class HazardousFacility extends AuditEntity {
 
     @Column(columnDefinition = "text")
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    private List<HFSphere> spheres;
 
     @Column(columnDefinition = "text")
     private String deregistrationReason;

@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.hazardousfacilitytype;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -14,7 +15,17 @@ import java.util.List;
  */
 public interface HazardousFacilityTypeRepository extends JpaRepository<HazardousFacilityType, Integer> {
 
-    List<HazardousFacilityType> findAllByName(String name);
+    @Query(value = """
+            select *
+            from hazardous_facility_type
+            where name ilike concat('%', :search, '%')
+            """, nativeQuery = true)
+    List<HazardousFacilityType> findAllByName(String search);
 
+    @Query(value = """
+            select *
+            from hazardous_facility_type
+            where name ilike concat('%', :search, '%')
+            """, nativeQuery = true)
     Page<HazardousFacilityType> findAllPageByName(Pageable pageable, String search);
 }
