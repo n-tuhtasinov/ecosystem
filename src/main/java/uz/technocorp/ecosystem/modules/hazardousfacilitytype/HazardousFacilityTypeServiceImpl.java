@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.hazardousfacilitytype;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -62,7 +63,7 @@ public class HazardousFacilityTypeServiceImpl implements HazardousFacilityTypeSe
 
     @Override
     public Page<HazardousFacilityType> getAllPage(int page, int size, String search) {
-        Pageable pageable = PageRequest.of(page-1, size, Sort.Direction.ASC, "name");
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.ASC, "name");
         return repository.findAllPageByName(pageable, search);
     }
 }
