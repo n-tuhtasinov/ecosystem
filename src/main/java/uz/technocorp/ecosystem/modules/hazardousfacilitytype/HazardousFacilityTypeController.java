@@ -1,6 +1,9 @@
 package uz.technocorp.ecosystem.modules.hazardousfacilitytype;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +11,8 @@ import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.hazardousfacilitytype.dto.HazardousFacilityTypeDto;
+
+import java.util.List;
 
 /**
  * @author Rasulov Komil
@@ -18,6 +23,7 @@ import uz.technocorp.ecosystem.modules.hazardousfacilitytype.dto.HazardousFacili
 @RestController
 @RequestMapping("/api/v1/hazardous-facility-types")
 @RequiredArgsConstructor
+@Slf4j
 public class HazardousFacilityTypeController {
 
     private final HazardousFacilityTypeService service;
@@ -27,9 +33,9 @@ public class HazardousFacilityTypeController {
         try {
             service.create(dto);
             return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(ResponseMessage.CONFLICT));
+        } catch (DataIntegrityViolationException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("Ushbu XICHO turi tizimda oldindan mavjud!");
         }
     }
 
@@ -39,7 +45,7 @@ public class HazardousFacilityTypeController {
             service.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(ResponseMessage.CONFLICT));
         }
     }
@@ -49,7 +55,7 @@ public class HazardousFacilityTypeController {
             service.delete(id);
             return ResponseEntity.ok(new ApiResponse(ResponseMessage.DELETED));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(ResponseMessage.CONFLICT));
         }
     }
@@ -59,7 +65,7 @@ public class HazardousFacilityTypeController {
         try {
             return ResponseEntity.ok(service.getById(id));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(ResponseMessage.CONFLICT));
         }
     }
@@ -69,9 +75,10 @@ public class HazardousFacilityTypeController {
                                           @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
                                           @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
         try {
-            return ResponseEntity.ok(service.getAllPage(page, size, search));
+            Page<HazardousFacilityType> allPage = service.getAllPage(page, size, search);
+            return ResponseEntity.ok(new ApiResponse(allPage));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(ResponseMessage.CONFLICT));
         }
     }
@@ -79,9 +86,10 @@ public class HazardousFacilityTypeController {
     @GetMapping("/select")
     public ResponseEntity<?> getAll(@RequestParam(value = "search", defaultValue = "") String search) {
         try {
-            return ResponseEntity.ok(service.getAll(search));
+            List<HazardousFacilityType> all = service.getAll(search);
+            return ResponseEntity.ok(new ApiResponse(all));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(ResponseMessage.CONFLICT));
         }
     }
