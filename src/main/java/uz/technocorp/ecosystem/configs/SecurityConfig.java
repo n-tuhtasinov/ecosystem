@@ -43,10 +43,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->authorize
                         .requestMatchers(HttpMethod.GET,
                                 "/",
-                                "/index.html",
-                                "/favicon.ico",
-                                "/files/**",
-                                "/public/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
