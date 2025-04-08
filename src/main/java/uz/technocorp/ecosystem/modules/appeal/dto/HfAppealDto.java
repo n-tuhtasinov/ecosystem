@@ -1,6 +1,8 @@
 package uz.technocorp.ecosystem.modules.appeal.dto;
 
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,8 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.hazardousfacility.enums.HFSphere;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @author Rasulov Komil
@@ -39,8 +43,13 @@ public class HfAppealDto implements AppealDto {
     private Integer regionId;
     @NotNull(message = "Tuman tanlanmadi!")
     private Integer districtId;
+
+    @Enumerated(EnumType.STRING)
+    private List<HFSphere> spheres;
+
     @NotBlank(message = "Identifikatsiya varag'i fayli biriktirilmadi!")
     private String identificationCardPath;
+
     @NotBlank(message = "XICHOni ro'yxatga olish uchun to'lov kvitansiyasi fayli biriktirilmadi!")
     private String receiptPath;
 

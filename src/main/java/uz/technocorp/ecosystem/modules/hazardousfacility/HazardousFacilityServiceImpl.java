@@ -69,6 +69,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .description(hfAppealDto.getDescription())
                         .registryNumber(registryNumber)
                         .active(true)
+                        .spheres(hfAppealDto.getSpheres())
                         .appointmentOrderPath(hfAppealDto.getAppointmentOrderPath())
                         .cadastralPassportPath(hfAppealDto.getCadastralPassportPath())
                         .certificationPath(hfAppealDto.getCertificationPath())
@@ -101,6 +102,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .upperOrganization(dto.upperOrganization())
                         .name(dto.name())
                         .address(dto.address())
+                        .spheres(dto.spheres())
 
                         .hazardousFacilityTypeId(dto.hazardousFacilityTypeId())
                         .extraArea(dto.extraArea())
@@ -143,6 +145,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setExtraArea(dto.extraArea());
         hazardousFacility.setDescription(dto.description());
         hazardousFacility.setRegistryNumber(dto.registryNumber());
+        hazardousFacility.setSpheres(dto.spheres());
 
         hazardousFacility.setAppointmentOrderPath(dto.appointmentOrderPath());
         hazardousFacility.setCadastralPassportPath(dto.cadastralPassportPath());
