@@ -38,12 +38,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         //get index html path
-//        String currentDir = System.getProperty("user.dir");
-//        String frontPath = new File(currentDir).getParentFile().getAbsolutePath();
+//        String currentDir = System.getProperty("user.dir")+"/static/";
 
         // handle SPA routing
 //        registry.addResourceHandler("/**", "/")
-//                .addResourceLocations("file:" + frontPath + "/front/index.html", "")
+//                .addResourceLocations("file:"+currentDir, "")
 //                .resourceChain(false);
 
 
