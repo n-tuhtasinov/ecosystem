@@ -63,7 +63,8 @@ public class HazardousFacilityTypeController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(service.getById(id));
+            HazardousFacilityType byId = service.getById(id);
+            return ResponseEntity.ok(new ApiResponse(byId));
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(ResponseMessage.CONFLICT));
