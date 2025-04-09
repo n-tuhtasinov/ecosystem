@@ -1,0 +1,1 @@
+import{j as n}from"./index-CjbR5zlf.js";import{g as t}from"./select-CBNmlDFn.js";function l(e){return!Array.isArray(e)||e.length===0?[n.jsx(t,{value:"null",children:"Mavjud emas"},"no-options")]:e.map(r=>r?.id?n.jsx(t,{value:String(r.id),children:r.name},String(r.id)||crypto.randomUUID()):null).filter(Boolean)}export{l as g};

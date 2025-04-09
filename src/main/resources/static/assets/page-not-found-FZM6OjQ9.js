@@ -1,0 +1,1 @@
+import{u as o,j as e,I as t}from"./index-CjbR5zlf.js";import"./vendor-CLh72Zqc.js";function a(){const{t:s}=o(["common"]);return e.jsxs("div",{className:"h-full flex flex-col items-center justify-center",children:[e.jsx(t,{name:"page-not-found",className:"size-80"}),e.jsx("h2",{className:"text-2xl font-semibold",children:s("errors.page_not_found")})]})}export{a as default};

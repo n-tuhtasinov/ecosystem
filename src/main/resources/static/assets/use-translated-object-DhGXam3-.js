@@ -1,0 +1,1 @@
+import{u,r as m}from"./index-CjbR5zlf.js";function i(n,t,s=!0){const{t:e}=u();return m.useMemo(()=>{const o=Object.values(n).map(r=>({id:r,name:e(t?`${t}.${r}`:r)}));return s?[...o].sort((r,a)=>r.name.localeCompare(a.name)):o},[n,t,e,s])}export{i as u};
