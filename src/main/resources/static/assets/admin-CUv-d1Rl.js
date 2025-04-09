@@ -1,1 +1,0 @@
-const n="Kirish",s="Chiqish",i="Ma'mur paneli",o="Login",a="Parol",t={sign_in:n,sign_out:s,admin_panel:i,username:o,password:a};export{i as admin_panel,t as default,a as password,n as sign_in,s as sign_out,o as username};

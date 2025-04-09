@@ -1,1 +1,0 @@
-const n="Кириш",s="Чиқиш",o="Маъмур панели",t="Логин",a="Пароль",c={sign_in:n,sign_out:s,admin_panel:o,username:t,password:a};export{o as admin_panel,c as default,a as password,n as sign_in,s as sign_out,t as username};
