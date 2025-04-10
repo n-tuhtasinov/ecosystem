@@ -24,40 +24,33 @@ import java.util.UUID;
 public class HfModificationAppealDto implements AppealDto {
 
         @NotNull(message = "Hisobga olish raqami kiritilmadi!")
-        UUID hazardousFacilityId;
+        private UUID hazardousFacilityId;
         @NotBlank(message = "Telefon raqami kiritilmadi!")
-        String phoneNumber;
+        private String phoneNumber;
         @NotBlank(message = "Pochta manzili kiritilmadi!")
-        String email;
+        private String email;
         @NotBlank(message = "Xichoga o'zgartirish kiritish yoki ro'yxatdan chiqarish sababi kiritilmadi!")
-        String reason;
+        private String reason;
         @NotBlank(message = "Ariza bayoni kiritilmadi!")
-        String statement;
+        private String statement;
         @NotBlank(message = "Dalolatnoma biriktirilmadi!")
-        String actPath;
-        @NotBlank(message = "Ariza fayli biriktirilmadi!")
-        String appealPath;
+        private String actPath;
 
-        Integer regionId;
+        @NotBlank(message = "Ariza fayli biriktirilmadi!")
+        private String appealPath;
+
+        @NotNull(message = "Viloyat jo'natilmadi")
+        private Integer regionId;
+
+        @NotNull(message = "Tuman jo'natilmadi")
+        private Integer districtId;
+
+        @NotBlank(message = "Manzil jo'natilmadi")
+        private String address;
 
         @Override
         public AppealType getAppealType() {
                 return AppealType.DEREGISTER_HF;
-        }
-
-        @Override
-        public Integer getRegionId() {
-                return null;
-        }
-
-        @Override
-        public Integer getDistrictId() {
-                return null;
-        }
-
-        @Override
-        public String getAddress() {
-                return null;
         }
 
         @Override

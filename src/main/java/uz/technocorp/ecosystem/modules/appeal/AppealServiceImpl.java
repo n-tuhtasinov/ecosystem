@@ -153,7 +153,7 @@ public class AppealServiceImpl implements AppealService {
         String number=null;
 
         switch (appealType){
-            case REGISTER_IRS, ACCEPT_IRS, PRESENT_IRS -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
+            case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
             case REGISTER_HF, DEREGISTER_HF -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
@@ -164,7 +164,7 @@ public class AppealServiceImpl implements AppealService {
         String executorName = null;
 
         switch (appealType){
-            case REGISTER_IRS, ACCEPT_IRS, PRESENT_IRS -> executorName = "INM ijrochi ismi";
+            case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> executorName = "INM ijrochi ismi";
             case ACCREDIT_EXPERT_ORGANIZATION -> executorName = "kimdir";
             case REGISTER_DECLARATION -> executorName = "yana kimdir";
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak

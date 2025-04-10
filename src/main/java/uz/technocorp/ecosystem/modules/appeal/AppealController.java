@@ -6,11 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.HfModificationAppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.HfAppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.IrsAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
@@ -36,12 +32,25 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
+    @PostMapping("/irs/transfer")
+    public ResponseEntity<?> createIrsTransferAppeal(@CurrentUser User user, @Valid @RequestBody IrsTransferAppealDto irsTransferDto) {
+        service.create(irsTransferDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/irs/acceptance")
+    public ResponseEntity<?> createIrsAcceptanceAppeal(@CurrentUser User user, @Valid @RequestBody IrsAcceptanceAppealDto irsAcceptanceDto) {
+        service.create(irsAcceptanceDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
     @PostMapping("/hf")
     public ResponseEntity<?> createHfAppeal(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
         service.create(hfDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
+    // inpektor fayllarni yuklashi uchun
     @PutMapping("/hf/{id}")
     public ResponseEntity<?> updateHfAppeal(@PathVariable UUID id, @CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
         service.update(id, hfDto,user);
@@ -59,7 +68,6 @@ public class AppealController {
         service.update(id, hfDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
-
 
     @PatchMapping("/set-inspector")
     public ResponseEntity<?> setInspector(@Valid @RequestBody SetInspectorDto dto) {
