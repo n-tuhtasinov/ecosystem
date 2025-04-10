@@ -44,5 +44,5 @@ public enum AppealType {
     // INM - IRS (Ionizing Radiation Source )
     REGISTER_IRS,
     ACCEPT_IRS,
-    PRESENT_IRS,
+    TRANSFER_IRS,
     }
