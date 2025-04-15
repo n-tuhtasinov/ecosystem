@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.childequipmenttype;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -27,5 +28,5 @@ public class ChildEquipmentType {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private AppealType appealType;
+    private EquipmentType equipmentType;
 }
