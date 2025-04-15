@@ -29,7 +29,7 @@ public class ChildEquipmentSort {
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChildEquipmentType.class, optional = false)
     @JoinColumn(name = "child_equipment_type_id", insertable = false, updatable = false)
-    private ChildEquipmentType type;
+    private ChildEquipmentType childEquipmentType;
 
     @Column(nullable = false, name = "child_equipment_type_id")
     private Integer typeId;
