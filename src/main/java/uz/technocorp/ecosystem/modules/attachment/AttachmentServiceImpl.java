@@ -65,7 +65,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                             path.toString().replace("\\", "/")
                     )
             );
-            return attachment.getPath();
+            return "/"+attachment.getPath();
         }
         return null;
     }
