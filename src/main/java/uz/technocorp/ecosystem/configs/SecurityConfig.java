@@ -13,7 +13,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
-import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.security.JwtAuthenticationEntryPoint;
 import uz.technocorp.ecosystem.security.JwtAuthenticationFilter;
 
@@ -40,7 +39,7 @@ public class SecurityConfig {
         return http
                 .cors(cor -> cor.configurationSource(corsFilter))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize ->authorize
+                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET,
                                 "/",
                                 "/favicon.ico",
@@ -49,6 +48,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/one-id").permitAll()
+                        .requestMatchers("/api/v1/e-imzo/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/files/**").permitAll() //TODO: sucuritydan files/ olib tashlash kerak
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated())
