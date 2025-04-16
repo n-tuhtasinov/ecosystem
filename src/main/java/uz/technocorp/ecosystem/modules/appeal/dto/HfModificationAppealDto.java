@@ -7,8 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.hazardousfacility.enums.HFSphere;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -16,45 +18,35 @@ import java.util.UUID;
  * @version 1.0
  * @created 17.03.2025
  * @since v1.0
+ * @description XICHO ma'lumotlrini o'zgartirganda ariza polyalarini XICHO reestrdan ma'lumoalrni olib kelib to'ldirib, frontdan to'liq HfAppealDTO ni jo'natilishi kerak
  */
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class HfModificationAppealDto implements AppealDto {
+public class HfModificationAppealDto extends HfAppealDto {
 
         @NotNull(message = "Hisobga olish raqami kiritilmadi!")
         private UUID hazardousFacilityId;
-        @NotBlank(message = "Telefon raqami kiritilmadi!")
-        private String phoneNumber;
-        @NotBlank(message = "Pochta manzili kiritilmadi!")
-        private String email;
-        @NotBlank(message = "Xichoga o'zgartirish kiritish yoki ro'yxatdan chiqarish sababi kiritilmadi!")
+
+        @NotBlank(message = "Xichoga o'zgartirish kiritish sababi kiritilmadi!")
         private String reason;
+
         @NotBlank(message = "Ariza bayoni kiritilmadi!")
-        private String statement;
-        @NotBlank(message = "Dalolatnoma biriktirilmadi!")
+        private String description;
+
+        @NotBlank(message = "Asos fayli biriktirilmadi!")
         private String actPath;
-
-        @NotBlank(message = "Ariza fayli biriktirilmadi!")
-        private String appealPath;
-
-        @NotNull(message = "Viloyat jo'natilmadi")
-        private Integer regionId;
-
-        @NotNull(message = "Tuman jo'natilmadi")
-        private Integer districtId;
-
-        @NotBlank(message = "Manzil jo'natilmadi")
-        private String address;
 
         @Override
         public AppealType getAppealType() {
-                return AppealType.DEREGISTER_HF;
+                return AppealType.MODIFY_HF;
         }
 
-        @Override
-        public LocalDate getDeadline() {
-                return null;
+        public HfModificationAppealDto(String phoneNumber, String email, String upperOrganization, String name, String address, Integer hazardousFacilityTypeId, String extraArea, String description, Integer regionId, Integer districtId, List<HFSphere> spheres, String identificationCardPath, String receiptPath, String expertOpinionPath, String projectDocumentationPath, String cadastralPassportPath, String industrialSafetyDeclarationPath, String insurancePolicyPath, String licensePath, String permitPath, String certificationPath, String deviceTestingPath, String appointmentOrderPath, String ecologicalConclusionPath, String replyLetterPath, String appealPath, UUID hazardousFacilityId, String reason, String description1, String actPath) {
+                super(phoneNumber, email, upperOrganization, name, address, hazardousFacilityTypeId, extraArea, description, regionId, districtId, spheres, identificationCardPath, receiptPath, expertOpinionPath, projectDocumentationPath, cadastralPassportPath, industrialSafetyDeclarationPath, insurancePolicyPath, licensePath, permitPath, certificationPath, deviceTestingPath, appointmentOrderPath, ecologicalConclusionPath, replyLetterPath, appealPath);
+                this.hazardousFacilityId = hazardousFacilityId;
+                this.reason = reason;
+                this.description = description1;
+                this.actPath = actPath;
         }
 }

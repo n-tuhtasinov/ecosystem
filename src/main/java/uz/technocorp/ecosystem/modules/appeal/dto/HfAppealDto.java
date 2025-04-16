@@ -77,6 +77,9 @@ public class HfAppealDto implements AppealDto {
 
     private String replyLetterPath;
 
+    @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
+    private String appealPath;
+
     @Override
     public AppealType getAppealType() {
         return AppealType.REGISTER_HF;

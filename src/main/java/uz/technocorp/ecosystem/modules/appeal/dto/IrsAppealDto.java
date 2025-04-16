@@ -109,6 +109,9 @@ public class IrsAppealDto implements AppealDto {
         @NotBlank(message = "INM joylashgan manzil kiritilmadi")
         private String address;
 
+        @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
+        private String appealPath;
+
         @Override
         public AppealType getAppealType() {
                 return AppealType.REGISTER_IRS;

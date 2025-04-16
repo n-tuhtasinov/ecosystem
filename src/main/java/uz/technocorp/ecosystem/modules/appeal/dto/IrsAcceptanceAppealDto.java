@@ -55,6 +55,9 @@ public class IrsAcceptanceAppealDto implements AppealDto {
 
     private String additionalFilePath;
 
+    @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
+    private String appealPath;
+
     @Override
     public AppealType getAppealType() {
         return AppealType.ACCEPT_IRS;
