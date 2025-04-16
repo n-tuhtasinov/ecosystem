@@ -50,23 +50,23 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    // inpektor fayllarni yuklashi uchun
-    @PutMapping("/hf/{id}")
-    public ResponseEntity<?> updateHfAppeal(@PathVariable UUID id, @CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        service.update(id, hfDto,user);
+    // inpektor tomonidan arizadagi kamchilik fayllarni yuklab arizani davom ettirib ketishi uchun
+    @PutMapping("/hf/{appealId}")
+    public ResponseEntity<?> updateHfAppeal(@PathVariable UUID appealId, @CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
+        service.update(appealId, hfDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
-    @PostMapping("/hf-modify")
-    public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfDto) {
-        service.create(hfDto,user);
+    @PostMapping("/hf/deregister")
+    public ResponseEntity<?> createHfDeregisterAppeal(@CurrentUser User user, @Valid @RequestBody HfDeregisterAppealDto hfDeregisterAppealDto) {
+        service.create(hfDeregisterAppealDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    @PutMapping("/hf-modify/{id}")
-    public ResponseEntity<?> updateHfModificationAppeal(@PathVariable UUID id, @CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfDto) {
-        service.update(id, hfDto,user);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+    @PostMapping("/hf/modification")
+    public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfModificationAppealDto) {
+        service.create(hfModificationAppealDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PatchMapping("/set-inspector")
