@@ -7,6 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
+import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfDeregisterAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfModificationAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsAcceptanceAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsTransferAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
@@ -68,6 +74,15 @@ public class AppealController {
         service.create(hfModificationAppealDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
+
+
+//    @PostMapping("/equipment/modification")
+//    public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfModificationAppealDto) {
+//        service.create(hfModificationAppealDto,user);
+//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+//    }
+
+
 
     @PatchMapping("/set-inspector")
     public ResponseEntity<?> setInspector(@Valid @RequestBody SetInspectorDto dto) {

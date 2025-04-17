@@ -8,7 +8,7 @@
 //import org.springframework.web.bind.annotation.*;
 //import uz.technocorp.ecosystem.models.ApiResponse;
 //import uz.technocorp.ecosystem.models.ResponseMessage;
-//import uz.technocorp.ecosystem.modules.appeal.dto.HfAppealDto;
+//import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
 //import uz.technocorp.ecosystem.modules.user.User;
 //import uz.technocorp.ecosystem.publics.AttachmentDto;
 //import uz.technocorp.ecosystem.security.CurrentUser;

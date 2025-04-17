@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
-import uz.technocorp.ecosystem.modules.appeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.hazardousfacility.dto.HfDto;
@@ -165,7 +165,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     }
 
     @Override
-    public void deActivate(UUID id, Map<String, String> dto) {
+    public void deregister(UUID id, Map<String, String> dto) {
         HazardousFacility hazardousFacility = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", id));
