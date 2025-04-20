@@ -1,6 +1,6 @@
 //package uz.technocorp.ecosystem.modules.hazardousfacilitymodificationappeal;
 //
-//import uz.technocorp.ecosystem.modules.appeal.dto.HfModificationAppealDto;
+//import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfModificationAppealDto;
 //import uz.technocorp.ecosystem.modules.user.User;
 //
 //import java.util.UUID;

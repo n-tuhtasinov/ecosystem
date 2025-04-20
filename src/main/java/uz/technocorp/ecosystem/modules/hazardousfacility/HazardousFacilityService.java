@@ -16,6 +16,6 @@ public interface HazardousFacilityService {
     void create(UUID appealId);
     void create(HfDto dto);
     void update(UUID id, HfDto dto);
-    void deActivate(UUID id, Map<String, String> dto);
+    void deregister(UUID id, Map<String, String> dto);
     void periodicUpdate(UUID id, Map<String, String> dto);
 }

@@ -1,19 +1,12 @@
 package uz.technocorp.ecosystem.configs;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.resource.ResourceResolver;
-import org.springframework.web.servlet.resource.ResourceResolverChain;
 
-import java.io.File;
-import java.util.List;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -38,12 +31,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         //get index html path
-//        String currentDir = System.getProperty("user.dir");
-//        String frontPath = new File(currentDir).getParentFile().getAbsolutePath();
+//        String currentDir = System.getProperty("user.dir")+"/static/";
 
         // handle SPA routing
 //        registry.addResourceHandler("/**", "/")
-//                .addResourceLocations("file:" + frontPath + "/front/index.html", "")
+//                .addResourceLocations("file:"+currentDir, "")
 //                .resourceChain(false);
 
 
