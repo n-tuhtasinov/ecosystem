@@ -10,9 +10,8 @@ import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.user.converter.DirectionConverter;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -56,7 +55,9 @@ public class User extends AuditEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        Set<SimpleGrantedAuthority> set = directions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+        set.add(new SimpleGrantedAuthority(role.name()));
+        return set;
     }
 
     @Override
