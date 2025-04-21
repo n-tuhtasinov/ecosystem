@@ -62,7 +62,7 @@ public class IonizingRadiationSource extends AuditEntity {
     private String serialNumber;
 
     @Column(nullable = false)
-    private Integer activity;
+    private Integer activity; // aktivligi
 
     @Column(nullable = false)
     private String type;

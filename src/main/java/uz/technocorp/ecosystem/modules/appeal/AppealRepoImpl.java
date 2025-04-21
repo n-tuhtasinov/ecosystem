@@ -61,6 +61,10 @@ public class AppealRepoImpl implements AppealRepo {
             predicates.add(cb.equal(appeal.get("officeId"), params.get("officeId")));
         }
 
+        if (params.get("inspectorId") != null) {
+            predicates.add(cb.equal(appeal.get("inspectorId"), params.get("inspectorId")));
+        }
+
         cq.where(predicates.toArray(new Predicate[0]));
         // DTO yaratish
         cq.select(cb
@@ -70,15 +74,15 @@ public class AppealRepoImpl implements AppealRepo {
                         appeal.get("date"),
                         appeal.get("status"),
                         appeal.get("legalTin"),
+                        appeal.get("number"),
                         appeal.get("legalName"),
                         appeal.get("regionName"),
                         appeal.get("districtName"),
-                        appeal.get("mainId"),
                         appeal.get("address"),
                         appeal.get("email"),
                         appeal.get("phoneNumber"),
                         appeal.get("appealType"),
-                        appeal.get("inspectorName"),
+                        appeal.get("executorName"),
                         appeal.get("deadline"),
                         appeal.get("officeName")
                 ));

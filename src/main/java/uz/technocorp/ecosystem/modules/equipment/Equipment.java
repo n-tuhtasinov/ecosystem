@@ -3,10 +3,12 @@ package uz.technocorp.ecosystem.modules.equipment;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSort;
 import uz.technocorp.ecosystem.modules.childequipmenttype.ChildEquipmentType;
 import uz.technocorp.ecosystem.modules.district.District;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
@@ -31,7 +33,14 @@ import java.util.UUID;
 public class Equipment extends AuditEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private AppealType appealType;
+    private EquipmentType type;
+
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class, optional = false)
+    @JoinColumn(name = "appeal_id", insertable = false, updatable = false)
+    private Appeal appeal;
+
+    @Column(name = "appeal_id", nullable = false)
+    private UUID appealId;
 
     @Column(nullable = false)
     private String number;
@@ -100,10 +109,7 @@ public class Equipment extends AuditEntity {
     private String owner;
 
     @Column(nullable = false)
-    private Long lng;
-
-    @Column(nullable = false)
-    private Long lat;
+    private String location;
 
     @Column(nullable = false)
     private LocalDate manufacturedAt;
