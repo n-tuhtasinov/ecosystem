@@ -109,10 +109,7 @@ public class Equipment extends AuditEntity {
     private String owner;
 
     @Column(nullable = false)
-    private Long lng;
-
-    @Column(nullable = false)
-    private Long lat;
+    private String location;
 
     @Column(nullable = false)
     private LocalDate manufacturedAt;
