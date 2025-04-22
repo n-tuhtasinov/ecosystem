@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
-import uz.technocorp.ecosystem.modules.appeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.hazardousfacility.dto.HfDto;
@@ -63,6 +63,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .upperOrganization(hfAppealDto.getUpperOrganization())
                         .name(hfAppealDto.getName())
                         .address(hfAppealDto.getAddress())
+                        .location(hfAppealDto.getLocation())
+                        .hazardousSubstance(hfAppealDto.getHazardousSubstance())
                         .appealId(appeal.getId())
                         .hazardousFacilityTypeId(hfAppealDto.getHazardousFacilityTypeId())
                         .extraArea(hfAppealDto.getExtraArea())
@@ -102,6 +104,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .upperOrganization(dto.upperOrganization())
                         .name(dto.name())
                         .address(dto.address())
+                        .location(dto.location())
+                        .hazardousSubstance(dto.hazardousSubstance())
                         .spheres(dto.spheres())
 
                         .hazardousFacilityTypeId(dto.hazardousFacilityTypeId())
@@ -141,6 +145,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setUpperOrganization(dto.upperOrganization());
         hazardousFacility.setName(dto.name());
         hazardousFacility.setAddress(dto.address());
+        hazardousFacility.setLocation(dto.location());
+        hazardousFacility.setHazardousSubstance(dto.hazardousSubstance());
         hazardousFacility.setHazardousFacilityTypeId(dto.hazardousFacilityTypeId());
         hazardousFacility.setExtraArea(dto.extraArea());
         hazardousFacility.setDescription(dto.description());
@@ -165,7 +171,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     }
 
     @Override
-    public void deActivate(UUID id, Map<String, String> dto) {
+    public void deregister(UUID id, Map<String, String> dto) {
         HazardousFacility hazardousFacility = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", id));

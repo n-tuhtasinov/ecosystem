@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal.dto;
+package uz.technocorp.ecosystem.modules.appeal.dto.hf;
 
 
 import jakarta.persistence.EnumType;
@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.hazardousfacility.enums.HFSphere;
 
@@ -44,6 +45,12 @@ public class HfAppealDto implements AppealDto {
     @NotNull(message = "Tuman tanlanmadi!")
     private Integer districtId;
 
+    @NotBlank(message = "Lokatsiya kiritilmadi!")
+    private String location;
+
+    @NotBlank(message = "Xavfli moddalarning nomi va miqdori kiritilmadi!")
+    private String hazardousSubstance;
+
     @Enumerated(EnumType.STRING)
     private List<HFSphere> spheres;
 
@@ -76,6 +83,9 @@ public class HfAppealDto implements AppealDto {
     private String ecologicalConclusionPath;
 
     private String replyLetterPath;
+
+    @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
+    private String appealPath;
 
     @Override
     public AppealType getAppealType() {

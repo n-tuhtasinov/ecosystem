@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal.dto;
+package uz.technocorp.ecosystem.modules.appeal.dto.hf;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
@@ -21,23 +22,16 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HfModificationAppealDto implements AppealDto {
+public class HfDeregisterAppealDto implements AppealDto {
 
-        @NotNull(message = "Hisobga olish raqami kiritilmadi!")
+        @NotNull(message = "XICHO ID raqami jo'natilmadi")
         private UUID hazardousFacilityId;
+
         @NotBlank(message = "Telefon raqami kiritilmadi!")
         private String phoneNumber;
+
         @NotBlank(message = "Pochta manzili kiritilmadi!")
         private String email;
-        @NotBlank(message = "Xichoga o'zgartirish kiritish yoki ro'yxatdan chiqarish sababi kiritilmadi!")
-        private String reason;
-        @NotBlank(message = "Ariza bayoni kiritilmadi!")
-        private String statement;
-        @NotBlank(message = "Dalolatnoma biriktirilmadi!")
-        private String actPath;
-
-        @NotBlank(message = "Ariza fayli biriktirilmadi!")
-        private String appealPath;
 
         @NotNull(message = "Viloyat jo'natilmadi")
         private Integer regionId;
@@ -47,6 +41,18 @@ public class HfModificationAppealDto implements AppealDto {
 
         @NotBlank(message = "Manzil jo'natilmadi")
         private String address;
+
+        @NotBlank(message = "XiCHOni ro'yxatdan chiqarish sababi kiritilmadi")
+        private String reason;
+
+        @NotBlank(message = "Ariza bayoni kiritilmadi!")
+        private String description;
+
+        @NotBlank(message = "Asos hujjati jo'natilmadi")
+        private String actPath;
+
+        @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
+        private String appealPath;
 
         @Override
         public AppealType getAppealType() {

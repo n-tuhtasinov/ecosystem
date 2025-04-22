@@ -7,6 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
+import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfDeregisterAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfModificationAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsAcceptanceAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsTransferAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
@@ -50,24 +56,33 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    // inpektor fayllarni yuklashi uchun
-    @PutMapping("/hf/{id}")
-    public ResponseEntity<?> updateHfAppeal(@PathVariable UUID id, @CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        service.update(id, hfDto,user);
+    // inpektor tomonidan arizadagi kamchilik fayllarni yuklab arizani davom ettirib ketishi uchun
+    @PutMapping("/hf/{appealId}")
+    public ResponseEntity<?> updateHfAppeal(@PathVariable UUID appealId, @CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
+        service.update(appealId, hfDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
-    @PostMapping("/hf-modify")
-    public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfDto) {
-        service.create(hfDto,user);
+    @PostMapping("/hf/deregister")
+    public ResponseEntity<?> createHfDeregisterAppeal(@CurrentUser User user, @Valid @RequestBody HfDeregisterAppealDto hfDeregisterAppealDto) {
+        service.create(hfDeregisterAppealDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    @PutMapping("/hf-modify/{id}")
-    public ResponseEntity<?> updateHfModificationAppeal(@PathVariable UUID id, @CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfDto) {
-        service.update(id, hfDto,user);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+    @PostMapping("/hf/modification")
+    public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfModificationAppealDto) {
+        service.create(hfModificationAppealDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
+
+
+//    @PostMapping("/equipment/modification")
+//    public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfModificationAppealDto) {
+//        service.create(hfModificationAppealDto,user);
+//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+//    }
+
+
 
     @PatchMapping("/set-inspector")
     public ResponseEntity<?> setInspector(@Valid @RequestBody SetInspectorDto dto) {

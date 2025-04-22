@@ -41,10 +41,10 @@ public class HazardousFacilityController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    @PatchMapping("/de-activate/{id}")
-    public ResponseEntity<?> deActivate(@PathVariable UUID id, @RequestBody Map<String, String> dto) {
+    @PatchMapping("/deregister/{id}")
+    public ResponseEntity<?> deregister(@PathVariable UUID id, @RequestBody Map<String, String> dto) {
         try {
-            service.deActivate(id, dto);
+            service.deregister(id, dto);
             return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
         } catch (Exception e) {
             throw new RuntimeException(e);

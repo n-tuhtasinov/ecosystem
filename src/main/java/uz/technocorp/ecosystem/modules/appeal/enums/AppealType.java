@@ -11,6 +11,7 @@ public enum AppealType {
     // Xavfli Ishlab Chiqarish Obyektini ro‘yxatga olish va chiqarish
     REGISTER_HF,
     DEREGISTER_HF,
+    MODIFY_HF,
 
     //Crane
     REGISTER_CRANE,
