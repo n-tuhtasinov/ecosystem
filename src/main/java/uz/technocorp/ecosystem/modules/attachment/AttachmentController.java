@@ -2,11 +2,9 @@ package uz.technocorp.ecosystem.modules.attachment;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uz.technocorp.ecosystem.modules.attachment.dto.AttachmentDto;
 
 /**
  * @author Rasulov Komil
@@ -28,5 +26,15 @@ public class AttachmentController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/html")
+    public ResponseEntity<String> createPdfFromHtml(@RequestBody String htmlContent) {
+        return ResponseEntity.ok(service.createPdfFromHtml(htmlContent, "generating-pdf"));
+    }
+
+    @GetMapping
+    public ResponseEntity<AttachmentDto> getHtmlByPath(@RequestParam("path") String path) {
+        return ResponseEntity.ok(service.getHtmlByPath(path));
     }
 }
