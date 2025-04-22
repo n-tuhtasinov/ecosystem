@@ -45,6 +45,12 @@ public class HfAppealDto implements AppealDto {
     @NotNull(message = "Tuman tanlanmadi!")
     private Integer districtId;
 
+    @NotBlank(message = "Lokatsiya kiritilmadi!")
+    private String location;
+
+    @NotBlank(message = "Xavfli moddalarning nomi va miqdori kiritilmadi!")
+    private String hazardousSubstance;
+
     @Enumerated(EnumType.STRING)
     private List<HFSphere> spheres;
 

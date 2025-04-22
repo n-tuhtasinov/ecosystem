@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.hazardousfacility;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
@@ -71,6 +72,12 @@ public class HazardousFacility extends AuditEntity {
     private String name;
 
     private String address;
+
+    @Column(nullable = false)
+    private String location;
+
+    @Column(nullable = false, columnDefinition = "text")
+    private String hazardousSubstance;
 
     @OneToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
     @JoinColumn(name = "registration_appeal_id", insertable = false, updatable = false)
