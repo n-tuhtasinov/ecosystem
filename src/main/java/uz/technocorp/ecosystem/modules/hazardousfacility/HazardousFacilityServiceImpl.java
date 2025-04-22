@@ -63,6 +63,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .upperOrganization(hfAppealDto.getUpperOrganization())
                         .name(hfAppealDto.getName())
                         .address(hfAppealDto.getAddress())
+                        .location(hfAppealDto.getLocation())
+                        .hazardousSubstance(hfAppealDto.getHazardousSubstance())
                         .appealId(appeal.getId())
                         .hazardousFacilityTypeId(hfAppealDto.getHazardousFacilityTypeId())
                         .extraArea(hfAppealDto.getExtraArea())
@@ -102,6 +104,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .upperOrganization(dto.upperOrganization())
                         .name(dto.name())
                         .address(dto.address())
+                        .location(dto.location())
+                        .hazardousSubstance(dto.hazardousSubstance())
                         .spheres(dto.spheres())
 
                         .hazardousFacilityTypeId(dto.hazardousFacilityTypeId())
@@ -141,6 +145,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setUpperOrganization(dto.upperOrganization());
         hazardousFacility.setName(dto.name());
         hazardousFacility.setAddress(dto.address());
+        hazardousFacility.setLocation(dto.location());
+        hazardousFacility.setHazardousSubstance(dto.hazardousSubstance());
         hazardousFacility.setHazardousFacilityTypeId(dto.hazardousFacilityTypeId());
         hazardousFacility.setExtraArea(dto.extraArea());
         hazardousFacility.setDescription(dto.description());

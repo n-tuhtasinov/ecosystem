@@ -14,6 +14,7 @@ import java.util.List;
  */
 public record HfDto(Long legalTin, String legalName, Integer regionId, Integer districtId, String legalAddress,
                     String phoneNumber, String email, String upperOrganization, String name, String address,
+                    String location, String hazardousSubstance,
                     Integer hazardousFacilityTypeId, String extraArea, String description, String registryNumber,
                     String appointmentOrderPath, String cadastralPassportPath, String certificationPath, String permitPath,
                     String deviceTestingPath, String licensePath, String ecologicalConclusionPath, String expertOpinionPath,
