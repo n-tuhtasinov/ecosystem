@@ -5,7 +5,7 @@ import lombok.*;
 import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hazardousfacility.enums.HFSphere;
-import uz.technocorp.ecosystem.modules.hazardousfacilitytype.HazardousFacilityType;
+import uz.technocorp.ecosystem.modules.hftype.HazardousFacilityType;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;

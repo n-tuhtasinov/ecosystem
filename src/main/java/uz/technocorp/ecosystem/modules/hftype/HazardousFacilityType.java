@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilitytype;
+package uz.technocorp.ecosystem.modules.hftype;
 
 import jakarta.persistence.*;
 import lombok.*;

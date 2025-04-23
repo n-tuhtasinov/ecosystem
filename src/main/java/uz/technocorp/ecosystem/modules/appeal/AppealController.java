@@ -8,18 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
-import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfDeregisterAppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfModificationAppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsAcceptanceAppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsAppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsTransferAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
-import uz.technocorp.ecosystem.modules.user.User;
-import uz.technocorp.ecosystem.security.CurrentUser;
 
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -33,51 +24,6 @@ import java.util.UUID;
 public class AppealController {
 
     private final AppealService service;
-
-    @PostMapping("/irs")
-    public ResponseEntity<?> createIrsAppeal(@CurrentUser User user, @Valid @RequestBody IrsAppealDto irsDto) {
-        service.create(irsDto,user);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
-    @PostMapping("/irs/transfer")
-    public ResponseEntity<?> createIrsTransferAppeal(@CurrentUser User user, @Valid @RequestBody IrsTransferAppealDto irsTransferDto) {
-        service.create(irsTransferDto,user);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
-    @PostMapping("/irs/acceptance")
-    public ResponseEntity<?> createIrsAcceptanceAppeal(@CurrentUser User user, @Valid @RequestBody IrsAcceptanceAppealDto irsAcceptanceDto) {
-        service.create(irsAcceptanceDto,user);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
-    @PostMapping("/hf")
-    public ResponseEntity<?> createHfAppeal(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        service.create(hfDto,user);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
-    // inpektor tomonidan arizadagi kamchilik fayllarni yuklab arizani davom ettirib ketishi uchun
-    //TODO: Faqat inspektor kirishi kerishi kerakligiga tekshirish kerak
-    @PutMapping("/hf/{appealId}")
-    public ResponseEntity<?> updateHfAppeal(@PathVariable UUID appealId, @Valid @RequestBody HfAppealDto hfDto) {
-        service.update(appealId, hfDto);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
-    }
-
-    @PostMapping("/hf/deregister")
-    public ResponseEntity<?> createHfDeregisterAppeal(@CurrentUser User user, @Valid @RequestBody HfDeregisterAppealDto hfDeregisterAppealDto) {
-        service.create(hfDeregisterAppealDto,user);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
-    @PostMapping("/hf/modification")
-    public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfModificationAppealDto) {
-        service.create(hfModificationAppealDto,user);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
 
     @PatchMapping("/set-inspector")
     public ResponseEntity<?> setInspector(@Valid @RequestBody SetInspectorDto dto) {
