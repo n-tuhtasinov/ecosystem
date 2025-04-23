@@ -1,5 +1,6 @@
-package uz.technocorp.ecosystem.modules.template.dto;
+package uz.technocorp.ecosystem.modules.template.form;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,17 +11,16 @@ import lombok.NoArgsConstructor;
  * @created 15.04.2025
  * @since v1.0
  */
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TemplateDto {
+public class TemplateEditForm {
 
-    private Integer id;
+    @NotBlank(message = "Template nomi jo'natilmadi")
     private String name;
-    private String description;
-    private Integer ord;
-    private String type;
-    private String content;
 
+    private String description;
+
+    // Other elements
+    private Integer id;
 }

@@ -1,8 +1,14 @@
 package uz.technocorp.ecosystem.modules.template;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import uz.technocorp.ecosystem.modules.template.projection.TemplateView;
+import uz.technocorp.ecosystem.modules.template.projection.TemplateViewBySelect;
+
+import java.util.List;
 
 /**
  * @author Sukhrob
@@ -11,7 +17,12 @@ import org.springframework.stereotype.Repository;
  * @since v1.0
  */
 @Repository
-public interface TemplateRepository extends JpaRepository<Template, Integer>, JpaSpecificationExecutor<Template> {
+public interface TemplateRepository extends JpaRepository<Template, Integer> {
 
-    long count();
+    @Query("SELECT t FROM Template t")
+    Page<TemplateView> getAll(Pageable pageable);
+
+    @Query("SELECT t FROM Template t")
+    List<TemplateViewBySelect> getAllBySelect();
+
 }

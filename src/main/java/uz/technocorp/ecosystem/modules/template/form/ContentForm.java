@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.template.dto;
+package uz.technocorp.ecosystem.modules.template.form;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,16 +7,16 @@ import lombok.NoArgsConstructor;
 /**
  * @author Sukhrob
  * @version 1.0
- * @created 15.04.2025
+ * @created 23.04.2025
  * @since v1.0
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TemplateParamsDto {
+public class ContentForm {
 
-    private String type;
-    private Integer page;
-    private Integer limit;
+    private String content;
 
+    // Other elements
+    private Integer id;
 }

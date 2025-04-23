@@ -19,11 +19,13 @@ public class TemplateForm {
     @NotBlank(message = "Template nomi jo'natilmadi")
     private String name;
 
-    @NotBlank(message = "Turi tanlanmadi")
+    @NotBlank(message = "Shablon turi tanlanmadi")
     private String type;
 
-    @NotBlank(message = "Template bo'sh bo'lishi mumkin emas")
     private String content;
 
     private String description;
+
+    // Other elements
+    private Integer id;
 }

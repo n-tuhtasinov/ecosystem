@@ -3,7 +3,6 @@ package uz.technocorp.ecosystem.modules.template;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
-import uz.technocorp.ecosystem.modules.user.enums.Direction;
 
 /**
  * @author Sukhrob
@@ -23,20 +22,17 @@ public class Template extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
     @Column
     private String description;
 
-    @Column
-    private Integer ord;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Direction type;
+    private TemplateType type;
 
-    @Column(nullable = false, columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String content;
 
 }
