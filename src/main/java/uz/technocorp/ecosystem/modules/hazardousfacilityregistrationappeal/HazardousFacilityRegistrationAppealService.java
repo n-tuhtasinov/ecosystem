@@ -1,6 +1,6 @@
 //package uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal;
 //
-//import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
+//import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 //import uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal.helper.HazardousFacilityRegistrationAppealHelper;
 //import uz.technocorp.ecosystem.modules.user.User;
 //import uz.technocorp.ecosystem.publics.AttachmentDto;

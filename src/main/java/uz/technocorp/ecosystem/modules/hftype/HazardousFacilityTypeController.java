@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilitytype;
+package uz.technocorp.ecosystem.modules.hftype;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.models.ResponseMessage;
-import uz.technocorp.ecosystem.modules.hazardousfacilitytype.dto.HazardousFacilityTypeDto;
+import uz.technocorp.ecosystem.modules.hftype.dto.HazardousFacilityTypeDto;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
  * @since v1.0
  */
 @RestController
-@RequestMapping("/api/v1/hazardous-facility-types")
+@RequestMapping("/api/v1/hf-types")
 @RequiredArgsConstructor
 @Slf4j
 public class HazardousFacilityTypeController {

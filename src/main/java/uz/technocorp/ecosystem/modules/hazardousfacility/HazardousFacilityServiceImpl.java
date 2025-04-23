@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
-import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.hazardousfacility.dto.HfDto;
