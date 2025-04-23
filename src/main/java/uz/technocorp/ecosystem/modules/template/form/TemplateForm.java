@@ -25,7 +25,4 @@ public class TemplateForm {
     private String content;
 
     private String description;
-
-    // Other elements
-    private Integer id;
 }

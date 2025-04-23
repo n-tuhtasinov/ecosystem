@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.template.projection;
 
+import java.time.LocalDateTime;
+
 /**
  * @author Sukhrob
  * @version 1.0
@@ -14,6 +16,10 @@ public interface TemplateView {
     String getDescription();
 
     String getType();
+
+    LocalDateTime getCreatedAt();
+
+    LocalDateTime getUpdatedAt();
 
     String getContent();
 }
