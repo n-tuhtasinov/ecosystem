@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.template.form;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,5 +23,6 @@ public class TemplateEditForm {
     private String description;
 
     // Other elements
+    @Schema(hidden = true)
     private Integer id;
 }
