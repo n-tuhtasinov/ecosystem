@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
-import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfDeregisterAppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfModificationAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfDeregisterAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfModificationAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 

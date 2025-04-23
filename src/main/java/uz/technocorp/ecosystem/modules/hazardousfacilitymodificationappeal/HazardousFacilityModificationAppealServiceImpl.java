@@ -11,7 +11,7 @@
 //import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
 //import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
 //import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacilityRepository;
-//import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfModificationAppealDto;
+//import uz.technocorp.ecosystem.modules.hfappeal.dto.HfModificationAppealDto;
 //import uz.technocorp.ecosystem.modules.office.Office;
 //import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 //import uz.technocorp.ecosystem.modules.profile.Profile;

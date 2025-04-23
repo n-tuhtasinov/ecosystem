@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal.dto.hf;
+package uz.technocorp.ecosystem.modules.hfappeal.dto;
 
 
 import jakarta.persistence.EnumType;
