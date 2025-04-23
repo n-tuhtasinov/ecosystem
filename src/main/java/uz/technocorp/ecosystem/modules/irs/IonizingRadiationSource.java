@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.irs;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
@@ -23,7 +23,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @Entity
-public class IonizingRadiationSource extends AuditEntity {
+public class IonizingRadiationSource extends AuditAndIdEntity {
 
     private String parentOrganization;
 

@@ -68,7 +68,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .appealId(appeal.getId())
                         .hazardousFacilityTypeId(hfAppealDto.getHazardousFacilityTypeId())
                         .extraArea(hfAppealDto.getExtraArea())
-                        .description(hfAppealDto.getDescription())
                         .registryNumber(registryNumber)
                         .active(true)
                         .spheres(hfAppealDto.getSpheres())

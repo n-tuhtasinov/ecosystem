@@ -1,24 +1,12 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.hibernate.usertype.UserType;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSort;
-import uz.technocorp.ecosystem.modules.childequipmenttype.ChildEquipmentType;
-import uz.technocorp.ecosystem.modules.district.District;
-import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
-import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
-import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
-import uz.technocorp.ecosystem.modules.profile.Profile;
-import uz.technocorp.ecosystem.modules.region.Region;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -32,7 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EquipmentAppeal extends AuditEntity {
+public class EquipmentAppeal extends AuditAndIdEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -52,10 +40,5 @@ public class EquipmentAppeal extends AuditEntity {
     private AppealStatus status;
 
     private LocalDate deadline;
-
-    //save all fields of the equipment as json in database
-    //all fields are in the equipment entity
-//    @Column(columnDefinition = "jsonb", nullable = false)
-//    private JsonNode data;
 
 }

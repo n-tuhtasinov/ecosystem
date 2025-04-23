@@ -5,7 +5,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.user.converter.DirectionConverter;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 @Builder
-public class User extends AuditEntity implements UserDetails {
+public class User extends AuditAndIdEntity implements UserDetails {
 
     @Column(nullable = false, unique = true)
     private String username;

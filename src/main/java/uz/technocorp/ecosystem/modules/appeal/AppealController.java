@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.appeal;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
@@ -13,6 +14,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfModificationAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsAcceptanceAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.irs.IrsTransferAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
@@ -57,9 +59,10 @@ public class AppealController {
     }
 
     // inpektor tomonidan arizadagi kamchilik fayllarni yuklab arizani davom ettirib ketishi uchun
+    //TODO: Faqat inspektor kirishi kerishi kerakligiga tekshirish kerak
     @PutMapping("/hf/{appealId}")
-    public ResponseEntity<?> updateHfAppeal(@PathVariable UUID appealId, @CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        service.update(appealId, hfDto,user);
+    public ResponseEntity<?> updateHfAppeal(@PathVariable UUID appealId, @Valid @RequestBody HfAppealDto hfDto) {
+        service.update(appealId, hfDto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
@@ -76,14 +79,6 @@ public class AppealController {
     }
 
 
-//    @PostMapping("/equipment/modification")
-//    public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfModificationAppealDto) {
-//        service.create(hfModificationAppealDto,user);
-//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-//    }
-
-
-
     @PatchMapping("/set-inspector")
     public ResponseEntity<?> setInspector(@Valid @RequestBody SetInspectorDto dto) {
         service.setInspector(dto);
@@ -98,7 +93,8 @@ public class AppealController {
 
     @GetMapping
     public ResponseEntity<?> getAllAppeals(@RequestParam Map<String, String> params) {
-        return ResponseEntity.ok(service.getAppealCustoms(params));
+        Page<AppealCustom> appeals = service.getAppealCustoms(params);
+        return ResponseEntity.ok(new ApiResponse(appeals));
     }
 
 }

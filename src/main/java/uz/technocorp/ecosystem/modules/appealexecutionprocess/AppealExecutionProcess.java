@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.appealexecutionprocess;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 
 import java.util.UUID;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class AppealExecutionProcess extends AuditEntity {
+public class AppealExecutionProcess extends AuditAndIdEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
     @JoinColumn(name = "appeal_id", insertable = false, updatable = false)

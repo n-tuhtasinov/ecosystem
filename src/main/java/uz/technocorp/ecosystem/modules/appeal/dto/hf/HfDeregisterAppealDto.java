@@ -51,9 +51,6 @@ public class HfDeregisterAppealDto implements AppealDto {
         @NotBlank(message = "Asos hujjati jo'natilmadi")
         private String actPath;
 
-        @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
-        private String appealPath;
-
         @Override
         public AppealType getAppealType() {
                 return AppealType.DEREGISTER_HF;

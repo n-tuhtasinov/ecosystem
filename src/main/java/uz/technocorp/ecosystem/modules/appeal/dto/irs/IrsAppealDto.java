@@ -99,8 +99,6 @@ public class IrsAppealDto implements AppealDto {
 
         private String additionalFilePath;
 
-        private String description;
-
         @NotNull(message = "INM joylashgan viloyat tanlanmadi")
         private Integer regionId;
 
@@ -109,9 +107,6 @@ public class IrsAppealDto implements AppealDto {
 
         @NotBlank(message = "INM joylashgan manzil kiritilmadi")
         private String address;
-
-        @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
-        private String appealPath;
 
         @Override
         public AppealType getAppealType() {

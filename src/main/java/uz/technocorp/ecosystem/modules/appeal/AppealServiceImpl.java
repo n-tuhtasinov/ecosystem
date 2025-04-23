@@ -133,7 +133,7 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public void update(UUID id, AppealDto dto, User user) {
+    public void update(UUID id, AppealDto dto) {
         Appeal appeal = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho arizasi", "Id", id));
