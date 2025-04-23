@@ -17,6 +17,7 @@ public interface AppConstants {
     String ACCESS_TOKEN = "access_token";
     String REFRESH_TOKEN = "refresh_token";
 
+    // TODO Domain name e-imzo production sertifikatga mos bo'lishi kerak
     String HOST = "technocorp.uz";
 
 //    Pageable pageable= PageRequest.of(

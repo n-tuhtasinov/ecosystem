@@ -2,7 +2,10 @@ package uz.technocorp.ecosystem.modules.attachment;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import uz.technocorp.ecosystem.models.AuditEntity;
 
 /**
@@ -21,4 +24,10 @@ public class Attachment extends AuditEntity {
     @Column(unique = true, nullable = false)
     private String path;
 
+    @Column(columnDefinition = "text")
+    private String htmlContent;
+
+    public Attachment(String path) {
+        this.path = path;
+    }
 }
