@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal.dto.irs;
+package uz.technocorp.ecosystem.modules.irsappeal.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

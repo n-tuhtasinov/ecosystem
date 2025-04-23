@@ -1,14 +1,13 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilitytype;
+package uz.technocorp.ecosystem.modules.hftype;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.hazardousfacilitytype.dto.HazardousFacilityTypeDto;
+import uz.technocorp.ecosystem.modules.hftype.dto.HazardousFacilityTypeDto;
 
 import java.util.List;
 

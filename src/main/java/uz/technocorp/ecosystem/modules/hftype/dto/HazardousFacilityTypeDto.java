@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilitytype.dto;
+package uz.technocorp.ecosystem.modules.hftype.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
