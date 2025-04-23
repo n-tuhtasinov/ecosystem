@@ -2,9 +2,8 @@ package uz.technocorp.ecosystem.modules.equipment;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSort;
 import uz.technocorp.ecosystem.modules.childequipmenttype.ChildEquipmentType;
 import uz.technocorp.ecosystem.modules.district.District;
@@ -30,7 +29,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Equipment extends AuditEntity {
+public class Equipment extends AuditAndIdEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EquipmentType type;

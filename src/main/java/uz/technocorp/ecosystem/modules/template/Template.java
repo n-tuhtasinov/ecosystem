@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.template;
 
 import jakarta.persistence.*;
 import lombok.*;
+import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.user.enums.Direction;
 
 /**
@@ -16,7 +17,7 @@ import uz.technocorp.ecosystem.modules.user.enums.Direction;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Template {
+public class Template extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

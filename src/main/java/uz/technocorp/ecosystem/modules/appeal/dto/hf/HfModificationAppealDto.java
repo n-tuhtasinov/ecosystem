@@ -29,9 +29,6 @@ public class HfModificationAppealDto extends HfAppealDto {
         @NotBlank(message = "Xichoga o'zgartirish kiritish sababi kiritilmadi!")
         private String reason;
 
-        @NotBlank(message = "Ariza bayoni kiritilmadi!")
-        private String description;
-
         @NotBlank(message = "Asos fayli biriktirilmadi!")
         private String actPath;
 
@@ -40,11 +37,10 @@ public class HfModificationAppealDto extends HfAppealDto {
                 return AppealType.MODIFY_HF;
         }
 
-        public HfModificationAppealDto(String phoneNumber, String email, String upperOrganization, String name, String address, Integer hazardousFacilityTypeId, String extraArea, String description, Integer regionId, Integer districtId, String location, String hazardousSubstance, List<HFSphere> spheres, String identificationCardPath, String receiptPath, String expertOpinionPath, String projectDocumentationPath, String cadastralPassportPath, String industrialSafetyDeclarationPath, String insurancePolicyPath, String licensePath, String permitPath, String certificationPath, String deviceTestingPath, String appointmentOrderPath, String ecologicalConclusionPath, String replyLetterPath, String appealPath, UUID hazardousFacilityId, String reason, String description1, String actPath) {
-                super(phoneNumber, email, upperOrganization, name, address, hazardousFacilityTypeId, extraArea, description, regionId, districtId, location, hazardousSubstance, spheres, identificationCardPath, receiptPath, expertOpinionPath, projectDocumentationPath, cadastralPassportPath, industrialSafetyDeclarationPath, insurancePolicyPath, licensePath, permitPath, certificationPath, deviceTestingPath, appointmentOrderPath, ecologicalConclusionPath, replyLetterPath, appealPath);
+        public HfModificationAppealDto(String phoneNumber, String email, String upperOrganization, String name, String address, Integer hazardousFacilityTypeId, String extraArea, Integer regionId, Integer districtId, String location, String hazardousSubstance, List<HFSphere> spheres, String identificationCardPath, String receiptPath, String expertOpinionPath, String projectDocumentationPath, String cadastralPassportPath, String industrialSafetyDeclarationPath, String insurancePolicyPath, String licensePath, String permitPath, String certificationPath, String deviceTestingPath, String appointmentOrderPath, String ecologicalConclusionPath, String replyLetterPath, UUID hazardousFacilityId, String reason, String actPath) {
+                super(phoneNumber, email, upperOrganization, name, address, hazardousFacilityTypeId, extraArea, regionId, districtId, location, hazardousSubstance, spheres, identificationCardPath, receiptPath, expertOpinionPath, projectDocumentationPath, cadastralPassportPath, industrialSafetyDeclarationPath, insurancePolicyPath, licensePath, permitPath, certificationPath, deviceTestingPath, appointmentOrderPath, ecologicalConclusionPath, replyLetterPath);
                 this.hazardousFacilityId = hazardousFacilityId;
                 this.reason = reason;
-                this.description = description1;
                 this.actPath = actPath;
         }
 }

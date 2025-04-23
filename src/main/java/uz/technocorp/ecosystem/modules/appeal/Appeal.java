@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.district.District;
@@ -29,7 +29,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Builder
-public class Appeal extends AuditEntity {
+public class Appeal extends AuditAndIdEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

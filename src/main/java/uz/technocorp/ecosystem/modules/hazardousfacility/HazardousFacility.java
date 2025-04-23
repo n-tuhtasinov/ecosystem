@@ -1,9 +1,8 @@
 package uz.technocorp.ecosystem.modules.hazardousfacility;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hazardousfacility.enums.HFSphere;
 import uz.technocorp.ecosystem.modules.hazardousfacilitytype.HazardousFacilityType;
@@ -26,7 +25,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Builder
-public class HazardousFacility extends AuditEntity {
+public class HazardousFacility extends AuditAndIdEntity {
 
     @Column(nullable = false)
     private Long legalTin;
