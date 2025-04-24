@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.template.form;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,15 +15,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TemplateForm {
+public class TemplateEditForm {
 
     @NotBlank(message = "Template nomi jo'natilmadi")
     private String name;
 
-    @NotBlank(message = "Shablon turi tanlanmadi")
-    private String type;
-
-    private String content;
-
     private String description;
+
+    // Other elements
+    @Schema(hidden = true)
+    private Integer id;
 }

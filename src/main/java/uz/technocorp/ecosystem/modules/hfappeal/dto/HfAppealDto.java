@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal.dto.hf;
+package uz.technocorp.ecosystem.modules.hfappeal.dto;
 
 
 import jakarta.persistence.EnumType;
@@ -32,16 +32,22 @@ public class HfAppealDto implements AppealDto {
     private String phoneNumber;
 
     private String email;
+
     private String upperOrganization;
+
     private String name;
+
     @NotBlank(message = "Manzil kiritilmadi!")
     private String address;
+
     @NotNull(message = "XICHO turi tanlanmadi!")
     private Integer hazardousFacilityTypeId;
+
     private String extraArea;
-    private String description;
+
     @NotNull(message = "Viloyat tanlanmadi!")
     private Integer regionId;
+
     @NotNull(message = "Tuman tanlanmadi!")
     private Integer districtId;
 
@@ -83,9 +89,6 @@ public class HfAppealDto implements AppealDto {
     private String ecologicalConclusionPath;
 
     private String replyLetterPath;
-
-    @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
-    private String appealPath;
 
     @Override
     public AppealType getAppealType() {

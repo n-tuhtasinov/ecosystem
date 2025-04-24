@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal.dto.hf;
+package uz.technocorp.ecosystem.modules.hfappeal.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -50,9 +50,6 @@ public class HfDeregisterAppealDto implements AppealDto {
 
         @NotBlank(message = "Asos hujjati jo'natilmadi")
         private String actPath;
-
-        @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
-        private String appealPath;
 
         @Override
         public AppealType getAppealType() {

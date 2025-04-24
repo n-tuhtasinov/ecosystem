@@ -1,12 +1,11 @@
 package uz.technocorp.ecosystem.modules.hazardousfacility;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hazardousfacility.enums.HFSphere;
-import uz.technocorp.ecosystem.modules.hazardousfacilitytype.HazardousFacilityType;
+import uz.technocorp.ecosystem.modules.hftype.HazardousFacilityType;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -26,7 +25,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Builder
-public class HazardousFacility extends AuditEntity {
+public class HazardousFacility extends AuditAndIdEntity {
 
     @Column(nullable = false)
     private Long legalTin;

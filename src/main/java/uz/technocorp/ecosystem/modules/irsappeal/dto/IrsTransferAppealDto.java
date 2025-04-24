@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal.dto.irs;
+package uz.technocorp.ecosystem.modules.irsappeal.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -70,9 +70,6 @@ public class IrsTransferAppealDto implements AppealDto {
     private String sesConclusionPath;
 
     private String additionalFilePath;
-
-    @NotBlank(message = "Ariza fayli joylashgan path jo'natilmadi")
-    private String appealPath;
 
     @Override
     public AppealType getAppealType() {

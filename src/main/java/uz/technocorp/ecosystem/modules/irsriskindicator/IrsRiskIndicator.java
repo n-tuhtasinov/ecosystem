@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.irsriskindicator;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.enums.RiskAssessmentIndicator;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class IrsRiskIndicator extends AuditEntity {
+public class IrsRiskIndicator extends AuditAndIdEntity {
 
     @Enumerated(EnumType.STRING)
     private RiskAssessmentIndicator indicatorType;

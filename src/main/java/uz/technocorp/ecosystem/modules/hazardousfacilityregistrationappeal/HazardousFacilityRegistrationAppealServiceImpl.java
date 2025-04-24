@@ -8,7 +8,7 @@
 //import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 //import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 //import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-//import uz.technocorp.ecosystem.modules.appeal.dto.hf.HfAppealDto;
+//import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 //import uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal.helper.HazardousFacilityRegistrationAppealHelper;
 //import uz.technocorp.ecosystem.modules.hazardousfacilityregistrationappeal.projection.HazardousFacilityRegistrationAppealView;
 //import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;

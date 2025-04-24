@@ -1,7 +1,7 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilitytype;
+package uz.technocorp.ecosystem.modules.hftype;
 
 import org.springframework.data.domain.Page;
-import uz.technocorp.ecosystem.modules.hazardousfacilitytype.dto.HazardousFacilityTypeDto;
+import uz.technocorp.ecosystem.modules.hftype.dto.HazardousFacilityTypeDto;
 
 import java.util.List;
 

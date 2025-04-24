@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.riskassessment;
 
 import jakarta.persistence.*;
 import lombok.*;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @Builder
 @Getter
 @Setter
-public class RiskAssessment extends AuditEntity {
+public class RiskAssessment extends AuditAndIdEntity {
 
     private short tin;
 
