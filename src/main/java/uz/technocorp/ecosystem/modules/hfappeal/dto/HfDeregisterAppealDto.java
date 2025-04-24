@@ -42,7 +42,7 @@ public class HfDeregisterAppealDto implements AppealDto {
         @NotBlank(message = "Manzil jo'natilmadi")
         private String address;
 
-        @NotBlank(message = "XiCHOni ro'yxatdan chiqarish sababi kiritilmadi")
+        @NotBlank(message = "XICHOni ro'yxatdan chiqarish sababi kiritilmadi")
         private String reason;
 
         @NotBlank(message = "Ariza bayoni kiritilmadi!")

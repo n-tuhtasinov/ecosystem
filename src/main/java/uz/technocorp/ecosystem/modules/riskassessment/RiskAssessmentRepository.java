@@ -1,11 +1,10 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment;
+package uz.technocorp.ecosystem.modules.riskassessment;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment.dto.HFRAssessmentDto;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment.projection.HFRAssessmentView;
+import uz.technocorp.ecosystem.modules.riskassessment.projection.RiskAssessmentView;
 
 import java.util.UUID;
 
@@ -15,7 +14,7 @@ import java.util.UUID;
  * @created 17.04.2025
  * @since v1.0
  */
-public interface HazardousFacilityRiskAssessmentRepository extends JpaRepository<HazardousFacilityRiskAssessment, UUID> {
+public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, UUID> {
 
     @Query(value = """
             select ra.sum_score as sumScore,
@@ -29,5 +28,5 @@ public interface HazardousFacilityRiskAssessmentRepository extends JpaRepository
             join profile pr on ra.tin = pr.tin
             join hazardous_facility hf on ra.hazardous_facility_id = hf.id
             """, nativeQuery = true)
-    Page<HFRAssessmentView> getAll(Pageable pageable);
+    Page<RiskAssessmentView> getAll(Pageable pageable);
 }

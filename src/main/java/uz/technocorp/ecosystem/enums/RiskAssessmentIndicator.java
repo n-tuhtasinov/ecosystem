@@ -1,0 +1,55 @@
+package uz.technocorp.ecosystem.enums;
+
+import lombok.Getter;
+
+/**
+ * @author Rasulov Komil
+ * @version 1.0
+ * @created 14.04.2025
+ * @since v1.0
+ */
+
+@Getter
+public enum RiskAssessmentIndicator {
+
+    PARAGRAPH_HF_1(13),
+    PARAGRAPH_HF_2(2),
+    PARAGRAPH_HF_3(14),
+    PARAGRAPH_HF_4(6),
+    PARAGRAPH_HF_5(10),
+    PARAGRAPH_HF_6(12),
+    PARAGRAPH_HF_7(1),
+    PARAGRAPH_HF_8(6),
+    PARAGRAPH_HF_9(15),
+    PARAGRAPH_HF_10(15),
+    PARAGRAPH_HF_11(6),
+    PARAGRAPH_IRS_1(10),
+    PARAGRAPH_IRS_2(10),
+    PARAGRAPH_IRS_3(5),
+    PARAGRAPH_IRS_4(10),
+    PARAGRAPH_IRS_5(5),
+    PARAGRAPH_IRS_6(5),
+    PARAGRAPH_IRS_7(5),
+    PARAGRAPH_IRS_8(5),
+    PARAGRAPH_IRS_9(5),
+    PARAGRAPH_IRS_10(10),
+    PARAGRAPH_IRS_11(10),
+    PARAGRAPH_IRS_12(5),
+    PARAGRAPH_IRS_13(5),
+    PARAGRAPH_IRS_14(5),
+    PARAGRAPH_IRS_15(5),
+    PARAGRAPH_A_1(15),
+    PARAGRAPH_A_2(15),
+    PARAGRAPH_A_3(15),
+    PARAGRAPH_A_4(15),
+    PARAGRAPH_A_5(15),
+    PARAGRAPH_A_6(15),
+    PARAGRAPH_A_7(10);
+
+    public final Integer score;
+
+    RiskAssessmentIndicator(Integer score) {
+        this.score = score;
+    }
+
+}

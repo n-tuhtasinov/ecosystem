@@ -1,17 +1,24 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator;
+package uz.technocorp.ecosystem.modules.irsriskindicator;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import uz.technocorp.ecosystem.enums.RiskAssessmentIndicator;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacilityRepository;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.HazardousFacilityRiskIndicator;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.HazardousFacilityRiskIndicatorRepository;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.HazardousFacilityRiskIndicatorService;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.dto.HFRIndicatorDto;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRiskIndicatorView;
+import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
+import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceRepository;
+import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
+import uz.technocorp.ecosystem.modules.irsriskindicator.view.IrsRiskIndicatorView;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.dto.HFRIndicatorDto;
-import uz.technocorp.ecosystem.enums.RiskAssessmentIndicator;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRiskIndicatorView;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,73 +36,40 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacilityRiskIndicatorService {
+public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
 
-    private final HazardousFacilityRiskIndicatorRepository repository;
-    private final HazardousFacilityRepository hazardousFacilityRepository;
+    private final IrsRiskIndicatorRepository repository;
+    private final IonizingRadiationSourceRepository irsRepository;
     private final RiskAssessmentRepository riskAssessmentRepository;
 
     @Override
-    public void create(HFRIndicatorDto dto) {
+    public void create(IrsRiskIndicatorDto dto) {
         LocalDate date = LocalDate.now();
         LocalDate quarterStart = getQuarterStart(date);
         LocalDate quarterEnd = getQuarterEnd(date);
         LocalDateTime startDateTime = quarterStart.atStartOfDay();
         LocalDateTime endDateTime = quarterEnd.atStartOfDay();
 
-        List<HazardousFacilityRiskIndicator> allByQuarter = repository.findAllByQuarter(startDateTime, endDateTime, dto.hazardousFacilityId());
-        if (allByQuarter.isEmpty()) {
-            if (!dto.indicatorType().equals(RiskAssessmentIndicator.PARAGRAPH_HF_1)) {
-                HazardousFacility hazardousFacility = hazardousFacilityRepository
-                        .findById(dto.hazardousFacilityId())
-                        .orElseThrow(() -> new ResourceNotFoundException("XICHO", "Id", dto.hazardousFacilityId()));
-                String identificationCardPath = hazardousFacility.getIdentificationCardPath();
-                String expertOpinionPath = hazardousFacility.getExpertOpinionPath();
-                String industrialSafetyDeclarationPath = hazardousFacility.getIndustrialSafetyDeclarationPath();
-                String insurancePolicyPath = hazardousFacility.getInsurancePolicyPath();
-                StringBuilder descriptionBuilder = new StringBuilder();
-                if (identificationCardPath.isEmpty()) {
-                    descriptionBuilder.append("Identifikatsiya xulosasi mavjud emas. ");
-                }
-                if (expertOpinionPath.isEmpty()) {
-                    descriptionBuilder.append("Ekspertiza xulosasi mavjud emas. ");
-                }
-                if (industrialSafetyDeclarationPath.isEmpty()) {
-                    descriptionBuilder.append("Sanoat xavfsizligi deklaratsiyasi mavjud emas. ");
-                }
-                if (insurancePolicyPath.isEmpty()) {
-                    descriptionBuilder.append("Majburiy sug'urta polisi mavjud emas. ");
-                }
-                repository.save(
-                        HazardousFacilityRiskIndicator
-                                .builder()
-                                .hazardousFacilityId(dto.hazardousFacilityId())
-                                .indicatorType(RiskAssessmentIndicator.PARAGRAPH_HF_1)
-                                .score(RiskAssessmentIndicator.PARAGRAPH_HF_1.getScore())
-                                .description(descriptionBuilder.toString())
-                                .tin(dto.tin())
-                                .build()
-                );
-            }
-            HazardousFacilityRiskIndicator existRiskIndicator = allByQuarter.stream().filter(riskIndicator -> riskIndicator.getIndicatorType().equals(dto.indicatorType())).toList().getFirst();
-            if (existRiskIndicator != null) {
-                throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
-            }
-            repository.save(
-                    HazardousFacilityRiskIndicator
-                            .builder()
-                            .hazardousFacilityId(dto.hazardousFacilityId())
-                            .indicatorType(dto.indicatorType())
-                            .score(dto.indicatorType().getScore())
-                            .description(dto.description())
-                            .tin(dto.tin())
-                            .build()
-            );
+        List<IrsRiskIndicator> allByQuarter = repository.findAllByQuarter(startDateTime, endDateTime, dto.irsId());
+
+        IrsRiskIndicator existRiskIndicator = allByQuarter.stream().filter(riskIndicator -> riskIndicator.getIndicatorType().equals(dto.indicatorType())).toList().getFirst();
+        if (existRiskIndicator != null) {
+            throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
         }
+        repository.save(
+                HazardousFacilityRiskIndicator
+                        .builder()
+                        .hazardousFacilityId(dto.irsId())
+                        .indicatorType(dto.indicatorType())
+                        .score(dto.indicatorType().getScore())
+                        .description(dto.description())
+                        .tin(dto.tin())
+                        .build()
+        );
     }
 
     @Override
-    public void update(UUID id, HFRIndicatorDto dto) {
+    public void update(UUID id, IrsRiskIndicatorDto dto) {
         HazardousFacilityRiskIndicator riskIndicator = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasi", "Id", id));
@@ -109,7 +83,7 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
     }
 
     @Override
-    public List<HFRiskIndicatorView> findAllByHazardousFacilityId(UUID id) {
+    public List<IrsRiskIndicatorView> findAllByIrsId(UUID id) {
         LocalDate date = LocalDate.now();
         LocalDate quarterStart = getQuarterStart(date);
         LocalDate quarterEnd = getQuarterEnd(date);
@@ -119,7 +93,7 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
     }
 
     @Override
-    public List<HFRiskIndicatorView> findAllByTin(Long tin) {
+    public List<IrsRiskIndicatorView> findAllByTin(Long tin) {
         LocalDate date = LocalDate.now();
         LocalDate quarterStart = getQuarterStart(date);
         LocalDate quarterEnd = getQuarterEnd(date);
@@ -172,13 +146,13 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
                                 RiskAssessment.builder()
                                         .sumScore(dto.sumScore() + nullScore)
                                         .objectName(
-                                                hazardousFacilityRepository.findById(dto.objectId())
-                                                        .map(HazardousFacility::getName)
+                                                irsRepository.findById(dto.objectId())
+                                                        .map(IonizingRadiationSource::getSymbol)
                                                         .orElse("Nomi ma'lum emas.")
 
                                         )
                                         .tin(tin)
-                                        .hazardousFacilityId(dto.objectId())
+                                        .ionizingRadiationSourceId(dto.objectId())
                                         .build()
                         );
                     });
