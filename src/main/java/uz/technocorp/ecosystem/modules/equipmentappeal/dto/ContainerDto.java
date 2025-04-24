@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -16,14 +15,14 @@ import java.util.UUID;
 /**
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
- * @created 23.04.2025
+ * @created 24.04.2025
  * @since v1.0
  */
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CraneDto implements AppealDto {
+public class ContainerDto implements AppealDto {
 
     @NotBlank(message = "Telefon nomer jo'natilmadi")
     private String phoneNumber;
@@ -91,7 +90,7 @@ public class CraneDto implements AppealDto {
 
     @Override
     public AppealType getAppealType() {
-        return AppealType.REGISTER_CRANE;
+        return null;
     }
 
     @Override

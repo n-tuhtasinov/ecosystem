@@ -5,7 +5,7 @@ import lombok.*;
 import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSort;
-import uz.technocorp.ecosystem.modules.childequipmenttype.ChildEquipmentType;
+import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
@@ -53,12 +53,6 @@ public class Equipment extends AuditAndIdEntity {
     @Column(nullable = false)
     private String legalName;
 
-    @Column(nullable = false)
-    private String phoneNumber;
-
-    @Column(nullable = false)
-    private String email;
-
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = HazardousFacility.class)
     @JoinColumn(name = "hazardous_facility_id", insertable = false, updatable = false)
     private HazardousFacility hazardousFacility;
@@ -66,9 +60,9 @@ public class Equipment extends AuditAndIdEntity {
     @Column(name = "hazardous_facility_id")
     private UUID hazardousFacilityId;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChildEquipmentType.class, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChildEquipment.class, optional = false)
     @JoinColumn(name = "child_equipment_type_id", insertable = false, updatable = false)
-    private ChildEquipmentType childEquipmentType;
+    private ChildEquipment childEquipment;
 
     @Column(name = "child_equipment_type_id", nullable = false)
     private Integer childEquipmentTypeId;
@@ -105,8 +99,6 @@ public class Equipment extends AuditAndIdEntity {
     @Column(nullable = false)
     private String factory;
 
-    private String owner;
-
     @Column(nullable = false)
     private String location;
 
@@ -118,38 +110,48 @@ public class Equipment extends AuditAndIdEntity {
     @Column(nullable = false)
     private LocalDate fullCheckDate;  // to'liq texnik ko'rik / gidrosinov/ keyimgi tekshirish (100ming)
 
+
+
     //previous registration number.
     //it is used when the device is re-registered
     private String oldNumber;
 
-    private Double boomLength; //strelasining uzunligi (kran)
+    //previous registration, it is used when the device is re-registered
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
+    @JoinColumn(name = "old_equipment_id", insertable = false, updatable = false)
+    private Equipment oldEquipment;
 
-    private Double liftingCapacity; //yuk ko'tarishi (kran, lift, yuk ko'targich)
+    @Column(name = "old_equipment_id")
+    private UUID oldEquipmentId;
 
-    private Double capacity; // hajmi (sosud, kimyoviy idish, qozon, sug, 100ming)
+    private String boomLength; //strelasining uzunligi (kran)
 
-    private Double environment; // muhit (sosud, quvur, qozon, sug, )
+    private String liftingCapacity; //yuk ko'tarishi (kran, lift, yuk ko'targich)
 
-    private Double pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug)
+    private String capacity; // hajmi (sosud, kimyoviy idish, qozon, sug, 100ming)
+
+    private String environment; // muhit (sosud, quvur, qozon, sug, )
+
+    private String pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug)
 
     @Enumerated(EnumType.STRING)
     private Sphere sphere;  // foydalanish sohasi (lift)
 
-    private Integer stopCount; // to'xtashlar soni (lift)
+    private String stopCount; // to'xtashlar soni (lift)
 
-    private Double length; // uzunligi (eskalator, osma yo'l, quvur, bug' va issiq suv quvuri)
+    private String length; // uzunligi (eskalator, osma yo'l, quvur, bug' va issiq suv quvuri)
 
-    private Double speed; // tezligi (eskalator, osma yo'l)
+    private String speed; // tezligi (eskalator, osma yo'l)
 
-    private Double height; // ko'tarish balandligi (eskalator, yuk ko'targich)
+    private String height; // ko'tarish balandligi (eskalator, yuk ko'targich)
 
-    private Integer passengersPerMinute; // o'tkazish qobilyati (eskalator)
+    private String passengersPerMinute; // o'tkazish qobilyati (eskalator)
 
-    private Integer passengerCount; // karakatlanuvchi sostav soni (osma yo'l)
+    private String passengerCount; // karakatlanuvchi sostav soni (osma yo'l)
 
-    private Double diameter; // diametr (quvur, bug' va issiq suv quvuri)
+    private String diameter; // diametr (quvur, bug' va issiq suv quvuri)
 
-    private Double thickness; // devor qalinligi (quvur, bug' va issiq suv quvuri)
+    private String thickness; // devor qalinligi (quvur, bug' va issiq suv quvuri)
 
     private String rideName; // attraksion nomi (attraksion)
 
@@ -172,9 +174,9 @@ public class Equipment extends AuditAndIdEntity {
 
     private LocalDate nonDestructiveCheckDate; // putur yetkazmaydigan nazoratda ko'rikdan o'tkazish (sosud, bug'qozon, quvur, osma yo'l, kimyoviy idish, qozon, sug, )
 
-    private Double temperature; //temperatura (bug' va issiq suv quvuri, qozon)
+    private String temperature; //temperatura (bug' va issiq suv quvuri, qozon)
 
-    private Double density; // zichligi (qozon)
+    private String density; // zichligi (qozon)
 
     @Column(nullable = false)
     private String labelPath; // birka rasmi
@@ -200,9 +202,6 @@ public class Equipment extends AuditAndIdEntity {
     private String expertisePath; //ekspertiza fayli
 
     private String installationCertPath; //montaj guvohnomasi
-
-    @Column(nullable = false)
-    private String appealPath; //ariza fayli
 
     private String additionalFilePath; // qo'shimcha ma'lumotlar fayli
 

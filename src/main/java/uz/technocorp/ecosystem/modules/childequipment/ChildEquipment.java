@@ -1,8 +1,8 @@
-package uz.technocorp.ecosystem.modules.childequipmenttype;
+package uz.technocorp.ecosystem.modules.childequipment;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 
 /**
@@ -17,7 +17,7 @@ import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ChildEquipmentType {
+public class ChildEquipment extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
