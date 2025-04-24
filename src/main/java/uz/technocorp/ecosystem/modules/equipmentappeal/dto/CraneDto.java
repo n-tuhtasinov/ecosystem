@@ -23,45 +23,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CraneDto implements AppealDto {
-
-    @NotBlank(message = "Telefon nomer jo'natilmadi")
-    private String phoneNumber;
-
-    private UUID hazardousFacilityId;
-
-    @NotNull(message = "Qurilma turi tanlanmadi")
-    private Integer childEquipmentId;
-
-    @NotBlank(message = "Zavod raqami jo'natilmadi")
-    private String factoryNumber;
-
-    @NotNull(message = "Qurilma joylashgan viloyat tanlanmadi")
-    private Integer regionId;
-
-    @NotNull(message = "Qurilma joylashgan tuman tanlanmadi")
-    private Integer districtId;
-
-    @NotBlank(message = "Qurilma joylashgan manzil jo'natilmadi")
-    private String address;
-
-    @NotBlank(message = "Qurilma model(marka)si jo'natilmadi ")
-    private String model;
-
-    @NotBlank(message = "Ishlan chiqargan zavod nomi jo'natilmadi ")
-    private String factory;
-
-    @NotBlank(message = "Qurilma joylashgan giolokatsiya jo'natilmadi")
-    private String location;
-
-    @NotNull(message = "Ishlab chiqarilgan sana jo'natilmadi")
-    private LocalDate manufacturedAt;
-
-    @NotNull(message = "Qisman texnik/tashqi va ichki ko'rik sanasi jo'natilmadi")
-    private LocalDate partialCheckDate;
-
-    @NotNull(message = "To'liq texnik ko'rik/gidrosinov/keyingi tekshirish sanasi jo'natilmadi")
-    private LocalDate fullCheckDate;
+public class CraneDto extends EquipmentAppealDto implements AppealDto{
 
     @NotBlank(message = "Strelasining uzunligi jo'natilmadi")
     private String boomLength;
