@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.document;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Document extends AuditEntity {
+public class Document extends AuditAndIdEntity {
 
     @Column(nullable = false, unique = true)
     private String path;

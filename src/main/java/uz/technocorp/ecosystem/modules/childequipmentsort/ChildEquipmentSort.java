@@ -3,7 +3,7 @@ package uz.technocorp.ecosystem.modules.childequipmentsort;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
-import uz.technocorp.ecosystem.modules.childequipmenttype.ChildEquipmentType;
+import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -18,7 +18,7 @@ import uz.technocorp.ecosystem.modules.childequipmenttype.ChildEquipmentType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ChildEquipmentSort {
+public class ChildEquipmentSort extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +27,10 @@ public class ChildEquipmentSort {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChildEquipmentType.class, optional = false)
-    @JoinColumn(name = "child_equipment_type_id", insertable = false, updatable = false)
-    private ChildEquipmentType childEquipmentType;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChildEquipment.class, optional = false)
+    @JoinColumn(name = "child_equipment_id", insertable = false, updatable = false)
+    private ChildEquipment childEquipment;
 
-    @Column(nullable = false, name = "child_equipment_type_id")
+    @Column(nullable = false, name = "child_equipment_id")
     private Integer typeId;
 }

@@ -22,6 +22,6 @@ public interface AppealService {
     void changeAppealStatus(AppealStatusDto dto);
     Page<AppealCustom> getAppealCustoms(Map<String, String> params);
     void create(AppealDto dto, User user);
-    void update(UUID id, AppealDto dto, User user);
+    void update(UUID id, AppealDto dto);
 
 }

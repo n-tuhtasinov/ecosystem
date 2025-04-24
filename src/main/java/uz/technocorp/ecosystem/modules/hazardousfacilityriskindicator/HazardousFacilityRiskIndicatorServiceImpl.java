@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacilityRepository;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment.HazardousFacilityRiskAssessment;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment.HazardousFacilityRiskAssessmentRepository;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment.dto.HFRAssessmentDto;
+import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
+import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
+import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.dto.HFRIndicatorDto;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.enums.HazardousFacilityRiskIndicatorType;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRIView;
+import uz.technocorp.ecosystem.enums.RiskAssessmentIndicator;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRiskIndicatorView;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +33,7 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
 
     private final HazardousFacilityRiskIndicatorRepository repository;
     private final HazardousFacilityRepository hazardousFacilityRepository;
-    private final HazardousFacilityRiskAssessmentRepository riskAssessmentRepository;
+    private final RiskAssessmentRepository riskAssessmentRepository;
 
     @Override
     public void create(HFRIndicatorDto dto) {
@@ -45,7 +45,7 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
 
         List<HazardousFacilityRiskIndicator> allByQuarter = repository.findAllByQuarter(startDateTime, endDateTime, dto.hazardousFacilityId());
         if (allByQuarter.isEmpty()) {
-            if (!dto.indicatorType().equals(HazardousFacilityRiskIndicatorType.PARAGRAPH_1)) {
+            if (!dto.indicatorType().equals(RiskAssessmentIndicator.PARAGRAPH_HF_1)) {
                 HazardousFacility hazardousFacility = hazardousFacilityRepository
                         .findById(dto.hazardousFacilityId())
                         .orElseThrow(() -> new ResourceNotFoundException("XICHO", "Id", dto.hazardousFacilityId()));
@@ -70,8 +70,8 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
                         HazardousFacilityRiskIndicator
                                 .builder()
                                 .hazardousFacilityId(dto.hazardousFacilityId())
-                                .indicatorType(HazardousFacilityRiskIndicatorType.PARAGRAPH_1)
-                                .score(HazardousFacilityRiskIndicatorType.PARAGRAPH_1.getScore())
+                                .indicatorType(RiskAssessmentIndicator.PARAGRAPH_HF_1)
+                                .score(RiskAssessmentIndicator.PARAGRAPH_HF_1.getScore())
                                 .description(descriptionBuilder.toString())
                                 .tin(dto.tin())
                                 .build()
@@ -109,7 +109,7 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
     }
 
     @Override
-    public List<HFRIView> findAllByHazardousFacilityId(UUID id) {
+    public List<HFRiskIndicatorView> findAllByHazardousFacilityId(UUID id) {
         LocalDate date = LocalDate.now();
         LocalDate quarterStart = getQuarterStart(date);
         LocalDate quarterEnd = getQuarterEnd(date);
@@ -119,7 +119,7 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
     }
 
     @Override
-    public List<HFRIView> findAllByTin(Long tin) {
+    public List<HFRiskIndicatorView> findAllByTin(Long tin) {
         LocalDate date = LocalDate.now();
         LocalDate quarterStart = getQuarterStart(date);
         LocalDate quarterEnd = getQuarterEnd(date);
@@ -147,37 +147,38 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
         LocalDate quarterEnd = getQuarterEnd(date);
         LocalDateTime startDateTime = quarterStart.atStartOfDay();
         LocalDateTime endDateTime = quarterEnd.atStartOfDay();
-        List<HFRAssessmentDto> allGroupByHazardousFacilityAndTin = repository.findAllGroupByHazardousFacilityAndTin(startDateTime, endDateTime);
+        List<RiskAssessmentDto> allGroupByHazardousFacilityAndTin = repository.findAllGroupByHazardousFacilityAndTin(startDateTime, endDateTime);
         // Barcha qiymatlarni guruhlash: TIN + hazardousFacilityId
-        Map<Short, List<HFRAssessmentDto>> groupedByTin = allGroupByHazardousFacilityAndTin.stream()
-                .collect(Collectors.groupingBy(HFRAssessmentDto::tin));
+        Map<Short, List<RiskAssessmentDto>> groupedByTin = allGroupByHazardousFacilityAndTin.stream()
+                .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
 
 // Har bir TIN uchun hisoblash
-        for (Map.Entry<Short, List<HFRAssessmentDto>> entry : groupedByTin.entrySet()) {
+        for (Map.Entry<Short, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
             Short tin = entry.getKey();
-            List<HFRAssessmentDto> dtoList = entry.getValue();
+            List<RiskAssessmentDto> dtoList = entry.getValue();
 
             // Null bo'lgan va bo'lmaganlarni ajratib olish
-            Optional<HFRAssessmentDto> nullFacility = dtoList.stream()
-                    .filter(dto -> dto.hazardousFacilityId() == null)
+            Optional<RiskAssessmentDto> nullFacility = dtoList.stream()
+                    .filter(dto -> dto.objectId() == null)
                     .findFirst();
 
-            int nullScore = nullFacility.map(HFRAssessmentDto::sumScore).orElse(0);
+            int nullScore = nullFacility.map(RiskAssessmentDto::sumScore).orElse(0);
 
             // Endi null bo'lmaganlarga qo‘shib saqlaymiz
             dtoList.stream()
-                    .filter(dto -> dto.hazardousFacilityId() != null)
+                    .filter(dto -> dto.objectId() != null)
                     .forEach(dto -> {
                         riskAssessmentRepository.save(
-                                HazardousFacilityRiskAssessment.builder()
+                                RiskAssessment.builder()
                                         .sumScore(dto.sumScore() + nullScore)
                                         .objectName(
-                                                hazardousFacilityRepository.findById(dto.hazardousFacilityId())
+                                                hazardousFacilityRepository.findById(dto.objectId())
                                                         .map(HazardousFacility::getName)
                                                         .orElse("Nomi ma'lum emas.")
 
                                         )
                                         .tin(tin)
+                                        .hazardousFacilityId(dto.objectId())
                                         .build()
                         );
                     });

@@ -1,9 +1,14 @@
 package uz.technocorp.ecosystem.modules.template;
 
-import uz.technocorp.ecosystem.modules.template.dto.PagingDto;
-import uz.technocorp.ecosystem.modules.template.dto.TemplateDto;
-import uz.technocorp.ecosystem.modules.template.dto.TemplateParamsDto;
+import org.springframework.data.domain.Page;
+import uz.technocorp.ecosystem.modules.template.form.ContentForm;
+import uz.technocorp.ecosystem.modules.template.form.TemplateEditForm;
 import uz.technocorp.ecosystem.modules.template.form.TemplateForm;
+import uz.technocorp.ecosystem.modules.template.projection.TemplateView;
+import uz.technocorp.ecosystem.modules.template.projection.TemplateViewBySelect;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Sukhrob
@@ -13,13 +18,17 @@ import uz.technocorp.ecosystem.modules.template.form.TemplateForm;
  */
 public interface TemplateService {
 
+    Page<TemplateView> getAll(Map<String, String> params);
+
+    List<TemplateViewBySelect> getAllBySelect();
+
+    Template getById(Integer templateId);
+
     Integer create(TemplateForm form);
 
-    Integer update(Integer templateId, TemplateForm form);
+    Integer update(TemplateEditForm form);
+
+    Integer updateContent(ContentForm form);
 
     void deleteById(Integer templateId);
-
-    PagingDto<TemplateDto> getAllByParams(TemplateParamsDto params);
-
-    TemplateDto getById(Integer templateId);
 }

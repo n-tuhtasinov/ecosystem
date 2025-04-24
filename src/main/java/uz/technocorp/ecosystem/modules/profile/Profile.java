@@ -2,8 +2,7 @@ package uz.technocorp.ecosystem.modules.profile;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.department.Department;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -21,7 +20,7 @@ import uz.technocorp.ecosystem.modules.region.Region;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Profile extends AuditEntity {
+public class Profile extends AuditAndIdEntity {
 
     @Column(unique = true)
     private Long tin;

@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.attachment.dto.AttachmentDto;
+import uz.technocorp.ecosystem.utils.HtmlToPdfGenerator;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,25 +30,13 @@ import java.util.UUID;
 public class AttachmentServiceImpl implements AttachmentService {
 
     private final AttachmentRepository repository;
+    private final HtmlToPdfGenerator htmlToPdfGenerator;
 
     @Override
     public String create(MultipartFile file, String folder) throws IOException {
         if (file != null) {
-            LocalDate now = LocalDate.now();
-            int year = now.getYear();
-            String month = now.getMonth().toString().toLowerCase();
-            int day = now.getDayOfMonth();
-
-            //create folder
-            Path attachmentFilesPath = Paths
-                    .get(String.format("files/%s/%s/%s/%s", folder, year, month, day));
-
-            try {
-                Files.createDirectories(attachmentFilesPath);
-            } catch (IOException e) {
-                log.error(e.getMessage());
-                throw new RuntimeException("files/... papkani ochishda xatolik yuz berdi");
-            }
+            // Create a directory for the file
+            Path attachmentFilesPath = createDirectory(folder);
 
             String originalFilename = file.getOriginalFilename();
             int index = Objects.requireNonNull(originalFilename).lastIndexOf(".");
@@ -65,7 +56,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                             path.toString().replace("\\", "/")
                     )
             );
-            return "/"+attachment.getPath();
+            return "/" + attachment.getPath();
         }
         return null;
     }
@@ -73,5 +64,56 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public void delete(UUID id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public String createPdfFromHtml(String htmlContent, String folder) {
+        if (htmlContent != null && !htmlContent.isBlank()) {
+            // Convert HTML to PDF
+            byte[] pdfBytes = htmlToPdfGenerator.convertHtmlToPdf(htmlContent);
+
+            // Create a directory for the PDF file
+            Path directoryPath = createDirectory(folder);
+
+            Path path = Paths.get(directoryPath + File.separator + System.currentTimeMillis() + ".pdf");
+            try {
+                Files.write(path, pdfBytes);
+            } catch (IOException e) {
+                log.error("PDF yaratishda xatolik {}", e.getMessage());
+                throw new RuntimeException("PDF ni saqlashda xatolik yuz berdi");
+            }
+            Attachment attachment = repository.save(
+                    new Attachment(
+                            path.toString().replace("\\", "/"),
+                            htmlContent));
+            return "/" + attachment.getPath();
+        }
+        return null;
+    }
+
+    @Override
+    public AttachmentDto getHtmlByPath(String path) {
+        return repository.findByPath(path).map(
+                a -> new AttachmentDto(a.getHtmlContent()))
+                .orElseThrow (()-> new ResourceNotFoundException("PDF file", "path", path));
+    }
+
+    private Path createDirectory(String folder) {
+        LocalDate now = LocalDate.now();
+        int year = now.getYear();
+        String month = now.getMonth().toString().toLowerCase();
+        int day = now.getDayOfMonth();
+
+        // Make a directory path
+        Path path = Paths.get(String.format("files/%s/%s/%s/%s", folder, year, month, day));
+
+        try {
+            // Create the directory if it doesn't exist
+            Files.createDirectories(path);
+        } catch (IOException e) {
+            log.error("Error creating folder {}", e.getMessage());
+            throw new RuntimeException("files/... papkani ochishda xatolik yuz berdi");
+        }
+        return path;
     }
 }

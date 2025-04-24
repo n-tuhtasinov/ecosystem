@@ -48,7 +48,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/one-id").permitAll()
-                        .requestMatchers("/api/v1/e-imzo/**").permitAll()
+                        .requestMatchers("/api/v1/e-imzo/**").permitAll() // TODO faqat /e-imzo/status permitAll bo'lishi kerak
                         .requestMatchers(HttpMethod.GET, "/files/**").permitAll() //TODO: sucuritydan files/ olib tashlash kerak
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated())

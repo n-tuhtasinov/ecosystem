@@ -1,7 +1,8 @@
 package uz.technocorp.ecosystem.modules.eimzo.helper;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.tomcat.util.codec.binary.Base64;
+
+import java.util.Base64;
 
 /**
  * @author Sukhrob
@@ -14,7 +15,7 @@ public class Helper {
     public static byte[] decodeFile(String base64String) {
         if (base64String != null) {
             try {
-                return Base64.decodeBase64(base64String);
+                return Base64.getDecoder().decode(base64String);
             } catch (Exception ignore) {
             }
         }

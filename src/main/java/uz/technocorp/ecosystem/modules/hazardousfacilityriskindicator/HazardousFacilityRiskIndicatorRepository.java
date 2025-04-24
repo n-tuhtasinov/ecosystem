@@ -2,11 +2,9 @@ package uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment.dto.HFRAssessmentDto;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRIView;
+import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRiskIndicatorView;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +35,7 @@ public interface HazardousFacilityRiskIndicatorRepository extends JpaRepository<
             where id = :id
             and created_at between :startDate and :endDate
             """, nativeQuery = true)
-    List<HFRIView> findAllByHazardousFacilityIdAndDate(UUID id, LocalDateTime startDate, LocalDateTime endDate);
+    List<HFRiskIndicatorView> findAllByHazardousFacilityIdAndDate(UUID id, LocalDateTime startDate, LocalDateTime endDate);
 
     @Query(value = """
             select cast(id as varchar) as id,
@@ -49,16 +47,16 @@ public interface HazardousFacilityRiskIndicatorRepository extends JpaRepository<
             and hazardous_facility_id is null
             and created_at between :startDate and :endDate
             """, nativeQuery = true)
-    List<HFRIView> findAllByTinAndDate(Long tin, LocalDateTime startDateTime, LocalDateTime endDateTime);
+    List<HFRiskIndicatorView> findAllByTinAndDate(Long tin, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     @Query(value = """
-            select cast(hazardous_facility_id as varchar) as hazardousFacilityId,
+            select cast(hazardous_facility_id as varchar) as objectId,
             sum(score),
             tin
             from hazardous_facility_risk_indicator
             where created_at between :startDate and :endDate
             group by hazardous_facility_id, tin
             """, nativeQuery = true)
-    List<HFRAssessmentDto> findAllGroupByHazardousFacilityAndTin(LocalDateTime startDateTime, LocalDateTime endDateTime);
+    List<RiskAssessmentDto> findAllGroupByHazardousFacilityAndTin(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 }
