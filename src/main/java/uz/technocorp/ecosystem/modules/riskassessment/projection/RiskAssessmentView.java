@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment.projection;
+package uz.technocorp.ecosystem.modules.riskassessment.projection;
 
 import java.util.UUID;
 
@@ -8,7 +8,7 @@ import java.util.UUID;
  * @created 18.04.2025
  * @since v1.0
  */
-public interface HFRAssessmentView {
+public interface RiskAssessmentView {
 
     Short getTin();
     Integer getSumScore();
