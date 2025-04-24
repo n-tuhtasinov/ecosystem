@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.ContainerDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfModificationAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -35,8 +37,14 @@ public class EquipmentAppealController {
     }
 
     @PostMapping("/container")
-    public ResponseEntity<?> createcontainer (@CurrentUser User user, @Valid @RequestBody CraneDto craneDto) {
-        appealService.create(craneDto,user);
+    public ResponseEntity<?> createContainer (@CurrentUser User user, @Valid @RequestBody ContainerDto containerDto) {
+        appealService.create(containerDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/boiler")
+    public ResponseEntity<?> createBoiler (@CurrentUser User user, @Valid @RequestBody BoilerDto boilerDto) {
+        appealService.create(boilerDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 

@@ -107,10 +107,8 @@ public class Equipment extends AuditAndIdEntity {
 
     private LocalDate partialCheckDate; // qisman texnik ko'rik / tashqi va ichki ko'rik
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private LocalDate fullCheckDate;  // to'liq texnik ko'rik / gidrosinov/ keyimgi tekshirish (100ming)
-
-
 
     //previous registration number.
     //it is used when the device is re-registered

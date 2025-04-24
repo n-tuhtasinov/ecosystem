@@ -22,75 +22,23 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContainerDto implements AppealDto {
+public class ContainerDto extends EquipmentAppealDto implements AppealDto {
 
-    @NotBlank(message = "Telefon nomer jo'natilmadi")
-    private String phoneNumber;
+    @NotNull(message = "Qurilmaning putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi jo'natilmadi")
+    private LocalDate nonDestructiveCheckDate;
 
-    private UUID hazardousFacilityId;
+    @NotBlank(message = "Hajm jo'natilmadi")
+    private String capacity;
 
-    @NotNull(message = "Qurilma turi tanlanmadi")
-    private Integer childEquipmentId;
+    @NotBlank(message = "Muhit jo'natilmadi")
+    private String environment;
 
-    @NotBlank(message = "Zavod raqami jo'natilmadi")
-    private String factoryNumber;
-
-    @NotNull(message = "Qurilma joylashgan viloyat tanlanmadi")
-    private Integer regionId;
-
-    @NotNull(message = "Qurilma joylashgan tuman tanlanmadi")
-    private Integer districtId;
-
-    @NotBlank(message = "Qurilma joylashgan manzil jo'natilmadi")
-    private String address;
-
-    @NotBlank(message = "Qurilma model(marka)si jo'natilmadi ")
-    private String model;
-
-    @NotBlank(message = "Ishlan chiqargan zavod nomi jo'natilmadi ")
-    private String factory;
-
-    @NotBlank(message = "Qurilma joylashgan giolokatsiya jo'natilmadi")
-    private String location;
-
-    @NotNull(message = "Ishlab chiqarilgan sana jo'natilmadi")
-    private LocalDate manufacturedAt;
-
-    @NotNull(message = "Qisman texnik/tashqi va ichki ko'rik sanasi jo'natilmadi")
-    private LocalDate partialCheckDate;
-
-    @NotNull(message = "To'liq texnik ko'rik/gidrosinov/keyingi tekshirish sanasi jo'natilmadi")
-    private LocalDate fullCheckDate;
-
-    @NotBlank(message = "Strelasining uzunligi jo'natilmadi")
-    private String boomLength;
-
-    @NotBlank(message = "Yuk ko'tara olish qiymati jo'natilmadi")
-    private String liftingCapacity;
-
-    @NotBlank(message = "Qurilmaning birkasi bilan surati pathi jo'natilmadi")
-    private String labelPath;
-
-    @NotBlank(message = "Qurilmaning oldi-sotdi shartnomasi pathi jo'natilmadi")
-    private String agreementPath;
-
-    @NotBlank(message = "Qurilmaning sertifikati fayli pathi jo'natilmadi")
-    private String equipmentCertPath;
-
-    @NotBlank(message = "Qurilmaning mas'ul shaxs tayinlanganligi to'g'risidagi buyrug'i pathi jo'natilmadi")
-    private String assignmentDecreePath;
-
-    @NotBlank(message = "Qurilmaning expertiza loyihasi pathi jo'natilmadi")
-    private String expertisePath;
-
-    @NotBlank(message = "Qurilmaning montaj guvohnomasi fayli pathi jo'natilmadi")
-    private String installationCertPath;
-
-    private String additionalFilePath;
+    @NotBlank(message = "Ruxsat etilgan bosim")
+    private String pressure;
 
     @Override
     public AppealType getAppealType() {
-        return null;
+        return AppealType.REGISTER_CONTAINER;
     }
 
     @Override
