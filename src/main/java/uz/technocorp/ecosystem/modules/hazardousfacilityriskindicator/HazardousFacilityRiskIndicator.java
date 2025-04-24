@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditEntity;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.enums.HazardousFacilityRiskIndicatorType;
+import uz.technocorp.ecosystem.enums.RiskAssessmentIndicator;
 
 import java.util.UUID;
 
@@ -23,7 +23,7 @@ import java.util.UUID;
 public class HazardousFacilityRiskIndicator extends AuditEntity {
 
     @Enumerated(EnumType.STRING)
-    private HazardousFacilityRiskIndicatorType indicatorType;
+    private RiskAssessmentIndicator indicatorType;
 
     private Integer score;
 

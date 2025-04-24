@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.dto;
+package uz.technocorp.ecosystem.modules.irsriskindicator.dto;
 
 import uz.technocorp.ecosystem.enums.RiskAssessmentIndicator;
 
@@ -10,9 +10,9 @@ import java.util.UUID;
  * @created 16.04.2025
  * @since v1.0
  */
-public record HFRIndicatorDto(
+public record IrsRiskIndicatorDto(
         RiskAssessmentIndicator indicatorType,
-        UUID hazardousFacilityId,
+        UUID irsId,
         String description,
         Long tin
 ) {

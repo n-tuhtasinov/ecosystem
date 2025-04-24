@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment;
+package uz.technocorp.ecosystem.modules.riskassessment;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment.projection.HFRAssessmentView;
+import uz.technocorp.ecosystem.modules.riskassessment.projection.RiskAssessmentView;
 
 /**
  * @author Rasulov Komil
@@ -16,10 +16,10 @@ import uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment.projectio
  */
 @Service
 @RequiredArgsConstructor
-public class HazardousFacilityRiskAssessmentServiceImpl implements HazardousFacilityRiskAssessmentService {
-    private final HazardousFacilityRiskAssessmentRepository repository;
+public class RiskAssessmentServiceImpl implements RiskAssessmentService {
+    private final RiskAssessmentRepository repository;
     @Override
-    public Page<HFRAssessmentView> getAll(int page, int size) {
+    public Page<RiskAssessmentView> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "sum_score");
         return repository.getAll(pageable);
     }
