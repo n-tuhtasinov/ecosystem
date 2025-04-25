@@ -1,11 +1,13 @@
 package uz.technocorp.ecosystem.exceptions;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -68,6 +70,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         logger.error(ex.toString());
         return ResponseEntity.badRequest().body(new ApiResponse("Qo'llab-quvvatlanmaydigan media turi ("+ex.getContentType()+") yuborildi"));
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        logger.error(ex.toString());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("Yuborilgan JSONni java obyektga parse qilishda xatolik yuz berdi, bu asosan sana formati ('2024-05-18' formatida bo'lishi kerak) yoki enum qiymatlari bilan bog'liq bo'lishi mumkin: " + ex.getMessage()));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
