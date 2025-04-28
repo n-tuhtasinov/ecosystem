@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -52,12 +53,15 @@ public class EquipmentAppealDto{
     private String location;
 
     @NotNull(message = "Ishlab chiqarilgan sana jo'natilmadi")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate manufacturedAt;
 
     @NotNull(message = "Qisman texnik/tashqi va ichki ko'rik sanasi jo'natilmadi")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate partialCheckDate;
 
     @NotNull(message = "To'liq texnik ko'rik/gidrosinov/keyingi tekshirish sanasi jo'natilmadi")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fullCheckDate;
 
     @NotBlank(message = "Qurilmaning birkasi bilan surati pathi jo'natilmadi")

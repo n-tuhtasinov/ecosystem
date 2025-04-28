@@ -1,8 +1,8 @@
-package uz.technocorp.ecosystem.modules.irsriskindicator;
+package uz.technocorp.ecosystem.modules.attractionriskindicator;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.HazardousFacilityRiskIndicator;
+import uz.technocorp.ecosystem.modules.elevatorriskindicator.ElevatorRiskIndicator;
 import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
@@ -12,15 +12,15 @@ import java.util.UUID;
 /**
  * @author Rasulov Komil
  * @version 1.0
- * @created 16.04.2025
+ * @created 28.04.2025
  * @since v1.0
  */
-public interface IrsRiskIndicatorRepository extends JpaRepository<HazardousFacilityRiskIndicator, UUID> {
+public interface AttractionRiskIndicatorRepository extends JpaRepository<AttractionRiskIndicator, UUID> {
 
-    @Query("SELECT h FROM IrsRiskIndicator h WHERE h.ionizingRadiationSourceId = :irsId AND h.riskAnalysisInterval.id = :intervalId")
-    List<IrsRiskIndicator> findAllByQuarter(
+    @Query("SELECT h FROM AttractionRiskIndicator h WHERE h.equipmentId = :equipmentId AND h.riskAnalysisInterval.id = :intervalId")
+    List<AttractionRiskIndicator> findAllByQuarter(
             Integer intervalId,
-            UUID irsId
+            UUID equipmentId
     );
 
 
@@ -29,33 +29,32 @@ public interface IrsRiskIndicatorRepository extends JpaRepository<HazardousFacil
             indicator_type as indicatorType,
             score,
             description
-            from irs_risk_indicator
-            where risk_analysis_interval_id = :intervalId
+            from attraction_risk_indicator
+            where (equipment_id = :id or equipment_id is null)
+            and risk_analysis_interval_id = :intervalId
             and tin = :tin
-            and (ionizing_radiation_source_id = :id or ionizing_radiation_source_id is null)
             """, nativeQuery = true)
-    List<RiskIndicatorView> findAllByIrsIdAndTinAndDate(UUID id, Long tin, Integer intervalId);
+    List<RiskIndicatorView> findAllByEquipmentIdAndTinAndDate(UUID id, Long tin, Integer intervalId);
 
     @Query(value = """
             select cast(id as varchar) as id,
             indicator_type as indicatorType,
             score,
             description
-            from irs_risk_indicator
+            from attraction_risk_indicator
             where tin = :tin
-            and ionizing_radiation_source_id is null
+            and equipment_id is null
             and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
     List<RiskIndicatorView> findAllByTinAndDate(Long tin, Integer intervalId);
 
     @Query(value = """
-            select cast(ionizing_radiation_source_id as varchar) as objectId,
+            select cast(equipment_id as varchar) as objectId,
             sum(score),
             tin
-            from irs_risk_indicator
+            from attraction_risk_indicator
             where risk_analysis_interval_id = :intervalId
-            group by ionizing_radiation_source_id, tin
+            group by equipment_id, tin
             """, nativeQuery = true)
-    List<RiskAssessmentDto> findAllGroupByIrsAndTin(Integer intervalId);
-
+    List<RiskAssessmentDto> findAllGroupByEquipmentAndTin(Integer intervalId);
 }

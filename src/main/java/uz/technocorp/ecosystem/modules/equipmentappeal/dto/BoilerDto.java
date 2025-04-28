@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 public class BoilerDto extends EquipmentAppealDto implements AppealDto {
 
     @NotNull(message = "Qurilmaning putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi jo'natilmadi")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate nonDestructiveCheckDate;
 
     @NotBlank(message = "Hajm jo'natilmadi")
@@ -26,7 +28,6 @@ public class BoilerDto extends EquipmentAppealDto implements AppealDto {
 
     @NotBlank(message = "Ruxsat etilgan bosim jo'natilmadi")
     private String pressure;
-
 
     @Override
     public AppealType getAppealType() {

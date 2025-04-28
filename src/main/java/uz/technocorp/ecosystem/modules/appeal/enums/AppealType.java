@@ -43,6 +43,11 @@ public enum AppealType {
     DEREGISTER_CABLEWAY,
     RE_REGISTER_CABLEWAY,
 
+    //hoist - yuk ko'targich
+    REGISTER_HOIST,
+    DEREGISTER_HOIST,
+    RE_REGISTER_HOIST,
+
 
 
 

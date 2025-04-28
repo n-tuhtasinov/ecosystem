@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.appeal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -14,5 +15,6 @@ import java.util.UUID;
 public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRepo {
 
     @Query("select a.sequenceNumber from Appeal a order by a.sequenceNumber desc limit 1")
-    Integer getMax();
+    Optional<Long> getMax();
+
 }

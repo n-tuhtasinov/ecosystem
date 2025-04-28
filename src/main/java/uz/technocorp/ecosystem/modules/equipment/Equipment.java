@@ -145,7 +145,7 @@ public class Equipment extends AuditAndIdEntity {
 
     private String passengersPerMinute; // o'tkazish qobilyati (eskalator)
 
-    private String passengerCount; // karakatlanuvchi sostav soni (osma yo'l)
+    private String passengerCount; // harakatlanuvchi sostav soni (osma yo'l)
 
     private String diameter; // diametr (quvur, bug' va issiq suv quvuri)
 

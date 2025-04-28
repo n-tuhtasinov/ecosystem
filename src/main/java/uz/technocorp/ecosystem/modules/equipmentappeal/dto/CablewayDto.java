@@ -11,36 +11,35 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
- * @created 24.04.2025
+ * @created 25.04.2025
  * @since v1.0
  */
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContainerDto extends EquipmentAppealDto implements AppealDto {
+public class CablewayDto extends EquipmentAppealDto implements AppealDto {
 
     @NotNull(message = "Qurilmaning putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi jo'natilmadi")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate nonDestructiveCheckDate;
 
-    @NotBlank(message = "Hajm jo'natilmadi")
-    private String capacity;
+    @NotBlank(message = "Tezlik jo'natilmadi")
+    private String speed;
 
-    @NotBlank(message = "Muhit jo'natilmadi")
-    private String environment;
+    @NotBlank(message = "Harakatlanuvchi sostav soni jo'natilamdi")
+    private String passengerCount;
 
-    @NotBlank(message = "Ruxsat etilgan bosim")
-    private String pressure;
+    @NotBlank(message = "Uzunligi jo'natilmadi")
+    private String length;
 
     @Override
     public AppealType getAppealType() {
-        return AppealType.REGISTER_CONTAINER;
+        return AppealType.REGISTER_CABLEWAY;
     }
 
     @Override
@@ -48,5 +47,3 @@ public class ContainerDto extends EquipmentAppealDto implements AppealDto {
         return null;
     }
 }
-
-
