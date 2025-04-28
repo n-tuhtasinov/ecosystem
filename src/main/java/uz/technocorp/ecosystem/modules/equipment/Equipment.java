@@ -130,7 +130,7 @@ public class Equipment extends AuditAndIdEntity {
 
     private String environment; // muhit (sosud, quvur, qozon, sug, )
 
-    private String pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug)
+    private String pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug, 100ming)
 
     @Enumerated(EnumType.STRING)
     private Sphere sphere;  // foydalanish sohasi (lift)
@@ -176,6 +176,8 @@ public class Equipment extends AuditAndIdEntity {
 
     private String density; // zichligi (qozon)
 
+    private String fuel; // yoqilg'i (100 ming)
+
     @Column(nullable = false)
     private String labelPath; // birka rasmi
 
@@ -210,6 +212,8 @@ public class Equipment extends AuditAndIdEntity {
     private String seasonalReadinessActPath; // mavsumiy tayyorlilik dalolatnomasi (attraksion pasporti)
 
     private String safetyDecreePath; // havfsiz foydalanish bo'yicha masul shaxs buyrug'i (attraksion pasporti)
+
+    private String gasSupplyProjectPath; // gaz ta'minoti loyihasi (100ming)
 
     private String rideFile1Path;
     private String rideFile2Path;
