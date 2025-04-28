@@ -48,10 +48,10 @@ public enum AppealType {
     DEREGISTER_HOIST,
     RE_REGISTER_HOIST,
 
-    //pipe - quvur
-    REGISTER_PIPE,
-    DEREGISTER_PIPE,
-    RE_REGISTER_PIPE,
+    //pipeline - quvur
+    REGISTER_PIPELINE,
+    DEREGISTER_PIPELINE,
+    RE_REGISTER_PIPELINE,
 
     //Chemical container - bosim ostida ishlovchi idish (kimyoviy)
     REGISTER_CHEMICAL_CONTAINER,
@@ -59,9 +59,9 @@ public enum AppealType {
     RE_REGISTER_CHEMICAL_CONTAINER,
 
     //Heat pipe - bug' va issiqsuv quvuri
-    REGISTER_HEAT_PIPE,
-    DEREGISTER_HEAT_PIPE,
-    RE_REGISTER_HEAT_PIPE,
+    REGISTER_HEAT_PIPELINE,
+    DEREGISTER_HEAT_PIPELINE,
+    RE_REGISTER_HEAT_PIPELINE,
 
 
     //Boiler utilizer - qozon utilizator
@@ -78,7 +78,6 @@ public enum AppealType {
     REGISTER_LPG_POWERED,
     DEREGISTER_LPG_POWERED,
     RE_REGISTER_LPG_POWERED,
-
 
     // Xavfli ishlab chiqarish obyektlari xodimlarini attestatsiyadan o‘tkazish
     CERTIFY_HF_EMPLOYEE,

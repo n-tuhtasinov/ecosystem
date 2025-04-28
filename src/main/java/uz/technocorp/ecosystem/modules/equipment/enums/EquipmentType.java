@@ -8,6 +8,17 @@ package uz.technocorp.ecosystem.modules.equipment.enums;
  */
 public enum EquipmentType {
     CRANE,
-    VESSEL,
-    BOILER
+    CONTAINER,
+    BOILER,
+    ELEVATOR,
+    ESCALATOR,
+    CABLEWAY,
+    HOIST,
+    PIPELINE,
+    CHEMICAL_CONTAINER,
+    HEAT_PIPELINE,
+    BOILER_UTILIZER,
+    LPG_CONTAINER,
+    LPG_POWERED
+
 }

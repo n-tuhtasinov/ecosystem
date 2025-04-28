@@ -42,7 +42,7 @@ public class PipelineDto extends EquipmentAppealDto implements AppealDto {
 
     @Override
     public AppealType getAppealType() {
-        return AppealType.REGISTER_PIPE;
+        return AppealType.REGISTER_PIPELINE;
     }
 
     @Override

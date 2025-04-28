@@ -39,7 +39,7 @@ public class HeatPipelineDto extends EquipmentAppealDto implements AppealDto {
 
     @Override
     public AppealType getAppealType() {
-        return AppealType.REGISTER_HEAT_PIPE;
+        return AppealType.REGISTER_HEAT_PIPELINE;
     }
 
     @Override

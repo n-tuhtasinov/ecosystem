@@ -61,10 +61,10 @@ public class Equipment extends AuditAndIdEntity {
     private UUID hazardousFacilityId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChildEquipment.class, optional = false)
-    @JoinColumn(name = "child_equipment_type_id", insertable = false, updatable = false)
+    @JoinColumn(name = "child_equipment_id", insertable = false, updatable = false)
     private ChildEquipment childEquipment;
 
-    @Column(name = "child_equipment_type_id", nullable = false)
+    @Column(name = "child_equipment_id", nullable = false)
     private Integer childEquipmentTypeId;
 
     @Column(nullable = false)
