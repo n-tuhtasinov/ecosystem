@@ -24,7 +24,7 @@ public class ChildEquipmentSort extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChildEquipment.class, optional = false)
@@ -32,5 +32,5 @@ public class ChildEquipmentSort extends AuditEntity {
     private ChildEquipment childEquipment;
 
     @Column(nullable = false, name = "child_equipment_id")
-    private Integer typeId;
+    private Integer childEquipmentId;
 }
