@@ -1,6 +1,6 @@
 package uz.technocorp.ecosystem.modules.irsriskindicator.dto;
 
-import uz.technocorp.ecosystem.enums.RiskAssessmentIndicator;
+import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
 
 import java.util.UUID;
 

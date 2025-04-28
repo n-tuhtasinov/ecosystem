@@ -6,15 +6,16 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacilityRepository;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.dto.HFRIndicatorDto;
-import uz.technocorp.ecosystem.enums.RiskAssessmentIndicator;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRiskIndicatorView;
+import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,22 +35,20 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
     private final HazardousFacilityRiskIndicatorRepository repository;
     private final HazardousFacilityRepository hazardousFacilityRepository;
     private final RiskAssessmentRepository riskAssessmentRepository;
+    private final RiskAnalysisIntervalRepository intervalRepository;
 
     @Override
     public void create(HFRIndicatorDto dto) {
-        LocalDate date = LocalDate.now();
-        LocalDate quarterStart = getQuarterStart(date);
-        LocalDate quarterEnd = getQuarterEnd(date);
-        LocalDateTime startDateTime = quarterStart.atStartOfDay();
-        LocalDateTime endDateTime = quarterEnd.atStartOfDay();
-
-        List<HazardousFacilityRiskIndicator> allByQuarter = repository.findAllByQuarter(startDateTime, endDateTime, dto.hazardousFacilityId());
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
+                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
+        List<HazardousFacilityRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.hazardousFacilityId());
         if (allByQuarter.isEmpty()) {
             if (!dto.indicatorType().equals(RiskAssessmentIndicator.PARAGRAPH_HF_1)) {
                 HazardousFacility hazardousFacility = hazardousFacilityRepository
                         .findById(dto.hazardousFacilityId())
                         .orElseThrow(() -> new ResourceNotFoundException("XICHO", "Id", dto.hazardousFacilityId()));
-                String identificationCardPath = hazardousFacility.getIdentificationCardPath();
+               String identificationCardPath = hazardousFacility.getIdentificationCardPath();
                 String expertOpinionPath = hazardousFacility.getExpertOpinionPath();
                 String industrialSafetyDeclarationPath = hazardousFacility.getIndustrialSafetyDeclarationPath();
                 String insurancePolicyPath = hazardousFacility.getInsurancePolicyPath();
@@ -74,6 +73,7 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
                                 .score(RiskAssessmentIndicator.PARAGRAPH_HF_1.getScore())
                                 .description(descriptionBuilder.toString())
                                 .tin(dto.tin())
+                                .riskAnalysisInterval(riskAnalysisInterval)
                                 .build()
                 );
             }
@@ -109,50 +109,37 @@ public class HazardousFacilityRiskIndicatorServiceImpl implements HazardousFacil
     }
 
     @Override
-    public List<HFRiskIndicatorView> findAllByHazardousFacilityId(UUID id) {
-        LocalDate date = LocalDate.now();
-        LocalDate quarterStart = getQuarterStart(date);
-        LocalDate quarterEnd = getQuarterEnd(date);
-        LocalDateTime startDateTime = quarterStart.atStartOfDay();
-        LocalDateTime endDateTime = quarterEnd.atStartOfDay();
-        return repository.findAllByHazardousFacilityIdAndDate(id, startDateTime, endDateTime);
+    public List<RiskIndicatorView> findAllByHFIdAndTin(UUID id, Long tin) {
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
+                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
+
+        return repository.findAllByHFIdAndTinAndDate(id, tin, riskAnalysisInterval.getId());
     }
 
     @Override
-    public List<HFRiskIndicatorView> findAllByTin(Long tin) {
-        LocalDate date = LocalDate.now();
-        LocalDate quarterStart = getQuarterStart(date);
-        LocalDate quarterEnd = getQuarterEnd(date);
-        LocalDateTime startDateTime = quarterStart.atStartOfDay();
-        LocalDateTime endDateTime = quarterEnd.atStartOfDay();
-        return repository.findAllByTinAndDate(tin, startDateTime, endDateTime);
+    public List<RiskIndicatorView> findAllByTin(Long tin) {
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
+                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
+        return repository.findAllByTinAndDate(tin, riskAnalysisInterval.getId());
     }
 
-    public LocalDate getQuarterStart(LocalDate date) {
-        int quarter = (date.getMonthValue() - 1) / 3 + 1;
-        return LocalDate.of(date.getYear(), (quarter - 1) * 3 + 1, 1);
-    }
-
-    public LocalDate getQuarterEnd(LocalDate date) {
-        return getQuarterStart(date).plusMonths(3).minusDays(1);
-    }
-
-    @Scheduled(cron = "0 0 9 31 3 *")  // 31-mart 10:00 da
-    @Scheduled(cron = "0 0 9 30 6 *")  // 30-iyun 10:00 da
-    @Scheduled(cron = "0 0 9 30 9 *")  // 30-sentyabr 10:00 da
-    @Scheduled(cron = "0 0 9 31 12 *") // 31-dekabr 10:00 da
+    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
+    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
+    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
+    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
     public void sumScore() {
-        LocalDate date = LocalDate.now();
-        LocalDate quarterStart = getQuarterStart(date);
-        LocalDate quarterEnd = getQuarterEnd(date);
-        LocalDateTime startDateTime = quarterStart.atStartOfDay();
-        LocalDateTime endDateTime = quarterEnd.atStartOfDay();
-        List<RiskAssessmentDto> allGroupByHazardousFacilityAndTin = repository.findAllGroupByHazardousFacilityAndTin(startDateTime, endDateTime);
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
+                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
+
+        List<RiskAssessmentDto> allGroupByHazardousFacilityAndTin = repository.findAllGroupByHazardousFacilityAndTin(riskAnalysisInterval.getId());
         // Barcha qiymatlarni guruhlash: TIN + hazardousFacilityId
         Map<Short, List<RiskAssessmentDto>> groupedByTin = allGroupByHazardousFacilityAndTin.stream()
                 .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
 
-// Har bir TIN uchun hisoblash
+        // Har bir TIN uchun hisoblash
         for (Map.Entry<Short, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
             Short tin = entry.getKey();
             List<RiskAssessmentDto> dtoList = entry.getValue();

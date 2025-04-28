@@ -1,7 +1,7 @@
 package uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator;
 
 import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.dto.HFRIndicatorDto;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRiskIndicatorView;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +17,6 @@ public interface HazardousFacilityRiskIndicatorService {
     void create(HFRIndicatorDto dto);
     void update(UUID id, HFRIndicatorDto dto);
     void delete(UUID id);
-    List<HFRiskIndicatorView> findAllByHazardousFacilityId(UUID id);
-    List<HFRiskIndicatorView> findAllByTin(Long tin);
+    List<RiskIndicatorView> findAllByHFIdAndTin(UUID id, Long tin);
+    List<RiskIndicatorView> findAllByTin(Long tin);
 }
