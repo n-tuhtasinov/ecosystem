@@ -1,14 +1,13 @@
-package uz.technocorp.ecosystem.modules.irsriskindicator;
+package uz.technocorp.ecosystem.modules.attractionriskindicator;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.HazardousFacilityRiskIndicator;
+import uz.technocorp.ecosystem.modules.elevatorriskindicator.dto.EquipmentRiskIndicatorDto;
+import uz.technocorp.ecosystem.modules.equipment.Equipment;
+import uz.technocorp.ecosystem.modules.equipment.EquipmentRepository;
 import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
-import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
-import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceRepository;
-import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
@@ -16,8 +15,6 @@ import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,40 +29,48 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
+public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicatorService {
 
-    private final IrsRiskIndicatorRepository repository;
-    private final IonizingRadiationSourceRepository irsRepository;
+    private final AttractionRiskIndicatorRepository repository;
+    private final EquipmentRepository equipmentRepository;
     private final RiskAssessmentRepository riskAssessmentRepository;
     private final RiskAnalysisIntervalRepository intervalRepository;
 
     @Override
-    public void create(IrsRiskIndicatorDto dto) {
+    public void create(EquipmentRiskIndicatorDto dto) {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
                 .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
+        List<AttractionRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.equipmentId());
+        if (!allByQuarter.isEmpty()) {
+            AttractionRiskIndicator existRiskIndicator = allByQuarter
+                    .stream()
+                    .filter(riskIndicator -> riskIndicator
+                            .getIndicatorType()
+                            .equals(dto.indicatorType()))
+                    .toList()
+                    .getFirst();
+            if (existRiskIndicator != null) {
+                throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
+            }
 
-        List<IrsRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.irsId());
-
-        IrsRiskIndicator existRiskIndicator = allByQuarter.stream().filter(riskIndicator -> riskIndicator.getIndicatorType().equals(dto.indicatorType())).toList().getFirst();
-        if (existRiskIndicator != null) {
-            throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
         }
         repository.save(
-                HazardousFacilityRiskIndicator
+                AttractionRiskIndicator
                         .builder()
-                        .hazardousFacilityId(dto.irsId())
+                        .equipmentId(dto.equipmentId())
                         .indicatorType(dto.indicatorType())
                         .score(dto.indicatorType().getScore())
                         .description(dto.description())
                         .tin(dto.tin())
                         .build()
         );
+
     }
 
     @Override
-    public void update(UUID id, IrsRiskIndicatorDto dto) {
-        HazardousFacilityRiskIndicator riskIndicator = repository
+    public void update(UUID id, EquipmentRiskIndicatorDto dto) {
+        AttractionRiskIndicator riskIndicator = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasi", "Id", id));
         riskIndicator.setDescription(dto.description());
@@ -78,12 +83,12 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
     }
 
     @Override
-    public List<RiskIndicatorView> findAllByIrsIdAndTin(UUID id, Long tin) {
+    public List<RiskIndicatorView> findAllByEquipmentIdAndTin(UUID id, Long tin) {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
                 .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
 
-        return repository.findAllByIrsIdAndTinAndDate(id, tin, riskAnalysisInterval.getId());
+        return repository.findAllByEquipmentIdAndTinAndDate(id, tin, riskAnalysisInterval.getId());
     }
 
     @Override
@@ -91,22 +96,21 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
                 .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
-
         return repository.findAllByTinAndDate(tin, riskAnalysisInterval.getId());
     }
 
-    @Scheduled(cron = "0 0 9 31 3 *")  // 31-mart 10:00 da
-    @Scheduled(cron = "0 0 9 30 6 *")  // 30-iyun 10:00 da
-    @Scheduled(cron = "0 0 9 30 9 *")  // 30-sentyabr 10:00 da
-    @Scheduled(cron = "0 0 9 31 12 *") // 31-dekabr 10:00 da
+    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
+    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
+    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
+    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
     public void sumScore() {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
                 .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
 
-        List<RiskAssessmentDto> allGroupByIrsAndTin = repository.findAllGroupByIrsAndTin(riskAnalysisInterval.getId());
-        // Barcha qiymatlarni guruhlash: TIN + IrsId
-        Map<Short, List<RiskAssessmentDto>> groupedByTin = allGroupByIrsAndTin.stream()
+        List<RiskAssessmentDto> allGroupByEquipmentAndTin = repository.findAllGroupByEquipmentAndTin(riskAnalysisInterval.getId());
+        // Barcha qiymatlarni guruhlash: TIN + EquipmentId
+        Map<Short, List<RiskAssessmentDto>> groupedByTin = allGroupByEquipmentAndTin.stream()
                 .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
 
         // Har bir TIN uchun hisoblash
@@ -115,11 +119,11 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
             List<RiskAssessmentDto> dtoList = entry.getValue();
 
             // Null bo'lgan va bo'lmaganlarni ajratib olish
-            Optional<RiskAssessmentDto> nullIrs = dtoList.stream()
+            Optional<RiskAssessmentDto> nullEquipment = dtoList.stream()
                     .filter(dto -> dto.objectId() == null)
                     .findFirst();
 
-            int nullScore = nullIrs.map(RiskAssessmentDto::sumScore).orElse(0);
+            int nullScore = nullEquipment.map(RiskAssessmentDto::sumScore).orElse(0);
 
             // Endi null bo'lmaganlarga qo‘shib saqlaymiz
             dtoList.stream()
@@ -129,13 +133,13 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                                 RiskAssessment.builder()
                                         .sumScore(dto.sumScore() + nullScore)
                                         .objectName(
-                                                irsRepository.findById(dto.objectId())
-                                                        .map(IonizingRadiationSource::getSymbol)
+                                                equipmentRepository.findById(dto.objectId())
+                                                        .map(Equipment::getNumber)
                                                         .orElse("Nomi ma'lum emas.")
 
                                         )
                                         .tin(tin)
-                                        .ionizingRadiationSourceId(dto.objectId())
+                                        .equipmentId(dto.objectId())
                                         .build()
                         );
                     });

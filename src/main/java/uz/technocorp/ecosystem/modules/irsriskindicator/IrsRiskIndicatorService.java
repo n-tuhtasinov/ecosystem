@@ -1,9 +1,7 @@
 package uz.technocorp.ecosystem.modules.irsriskindicator;
 
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.dto.HFRIndicatorDto;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRiskIndicatorView;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
-import uz.technocorp.ecosystem.modules.irsriskindicator.view.IrsRiskIndicatorView;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +17,6 @@ public interface IrsRiskIndicatorService {
     void create(IrsRiskIndicatorDto dto);
     void update(UUID id, IrsRiskIndicatorDto dto);
     void delete(UUID id);
-    List<IrsRiskIndicatorView> findAllByIrsId(UUID id);
-    List<IrsRiskIndicatorView> findAllByTin(Long tin);
+    List<RiskIndicatorView> findAllByIrsIdAndTin(UUID id, Long tin);
+    List<RiskIndicatorView> findAllByTin(Long tin);
 }

@@ -3,9 +3,8 @@ package uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.HFRiskIndicatorView;
+import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,10 +17,9 @@ import java.util.UUID;
 public interface HazardousFacilityRiskIndicatorRepository extends JpaRepository<HazardousFacilityRiskIndicator, UUID> {
 //    List<HazardousFacilityRiskIndicator> findByHazardousFacilityIdAndDate(UUID hfId, LocalDate date);
 
-    @Query("SELECT h FROM HazardousFacilityRiskIndicator h WHERE h.hazardousFacilityId = :hfId AND h.createdAt BETWEEN :startDate AND :endDate")
+    @Query("SELECT h FROM HazardousFacilityRiskIndicator h WHERE h.hazardousFacilityId = :hfId AND h.riskAnalysisInterval.id = :intervalId")
     List<HazardousFacilityRiskIndicator> findAllByQuarter(
-            LocalDateTime startDate,
-            LocalDateTime endDate,
+            Integer intervalId,
             UUID hfId
     );
 
@@ -32,10 +30,11 @@ public interface HazardousFacilityRiskIndicatorRepository extends JpaRepository<
             score,
             description
             from hazardous_facility_risk_indicator
-            where id = :id
-            and created_at between :startDate and :endDate
+            where (hazardous_facility_id = :id or hazardous_facility_id is null)
+            and risk_analysis_interval_id = :intervalId
+            and tin = :tin
             """, nativeQuery = true)
-    List<HFRiskIndicatorView> findAllByHazardousFacilityIdAndDate(UUID id, LocalDateTime startDate, LocalDateTime endDate);
+    List<RiskIndicatorView> findAllByHFIdAndTinAndDate(UUID id, Long tin, Integer intervalId);
 
     @Query(value = """
             select cast(id as varchar) as id,
@@ -45,18 +44,18 @@ public interface HazardousFacilityRiskIndicatorRepository extends JpaRepository<
             from hazardous_facility_risk_indicator
             where tin = :tin
             and hazardous_facility_id is null
-            and created_at between :startDate and :endDate
+            and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
-    List<HFRiskIndicatorView> findAllByTinAndDate(Long tin, LocalDateTime startDateTime, LocalDateTime endDateTime);
+    List<RiskIndicatorView> findAllByTinAndDate(Long tin, Integer intervalId);
 
     @Query(value = """
             select cast(hazardous_facility_id as varchar) as objectId,
             sum(score),
             tin
             from hazardous_facility_risk_indicator
-            where created_at between :startDate and :endDate
+            where risk_analysis_interval_id = :intervalId
             group by hazardous_facility_id, tin
             """, nativeQuery = true)
-    List<RiskAssessmentDto> findAllGroupByHazardousFacilityAndTin(LocalDateTime startDateTime, LocalDateTime endDateTime);
+    List<RiskAssessmentDto> findAllGroupByHazardousFacilityAndTin(Integer intervalId);
 
 }

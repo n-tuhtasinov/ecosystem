@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.irsriskindicator.view;
+package uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view;
 
 import java.util.UUID;
 
@@ -8,7 +8,7 @@ import java.util.UUID;
  * @created 17.04.2025
  * @since v1.0
  */
-public interface IrsRiskIndicatorView {
+public interface RiskIndicatorView {
     UUID getId();
     String getTin();
     String getIndicatorType();

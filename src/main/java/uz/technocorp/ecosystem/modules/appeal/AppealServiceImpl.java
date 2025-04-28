@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SequenceNumberDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
@@ -102,12 +103,14 @@ public class AppealServiceImpl implements AppealService {
         District district = districtRepository.findById(dto.getDistrictId()).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId()));
         Office office = officeRepository.findById(region.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "ID", region.getOfficeId()));
         String executorName = getExecutorName(dto.getAppealType());
-        String number = makeNumber(dto.getAppealType());
+        SequenceNumberDto numberDto = makeNumber(dto.getAppealType());
         JsonNode data = makeJsonData(dto);
 
-        Appeal appeal = Appeal.builder()
+        Appeal appeal = Appeal
+                .builder()
                 .appealType(dto.getAppealType())
-                .number(number)
+                .number(numberDto.number())
+                .sequenceNumber(numberDto.sequenceNumber())
                 .legalTin(profile.getTin())
                 .legalName(profile.getLegalName())
                 .legalRegionId(profile.getRegionId())
@@ -147,9 +150,9 @@ public class AppealServiceImpl implements AppealService {
         return mapper.valueToTree(dto);
     }
 
-    private String makeNumber(AppealType appealType) {
-        Integer maxNum = appealRepository.getMax();
-        int orderNumber = (maxNum == null ? 0 : maxNum) + 1;
+    private SequenceNumberDto makeNumber(AppealType appealType) {
+        Long orderNumber = appealRepository.getMax().orElse(0L) + 1;
+
         String number=null;
 
         switch (appealType){
@@ -157,7 +160,7 @@ public class AppealServiceImpl implements AppealService {
             case REGISTER_HF, DEREGISTER_HF -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
-        return number;
+        return new SequenceNumberDto(orderNumber, number);
     }
 
     private String getExecutorName(AppealType appealType) {
