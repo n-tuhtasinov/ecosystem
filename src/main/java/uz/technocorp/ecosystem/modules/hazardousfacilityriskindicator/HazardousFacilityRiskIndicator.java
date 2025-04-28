@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
-import uz.technocorp.ecosystem.enums.RiskAssessmentIndicator;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
+import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
 
 import java.util.UUID;
 
@@ -38,5 +39,8 @@ public class HazardousFacilityRiskIndicator extends AuditAndIdEntity {
     private String description;
 
     private Long tin;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RiskAnalysisInterval riskAnalysisInterval;
 
 }
