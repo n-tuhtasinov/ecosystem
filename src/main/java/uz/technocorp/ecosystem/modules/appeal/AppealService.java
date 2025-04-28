@@ -5,6 +5,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.Map;
@@ -23,5 +24,5 @@ public interface AppealService {
     Page<AppealCustom> getAppealCustoms(Map<String, String> params);
     void create(AppealDto dto, User user);
     void update(UUID id, AppealDto dto);
-
+    byte[] generatePdfWithParam(HfAppealDto dto, User user);
 }

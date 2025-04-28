@@ -18,16 +18,22 @@ import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionPro
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
+import uz.technocorp.ecosystem.modules.template.Template;
+import uz.technocorp.ecosystem.modules.template.TemplateService;
+import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
+import uz.technocorp.ecosystem.utils.HtmlToPdfGenerator;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,6 +55,8 @@ public class AppealServiceImpl implements AppealService {
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
     private final OfficeRepository officeRepository;
+    private final TemplateService templateService;
+    private final HtmlToPdfGenerator htmlToPdfGenerator;
 
     @Override
     @Transactional
@@ -141,6 +149,24 @@ public class AppealServiceImpl implements AppealService {
         repository.save(appeal);
     }
 
+    @Override
+    public byte[] generatePdfWithParam(HfAppealDto dto, User user) {
+
+        Template template = templateService.getByType(TemplateType.XICHO_APPEAL.name());
+        Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
+
+        // Collect params to Map
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("name", user.getName());
+        parameters.put("legalName", profile.getLegalName());
+        parameters.put("tin", profile.getTin());
+        parameters.put("regionName", regionRepository.findById(dto.getRegionId()).map(Region::getName).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId())));
+        parameters.put("districtName", districtRepository.findById(dto.getDistrictId()).map(District::getName).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId())));
+        parameters.put("hfName", dto.getName());
+
+        return htmlToPdfGenerator.generatePdfWithParam(template.getContent(), parameters);
+    }
+
     private JsonNode makeJsonData(AppealDto dto) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -150,9 +176,9 @@ public class AppealServiceImpl implements AppealService {
     private String makeNumber(AppealType appealType) {
         Integer maxNum = appealRepository.getMax();
         int orderNumber = (maxNum == null ? 0 : maxNum) + 1;
-        String number=null;
+        String number = null;
 
-        switch (appealType){
+        switch (appealType) {
             case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
             case REGISTER_HF, DEREGISTER_HF -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
@@ -163,7 +189,7 @@ public class AppealServiceImpl implements AppealService {
     private String getExecutorName(AppealType appealType) {
         String executorName = null;
 
-        switch (appealType){
+        switch (appealType) {
             case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> executorName = "INM ijrochi ismi";
             case ACCREDIT_EXPERT_ORGANIZATION -> executorName = "kimdir";
             case REGISTER_DECLARATION -> executorName = "yana kimdir";

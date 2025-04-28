@@ -9,6 +9,7 @@ import uz.technocorp.ecosystem.modules.template.projection.TemplateView;
 import uz.technocorp.ecosystem.modules.template.projection.TemplateViewBySelect;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Sukhrob
@@ -25,4 +26,5 @@ public interface TemplateRepository extends JpaRepository<Template, Integer> {
     @Query("SELECT t FROM Template t")
     List<TemplateViewBySelect> getAllBySelect();
 
+    Optional<Template> findByType(TemplateType type);
 }

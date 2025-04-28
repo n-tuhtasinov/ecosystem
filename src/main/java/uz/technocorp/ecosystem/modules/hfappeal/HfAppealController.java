@@ -2,6 +2,9 @@ package uz.technocorp.ecosystem.modules.hfappeal;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
@@ -30,7 +33,7 @@ public class HfAppealController {
 
     @PostMapping
     public ResponseEntity<?> createHfAppeal(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        appealService.create(hfDto,user);
+        appealService.create(hfDto, user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
@@ -44,13 +47,23 @@ public class HfAppealController {
 
     @PostMapping("/deregister")
     public ResponseEntity<?> createHfDeregisterAppeal(@CurrentUser User user, @Valid @RequestBody HfDeregisterAppealDto hfDeregisterAppealDto) {
-        appealService.create(hfDeregisterAppealDto,user);
+        appealService.create(hfDeregisterAppealDto, user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/modification")
     public ResponseEntity<?> createHfModificationAppeal(@CurrentUser User user, @Valid @RequestBody HfModificationAppealDto hfModificationAppealDto) {
-        appealService.create(hfModificationAppealDto,user);
+        appealService.create(hfModificationAppealDto, user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/generate-pdf")
+    public ResponseEntity<byte[]> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
+        byte[] pdfBytes = appealService.generatePdfWithParam(hfDto, user);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "hf-appeal" + ".pdf");
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }

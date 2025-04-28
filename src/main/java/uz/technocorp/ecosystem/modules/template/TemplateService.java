@@ -24,6 +24,8 @@ public interface TemplateService {
 
     Template getById(Integer templateId);
 
+    Template getByType(String type);
+
     Integer create(TemplateForm form);
 
     Integer update(TemplateEditForm form);

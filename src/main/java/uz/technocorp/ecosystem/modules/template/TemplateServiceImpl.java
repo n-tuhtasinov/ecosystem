@@ -51,6 +51,11 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
+    public Template getByType(String type) {
+        return repository.findByType(TemplateType.valueOf(type)).orElseThrow(() -> new ResourceNotFoundException("Shablon", "Type", type));
+    }
+
+    @Override
     public Integer create(TemplateForm form) {
         return repository.save(Template.builder()
                 .name(form.getName())
