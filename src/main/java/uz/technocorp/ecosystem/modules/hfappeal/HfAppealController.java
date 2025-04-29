@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.hfappeal;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
+import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfDeregisterAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfModificationAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.SignedHfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 
@@ -32,8 +35,8 @@ public class HfAppealController {
     private final AppealService appealService;
 
     @PostMapping
-    public ResponseEntity<?> createHfAppeal(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        appealService.create(hfDto, user);
+    public ResponseEntity<ApiResponse> createAndSign(@CurrentUser User user, @Valid @RequestBody SignedHfAppealDto signedDto, HttpServletRequest request) {
+        appealService.saveAndSign(user, signedDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 

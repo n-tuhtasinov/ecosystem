@@ -3,15 +3,13 @@ package uz.technocorp.ecosystem.modules.appeal;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.SequenceNumberDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
@@ -19,7 +17,12 @@ import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionPro
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.document.DocumentService;
+import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
+import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -57,6 +60,7 @@ public class AppealServiceImpl implements AppealService {
     private final DistrictRepository districtRepository;
     private final OfficeRepository officeRepository;
     private final TemplateService templateService;
+    private final DocumentService documentService;
     private final HtmlToPdfGenerator htmlToPdfGenerator;
 
     @Override
@@ -104,7 +108,7 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public void create(AppealDto dto, User user) {
+    public UUID create(AppealDto dto, User user) {
 
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
         Region region = regionRepository.findById(dto.getRegionId()).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId()));
@@ -140,7 +144,7 @@ public class AppealServiceImpl implements AppealService {
                 .executorName(executorName)
                 .data(data)
                 .build();
-        repository.save(appeal);
+        return repository.save(appeal).getId();
     }
 
     @Override
@@ -156,6 +160,9 @@ public class AppealServiceImpl implements AppealService {
     public byte[] generatePdfWithParam(HfAppealDto dto, User user) {
 
         Template template = templateService.getByType(TemplateType.XICHO_APPEAL.name());
+        if (template == null) {
+            throw new ResourceNotFoundException("Xicho arizasi", "Template", TemplateType.XICHO_APPEAL.name());
+        }
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
 
         // Collect params to Map
@@ -170,6 +177,22 @@ public class AppealServiceImpl implements AppealService {
         return htmlToPdfGenerator.generatePdfWithParam(template.getContent(), parameters);
     }
 
+    @Override
+    @Transactional
+    public void saveAndSign(User user, SignedAppealDto dto, HttpServletRequest request) {
+        UUID appealId;
+        switch (dto.getDto()) {
+            case HfAppealDto hfAppealDto -> appealId = create(hfAppealDto, user);
+            case IrsAppealDto irsAppealDto -> appealId = create(irsAppealDto, user);
+            case BoilerDto boilerDto -> appealId = create(boilerDto, user);
+            // TODO barcha qurilmalar uchun case yozish kerak
+            default -> throw new RuntimeException("Mavjud bo'lmagan obyekt turi keldi");
+        }
+
+        // Create a document
+        documentService.create(new DocumentDto(dto.getType(), appealId, dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
+    }
+
     private JsonNode makeJsonData(AppealDto dto) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -179,7 +202,7 @@ public class AppealServiceImpl implements AppealService {
     private SequenceNumberDto makeNumber(AppealType appealType) {
         Long orderNumber = appealRepository.getMax().orElse(0L) + 1;
 
-        String number=null;
+        String number = null;
 
         switch (appealType) {
             case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> number = orderNumber + "-INM-" + LocalDate.now().getYear();

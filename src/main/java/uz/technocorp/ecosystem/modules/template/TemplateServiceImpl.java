@@ -52,11 +52,15 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public Template getByType(String type) {
-        return repository.findByType(TemplateType.valueOf(type)).orElseThrow(() -> new ResourceNotFoundException("Shablon", "Type", type));
+        return repository.findByType(TemplateType.valueOf(type)).orElse(null);
     }
 
     @Override
     public Integer create(TemplateForm form) {
+        // Check if template with same type already exists
+        if (getByType(form.getType()) != null) {
+            throw new ResourceNotFoundException("Bu turdagi shablon mavjud : " + form.getType());
+        }
         return repository.save(Template.builder()
                 .name(form.getName())
                 .description(form.getDescription())
