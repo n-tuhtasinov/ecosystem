@@ -2,13 +2,15 @@ package uz.technocorp.ecosystem.modules.document;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcess;
-import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
-import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
+import uz.technocorp.ecosystem.modules.document.dto.Signer;
 import uz.technocorp.ecosystem.modules.document.projection.DocumentProjection;
+import uz.technocorp.ecosystem.modules.eimzo.EImzoProxy;
+import uz.technocorp.ecosystem.modules.eimzo.json.pcks7.Pkcs7VerifyAttachedJson;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,37 +24,40 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DocumentServiceImpl implements DocumentService {
 
-    private final DocumentRepository repository;
-    private final AppealExecutionProcessRepository appealExecutionProcessRepository;
+    private final EImzoProxy eImzoProxy;
+    private final DocumentRepository documentRepository;
 
     @Override
-    @Transactional
     public void create(DocumentDto dto) {
+        Signer signer = new Signer(getSigner(dto.sign(), dto.ip()), dto.executedBy(), LocalDateTime.now());
 
-        repository.save(
-                new Document(
-                        dto.path(),
-                        dto.appealId(),
-                        DocumentType.valueOf(dto.documentType()),
-                        false
-                )
-        );
-        repository.flush();
-        appealExecutionProcessRepository
-                .save(new AppealExecutionProcess(
-                   dto.appealId(),
-                        dto.documentType() + " yaratildi!"
-                ));
-
+        documentRepository.save(Document.builder()
+                .path(dto.path())
+                .signedContent(dto.sign())
+                .appealId(dto.belongId())
+                .signers(List.of(signer)) // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
+                .documentType(dto.documentType())
+                .build());
     }
 
     @Override
     public List<DocumentProjection> findByAppealId(UUID appealId) {
-        return repository.getByAppealId(appealId);
+        return documentRepository.getByAppealId(appealId);
     }
 
     @Override
     public void delete(UUID id) {
-        repository.deleteById(id);
+        documentRepository.deleteById(id);
+    }
+
+    private String getSigner(String sign, String ip) {
+        Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(AppConstants.HOST, ip, sign);
+
+        if (!"1".equals(pkcs7VerifyAttached.getStatus())) {
+            throw new ResourceNotFoundException("Document verification failed");
+        }
+
+        String subjectName = pkcs7VerifyAttached.getPkcs7Info().getSigners().getLast().getCertificate().getFirst().getSubjectName();
+        return subjectName.split(",")[0].replace("CN=", "").trim();
     }
 }

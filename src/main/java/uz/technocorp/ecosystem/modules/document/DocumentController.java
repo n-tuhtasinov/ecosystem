@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
-import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 
 import java.util.UUID;
 
@@ -21,16 +20,6 @@ import java.util.UUID;
 public class DocumentController {
 
     private final DocumentService service;
-
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody DocumentDto dto) {
-        try {
-            service.create(dto);
-            return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable UUID id) {

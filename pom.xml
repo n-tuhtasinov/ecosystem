@@ -131,14 +131,19 @@
             <version>6.1.0</version>
         </dependency>
 
-        <!-- iText core -->
+        <!-- Thymeleaf -->
         <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itext7-core</artifactId>
-            <version>9.1.0</version>
-            <type>pom</type>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <scope>compile</scope>
         </dependency>
 
+        <!-- ognl  -->
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>3.2.21</version>
+        </dependency>
     </dependencies>
 
     <build>
