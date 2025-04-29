@@ -63,4 +63,46 @@ public class EquipmentAppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
+    @PostMapping("/hoist")
+    public ResponseEntity<?> createHoist (@CurrentUser User user, @Valid @RequestBody HoistDto hoistDto) {
+        appealService.create(hoistDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/pipeline")
+    public ResponseEntity<?> createPipeline (@CurrentUser User user, @Valid @RequestBody PipelineDto pipelineDto) {
+        appealService.create(pipelineDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/chemical-container")
+    public ResponseEntity<?> createChemicalContainer (@CurrentUser User user, @Valid @RequestBody ChemicalContainerDto chemicalContainerDto) {
+        appealService.create(chemicalContainerDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/heat-pipeline")
+    public ResponseEntity<?> createHeatPipeline (@CurrentUser User user, @Valid @RequestBody HeatPipelineDto heatPipelineDto) {
+        appealService.create(heatPipelineDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/boiler-utilizer")
+    public ResponseEntity<?> createBoilerUtilizer (@CurrentUser User user, @Valid @RequestBody BoilerUtilizerDto boilerUtilizerDto) {
+        appealService.create(boilerUtilizerDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/lpg-container")
+    public ResponseEntity<?> createLpgContainer (@CurrentUser User user, @Valid @RequestBody LpgContainerDto lpgContainerDto) {
+        appealService.create(lpgContainerDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/lpg-powered")
+    public ResponseEntity<?> createLpgPowered (@CurrentUser User user, @Valid @RequestBody LpgPoweredDto lpgPoweredDto) {
+        appealService.create(lpgPoweredDto,user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
 }

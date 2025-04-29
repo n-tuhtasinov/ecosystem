@@ -18,17 +18,17 @@ public enum AppealType {
     DEREGISTER_CRANE,
     RE_REGISTER_CRANE,
 
-    //Container
+    //Container - bosim ostida ishlovchi idish
     REGISTER_CONTAINER,
     DEREGISTER_CONTAINER,
     RE_REGISTER_CONTAINER,
 
-    //Boiler
+    //Boiler - bug'qozon
     REGISTER_BOILER,
     DEREGISTER_BOILER,
     RE_REGISTER_BOILER,
 
-    //Elevator
+    //Elevator - lift
     REGISTER_ELEVATOR,
     DEREGISTER_ELEVATOR,
     RE_REGISTER_ELEVATOR,
@@ -48,8 +48,36 @@ public enum AppealType {
     DEREGISTER_HOIST,
     RE_REGISTER_HOIST,
 
+    //pipeline - quvur
+    REGISTER_PIPELINE,
+    DEREGISTER_PIPELINE,
+    RE_REGISTER_PIPELINE,
+
+    //Chemical container - bosim ostida ishlovchi idish (kimyoviy)
+    REGISTER_CHEMICAL_CONTAINER,
+    DEREGISTER_CHEMICAL_CONTAINER,
+    RE_REGISTER_CHEMICAL_CONTAINER,
+
+    //Heat pipe - bug' va issiqsuv quvuri
+    REGISTER_HEAT_PIPELINE,
+    DEREGISTER_HEAT_PIPELINE,
+    RE_REGISTER_HEAT_PIPELINE,
 
 
+    //Boiler utilizer - qozon utilizator
+    REGISTER_BOILER_UTILIZER,
+    DEREGISTER_BOILER_UTILIZER,
+    RE_REGISTER_BOILER_UTILIZER,
+
+    //LPG container (Liquefied Petroleum Gas) - bosim ostida ishlovchi idish (SUG)
+    REGISTER_LPG_CONTAINER,
+    DEREGISTER_LPG_CONTAINER,
+    RE_REGISTER_LPG_CONTAINER,
+
+    //LPG powered (Liquefied Petroleum Gas) - SUG bilan ishlovchi qurilmalar
+    REGISTER_LPG_POWERED,
+    DEREGISTER_LPG_POWERED,
+    RE_REGISTER_LPG_POWERED,
 
     // Xavfli ishlab chiqarish obyektlari xodimlarini attestatsiyadan o‘tkazish
     CERTIFY_HF_EMPLOYEE,
