@@ -1,13 +1,21 @@
 package uz.technocorp.ecosystem.modules.document.dto;
 
+import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
+
 import java.util.UUID;
 
 /**
  * @author Rasulov Komil
  * @version 1.0
  * @created 17.02.2025
+ * @description belongId indicates which class this document is based on.
  * @since v1.0
  */
-public record DocumentDto(String documentType, UUID appealId, String path) {
-
+public record DocumentDto(
+        DocumentType documentType,
+        UUID belongId,
+        String path,
+        String sign,
+        String ip,
+        UUID executedBy) {
 }
