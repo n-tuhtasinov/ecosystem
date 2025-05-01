@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.childequipment;
 
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.childequipment.dto.ChildEquipmentDto;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public interface ChildEquipmentService {
 
     Page<ChildEquipment> getAll(Map<String, String> params);
 
-    List<ChildEquipment> getSelect();
+    List<ChildEquipment> getSelect(EquipmentType equipmentType);
 
     void update(Integer childEquipmentId, ChildEquipmentDto childEquipmentDto);
 

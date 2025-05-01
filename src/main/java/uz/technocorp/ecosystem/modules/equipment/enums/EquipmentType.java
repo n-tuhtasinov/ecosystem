@@ -20,5 +20,4 @@ public enum EquipmentType {
     BOILER_UTILIZER,
     LPG_CONTAINER,
     LPG_POWERED
-
 }
