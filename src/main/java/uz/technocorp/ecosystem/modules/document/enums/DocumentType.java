@@ -1,9 +1,5 @@
 package uz.technocorp.ecosystem.modules.document.enums;
 
-import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-
-import java.util.Arrays;
-
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -12,15 +8,15 @@ import java.util.Arrays;
  */
 public enum DocumentType {
 
-    Report("Ma'lumotnoma"),
-    Protocol("Bayonnoma"),
-    Act("Dalolatnoma"),
-    Order("Buyruq"),
-    Decree("Qaror"),
-    Notification("Xabarnoma"),
-    Appeal("Ariza"),
-    ReplyLetter("Javob xati"),
-    AccreditationCertificate("Akkreditatsiya attestati");
+    REPORT("Ma'lumotnoma"),
+    PROTOCOL("Bayonnoma"),
+    ACT("Dalolatnoma"),
+    ORDER("Buyruq"),
+    DECREE("Qaror"),
+    NOTIFICATION("Xabarnoma"),
+    APPEAL("Ariza"),
+    REPLY_LETTER("Javob xati"),
+    ACCREDITATION_CERTIFICATE("Akkreditatsiya attestati");
 
     public final String displayName;
 
