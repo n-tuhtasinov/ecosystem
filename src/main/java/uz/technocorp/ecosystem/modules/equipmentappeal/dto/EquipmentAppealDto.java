@@ -68,7 +68,7 @@ public class EquipmentAppealDto{
     private String labelPath;
 
     @NotBlank(message = "Qurilmaning oldi-sotdi shartnomasi pathi jo'natilmadi")
-    private String agreementPath;
+    private String saleContractPath;
 
     @NotBlank(message = "Qurilmaning sertifikati fayli pathi jo'natilmadi")
     private String equipmentCertPath;

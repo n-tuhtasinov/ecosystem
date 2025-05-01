@@ -191,7 +191,7 @@ public class Equipment extends AuditAndIdEntity {
     private UUID inspectorId;
 
     @Column(nullable = false)
-    private String agreementPath; // oldi-sotdi kelishuvi shartnomasi
+    private String saleContractPath; // oldi-sotdi shartnomasi
 
     @Column(nullable = false)
     private String equipmentCertPath; // qurilma sertifikati

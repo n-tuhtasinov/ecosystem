@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.modules.childequipment.dto.ChildEquipmentDto;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 
 import java.util.List;
 import java.util.Map;
@@ -46,8 +47,8 @@ public class ChildEquipmentServiceImpl implements ChildEquipmentService {
     }
 
     @Override
-    public List<ChildEquipment> getSelect() {
-        return childEquipmentRepository.findAll();
+    public List<ChildEquipment> getSelect(EquipmentType equipmentType) {
+        return childEquipmentRepository.findByEquipmentType(equipmentType);
     }
 
     @Override

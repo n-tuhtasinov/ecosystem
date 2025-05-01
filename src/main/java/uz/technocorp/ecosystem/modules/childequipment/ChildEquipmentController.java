@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.childequipment.dto.ChildEquipmentDto;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 
 import java.util.List;
 import java.util.Map;
@@ -38,8 +39,8 @@ public class ChildEquipmentController {
     }
 
     @GetMapping("/select")
-    public ResponseEntity<?> getSelect () {
-        List<ChildEquipment> list = childEquipmentService.getSelect();
+    public ResponseEntity<?> getSelect (@RequestParam EquipmentType equipmentType) {
+        List<ChildEquipment> list = childEquipmentService.getSelect(equipmentType);
         return ResponseEntity.ok(new ApiResponse(list));
     }
 
