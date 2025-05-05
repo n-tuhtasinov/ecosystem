@@ -26,8 +26,9 @@ public interface ChildEquipmentSortRepository extends JpaRepository<ChildEquipme
                    ce.name      as childEquipment
             from child_equipment_sort s
                      join public.child_equipment ce on ce.id = s.child_equipment_id
+            where (:childEquipmentId is null or s.child_equipment_id = :childEquipmentId)
             """)
-    Page<ChildEquipmentSortView> getAllByPage(Pageable pageable);
+    Page<ChildEquipmentSortView> getAllByPage(Pageable pageable, Integer childEquipmentId);
 
     List<ChildEquipmentSortViewBySelect> findByChildEquipmentId(Integer childEquipmentId);
 

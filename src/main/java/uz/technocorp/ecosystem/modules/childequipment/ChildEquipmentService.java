@@ -17,7 +17,7 @@ public interface ChildEquipmentService {
 
     void create(ChildEquipmentDto childEquipmentDto);
 
-    Page<ChildEquipment> getAll(Map<String, String> params);
+    Page<ChildEquipment> getAll(Map<String, String> params, EquipmentType equipmentType);
 
     List<ChildEquipment> getSelect(EquipmentType equipmentType);
 
