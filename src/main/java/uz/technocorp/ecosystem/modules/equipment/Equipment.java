@@ -65,7 +65,7 @@ public class Equipment extends AuditAndIdEntity {
     private ChildEquipment childEquipment;
 
     @Column(name = "child_equipment_id", nullable = false)
-    private Integer childEquipmentTypeId;
+    private Integer childEquipmentId;
 
     @Column(nullable = false)
     private String factoryNumber;

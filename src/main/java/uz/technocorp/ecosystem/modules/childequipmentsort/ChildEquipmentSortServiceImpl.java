@@ -41,7 +41,7 @@ public class ChildEquipmentSortServiceImpl implements ChildEquipmentSortService 
     }
 
     @Override
-    public Page<ChildEquipmentSortView> getAllByPage(Map<String, String> params) {
+    public Page<ChildEquipmentSortView> getAllByPage(Map<String, String> params, Integer childEquipmentId) {
 
         Pageable pageable= PageRequest.of(
                 Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER)) - 1,
@@ -49,7 +49,7 @@ public class ChildEquipmentSortServiceImpl implements ChildEquipmentSortService 
                 Sort.Direction.DESC,
                 "createdAt");
 
-        return childEquipmentSortRepository.getAllByPage(pageable);
+        return childEquipmentSortRepository.getAllByPage(pageable, childEquipmentId);
 
     }
 

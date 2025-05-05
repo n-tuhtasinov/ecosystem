@@ -20,7 +20,7 @@ public interface ChildEquipmentSortService {
 
     void create(@Valid ChildEquipmentSortDto dto);
 
-    Page<ChildEquipmentSortView> getAllByPage(Map<String, String> params);
+    Page<ChildEquipmentSortView> getAllByPage(Map<String, String> params, Integer childEquipmentId);
 
     List<ChildEquipmentSortViewBySelect> getAll(Integer childEquipmentId);
 
