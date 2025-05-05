@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
@@ -41,7 +42,9 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         Appeal appeal = appealRepository
                 .findById(appealId)
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho arizasi", "Id", appealId));
-        Integer maxSerialNumber = repository.findMaxSerialNumber();
+        appeal.setStatus(AppealStatus.COMPLETED);
+        appealRepository.save(appeal);
+        Long maxSerialNumber = repository.findMaxSerialNumber().orElse(0L) + 1;
         District district = districtRepository
                 .findById(appeal.getDistrictId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", appeal.getDistrictId()));

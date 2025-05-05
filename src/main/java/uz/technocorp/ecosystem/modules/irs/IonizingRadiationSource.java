@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.irs;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.models.AuditAndIdEntity;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
@@ -10,6 +11,7 @@ import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
 import uz.technocorp.ecosystem.modules.region.Region;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -26,6 +28,8 @@ import java.time.LocalDate;
 public class IonizingRadiationSource extends AuditAndIdEntity {
 
     private String parentOrganization;
+
+    private String address;
 
     @Column(nullable = false)
     private String supervisorName; //supervisor - mas'ul shaxs
@@ -59,7 +63,7 @@ public class IonizingRadiationSource extends AuditAndIdEntity {
     private String factoryNumber;
 
     @Column(nullable = false)
-    private String serialNumber;
+    private Integer serialNumber;
 
     @Column(nullable = false)
     private Integer activity; // aktivligi
@@ -114,4 +118,13 @@ public class IonizingRadiationSource extends AuditAndIdEntity {
     @Column(nullable = false, name = "district_id")
     private Integer districtId;
 
+    @ManyToOne(targetEntity = Appeal.class, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "appeal_id", updatable = false, insertable = false)
+    private Appeal appeal;
+
+    @Column(name = "appeal_id")
+    private UUID appealId;
+
+    @Column(nullable = false, unique = true)
+    private String registryNumber;
 }
