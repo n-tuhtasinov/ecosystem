@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.technocorp.ecosystem.modules.attachment.dto.AttachmentDto;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -36,5 +39,23 @@ public class AttachmentController {
     @GetMapping
     public ResponseEntity<AttachmentDto> getHtmlByPath(@RequestParam("path") String path) {
         return ResponseEntity.ok(service.getHtmlByPath(path));
+    }
+
+    @PostMapping("/checklist-templates")
+    public ResponseEntity<String> createChecklistTemplates(@RequestBody MultipartFile file) {
+        try {
+            return ResponseEntity.ok(service.create(file, "checklist-templates"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/checklist")
+    public ResponseEntity<String> createChecklist(@RequestBody MultipartFile file) {
+        try {
+            return ResponseEntity.ok(service.create(file, "checklist-" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
