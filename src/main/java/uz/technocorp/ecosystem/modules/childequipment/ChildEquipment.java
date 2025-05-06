@@ -17,16 +17,17 @@ import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "equipment_type"}))
 public class ChildEquipment extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "equipment_type")
     @Enumerated(EnumType.STRING)
     private EquipmentType equipmentType;
 }
