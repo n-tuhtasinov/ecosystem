@@ -36,8 +36,8 @@ public class ChildEquipmentSortController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllByPage (@RequestParam Map<String, String> params) {
-        Page<ChildEquipmentSortView> page = childEquipmentSortService.getAllByPage(params);
+    public ResponseEntity<?> getAllByPage (@RequestParam Map<String, String> params, @RequestParam(required = false) Integer childEquipmentId) {
+        Page<ChildEquipmentSortView> page = childEquipmentSortService.getAllByPage(params, childEquipmentId);
         return ResponseEntity.ok(new ApiResponse(page));
     }
 
