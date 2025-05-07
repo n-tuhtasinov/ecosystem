@@ -115,14 +115,14 @@ public class AppealServiceImpl implements AppealService {
         District district = districtRepository.findById(dto.getDistrictId()).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId()));
         Office office = officeRepository.findById(region.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "ID", region.getOfficeId()));
         String executorName = getExecutorName(dto.getAppealType());
-        SequenceNumberDto numberDto = makeNumber(dto.getAppealType());
+        OrderNumberDto numberDto = makeNumber(dto.getAppealType());
         JsonNode data = makeJsonData(dto);
 
         Appeal appeal = Appeal
                 .builder()
                 .appealType(dto.getAppealType())
                 .number(numberDto.number())
-                .sequenceNumber(numberDto.sequenceNumber())
+                .orderNumber(numberDto.orderNumber())
                 .legalTin(profile.getTin())
                 .legalName(profile.getLegalName())
                 .legalRegionId(profile.getRegionId())
@@ -199,7 +199,7 @@ public class AppealServiceImpl implements AppealService {
         return mapper.valueToTree(dto);
     }
 
-    private SequenceNumberDto makeNumber(AppealType appealType) {
+    private OrderNumberDto makeNumber(AppealType appealType) {
         Long orderNumber = appealRepository.getMax().orElse(0L) + 1;
 
         String number = null;
@@ -209,7 +209,7 @@ public class AppealServiceImpl implements AppealService {
             case REGISTER_HF, DEREGISTER_HF -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
-        return new SequenceNumberDto(orderNumber, number);
+        return new OrderNumberDto(orderNumber, number);
     }
 
     private String getExecutorName(AppealType appealType) {

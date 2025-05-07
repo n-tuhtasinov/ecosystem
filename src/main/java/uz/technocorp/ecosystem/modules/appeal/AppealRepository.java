@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRepo {
 
-    @Query("select a.sequenceNumber from Appeal a order by a.sequenceNumber desc limit 1")
+    @Query("select a.orderNumber from Appeal a order by a.orderNumber desc limit 1")
     Optional<Long> getMax();
 
 }
