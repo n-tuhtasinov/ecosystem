@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.models.ApiResponse;
 import uz.technocorp.ecosystem.models.ResponseMessage;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -25,8 +25,8 @@ public class EquipmentController {
     private final EquipmentService equipmentService;
 
     @PostMapping
-    public ResponseEntity<?> create (@Valid @RequestBody EquipmentDto equipmentDto) {
-        equipmentService.create(equipmentDto);
+    public ResponseEntity<?> create (@Valid @RequestBody EquipmentRegistryDto equipmentRegistryDto) {
+        equipmentService.create(equipmentRegistryDto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 

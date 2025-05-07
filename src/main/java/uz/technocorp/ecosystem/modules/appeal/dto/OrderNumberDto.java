@@ -6,5 +6,5 @@ package uz.technocorp.ecosystem.modules.appeal.dto;
  * @created 25.04.2025
  * @since v1.0
  */
-public record SequenceNumberDto(Long sequenceNumber, String number) {
+public record OrderNumberDto(Long orderNumber, String number) {
 }

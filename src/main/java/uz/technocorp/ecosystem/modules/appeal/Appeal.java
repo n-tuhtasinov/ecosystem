@@ -39,7 +39,7 @@ public class Appeal extends AuditAndIdEntity {
     private String number;
 
     @Column(nullable = false, unique = true)
-    private Long sequenceNumber;
+    private Long orderNumber;
 
     @Column(nullable = false)
     private Long legalTin;
