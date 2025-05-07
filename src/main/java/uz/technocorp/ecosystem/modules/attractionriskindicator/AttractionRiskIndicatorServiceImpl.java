@@ -134,7 +134,7 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
                                         .sumScore(dto.sumScore() + nullScore)
                                         .objectName(
                                                 equipmentRepository.findById(dto.objectId())
-                                                        .map(Equipment::getNumber)
+                                                        .map(Equipment::getRegistryNumber)
                                                         .orElse("Nomi ma'lum emas.")
 
                                         )
