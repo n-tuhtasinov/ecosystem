@@ -44,14 +44,14 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho arizasi", "Id", appealId));
         appeal.setStatus(AppealStatus.COMPLETED);
         appealRepository.save(appeal);
-        Long maxSerialNumber = repository.findMaxSerialNumber().orElse(0L) + 1;
+        Long maxOrderNumber = repository.findMaxOrderNumber().orElse(0L) + 1;
         District district = districtRepository
                 .findById(appeal.getDistrictId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", appeal.getDistrictId()));
         Region region = regionRepository
                 .findById(appeal.getRegionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", appeal.getRegionId()));
-        String registryNumber = String.format("%05d", maxSerialNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
+        String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
         HfAppealDto hfAppealDto = parseJsonData(appeal.getData());
         repository.save(
                 HazardousFacility.builder()
@@ -59,6 +59,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .legalName(appeal.getLegalName())
                         .regionId(appeal.getRegionId())
                         .districtId(appeal.getDistrictId())
+                        .orderNumber(maxOrderNumber)
                         .profileId(appeal.getProfileId())
                         .legalAddress(appeal.getLegalAddress())
                         .phoneNumber(appeal.getPhoneNumber())
@@ -181,7 +182,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setDeregistrationFilePath(dto.get("deregistrationFilePath"));
         hazardousFacility.setDeregistrationFilePath(dto.get("deregistrationReason"));
         hazardousFacility.setRegistryNumber(
-                hazardousFacility.getRegistryNumber() + "/р-ч" + String.format("%05d", hazardousFacility.getSerialNumber())
+                hazardousFacility.getRegistryNumber() + "/р-ч" + String.format("%05d", hazardousFacility.getOrderNumber())
         );
         repository.save(hazardousFacility);
     }
@@ -194,7 +195,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setDeregistrationFilePath(dto.get("periodicUpdateFilePath"));
         hazardousFacility.setDeregistrationFilePath(dto.get("periodicUpdateReason"));
         hazardousFacility.setRegistryNumber(
-                hazardousFacility.getRegistryNumber() + "/д-я" + String.format("%05d", hazardousFacility.getSerialNumber())
+                hazardousFacility.getRegistryNumber() + "/д-я" + String.format("%05d", hazardousFacility.getOrderNumber())
         );
         repository.save(hazardousFacility);
     }

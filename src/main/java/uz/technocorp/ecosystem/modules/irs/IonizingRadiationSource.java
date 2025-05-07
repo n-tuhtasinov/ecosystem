@@ -63,7 +63,7 @@ public class IonizingRadiationSource extends AuditAndIdEntity {
     private String factoryNumber;
 
     @Column(nullable = false)
-    private Integer serialNumber;
+    private Long orderNumber;
 
     @Column(nullable = false)
     private Integer activity; // aktivligi

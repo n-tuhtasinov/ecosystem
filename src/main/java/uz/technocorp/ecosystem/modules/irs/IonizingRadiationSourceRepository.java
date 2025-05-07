@@ -13,6 +13,6 @@ import java.util.UUID;
  * @since v1.0
  */
 public interface IonizingRadiationSourceRepository extends JpaRepository<IonizingRadiationSource, UUID> {
-    @Query("SELECT i.serialNumber FROM IonizingRadiationSource i ORDER BY i.serialNumber DESC LIMIT 1")
-    Optional<Integer> findMaxSerialNumber();
+    @Query("SELECT i.orderNumber FROM IonizingRadiationSource i ORDER BY i.orderNumber DESC LIMIT 1")
+    Optional<Long> findMaxOrderNumber();
 }

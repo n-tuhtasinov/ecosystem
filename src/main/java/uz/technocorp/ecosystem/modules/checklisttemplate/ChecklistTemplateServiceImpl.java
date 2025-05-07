@@ -38,17 +38,13 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
         Attachment attachment = attachmentRepository
                 .findByPath(dto.path())
                 .orElseThrow(() -> new ResourceNotFoundException("File", "qiymat", dto.path()));
-        try {
-            repository.save(
-                    ChecklistTemplate
-                            .builder()
-                            .name(dto.name())
-                            .path(dto.path())
-                            .build()
-            );
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("Bunday nomli shablon mavjud!");
-        }
+        repository.save(
+                ChecklistTemplate
+                        .builder()
+                        .name(dto.name())
+                        .path(dto.path())
+                        .build()
+        );
         attachmentRepository.deleteById(attachment.getId());
     }
 
@@ -63,11 +59,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
                     .findByPath(dto.path())
                     .orElseThrow(() -> new ResourceNotFoundException("File", "qiymat", dto.path()));
             checklistTemplate.setPath(dto.path());
-            try {
-                repository.save(checklistTemplate);
-            } catch (DataIntegrityViolationException e) {
-                throw new RuntimeException("Bunday nomli shablon mavjud!");
-            }
+            repository.save(checklistTemplate);
             attachmentRepository.deleteById(attachment.getId());
         } else repository.save(checklistTemplate);
     }
