@@ -10,7 +10,6 @@ import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDeregisterDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
@@ -44,11 +43,11 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                 .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", appealId));
         appeal.setStatus(AppealStatus.COMPLETED);
         appealRepository.save(appeal);
-        Integer maxSerialNumber = repository.findMaxSerialNumber().orElse(0) + 1;
+        Long maxOrderNumber = repository.findMaxOrderNumber().orElse(0L) + 1;
         Region region = regionRepository
                 .findById(appeal.getRegionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", appeal.getRegionId()));
-        String registryNumber = String.format("%02d", region.getNumber()) + "-S-" +  String.format("%04d", maxSerialNumber);
+        String registryNumber = String.format("%02d", region.getNumber()) + "-S-" +  String.format("%04d", maxOrderNumber);
         IrsAppealDto irsAppealDto = parseJsonData(appeal.getData());
         repository.save(
                 IonizingRadiationSource
@@ -65,7 +64,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                         .symbol(irsAppealDto.getSymbol())
                         .sphere(irsAppealDto.getSphere())
                         .factoryNumber(irsAppealDto.getFactoryNumber())
-                        .serialNumber(maxSerialNumber)
+                        .orderNumber(maxOrderNumber)
 //                        .activity()
                         .category(IrsCategory.valueOf(irsAppealDto.getCategory()))
                         .type(irsAppealDto.getType())

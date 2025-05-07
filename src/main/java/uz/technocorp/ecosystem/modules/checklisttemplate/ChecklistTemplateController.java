@@ -38,43 +38,27 @@ public class ChecklistTemplateController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody ChecklistTemplateDto dto) {
-        try {
-            service.update(id, dto);
-            return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        service.update(id, dto);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
-        try {
-            service.delete(id);
-            return ResponseEntity.ok(new ApiResponse(ResponseMessage.DELETED));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        service.delete(id);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.DELETED));
     }
 
     @GetMapping("/select")
     public ResponseEntity<?> findAll(@RequestParam(value = "name", defaultValue = "") String name) {
-        try {
-            List<ChecklistTemplateView> all = service.findAll(name);
-            return ResponseEntity.ok(new ApiResponse(all));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        List<ChecklistTemplateView> all = service.findAll(name);
+        return ResponseEntity.ok(new ApiResponse(all));
     }
 
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(value = "name", defaultValue = "") String name,
                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
-        try {
-            Page<ChecklistTemplateView> all = service.getAll(page, size, name);
-            return ResponseEntity.ok(new ApiResponse(all));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        Page<ChecklistTemplateView> all = service.getAll(page, size, name);
+        return ResponseEntity.ok(new ApiResponse(all));
     }
 }

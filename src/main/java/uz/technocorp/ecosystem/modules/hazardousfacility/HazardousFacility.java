@@ -34,7 +34,7 @@ public class HazardousFacility extends AuditAndIdEntity {
     private String legalName;
 
     @Column(nullable = false)
-    private Long serialNumber;
+    private Long orderNumber;
 
     @Column(nullable = false, unique = true)
     private String registryNumber;

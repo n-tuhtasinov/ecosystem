@@ -14,6 +14,6 @@ import java.util.UUID;
  */
 public interface HazardousFacilityRepository extends JpaRepository<HazardousFacility, UUID> {
 
-    @Query("SELECT h.serialNumber FROM HazardousFacility h ORDER BY h.serialNumber DESC LIMIT 1")
-    Optional<Long> findMaxSerialNumber();
+    @Query("SELECT h.orderNumber FROM HazardousFacility h ORDER BY h.orderNumber DESC LIMIT 1")
+    Optional<Long> findMaxOrderNumber();
 }
