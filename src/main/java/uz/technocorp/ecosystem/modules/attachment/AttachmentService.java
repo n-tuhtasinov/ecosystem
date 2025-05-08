@@ -20,5 +20,7 @@ public interface AttachmentService {
 
     String getHtmlByPath(String path);
 
+    byte[] getFileByPath(String path);
+
     void deleteByPath(String path);
 }

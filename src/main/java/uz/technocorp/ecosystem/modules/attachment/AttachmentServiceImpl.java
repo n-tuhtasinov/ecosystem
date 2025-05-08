@@ -98,6 +98,15 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
+    public byte[] getFileByPath(String path) {
+        try {
+            return Files.readAllBytes(Path.of(path));
+        } catch (IOException e) {
+            throw new ResourceNotFoundException("File" + "path" + path);
+        }
+    }
+
+    @Override
     public void deleteByPath(String path) {
         repository.deleteByPath(path);
     }

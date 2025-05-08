@@ -5,8 +5,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.shared.ApiResponse;
-import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfDeregisterAppealDto;
@@ -14,6 +12,8 @@ import uz.technocorp.ecosystem.modules.hfappeal.dto.HfModificationAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.SignedHfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 
 import java.util.UUID;
 
@@ -59,10 +59,8 @@ public class HfAppealController {
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
         appealService.generatePdfWithParam(hfDto, user);
-        /*HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "hf-appeal" + ".pdf");*/
 
+        // TODO return path file
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", "/files/registry-files/2025/may/8/1746686108933.pdf"));
     }
 }
