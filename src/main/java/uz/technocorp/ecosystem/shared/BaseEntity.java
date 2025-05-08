@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.models;
+package uz.technocorp.ecosystem.shared;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @MappedSuperclass
-public abstract class AuditAndIdEntity extends AuditEntity {
+public abstract class BaseEntity extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

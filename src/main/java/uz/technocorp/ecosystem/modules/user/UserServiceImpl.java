@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.models.AppConstants;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.department.Department;
 import uz.technocorp.ecosystem.modules.department.DepartmentRepository;
 import uz.technocorp.ecosystem.modules.office.Office;

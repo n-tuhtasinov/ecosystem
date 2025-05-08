@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.childequipmentsort;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditEntity;
+import uz.technocorp.ecosystem.shared.AuditEntity;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 
 /**

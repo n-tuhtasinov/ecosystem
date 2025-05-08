@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.hazardousfacilityriskassessment;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditAndIdEntity;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 
 /**
  * @author Rasulov Komil
@@ -16,7 +16,7 @@ import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 @Builder
 @Getter
 @Setter
-public class HazardousFacilityRiskAssessment extends AuditAndIdEntity {
+public class HazardousFacilityRiskAssessment extends BaseEntity {
 
     private short tin;
 

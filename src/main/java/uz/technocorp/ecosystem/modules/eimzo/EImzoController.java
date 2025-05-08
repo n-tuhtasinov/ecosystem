@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.models.AppConstants;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.eimzo.dto.SignDto;
 import uz.technocorp.ecosystem.modules.eimzo.dto.StatusDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;

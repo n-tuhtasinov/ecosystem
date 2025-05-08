@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.models.AuditAndIdEntity;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 
 /**
  * @author Rasulov Komil
@@ -19,7 +19,7 @@ import uz.technocorp.ecosystem.models.AuditAndIdEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Attachment extends AuditAndIdEntity {
+public class Attachment extends BaseEntity {
 
     @Column(unique = true, nullable = false)
     private String path;
