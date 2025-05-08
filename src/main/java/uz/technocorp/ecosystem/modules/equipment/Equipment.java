@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.equipment;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditAndIdEntity;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSort;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
@@ -29,7 +29,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Equipment extends AuditAndIdEntity {
+public class Equipment extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EquipmentType type;

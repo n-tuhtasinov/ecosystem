@@ -3,7 +3,7 @@ package uz.technocorp.ecosystem.modules.document;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.models.AppConstants;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.dto.Signer;
 import uz.technocorp.ecosystem.modules.document.projection.DocumentProjection;

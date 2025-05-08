@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.attractionriskindicator;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditAndIdEntity;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttractionRiskIndicator extends AuditAndIdEntity {
+public class AttractionRiskIndicator extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private RiskAssessmentIndicator indicatorType;

@@ -2,11 +2,9 @@ package uz.technocorp.ecosystem.modules.checklist;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditAndIdEntity;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.checklisttemplate.ChecklistTemplate;
 import uz.technocorp.ecosystem.modules.profile.Profile;
-
-import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -20,7 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Checklist extends AuditAndIdEntity {
+public class Checklist extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Profile profile;

@@ -15,8 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import uz.technocorp.ecosystem.models.AppConstants;
-import uz.technocorp.ecosystem.models.TokenResponse;
+import uz.technocorp.ecosystem.shared.AppConstants;
+import uz.technocorp.ecosystem.shared.TokenResponse;
 import uz.technocorp.ecosystem.modules.auth.AuthService;
 
 import java.io.IOException;

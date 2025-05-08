@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uz.technocorp.ecosystem.models.ApiResponse;
+import uz.technocorp.ecosystem.shared.ApiResponse;
 
 import java.util.List;
 
