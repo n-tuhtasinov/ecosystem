@@ -3,9 +3,6 @@ package uz.technocorp.ecosystem.modules.hfappeal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -60,12 +57,12 @@ public class HfAppealController {
     }
 
     @PostMapping("/generate-pdf")
-    public ResponseEntity<byte[]> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        byte[] pdfBytes = appealService.generatePdfWithParam(hfDto, user);
-        HttpHeaders headers = new HttpHeaders();
+    public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
+        appealService.generatePdfWithParam(hfDto, user);
+        /*HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "hf-appeal" + ".pdf");
+        headers.setContentDispositionFormData("attachment", "hf-appeal" + ".pdf");*/
 
-        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", "/* PATH */"));
     }
 }

@@ -31,7 +31,7 @@ public interface AppealService {
 
     void update(UUID id, AppealDto dto);
 
-    byte[] generatePdfWithParam(HfAppealDto dto, User user);
+    String generatePdfWithParam(HfAppealDto dto, User user);
 
     void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
 }

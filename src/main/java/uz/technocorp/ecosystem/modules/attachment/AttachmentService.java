@@ -1,7 +1,6 @@
 package uz.technocorp.ecosystem.modules.attachment;
 
 import org.springframework.web.multipart.MultipartFile;
-import uz.technocorp.ecosystem.modules.attachment.dto.AttachmentDto;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -19,5 +18,7 @@ public interface AttachmentService {
 
     String createPdfFromHtml(String htmlContent, String folder);
 
-    AttachmentDto getHtmlByPath(String path);
+    String getHtmlByPath(String path);
+
+    void deleteByPath(String path);
 }
