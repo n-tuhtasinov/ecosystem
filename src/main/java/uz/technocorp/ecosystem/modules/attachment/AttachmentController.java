@@ -6,9 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -24,38 +21,31 @@ public class AttachmentController {
 
     @PostMapping("/registry-files")
     public ResponseEntity<ApiResponse> createRegistryFiles(@RequestBody MultipartFile file) {
-        try {
-            return ResponseEntity.ok(new ApiResponse(service.create(file, "registry-files")));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage()));
-        }
+        String path = service.create(file, "registry-files");
+        return ResponseEntity.ok(new ApiResponse(path));
     }
 
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> createPdfFromHtml(@RequestBody String htmlContent) {
-        return ResponseEntity.ok(new ApiResponse(service.createPdfFromHtml(htmlContent, "generated-documents")));
+        String path = service.createPdfFromHtml(htmlContent, "generated-documents");
+        return ResponseEntity.ok(new ApiResponse(path));
     }
 
     @GetMapping("/content")
     public ResponseEntity<ApiResponse> getHtmlByPath(@RequestParam("path") String path) {
-        return ResponseEntity.ok(new ApiResponse(service.getHtmlByPath(path)));
+        String content = service.getHtmlByPath(path);
+        return ResponseEntity.ok(new ApiResponse(content));
     }
 
     @PostMapping("/checklist-templates")
     public ResponseEntity<ApiResponse> createChecklistTemplates(@RequestBody MultipartFile file) {
-        try {
-            return ResponseEntity.ok(new ApiResponse(service.create(file, "checklist-templates")));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage()));
-        }
+        String path = service.create(file, "checklist-templates");
+        return ResponseEntity.ok(new ApiResponse(path));
     }
 
     @PostMapping("/checklist")
     public ResponseEntity<ApiResponse> createChecklist(@RequestBody MultipartFile file) {
-        try {
-            return ResponseEntity.ok(new ApiResponse(service.create(file, "checklist-" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")))));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage()));
-        }
+        String path = service.create(file, "checklists");
+        return ResponseEntity.ok(new ApiResponse(path));
     }
 }

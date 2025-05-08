@@ -32,7 +32,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private final HtmlToPdfGenerator htmlToPdfGenerator;
 
     @Override
-    public String create(MultipartFile file, String folder) throws IOException {
+    public String create(MultipartFile file, String folder) {
         if (file != null) {
             // Create a directory for the file
             Path attachmentFilesPath = createDirectory(folder);
