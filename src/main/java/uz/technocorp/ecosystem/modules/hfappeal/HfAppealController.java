@@ -60,7 +60,7 @@ public class HfAppealController {
     public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
         appealService.generatePdfWithParam(hfDto, user);
 
-        // TODO return path file
-        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", "/files/registry-files/2025/may/8/1746686108933.pdf"));
+        // TODO return file path
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", "files/registry-files/2025/may/8/1746686108933.pdf"));
     }
 }

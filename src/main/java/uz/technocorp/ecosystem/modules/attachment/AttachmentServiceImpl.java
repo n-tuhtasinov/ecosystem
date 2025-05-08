@@ -55,7 +55,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                             path.toString().replace("\\", "/")
                     )
             );
-            return "/" + attachment.getPath();
+            return attachment.getPath();
         }
         return null;
     }
@@ -85,7 +85,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                     new Attachment(
                             path.toString().replace("\\", "/"),
                             htmlContent));
-            return "/" + attachment.getPath();
+            return attachment.getPath();
         }
         return null;
     }
