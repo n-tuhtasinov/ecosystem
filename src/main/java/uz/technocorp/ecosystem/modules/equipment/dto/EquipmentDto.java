@@ -18,7 +18,6 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class EquipmentDto {
 
     private EquipmentType type;
@@ -55,7 +54,7 @@ public class EquipmentDto {
     private String passengerCount;
     private String diameter;
     private String thickness;
-    private String rideName;
+    private String attractionName;
     private LocalDate acceptedAt;
     private Integer childEquipmentSortId;
     private String country;
@@ -91,6 +90,4 @@ public class EquipmentDto {
     private String rideFile9Path;
     private String rideFile10Path;
     private String rideFile11Path;
-
-
 }

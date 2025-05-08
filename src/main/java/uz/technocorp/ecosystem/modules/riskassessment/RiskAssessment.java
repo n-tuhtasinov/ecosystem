@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
-import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
+import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
 
 import java.util.UUID;

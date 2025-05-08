@@ -1,11 +1,11 @@
-package uz.technocorp.ecosystem.modules.elevatorriskindicator;
+package uz.technocorp.ecosystem.modules.hfriskindicator;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
-import uz.technocorp.ecosystem.modules.elevatorriskindicator.dto.EquipmentRiskIndicatorDto;
+import uz.technocorp.ecosystem.modules.hfriskindicator.dto.HFRIndicatorDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 
 import java.util.List;
@@ -18,20 +18,20 @@ import java.util.UUID;
  * @since v1.0
  */
 @RestController
-@RequestMapping("/api/v1/elevator-risk-indicator")
+@RequestMapping("/api/v1/hf-risk-indicators")
 @RequiredArgsConstructor
-public class ElevatorRiskIndicatorController {
+public class HfRiskIndicatorController {
 
-    private final ElevatorRiskIndicatorService service;
+    private final HfRiskIndicatorService service;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody EquipmentRiskIndicatorDto dto) {
+    public ResponseEntity<?> create(@RequestBody HFRIndicatorDto dto) {
         service.create(dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody EquipmentRiskIndicatorDto dto) {
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody HFRIndicatorDto dto) {
         service.update(id, dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
@@ -44,7 +44,7 @@ public class ElevatorRiskIndicatorController {
 
     @GetMapping("/{tin}/{id}")
     public ResponseEntity<?> getById(@PathVariable Long tin, @PathVariable UUID id) {
-        List<RiskIndicatorView> allByIrsIdAndTin = service.findAllByEquipmentIdAndTin(id, tin);
+        List<RiskIndicatorView> allByIrsIdAndTin = service.findAllByHFIdAndTin(id, tin);
         return ResponseEntity.ok(new ApiResponse(allByIrsIdAndTin));
     }
 

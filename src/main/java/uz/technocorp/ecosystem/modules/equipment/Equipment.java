@@ -10,7 +10,7 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
-import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
+import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 
@@ -151,7 +151,7 @@ public class Equipment extends BaseEntity {
 
     private String thickness; // devor qalinligi (quvur, bug' va issiq suv quvuri)
 
-    private String rideName; // attraksion nomi (attraksion)
+    private String attractionName; // attraksion nomi (attraksion)
 
     private LocalDate acceptedAt; // foydalanishga qabul qilingan sana (attraksion pasporti)
 

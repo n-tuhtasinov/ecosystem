@@ -1,6 +1,6 @@
 package uz.technocorp.ecosystem.modules.irsriskindicator;
 
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
+import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
 
 import java.util.List;
