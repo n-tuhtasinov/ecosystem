@@ -1,7 +1,7 @@
 package uz.technocorp.ecosystem.modules.attachment;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -35,17 +35,6 @@ public class AttachmentController {
     public ResponseEntity<ApiResponse> getHtmlByPath(@RequestParam("path") String path) {
         String content = service.getHtmlByPath(path);
         return ResponseEntity.ok(new ApiResponse("Success", content));
-    }
-
-    @GetMapping("/file")
-    public ResponseEntity<byte[]> getFileByPath(@RequestParam("path") String path) {
-        byte[] fileBytes = service.getFileByPath(path);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDisposition(ContentDisposition.inline().filename("attachment.pdf").build());
-
-        return new ResponseEntity<>(fileBytes, headers, HttpStatus.OK);
     }
 
     @PostMapping("/checklist-templates")

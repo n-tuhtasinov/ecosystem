@@ -55,7 +55,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                             path.toString().replace("\\", "/")
                     )
             );
-            return attachment.getPath();
+            return "/" + attachment.getPath();
         }
         return null;
     }
@@ -85,7 +85,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                     new Attachment(
                             path.toString().replace("\\", "/"),
                             htmlContent));
-            return attachment.getPath();
+            return "/" + attachment.getPath();
         }
         return null;
     }
@@ -95,15 +95,6 @@ public class AttachmentServiceImpl implements AttachmentService {
         return repository.findByPath(path).map(
                         Attachment::getHtmlContent)
                 .orElseThrow(() -> new ResourceNotFoundException("PDF file", "path", path));
-    }
-
-    @Override
-    public byte[] getFileByPath(String path) {
-        try {
-            return Files.readAllBytes(Path.of(path));
-        } catch (IOException e) {
-            throw new ResourceNotFoundException("File" + "path" + path);
-        }
     }
 
     @Override
