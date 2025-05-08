@@ -157,7 +157,7 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public byte[] generatePdfWithParam(HfAppealDto dto, User user) {
+    public String generatePdfWithParam(HfAppealDto dto, User user) {
 
         Template template = templateService.getByType(TemplateType.XICHO_APPEAL.name());
         if (template == null) {
@@ -174,7 +174,18 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("districtName", districtRepository.findById(dto.getDistrictId()).map(District::getName).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId())));
         parameters.put("hfName", dto.getName());
 
-        return htmlToPdfGenerator.generatePdfWithParam(template.getContent(), parameters);
+        /**
+         * QR code qoyish kerak
+         */
+
+        byte[] pdfBytes = htmlToPdfGenerator.generatePdfWithParam(template.getContent(), parameters);
+
+        /**
+         * attachmentga va folder ga save qilish kerak
+         * file path ni qaytarib yuborish kerak
+         */
+
+        return null;
     }
 
     @Override

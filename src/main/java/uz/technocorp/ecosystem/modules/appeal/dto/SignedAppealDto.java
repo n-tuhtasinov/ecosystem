@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.appeal.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 
 /**
@@ -15,5 +16,6 @@ public interface SignedAppealDto {
 
     Object getDto();
 
+    @Schema(hidden = true)
     DocumentType getType();
 }

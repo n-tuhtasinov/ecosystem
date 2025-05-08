@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.models.AppConstants;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.dto.Signer;
 import uz.technocorp.ecosystem.modules.document.projection.DocumentProjection;
@@ -26,6 +27,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     private final EImzoProxy eImzoProxy;
     private final DocumentRepository documentRepository;
+    private final AttachmentService attachmentService;
 
     @Override
     public void create(DocumentDto dto) {
@@ -38,6 +40,9 @@ public class DocumentServiceImpl implements DocumentService {
                 .signers(List.of(signer)) // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
                 .documentType(dto.documentType())
                 .build());
+
+        // Delete attachment without the file
+        attachmentService.deleteByPath(dto.path());
     }
 
     @Override
