@@ -12,7 +12,7 @@ import java.util.UUID;
  * @since v1.0
  */
 public interface AttachmentService {
-    String create(MultipartFile file, String folder) throws IOException;
+    String create(MultipartFile file, String folder);
 
     void delete(UUID id);
 
