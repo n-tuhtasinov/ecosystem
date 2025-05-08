@@ -33,8 +33,8 @@ public class ChildEquipmentController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll (@RequestParam Map<String, String> params) {
-        Page<ChildEquipment> page = childEquipmentService.getAll(params);
+    public ResponseEntity<?> getAll (@RequestParam Map<String, String> params, @RequestParam(required = false) EquipmentType equipmentType) {
+        Page<ChildEquipment> page = childEquipmentService.getAll(params, equipmentType);
         return ResponseEntity.ok(new ApiResponse(page));
     }
 

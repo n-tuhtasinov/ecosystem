@@ -41,8 +41,8 @@ public class Equipment extends AuditAndIdEntity {
     @Column(name = "appeal_id", nullable = false)
     private UUID appealId;
 
-    @Column(nullable = false)
-    private String number;
+    @Column(nullable = false, unique = true)
+    private String registryNumber;
 
     @Column(nullable = false)
     private Long orderNumber;
@@ -65,7 +65,7 @@ public class Equipment extends AuditAndIdEntity {
     private ChildEquipment childEquipment;
 
     @Column(name = "child_equipment_id", nullable = false)
-    private Integer childEquipmentTypeId;
+    private Integer childEquipmentId;
 
     @Column(nullable = false)
     private String factoryNumber;

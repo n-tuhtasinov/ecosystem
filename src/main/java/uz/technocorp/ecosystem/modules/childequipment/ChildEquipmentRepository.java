@@ -1,8 +1,12 @@
 package uz.technocorp.ecosystem.modules.childequipment;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,4 +18,11 @@ import java.util.List;
 public interface ChildEquipmentRepository extends JpaRepository<ChildEquipment, Integer> {
 
     List<ChildEquipment> findByEquipmentType(EquipmentType type);
+
+
+    @Query("""
+            select c from ChildEquipment c
+            where (:type is null or c.equipmentType = :type)
+            """)
+    Page<ChildEquipment> findAllByEquipmentType(Pageable pageable, EquipmentType type);
 }
