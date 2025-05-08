@@ -22,30 +22,30 @@ public class AttachmentController {
     @PostMapping("/registry-files")
     public ResponseEntity<ApiResponse> createRegistryFiles(@RequestBody MultipartFile file) {
         String path = service.create(file, "registry-files");
-        return ResponseEntity.ok(new ApiResponse(path));
+        return ResponseEntity.ok(new ApiResponse("File saqlandi", path));
     }
 
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> createPdfFromHtml(@RequestBody String htmlContent) {
         String path = service.createPdfFromHtml(htmlContent, "generated-documents");
-        return ResponseEntity.ok(new ApiResponse(path));
+        return ResponseEntity.ok(new ApiResponse("PDF yaratildi", path));
     }
 
     @GetMapping("/content")
     public ResponseEntity<ApiResponse> getHtmlByPath(@RequestParam("path") String path) {
         String content = service.getHtmlByPath(path);
-        return ResponseEntity.ok(new ApiResponse(content));
+        return ResponseEntity.ok(new ApiResponse("Success", content));
     }
 
     @PostMapping("/checklist-templates")
     public ResponseEntity<ApiResponse> createChecklistTemplates(@RequestBody MultipartFile file) {
         String path = service.create(file, "checklist-templates");
-        return ResponseEntity.ok(new ApiResponse(path));
+        return ResponseEntity.ok(new ApiResponse("Success", path));
     }
 
     @PostMapping("/checklist")
     public ResponseEntity<ApiResponse> createChecklist(@RequestBody MultipartFile file) {
         String path = service.create(file, "checklists");
-        return ResponseEntity.ok(new ApiResponse(path));
+        return ResponseEntity.ok(new ApiResponse("Success", path));
     }
 }
