@@ -63,6 +63,6 @@ public class HfAppealController {
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "hf-appeal" + ".pdf");*/
 
-        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", "/* PATH */"));
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", "/files/registry-files/2025/may/8/1746686108933.pdf"));
     }
 }
