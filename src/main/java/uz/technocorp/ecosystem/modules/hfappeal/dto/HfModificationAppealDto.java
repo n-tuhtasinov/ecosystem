@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.hazardousfacility.enums.HFSphere;
+import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 
 import java.util.List;
 import java.util.UUID;

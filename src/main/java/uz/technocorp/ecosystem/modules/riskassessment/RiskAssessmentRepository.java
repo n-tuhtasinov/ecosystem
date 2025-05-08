@@ -16,17 +16,31 @@ import java.util.UUID;
  */
 public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, UUID> {
 
+//    @Query(value = """
+//            select ra.sum_score as sumScore,
+//            ra.tin as tin,
+//            pr.legal_address as address,
+//            pr.legal_name as legalName,
+//            pr.region_name as regionName,
+//            pr.district_name as districtName,
+//            hf.name as hazardousFacilityName
+//            from hf_risk_assessment ra
+//            join profile pr on ra.tin = pr.tin
+//            join hazardous_facility hf on ra.hazardous_facility_id = hf.id
+//            """, nativeQuery = true)
+//    Page<RiskAssessmentView> getAll(Pageable pageable);
+
     @Query(value = """
             select ra.sum_score as sumScore,
-            ra.tin as tin,
-            pr.legal_address as address,
-            pr.legal_name as legalName,
-            pr.region_name as regionName,
-            pr.district_name as districtName,
-            hf.name as hazardousFacilityName
-            from hazardous_facility_risk_assessment ra
-            join profile pr on ra.tin = pr.tin
-            join hazardous_facility hf on ra.hazardous_facility_id = hf.id
+                   ra.tin as tin,
+                   pr.legal_address as address,
+                   pr.legal_name as legalName,
+                   pr.region_name as regionName,
+                   pr.district_name as districtName,
+                   hf.name as hazardousFacilityName
+            from risk_assessment ra
+                     join profile pr on ra.tin = pr.tin
+                     join hazardous_facility hf on ra.hazardous_facility_id = hf.id
             """, nativeQuery = true)
     Page<RiskAssessmentView> getAll(Pageable pageable);
 }

@@ -1,8 +1,10 @@
 package uz.technocorp.ecosystem.modules.irs;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.irs.dto.IrsRegistryDto;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
@@ -22,20 +24,20 @@ public class IonizingRadiationSourceController {
 
     private final IonizingRadiationSourceService service;
 
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody IrsDto dto) {
-        service.create(dto);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
+//    @PostMapping("/without-appeal")
+//    public ResponseEntity<?> create(@RequestBody IrsDto dto) {
+//        service.create(dto);
+//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+//    }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id) {
-        service.create(id);
+    @PostMapping
+    public ResponseEntity<?> create(@Valid @RequestBody IrsRegistryDto irsRegistryDto) {
+        service.create(irsRegistryDto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody IrsDto dto) {
+    public ResponseEntity<?> update(@PathVariable UUID id, @Valid @RequestBody IrsDto dto) {
         service.update(id, dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }

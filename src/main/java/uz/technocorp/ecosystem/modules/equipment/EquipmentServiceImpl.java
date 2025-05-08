@@ -74,7 +74,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .passengerCount(dto.getPassengerCount())
                 .diameter(dto.getDiameter())
                 .thickness(dto.getThickness())
-                .rideName(dto.getRideName())
+                .attractionName(dto.getAttractionName())
                 .acceptedAt(dto.getAcceptedAt())
                 .childEquipmentSortId(dto.getChildEquipmentSortId())
                 .country(dto.getCountry())

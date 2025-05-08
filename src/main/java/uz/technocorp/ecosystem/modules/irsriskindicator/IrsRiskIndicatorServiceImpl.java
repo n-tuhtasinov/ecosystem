@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.HazardousFacilityRiskIndicator;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
+import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceRepository;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
@@ -16,8 +15,6 @@ import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,9 +49,9 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
             throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
         }
         repository.save(
-                HazardousFacilityRiskIndicator
+                IrsRiskIndicator
                         .builder()
-                        .hazardousFacilityId(dto.irsId())
+                        .ionizingRadiationSourceId(dto.irsId())
                         .indicatorType(dto.indicatorType())
                         .score(dto.indicatorType().getScore())
                         .description(dto.description())
@@ -65,11 +62,11 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
 
     @Override
     public void update(UUID id, IrsRiskIndicatorDto dto) {
-        HazardousFacilityRiskIndicator riskIndicator = repository
+        IrsRiskIndicator irsRiskIndicator = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasi", "Id", id));
-        riskIndicator.setDescription(dto.description());
-        repository.save(riskIndicator);
+        irsRiskIndicator.setDescription(dto.description());
+        repository.save(irsRiskIndicator);
     }
 
     @Override

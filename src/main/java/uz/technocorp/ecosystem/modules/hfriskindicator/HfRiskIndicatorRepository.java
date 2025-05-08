@@ -1,9 +1,9 @@
-package uz.technocorp.ecosystem.modules.elevatorriskindicator;
+package uz.technocorp.ecosystem.modules.hfriskindicator;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
+import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,16 +11,13 @@ import java.util.UUID;
 /**
  * @author Rasulov Komil
  * @version 1.0
- * @created 28.04.2025
+ * @created 16.04.2025
  * @since v1.0
  */
-public interface ElevatorRiskIndicatorRepository extends JpaRepository<ElevatorRiskIndicator, UUID> {
+public interface HfRiskIndicatorRepository extends JpaRepository<HfRiskIndicator, UUID> {
 
-    @Query("SELECT h FROM ElevatorRiskIndicator h WHERE h.equipmentId = :equipmentId AND h.riskAnalysisInterval.id = :intervalId")
-    List<ElevatorRiskIndicator> findAllByQuarter(
-            Integer intervalId,
-            UUID equipmentId
-    );
+    @Query("SELECT h FROM HfRiskIndicator h WHERE h.hazardousFacilityId = :hfId AND h.riskAnalysisInterval.id = :intervalId")
+    List<HfRiskIndicator> findAllByQuarter(Integer intervalId, UUID hfId);
 
 
     @Query(value = """
@@ -28,32 +25,33 @@ public interface ElevatorRiskIndicatorRepository extends JpaRepository<ElevatorR
             indicator_type as indicatorType,
             score,
             description
-            from elevator_risk_indicator
-            where (equipment_id = :id or equipment_id is null)
+            from hf_risk_indicator
+            where (hazardous_facility_id = :id or hazardous_facility_id is null)
             and risk_analysis_interval_id = :intervalId
             and tin = :tin
             """, nativeQuery = true)
-    List<RiskIndicatorView> findAllByEquipmentIdAndTinAndDate(UUID id, Long tin, Integer intervalId);
+    List<RiskIndicatorView> findAllByHfIdAndTinAndDate(UUID id, Long tin, Integer intervalId);
 
     @Query(value = """
             select cast(id as varchar) as id,
             indicator_type as indicatorType,
             score,
             description
-            from elevator_risk_indicator
+            from hf_risk_indicator
             where tin = :tin
-            and equipment_id is null
+            and hazardous_facility_id is null
             and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
     List<RiskIndicatorView> findAllByTinAndDate(Long tin, Integer intervalId);
 
     @Query(value = """
-            select cast(equipment_id as varchar) as objectId,
+            select cast(hazardous_facility_id as varchar) as objectId,
             sum(score),
             tin
-            from elevator_risk_indicator
+            from hf_risk_indicator
             where risk_analysis_interval_id = :intervalId
-            group by equipment_id, tin
+            group by hazardous_facility_id, tin
             """, nativeQuery = true)
-    List<RiskAssessmentDto> findAllGroupByEquipmentAndTin(Integer intervalId);
+    List<RiskAssessmentDto> findAllGroupByHfIdAndTin(Integer intervalId);
+
 }
