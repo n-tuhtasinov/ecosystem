@@ -5,7 +5,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.models.AppConstants;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.office.dto.OfficeDto;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeView;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
@@ -14,7 +14,6 @@ import uz.technocorp.ecosystem.modules.region.RegionRepository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author Nurmuhammad Tuhtasinov

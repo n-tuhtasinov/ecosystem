@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.models.AuditAndIdEntity;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class HazardousFacilityRiskIndicator extends AuditAndIdEntity {
+public class HazardousFacilityRiskIndicator extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private RiskAssessmentIndicator indicatorType;

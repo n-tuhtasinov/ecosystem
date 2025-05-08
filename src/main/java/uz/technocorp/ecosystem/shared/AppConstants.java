@@ -1,8 +1,4 @@
-package uz.technocorp.ecosystem.models;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+package uz.technocorp.ecosystem.shared;
 
 /**
  * @author Nurmuhammad Tuhtasinov

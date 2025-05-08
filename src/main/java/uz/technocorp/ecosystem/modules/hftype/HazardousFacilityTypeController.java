@@ -7,9 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.models.ApiResponse;
-import uz.technocorp.ecosystem.models.AppConstants;
-import uz.technocorp.ecosystem.models.ResponseMessage;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.AppConstants;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.hftype.dto.HazardousFacilityTypeDto;
 
 import java.util.List;

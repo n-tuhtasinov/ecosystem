@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.models;
+package uz.technocorp.ecosystem.shared;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

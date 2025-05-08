@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.models;
+package uz.technocorp.ecosystem.shared;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

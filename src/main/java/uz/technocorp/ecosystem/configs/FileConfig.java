@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.configs;
 
 
 import org.springframework.context.annotation.Configuration;
-import uz.technocorp.ecosystem.models.ResponseMessage;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 
 import java.io.File;
 import java.io.IOException;
