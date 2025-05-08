@@ -3,11 +3,11 @@ package uz.technocorp.ecosystem.modules.eimzo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.eimzo.dto.SignDto;
 import uz.technocorp.ecosystem.modules.eimzo.dto.StatusDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
@@ -32,6 +32,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class EImzoController {
 
+    @Value("${app.e-imzo.host}")
+    private String host;
     private final EImzoProxy eImzoProxy;
 
     @GetMapping("/status")
@@ -57,7 +59,7 @@ public class EImzoController {
     @PostMapping("/auth")
     public ResponseEntity<EImzoAuthJson> auth(@Valid @RequestBody SignDto form, Authentication authentication, HttpServletRequest request) {
         try {
-            EImzoAuthJson eImzoAuth = eImzoProxy.auth(AppConstants.HOST, Helper.getIp(request), form.getSign());
+            EImzoAuthJson eImzoAuth = eImzoProxy.auth(host, Helper.getIp(request), form.getSign());
             return ResponseEntity.ok(eImzoAuth);
         } catch (Exception ex) {
             throw new ResourceNotFoundException(ex.getMessage());
@@ -67,7 +69,7 @@ public class EImzoController {
     @PostMapping("/attach-timestamp")
     public ResponseEntity<Pkcs7Json> attachTimestamp(@Valid @RequestBody SignDto form, Authentication authentication, HttpServletRequest request) {
         try {
-            Pkcs7Json pkcs7 = eImzoProxy.attachTimestamp(AppConstants.HOST, Helper.getIp(request), form.getSign());
+            Pkcs7Json pkcs7 = eImzoProxy.attachTimestamp(host, Helper.getIp(request), form.getSign());
             return ResponseEntity.ok(pkcs7);
         } catch (Exception ex) {
             throw new ResourceNotFoundException(ex.getMessage());
@@ -77,7 +79,7 @@ public class EImzoController {
     @PostMapping("/attached")
     public ResponseEntity<Pkcs7VerifyAttachedJson> attached(@Valid @RequestBody SignDto form, Authentication authentication, HttpServletRequest request) {
         try {
-            Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(AppConstants.HOST, Helper.getIp(request), form.getSign());
+            Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, Helper.getIp(request), form.getSign());
             if ("1".equals(pkcs7VerifyAttached.getStatus())) {
                 Pkcs7InfoJson pkcs7Info = pkcs7VerifyAttached.getPkcs7Info();
                 if (pkcs7Info != null) {
@@ -97,7 +99,7 @@ public class EImzoController {
     @PostMapping("/detached")
     public ResponseEntity<Pkcs7VerifyDetachedJson> detached(@RequestBody SignDto form, Authentication authentication, HttpServletRequest request) {
         try {
-            Pkcs7VerifyDetachedJson pkcs7VerifyDetached = eImzoProxy.pkcs7Detached(AppConstants.HOST, Helper.getIp(request), form.getSign());
+            Pkcs7VerifyDetachedJson pkcs7VerifyDetached = eImzoProxy.pkcs7Detached(host, Helper.getIp(request), form.getSign());
             return ResponseEntity.ok(pkcs7VerifyDetached);
         } catch (Exception ex) {
             throw new ResourceNotFoundException(ex.getMessage());
@@ -107,7 +109,7 @@ public class EImzoController {
     @PostMapping("/make-attached")
     public ResponseEntity<Pkcs7VerifyAttachedJson> makeAttached(@RequestBody SignDto form, Authentication authentication, HttpServletRequest request) {
         try {
-            Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(AppConstants.HOST, Helper.getIp(request), form.getSign());
+            Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, Helper.getIp(request), form.getSign());
             return ResponseEntity.ok(pkcs7VerifyAttached);
         } catch (Exception ex) {
             throw new ResourceNotFoundException(ex.getMessage());
@@ -117,7 +119,7 @@ public class EImzoController {
     @PostMapping("/join")
     public ResponseEntity<Pkcs7Json> join(@RequestBody SignDto form, Authentication authentication, HttpServletRequest request) {
         try {
-            Pkcs7Json pkcs7 = eImzoProxy.pkcs7Join(AppConstants.HOST, Helper.getIp(request), form.getSign());
+            Pkcs7Json pkcs7 = eImzoProxy.pkcs7Join(host, Helper.getIp(request), form.getSign());
             return ResponseEntity.ok(pkcs7);
         } catch (Exception ex) {
             throw new ResourceNotFoundException(ex.getMessage());

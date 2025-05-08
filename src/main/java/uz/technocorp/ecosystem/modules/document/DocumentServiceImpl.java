@@ -1,11 +1,10 @@
 package uz.technocorp.ecosystem.modules.document;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.models.AppConstants;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
-import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.dto.Signer;
 import uz.technocorp.ecosystem.modules.document.projection.DocumentProjection;
@@ -25,6 +24,9 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class DocumentServiceImpl implements DocumentService {
+
+    @Value("${app.e-imzo.host}")
+    private String host;
 
     private final EImzoProxy eImzoProxy;
     private final DocumentRepository documentRepository;
@@ -57,7 +59,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private String getSigner(String sign, String ip) {
-        Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(AppConstants.HOST, ip, sign);
+        Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, ip, sign);
 
         if (!"1".equals(pkcs7VerifyAttached.getStatus())) {
             throw new ResourceNotFoundException("Document verification failed");

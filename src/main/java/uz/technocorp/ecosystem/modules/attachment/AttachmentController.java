@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import uz.technocorp.ecosystem.models.ApiResponse;
+import uz.technocorp.ecosystem.shared.ApiResponse;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
