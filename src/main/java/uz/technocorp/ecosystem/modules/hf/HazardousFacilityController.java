@@ -7,10 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
+import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -62,5 +66,11 @@ public class HazardousFacilityController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/select")
+    public ResponseEntity<?> findAllByProfile(@CurrentUser User user) {
+        List<HfSelectView> allByProfile = service.findAllByProfile(user);
+        return ResponseEntity.ok(new ApiResponse(allByProfile));
     }
 }
