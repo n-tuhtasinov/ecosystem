@@ -15,6 +15,7 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcess;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
@@ -34,7 +35,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
-import uz.technocorp.ecosystem.utils.HtmlToPdfGenerator;
+import uz.technocorp.ecosystem.utils.Generator;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -61,7 +62,8 @@ public class AppealServiceImpl implements AppealService {
     private final OfficeRepository officeRepository;
     private final TemplateService templateService;
     private final DocumentService documentService;
-    private final HtmlToPdfGenerator htmlToPdfGenerator;
+    private final Generator generator;
+    private final AttachmentService attachmentService;
 
     @Override
     @Transactional
@@ -166,26 +168,22 @@ public class AppealServiceImpl implements AppealService {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
 
         // Collect params to Map
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("name", user.getName());
         parameters.put("legalName", profile.getLegalName());
-        parameters.put("tin", profile.getTin());
+        parameters.put("tin", profile.getTin().toString());
         parameters.put("regionName", regionRepository.findById(dto.getRegionId()).map(Region::getName).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId())));
         parameters.put("districtName", districtRepository.findById(dto.getDistrictId()).map(District::getName).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId())));
         parameters.put("hfName", dto.getName());
 
-        /**
-         * QR code qoyish kerak
-         */
-
-        byte[] pdfBytes = htmlToPdfGenerator.generatePdfWithParam(template.getContent(), parameters);
+        // Replace variables
+        String content = replaceVariables(template.getContent(), parameters);
 
         /**
          * attachmentga va folder ga save qilish kerak
          * file path ni qaytarib yuborish kerak
          */
-
-        return null;
+        return attachmentService.createPdfFromHtml(content, "appeals/hf-appeals");
     }
 
     @Override
@@ -233,5 +231,13 @@ public class AppealServiceImpl implements AppealService {
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
         }
         return executorName;
+    }
+
+    private String replaceVariables(String htmlContent, Map<String, String> variables) {
+        String result = htmlContent;
+        for (Map.Entry<String, String> entry : variables.entrySet()) {
+            result = result.replace("{" + entry.getKey() + "}", entry.getValue());
+        }
+        return result;
     }
 }
