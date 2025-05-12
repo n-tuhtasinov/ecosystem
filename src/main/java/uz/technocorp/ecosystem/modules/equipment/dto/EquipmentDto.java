@@ -82,6 +82,6 @@ public record EquipmentDto(
         String safetyUsageReportPath,
         String insurancePolicyPath,
         String biomechanicalRiskFilePath,
-        String technicalStatusAct,
+        String technicalStatusActPath,
         String usageRightsPath
 ) {}

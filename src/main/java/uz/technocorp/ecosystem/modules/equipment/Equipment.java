@@ -240,7 +240,7 @@ public class Equipment extends BaseEntity {
 
     private String biomechanicalRiskFilePath; //beomexanik xavf hujjati (atraksion)
 
-    private String technicalStatusAct; //texnik holat dalolatnomasi (atraksion)
+    private String technicalStatusActPath; //texnik holat dalolatnomasi (atraksion)
 
     private String usageRightsPath; //foydalanish huquqi (atraksion)
 }
