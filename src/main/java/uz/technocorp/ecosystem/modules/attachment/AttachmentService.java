@@ -2,9 +2,6 @@ package uz.technocorp.ecosystem.modules.attachment;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.UUID;
-
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -13,8 +10,6 @@ import java.util.UUID;
  */
 public interface AttachmentService {
     String create(MultipartFile file, String folder);
-
-    void delete(UUID id);
 
     String createPdfFromHtml(String htmlContent, String folder);
 
