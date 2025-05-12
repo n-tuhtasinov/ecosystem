@@ -10,7 +10,7 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
-import uz.technocorp.ecosystem.modules.hazardousfacility.HazardousFacility;
+import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 
@@ -151,7 +151,7 @@ public class Equipment extends BaseEntity {
 
     private String thickness; // devor qalinligi (quvur, bug' va issiq suv quvuri)
 
-    private String rideName; // attraksion nomi (attraksion)
+    private String attractionName; // attraksion nomi (attraksion)
 
     private LocalDate acceptedAt; // foydalanishga qabul qilingan sana (attraksion pasporti)
 
@@ -177,6 +177,13 @@ public class Equipment extends BaseEntity {
     private String density; // zichligi (qozon)
 
     private String fuel; // yoqilg'i (100 ming)
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
+    @JoinColumn(name = "attraction_passport_id", insertable = false, updatable = false)
+    private Equipment attractionPassport; // faqat atraksionni ro'yhatga olish uchun
+
+    @Column(name = "attraction_passport_id")
+    private UUID attractionPassportId; // faqat atraksionni ro'yhatga olish uchun
 
     @Column(nullable = false)
     private String labelPath; // birka rasmi
@@ -205,7 +212,7 @@ public class Equipment extends BaseEntity {
 
     private String additionalFilePath; // qo'shimcha ma'lumotlar fayli
 
-    private String passportPath; // pasporti fayli (attraksion pasporti)
+    private String passportPath; // pasporti fayli (attraksion pasporti, atraksion)
 
     private String techReadinessActPath; // texnik tayyorlilik dalolatnomasi (attraksion pasporti)
 
@@ -215,15 +222,25 @@ public class Equipment extends BaseEntity {
 
     private String gasSupplyProjectPath; // gaz ta'minoti loyihasi (100ming)
 
-    private String rideFile1Path;
-    private String rideFile2Path;
-    private String rideFile3Path;
-    private String rideFile4Path;
-    private String rideFile5Path;
-    private String rideFile6Path;
-    private String rideFile7Path;
-    private String rideFile8Path;
-    private String rideFile9Path;
-    private String rideFile10Path;
-    private String rideFile11Path;
+    private String technicalManualPath; //texnik foydalanish qo'llanmasi (attraksion)
+
+    private String serviceManualPath; //xizmat ko'rsatish va ta'mirlash qo'llanmasi (atraksion)
+
+    private String technicalJournalPath; //texnik jurnal nusxasi (atraksion)
+
+    private String acceptanceFilePath; //qabul qilinganligi xujjatlari (atraksion)
+
+    private String routeInfoPath; //marshrut ma'lumotlari (atraksion)
+
+    private String conformityCertPath; //muvofiqlik sertifikati(atraksion)
+
+    private String safetyUsageReportPath; //xavfsiz foydalanish xulosasi (atraksion)
+
+    private String insurancePolicyPath; //sug'urta polisi (atraksion)
+
+    private String biomechanicalRiskFilePath; //beomexanik xavf hujjati (atraksion)
+
+    private String technicalStatusAct; //texnik holat dalolatnomasi (atraksion)
+
+    private String usageRightsPath; //foydalanish huquqi (atraksion)
 }

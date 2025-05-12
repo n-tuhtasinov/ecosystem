@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.hazardousfacility.enums.HFSphere;
+import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,7 +41,7 @@ public class HfAppealDto implements AppealDto {
     private String address;
 
     @NotNull(message = "XICHO turi tanlanmadi!")
-    private Integer hazardousFacilityTypeId;
+    private Integer hfTypeId;
 
     private String extraArea;
 
