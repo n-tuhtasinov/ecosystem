@@ -3,21 +3,17 @@ package uz.technocorp.ecosystem.modules.hfappeal;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.models.ApiResponse;
-import uz.technocorp.ecosystem.models.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
-import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfDeregisterAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfModificationAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.SignedHfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 
 import java.util.UUID;
 
@@ -61,12 +57,10 @@ public class HfAppealController {
     }
 
     @PostMapping("/generate-pdf")
-    public ResponseEntity<byte[]> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        byte[] pdfBytes = appealService.generatePdfWithParam(hfDto, user);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "hf-appeal" + ".pdf");
+    public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
+        appealService.generatePdfWithParam(hfDto, user);
 
-        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        // TODO return file path
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", "/files/registry-files/2025/may/8/1746686108933.pdf"));
     }
 }

@@ -2,8 +2,7 @@ package uz.technocorp.ecosystem.modules.irsriskindicator;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.HazardousFacilityRiskIndicator;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
+import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.UUID;
  * @created 16.04.2025
  * @since v1.0
  */
-public interface IrsRiskIndicatorRepository extends JpaRepository<HazardousFacilityRiskIndicator, UUID> {
+public interface IrsRiskIndicatorRepository extends JpaRepository<IrsRiskIndicator, UUID> {
 
     @Query("SELECT h FROM IrsRiskIndicator h WHERE h.ionizingRadiationSourceId = :irsId AND h.riskAnalysisInterval.id = :intervalId")
     List<IrsRiskIndicator> findAllByQuarter(

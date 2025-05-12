@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import uz.technocorp.ecosystem.models.AuditAndIdEntity;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.document.dto.Signer;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
@@ -24,7 +24,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Document extends AuditAndIdEntity {
+public class Document extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String path;

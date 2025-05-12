@@ -3,10 +3,10 @@ package uz.technocorp.ecosystem.modules.attractionriskindicator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.models.ApiResponse;
-import uz.technocorp.ecosystem.models.ResponseMessage;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.elevatorriskindicator.dto.EquipmentRiskIndicatorDto;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
+import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 
 import java.util.List;
 import java.util.UUID;

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.attachment.dto.AttachmentDto;
 import uz.technocorp.ecosystem.utils.HtmlToPdfGenerator;
 
 import java.io.File;
@@ -33,7 +32,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private final HtmlToPdfGenerator htmlToPdfGenerator;
 
     @Override
-    public String create(MultipartFile file, String folder) throws IOException {
+    public String create(MultipartFile file, String folder) {
         if (file != null) {
             // Create a directory for the file
             Path attachmentFilesPath = createDirectory(folder);
@@ -92,10 +91,15 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public AttachmentDto getHtmlByPath(String path) {
+    public String getHtmlByPath(String path) {
         return repository.findByPath(path).map(
-                a -> new AttachmentDto(a.getHtmlContent()))
-                .orElseThrow (()-> new ResourceNotFoundException("PDF file", "path", path));
+                        Attachment::getHtmlContent)
+                .orElseThrow(() -> new ResourceNotFoundException("PDF file", "path", path));
+    }
+
+    @Override
+    public void deleteByPath(String path) {
+        repository.deleteByPath(path);
     }
 
     private Path createDirectory(String folder) {

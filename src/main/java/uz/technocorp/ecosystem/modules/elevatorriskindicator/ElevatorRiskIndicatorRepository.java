@@ -2,8 +2,7 @@ package uz.technocorp.ecosystem.modules.elevatorriskindicator;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
-import uz.technocorp.ecosystem.modules.irsriskindicator.IrsRiskIndicator;
+import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
 import java.util.List;

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.models.AppConstants;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.department.dto.DepartmentDto;
 
 import java.util.List;

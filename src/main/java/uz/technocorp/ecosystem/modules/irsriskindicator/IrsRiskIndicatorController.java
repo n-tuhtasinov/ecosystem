@@ -3,11 +3,10 @@ package uz.technocorp.ecosystem.modules.irsriskindicator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.models.ApiResponse;
-import uz.technocorp.ecosystem.models.ResponseMessage;
-import uz.technocorp.ecosystem.modules.hazardousfacilityriskindicator.view.RiskIndicatorView;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
+import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
-import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +18,7 @@ import java.util.UUID;
  * @since v1.0
  */
 @RestController
-@RequestMapping("/api/v1/irs-risk-indicator")
+@RequestMapping("/api/v1/irs-risk-indicators")
 @RequiredArgsConstructor
 public class IrsRiskIndicatorController {
 

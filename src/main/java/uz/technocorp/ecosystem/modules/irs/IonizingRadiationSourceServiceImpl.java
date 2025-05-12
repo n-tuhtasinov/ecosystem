@@ -12,6 +12,7 @@ import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDeregisterDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
+import uz.technocorp.ecosystem.modules.irs.dto.IrsRegistryDto;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
@@ -37,10 +38,10 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
     private final RegionRepository regionRepository;
 
     @Override
-    public void create(UUID appealId) {
+    public void create(IrsRegistryDto dto) {
         Appeal appeal = appealRepository
-                .findById(appealId)
-                .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", appealId));
+                .findById(dto.appealId())
+                .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.appealId()));
         appeal.setStatus(AppealStatus.COMPLETED);
         appealRepository.save(appeal);
         Long maxOrderNumber = repository.findMaxOrderNumber().orElse(0L) + 1;
@@ -85,40 +86,40 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
         );
     }
 
-    @Override
-    public void create(IrsDto dto) {
-        repository.save(
-                IonizingRadiationSource
-                        .builder()
-                        .address(dto.address())
-                        .parentOrganization(dto.parentOrganization())
-                        .supervisorName(dto.supervisorName())
-                        .supervisorEducation(dto.supervisorEducation())
-                        .supervisorStatus(dto.supervisorStatus())
-                        .supervisorPosition(dto.supervisorPosition())
-                        .supervisorPhoneNumber(dto.supervisorPhoneNumber())
-                        .division(dto.division())
-                        .identifierType(IrsIdentifierType.valueOf(dto.identifierType()))
-                        .symbol(dto.symbol())
-                        .sphere(dto.sphere())
-                        .factoryNumber(dto.factoryNumber())
-//                        .activity()
-                        .category(IrsCategory.valueOf(dto.category()))
-                        .type(dto.type())
-                        .country(dto.country())
-                        .manufacturedAt(LocalDate.parse(dto.manufacturedAt()))
-                        .acceptedFrom(dto.acceptedFrom())
-                        .isValid(dto.isValid())
-                        .usageType(IrsUsageType.valueOf(dto.usageType()))
-                        .storageLocation(dto.storageLocation())
-                        .passportPath(dto.passportPath())
-                        .additionalFilePath(dto.additionalFilePath())
-//                        .description()
-                        .regionId(dto.regionId())
-                        .districtId(dto.districtId())
-                        .build()
-        );
-    }
+//    @Override
+//    public void create(IrsDto dto) {
+//        repository.save(
+//                IonizingRadiationSource
+//                        .builder()
+//                        .address(dto.address())
+//                        .parentOrganization(dto.parentOrganization())
+//                        .supervisorName(dto.supervisorName())
+//                        .supervisorEducation(dto.supervisorEducation())
+//                        .supervisorStatus(dto.supervisorStatus())
+//                        .supervisorPosition(dto.supervisorPosition())
+//                        .supervisorPhoneNumber(dto.supervisorPhoneNumber())
+//                        .division(dto.division())
+//                        .identifierType(IrsIdentifierType.valueOf(dto.identifierType()))
+//                        .symbol(dto.symbol())
+//                        .sphere(dto.sphere())
+//                        .factoryNumber(dto.factoryNumber())
+////                        .activity()
+//                        .category(IrsCategory.valueOf(dto.category()))
+//                        .type(dto.type())
+//                        .country(dto.country())
+//                        .manufacturedAt(LocalDate.parse(dto.manufacturedAt()))
+//                        .acceptedFrom(dto.acceptedFrom())
+//                        .isValid(dto.isValid())
+//                        .usageType(IrsUsageType.valueOf(dto.usageType()))
+//                        .storageLocation(dto.storageLocation())
+//                        .passportPath(dto.passportPath())
+//                        .additionalFilePath(dto.additionalFilePath())
+////                        .description()
+//                        .regionId(dto.regionId())
+//                        .districtId(dto.districtId())
+//                        .build()
+//        );
+//    }
 
     @Override
     public void update(UUID id, IrsDto dto) {
