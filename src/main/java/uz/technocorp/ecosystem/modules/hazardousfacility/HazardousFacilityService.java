@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.hazardousfacility;
 
 import uz.technocorp.ecosystem.modules.hazardousfacility.dto.HfDto;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,4 +19,5 @@ public interface HazardousFacilityService {
     void update(UUID id, HfDto dto);
     void deregister(UUID id, Map<String, String> dto);
     void periodicUpdate(UUID id, Map<String, String> dto);
+
 }
