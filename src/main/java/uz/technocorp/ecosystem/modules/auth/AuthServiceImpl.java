@@ -95,7 +95,8 @@ public class AuthServiceImpl implements AuthService {
             //TODO: soliq bilan integratsiya qilib tashkilot INN bo'yicha to'liq ma'lumotlarni olib kelish kerak. OfficeID ham topib set qilib ketish kerak
             //Hozircha testvoviy ma'lumotlar yozib qo'yganman
 
-            iipService.getToken();
+            //get token from IIP
+            String token = iipService.getToken();
 
             District district = districtRepository.findBySoato(3462784).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", "3462784"));
             LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId(), userInfoFromOneIdDto.getMob_phone_no(), "Tashkilot mulkchilik shakli", "Tashkilot tashkiliy-huquqiy shakli");

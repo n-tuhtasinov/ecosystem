@@ -1,0 +1,21 @@
+package uz.technocorp.ecosystem.modules.appeal.view;
+
+import java.util.UUID;
+
+/**
+ * @author Nurmuhammad Tuhtasinov
+ * @version 1.0
+ * @created 13.05.2025
+ * @since v1.0
+ */
+public interface AppealViewByPeriod {
+    UUID getId();
+    String getAppealType();
+    String getNumber();
+    String getLegalName();
+    Long getLegalTin();
+    String getRegion();
+    String getDistrict();
+    String getAddress();
+    String getPhoneNumber();
+}
