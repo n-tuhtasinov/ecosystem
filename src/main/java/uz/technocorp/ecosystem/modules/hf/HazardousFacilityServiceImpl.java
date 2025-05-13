@@ -13,13 +13,16 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
+import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
+import uz.technocorp.ecosystem.modules.user.User;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -204,6 +207,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         );
 
         repository.save(hazardousFacility);
+    }
+
+    @Override
+    public List<HfSelectView> findAllByProfile(User user) {
+        return repository.findAllByProfileId(user.getProfileId());
     }
 
     private HfAppealDto parseJsonData(JsonNode jsonNode) {
