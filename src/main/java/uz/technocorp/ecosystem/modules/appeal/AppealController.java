@@ -4,12 +4,18 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +47,14 @@ public class AppealController {
     public ResponseEntity<?> getAllAppeals(@RequestParam Map<String, String> params) {
         Page<AppealCustom> appeals = service.getAppealCustoms(params);
         return ResponseEntity.ok(new ApiResponse(appeals));
+    }
+
+
+//    @PreAuthorize("hasRole('INSPECTOR')")
+    @GetMapping("/period")
+    public ResponseEntity<?> getAllByPeriodAndInspector(@CurrentUser User user, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate) {
+        List<AppealViewByPeriod> list = service.getAllByPeriodAndInspector(user, startDate, endDate);
+        return ResponseEntity.ok(new ApiResponse(list));
     }
 
 }

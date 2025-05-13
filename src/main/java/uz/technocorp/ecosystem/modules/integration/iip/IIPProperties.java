@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "app.iip")
 @Data
-public class IIProperties {
+public class IIPProperties {
     private String tokenUrl;
     private String username;
     private String password;

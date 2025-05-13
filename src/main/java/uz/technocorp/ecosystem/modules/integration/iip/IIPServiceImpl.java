@@ -1,9 +1,7 @@
 package uz.technocorp.ecosystem.modules.integration.iip;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -11,7 +9,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 
@@ -23,10 +20,9 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class IIPServiceImpl implements IIPService {
 
-    private final IIProperties properties;
+    private final IIPProperties properties;
     private final RestClient restClient;
 
     @Override
@@ -45,9 +41,6 @@ public class IIPServiceImpl implements IIPService {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(formData)
                 .retrieve()
-//                .onStatus(HttpStatusCode::isError,
-//                        (req, res)-> {throw new RuntimeException("MIP dan token olishda xatolik yuz berdi");}
-//                )
                 .body(Map.class);
 
         if (response==null){
