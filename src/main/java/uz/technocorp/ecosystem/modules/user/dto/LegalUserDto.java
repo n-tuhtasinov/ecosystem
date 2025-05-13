@@ -1,9 +1,6 @@
 package uz.technocorp.ecosystem.modules.user.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import uz.technocorp.ecosystem.modules.user.enums.Direction;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
@@ -16,7 +13,8 @@ import java.util.List;
  * @created 15.02.2025
  * @description The legal user has only "appeal" in the direction list when it is first created
  */
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class LegalUserDto implements UserDto{
@@ -38,6 +36,8 @@ public class LegalUserDto implements UserDto{
     private String legalOwnershipType;  // mulkchilik shakli
 
     private String legalForm; // tashkiliy-huquqiy shakli
+
+    private Integer officeId; //tashkilot qaysi officega tegishli (profilaktika uchun kerak)
 
     @Override
     public String getUsername() {
@@ -66,11 +66,6 @@ public class LegalUserDto implements UserDto{
 
     @Override
     public Integer getDepartmentId() {
-        return null;
-    }
-
-    @Override
-    public Integer getOfficeId() {
         return null;
     }
 
