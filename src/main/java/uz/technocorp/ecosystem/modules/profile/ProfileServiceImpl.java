@@ -1,14 +1,23 @@
 package uz.technocorp.ecosystem.modules.profile;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.prevention.dto.PagingDto;
+import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
+import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -21,6 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
+    private final ProfileSpecification profileSpecification;
     private final ProfileRepository profileRepository;
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
@@ -74,8 +84,42 @@ public class ProfileServiceImpl implements ProfileService {
         profileRepository.save(profile);
     }
 
+    @Override
+    public Integer getOfficeId(UUID profileId) {
+        return profileRepository.findById(profileId).map(Profile::getOfficeId).orElseThrow(() -> new ResourceNotFoundException("OfficeID topilmadi"));
+    }
+
+    @Override
+    public PagingDto<ProfileView> getProfilesForPrevention(Integer inspectorOfficeId, PreventionParamsDto params) {
+        // Query
+        Specification<Profile> hasQuery = (root, cq, cb) -> {
+            if (params.getQuery() == null || params.getQuery().isBlank()) {
+                return cb.conjunction();
+            }
+            Long tinOrPin = parseTinOrPin(params.getQuery());
+            return tinOrPin != null
+                    ? cb.or(cb.equal(root.get("tin"), tinOrPin), cb.equal(root.get("pin"), tinOrPin))
+                    : cb.like(cb.lower(root.get("legalName")), "%" + params.getQuery().toLowerCase() + "%");
+        };
+        Specification<Profile> spec = Specification
+                .where(profileSpecification.notInPreventionForYear(inspectorOfficeId, LocalDate.now().getYear()))
+                .and(hasQuery);
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "legalName");
+        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), sort);
+
+        Page<Profile> profiles = profileRepository.findAll(spec, pageRequest);
+
+        List<ProfileView> list = profiles.stream().map(this::map).toList();
+
+        // create Paging
+        PagingDto<ProfileView> paging = new PagingDto<>((int) profiles.getTotalElements(), params.getPage(), params.getSize());
+        paging.getItems().addAll(list);
+        return paging;
+    }
+
     private void setRegion(Integer regionId, Profile profile) {
-        if (regionId==null){
+        if (regionId == null) {
             profile.setRegionId(null);
             profile.setRegionName(null);
             return;
@@ -89,7 +133,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     private void setDistrict(Integer districtId, Profile profile) {
-        if (districtId==null){
+        if (districtId == null) {
             profile.setDistrictId(null);
             profile.setDistrictName(null);
             return;
@@ -120,5 +164,26 @@ public class ProfileServiceImpl implements ProfileService {
                     .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", districtId));
         }
         return district;
+    }
+
+    private Long parseTinOrPin(String query) {
+        try {
+            return (query.length() == 9 || query.length() == 14) ? Long.parseLong(query) : null;
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    // MAPPER
+    private ProfileView map(Profile profile) {
+        ProfileView view = new ProfileView();
+        view.setId(profile.getId().toString());
+        view.setTin(profile.getTin());
+        view.setLegalName(profile.getLegalName());
+        view.setLegalAddress(profile.getLegalAddress());
+        view.setPin(profile.getPin());
+        view.setDistrictName(profile.getDistrictName());
+
+        return view;
     }
 }

@@ -25,5 +25,4 @@ public class PreventionParamsDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private Boolean viewed;
-
 }
