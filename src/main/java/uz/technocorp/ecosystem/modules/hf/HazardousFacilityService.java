@@ -4,7 +4,10 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
+import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
+import uz.technocorp.ecosystem.modules.user.User;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,4 +23,5 @@ public interface HazardousFacilityService {
     void update(UUID id, HfDto dto);
     void deregister(UUID id, HfDeregisterDto dto);
     void periodicUpdate(UUID id, HfPeriodicUpdateDto dto);
+    List<HfSelectView> findAllByProfile(User user);
 }
