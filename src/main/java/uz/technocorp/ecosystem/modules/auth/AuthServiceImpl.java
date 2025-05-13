@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.shared.AppConstants;
@@ -73,6 +74,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public UserMeDto loginViaOneId(OneIdDto dto, HttpServletResponse response) {
 
         AccessDataDto accessData = getAccessData(dto);
@@ -93,14 +95,11 @@ public class AuthServiceImpl implements AuthService {
 
             //create a new legal user. The legal user has only "appeal" in the direction list when he is first created
             //TODO: soliq bilan integratsiya qilib tashkilot INN bo'yicha to'liq ma'lumotlarni olib kelish kerak. OfficeID ham topib set qilib ketish kerak
-            //Hozircha testvoviy ma'lumotlar yozib qo'yganman
 
-            //get token from IIP
-            String token = iipService.getToken();
+            //get gnk legal info from IIP
+            LegalUserDto info = iipService.getGnkInfo(legalTin);
 
-            District district = districtRepository.findBySoato(3462784).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", "3462784"));
-            LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId(), userInfoFromOneIdDto.getMob_phone_no(), "Tashkilot mulkchilik shakli", "Tashkilot tashkiliy-huquqiy shakli");
-            User user = userService.create(legalUserDto);
+            User user = userService.create(info);
             return getUserMeWithToken(user, accessData.getAccess_token(), response);
         }
 

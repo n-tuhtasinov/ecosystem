@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.integration.iip;
 
+import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
+
 /**
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
@@ -8,4 +10,5 @@ package uz.technocorp.ecosystem.modules.integration.iip;
  */
 public interface IIPService {
     String getToken();
+    LegalUserDto getGnkInfo(String tin);
 }
