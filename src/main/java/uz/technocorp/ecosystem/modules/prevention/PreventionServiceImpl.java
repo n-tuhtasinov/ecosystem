@@ -7,12 +7,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.prevention.dto.PagingDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
-import uz.technocorp.ecosystem.modules.profile.Profile;
-import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
+import uz.technocorp.ecosystem.modules.prevention.projection.PreventionView;
+import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
@@ -32,23 +32,21 @@ import static org.springframework.data.jpa.domain.Specification.where;
 public class PreventionServiceImpl implements PreventionService {
 
     private final PreventionRepository preventionRepository;
-    private final ProfileRepository profileRepository;
+    private final ProfileService profileService;
 
     @Override
-    public PagingDto<PreventionDto> getOrganizationsWithEvents(User user, PreventionParamsDto params) {
+    public PagingDto<PreventionView> getOrganizationsWithEventsByInspector(User user, PreventionParamsDto params) {
         List<Sort.Order> orders = List.of(Sort.Order.desc("createdAt"));
 
         // Query
         Specification<Prevention> hasQuery = (root, cq, cb) -> {
-            if (params.getQuery() != null && !params.getQuery().isBlank()) {
-                Long tin = parseLong(params.getQuery());
-                if (tin != null) {
-                    return cb.equal(root.get("profileTin"), tin);
-                } else {
-                    cb.like(root.get("type"), "%" + params.getQuery() + "%");
-                }
+            if (params.getQuery() == null || params.getQuery().isBlank()) {
+                return null;
             }
-            return null;
+            Long tin = parseTin(params.getQuery());
+            return tin != null
+                    ? cb.equal(root.get("profileTin"), tin)
+                    : cb.like(root.get("profileName"), "%" + params.getQuery() + "%");
         };
 
         // Date range
@@ -69,46 +67,26 @@ public class PreventionServiceImpl implements PreventionService {
         };
 
         // Has viewed
-        Specification<Prevention> hasViewed = (root, query, cb) -> {
-            if (params.getViewed() != null) {
-                return cb.equal(root.get("viewed"), params.getViewed());
-            }
-            return null;
-        };
+        Specification<Prevention> hasViewed = (root, query, cb)
+                -> params.getViewed() != null ? cb.equal(root.get("viewed"), params.getViewed()) : null;
 
         // Get Prevention
         Page<Prevention> transactions = preventionRepository.findAll(
                 where(hasQuery).and(hasDateRange).and(hasViewed), PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(orders)));
 
         // Create paging dto
-        PagingDto<PreventionDto> paging = new PagingDto<>((int) transactions.getTotalElements(), params.getPage(), params.getSize());
+        PagingDto<PreventionView> paging = new PagingDto<>((int) transactions.getTotalElements(), params.getPage(), params.getSize());
         paging.getItems().addAll(transactions.stream().map(this::map).toList());
 
         return paging;
     }
 
     @Override
-    public PagingDto<PreventionDto> getOrganizationsWithoutEvents(User user, PreventionParamsDto params) {
-        /**
-         * query da INN yoki tashkilot name kelishi mumkin
-         * page va size keladi
-         * inspector officeID organization officeID ga teng bo'lganlar va prevention qilinmaganlarni yuborish kerak
-         * Kerakli fieldlar: Organization(name,tin,address)
-         */
-
+    public PagingDto<ProfileView> getOrganizationsWithoutEvents(User user, PreventionParamsDto params) {
         // Get inspector officeId by userProfileId
-        Integer inspectorOfficeId = profileRepository.findById(user.getProfileId()).map(Profile::getOfficeId).orElseThrow(() -> new ResourceNotFoundException("Inspektor hududga biriktirilmagan"));
-        Integer currentYear = LocalDate.now().getYear();
+        Integer inspectorOfficeId = profileService.getOfficeId(user.getProfileId());
 
-
-        /**
-         * query yozish kerak
-         * & tin bor bo'lishi kerak
-         * & inspectorOfficeId = profileOfficeId
-         * & prevention table da currentYear da bo'lmasligi kerak
-         */
-
-        return null;
+        return profileService.getProfilesForPrevention(inspectorOfficeId, params);
     }
 
     @Override
@@ -122,16 +100,30 @@ public class PreventionServiceImpl implements PreventionService {
                 .build());
     }
 
-    private Long parseLong(String str) {
+    private Long parseTin(String query) {
         try {
-            return Long.parseLong(str);
-        } catch (NumberFormatException e) {
+            return query.length() == 9 ? Long.parseLong(query) : null;
+        } catch (NumberFormatException ex) {
             return null;
         }
     }
 
     // MAPPER
-    private PreventionDto map(Prevention prevention) {
-        return null;
+    private PreventionView map(Prevention prevention) {
+        PreventionView view = new PreventionView();
+
+        view.setId(prevention.getId().toString());
+        view.setType(prevention.getType());
+        view.setContent(prevention.getContent());
+        view.setYear(prevention.getYear());
+        view.setViewDate(prevention.getViewDate());
+        view.setCreatedAt(prevention.getCreatedAt());
+        view.setCreatedBy(prevention.getCreatedBy().toString());
+        view.setInspectorName(prevention.getInspectorName());
+        view.setProfileTin(prevention.getProfileTin());
+        view.setProfileName(prevention.getProfileName());
+        view.setProfileAddress(prevention.getProfileAddress());
+
+        return view;
     }
 }

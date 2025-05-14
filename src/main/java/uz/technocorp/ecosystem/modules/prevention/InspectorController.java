@@ -3,14 +3,18 @@ package uz.technocorp.ecosystem.modules.prevention;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.shared.ApiResponse;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import uz.technocorp.ecosystem.modules.prevention.dto.PagingDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
+import uz.technocorp.ecosystem.modules.prevention.projection.PreventionView;
+import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
-
-import java.util.ArrayList;
+import uz.technocorp.ecosystem.shared.ApiResponse;
 
 /**
  * @author Sukhrob
@@ -19,24 +23,22 @@ import java.util.ArrayList;
  * @since v1.0
  */
 @RestController
-@RequestMapping("/prevention/inspector")
+@RequestMapping("/api/v1/prevention/inspector")
 @RequiredArgsConstructor
-public class InspectorPreventionController {
+public class InspectorController {
 
     private final PreventionService service;
 
-    @GetMapping("/with-events")
+    @PostMapping("/with-events")
     public ResponseEntity<ApiResponse> getAllOrganizationsWithEvents(@CurrentUser User user, @RequestBody PreventionParamsDto params) {
-        service.getOrganizationsWithEvents(user, params);
-
-        return ResponseEntity.ok(new ApiResponse(new ArrayList<>()));
+        PagingDto<PreventionView> paging = service.getOrganizationsWithEventsByInspector(user, params);
+        return ResponseEntity.ok(new ApiResponse(paging));
     }
 
-    @GetMapping("/without-events")
+    @PostMapping("/without-events")
     public ResponseEntity<ApiResponse> getAllOrganizationsWithoutEvents(@CurrentUser User user, @RequestBody PreventionParamsDto params) {
-        service.getOrganizationsWithoutEvents(user, params);
-
-        return ResponseEntity.ok(new ApiResponse(new ArrayList<>()));
+        PagingDto<ProfileView> paging = service.getOrganizationsWithoutEvents(user, params);
+        return ResponseEntity.ok(new ApiResponse(paging));
     }
 
     @PostMapping
