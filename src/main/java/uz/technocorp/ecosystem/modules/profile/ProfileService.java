@@ -22,4 +22,6 @@ public interface ProfileService {
     Integer getOfficeId(UUID profileId);
 
     PagingDto<ProfileView> getProfilesForPrevention(Integer inspectorOfficeId, PreventionParamsDto params);
+
+    void addPhoneNumber(UUID profileId, String phoneNumber);
 }

@@ -138,6 +138,7 @@ public class UserServiceImpl implements UserService {
         return new UserHelperById(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), profile.getDepartmentId(), profile.getOfficeId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
     }
 
+
     private CommitteeUserHelper convertToCommitteeView(User user) {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
         Department department = departmentRepository.findById(profile.getDepartmentId()).orElseThrow(() -> new ResourceNotFoundException("Department", "id", profile.getDepartmentId()));
