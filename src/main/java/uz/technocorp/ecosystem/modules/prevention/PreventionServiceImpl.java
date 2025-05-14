@@ -97,6 +97,7 @@ public class PreventionServiceImpl implements PreventionService {
                 .year(LocalDate.now().getYear())
                 .files(dto.getFilePaths())
                 .profileTin(dto.getTin())
+                .viewed(false)
                 .build());
     }
 
