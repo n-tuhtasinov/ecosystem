@@ -74,6 +74,15 @@ public class ProfileServiceImpl implements ProfileService {
         profileRepository.save(profile);
     }
 
+    @Override
+    public void addPhoneNumber(UUID profileId, String phoneNumber) {
+        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", profileId));
+        if (profile.getPhoneNumber() == null) {
+            profile.setPhoneNumber(phoneNumber);
+            profileRepository.save(profile);
+        }
+    }
+
     private void setRegion(Integer regionId, Profile profile) {
         if (regionId==null){
             profile.setRegionId(null);

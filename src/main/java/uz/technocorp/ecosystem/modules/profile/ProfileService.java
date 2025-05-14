@@ -14,4 +14,5 @@ import java.util.UUID;
 public interface ProfileService {
     UUID create(UserDto dto);
     void update(UUID profileId, UserDto dto);
+    void addPhoneNumber(UUID profileId, String phoneNumber);
 }
