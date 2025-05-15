@@ -35,5 +35,5 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
             where a.deadline between :startDate and :endDate
               and a.inspector_id = :inspectorId
               and a.status = :appealStatus""")
-    List<AppealViewByPeriod> getAllByPeriodAndInspectorId(LocalDate startDate, LocalDate endDate, UUID inspectorId, AppealStatus appealStatus);
+    List<AppealViewByPeriod> getAllByPeriodAndInspectorId(LocalDate startDate, LocalDate endDate, UUID inspectorId, String appealStatus);
 }

@@ -206,7 +206,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate) {
-        return repository.getAllByPeriodAndInspectorId(startDate, endDate, inspector.getId(), AppealStatus.IN_PROCESS);
+        return repository.getAllByPeriodAndInspectorId(startDate, endDate, inspector.getId(), AppealStatus.IN_PROCESS.name());
     }
 
     private JsonNode makeJsonData(AppealDto dto) {

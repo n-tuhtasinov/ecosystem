@@ -66,7 +66,8 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.save(User.builder()
                 .username(dto.getUsername())
-                .password(passwordEncoder.encode(UUID.randomUUID().toString().substring(24)))
+//                .password(passwordEncoder.encode(UUID.randomUUID().toString().substring(24)))
+                .password(passwordEncoder.encode("root1234")) //TODO: vaqtinchalik password, keyinchalik udalit qilish kerak
                 .role(Role.valueOf(dto.getRole()))
                 .name(dto.getName())
                 .directions(dto.getDirections())
