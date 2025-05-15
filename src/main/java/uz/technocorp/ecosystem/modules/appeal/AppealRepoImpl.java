@@ -61,8 +61,8 @@ public class AppealRepoImpl implements AppealRepo {
             predicates.add(cb.equal(appeal.get("officeId"), params.get("officeId")));
         }
 
-        if (params.get("inspectorId") != null) {
-            predicates.add(cb.equal(appeal.get("inspectorId"), params.get("inspectorId")));
+        if (params.get("executorId") != null) {
+            predicates.add(cb.equal(appeal.get("executorId"), params.get("executorId")));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
