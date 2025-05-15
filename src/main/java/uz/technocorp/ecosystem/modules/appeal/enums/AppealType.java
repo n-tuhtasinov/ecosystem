@@ -8,7 +8,7 @@ package uz.technocorp.ecosystem.modules.appeal.enums;
  */
 public enum AppealType {
 
-    // Xavfli Ishlab Chiqarish Obyektini ro‘yxatga olish va chiqarish
+    // Xavfli Ishlab Chiqarish Obyektini ro‘yxatga olish, o'zgartirish va chiqarish
     REGISTER_HF,
     DEREGISTER_HF,
     MODIFY_HF,
@@ -53,6 +53,16 @@ public enum AppealType {
     DEREGISTER_PIPELINE,
     RE_REGISTER_PIPELINE,
 
+    //attraction_passport - Attraksion pasporti
+    REGISTER_ATTRACTION_PASSPORT,
+    DEREGISTER_ATTRACTION_PASSPORT,
+    RE_REGISTER_ATTRACTION_PASSPORT,
+
+    //attraction - Attraksion
+    REGISTER_ATTRACTION,
+    DEREGISTER_ATTRACTION,
+    RE_REGISTER_ATTRACTION,
+
     //Chemical container - bosim ostida ishlovchi idish (kimyoviy)
     REGISTER_CHEMICAL_CONTAINER,
     DEREGISTER_CHEMICAL_CONTAINER,
@@ -62,7 +72,6 @@ public enum AppealType {
     REGISTER_HEAT_PIPELINE,
     DEREGISTER_HEAT_PIPELINE,
     RE_REGISTER_HEAT_PIPELINE,
-
 
     //Boiler utilizer - qozon utilizator
     REGISTER_BOILER_UTILIZER,
@@ -103,7 +112,7 @@ public enum AppealType {
     REGISTER_DECLARATION,
     DEREGISTER_DECLARATION,
 
-    // INM - IRS (Ionizing Radiation Source )
+    //IRS (Ionizing Radiation Source ) - INM ro'yhatga olish, qabul qilib olish va berish
     REGISTER_IRS,
     ACCEPT_IRS,
     TRANSFER_IRS,
