@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.appeal.view;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -18,4 +19,5 @@ public interface AppealViewByPeriod {
     String getDistrict();
     String getAddress();
     String getPhoneNumber();
+    LocalDate getDeadline();
 }
