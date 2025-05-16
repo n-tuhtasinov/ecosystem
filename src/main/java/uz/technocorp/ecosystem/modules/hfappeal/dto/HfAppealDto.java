@@ -35,6 +35,7 @@ public class HfAppealDto implements AppealDto {
 
     private String upperOrganization;
 
+    @NotBlank(message = "Xicho nomi kiritilmadi")
     private String name;
 
     @NotBlank(message = "Manzil kiritilmadi!")
