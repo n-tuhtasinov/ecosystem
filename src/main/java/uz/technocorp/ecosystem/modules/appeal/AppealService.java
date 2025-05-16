@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -39,4 +40,6 @@ public interface AppealService {
     void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
 
     List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate);
+
+    AppealViewById getById(UUID appealId);
 }
