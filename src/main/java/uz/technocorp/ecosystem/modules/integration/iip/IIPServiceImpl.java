@@ -2,6 +2,8 @@ package uz.technocorp.ecosystem.modules.integration.iip;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.util.encoders.UTF8;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,13 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
+import uz.technocorp.ecosystem.modules.user.dto.IndividualUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,6 +32,7 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class IIPServiceImpl implements IIPService {
 
     private final IIPProperties properties;
@@ -34,8 +40,8 @@ public class IIPServiceImpl implements IIPService {
     private final DistrictRepository districtRepository;
     private final RegionRepository regionRepository;
 
-    @Override
-    public String getToken() {
+
+    private String getToken() {
         String credentials = properties.getConsumerKey()+":"+properties.getConsumerSecret();
         String base64 = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
 
@@ -97,5 +103,40 @@ public class IIPServiceImpl implements IIPService {
                 region.getOfficeId());
 
         return dto;
+    }
+
+    @Override
+    public IndividualUserDto getPinInfo(String pin, LocalDate birthDate) {
+
+        //get token from IIP
+        String token = getToken();
+
+        //get gnkInfo as jsonNode
+        Map<String,Object> fields = new HashMap<>();
+        fields.put("transaction_id", 3);
+        fields.put("is_consent", "Y");
+        fields.put("sender_pinfl", pin);
+        fields.put("langId", 3);
+        fields.put("birth_date", birthDate.toString());
+        fields.put("pinpp", pin);
+        fields.put("is_photo", "N");
+        fields.put("Sender", "P");
+
+        JsonNode node = restClient.post()
+                .uri(properties.getIndividualUrl())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(fields)
+                .retrieve()
+                .body(JsonNode.class);
+
+        if (node==null || node.get("data")==null) throw new RuntimeException("MIP dan JSHSHIR bo'yicha so'rovga bo'sh javob qaytdi");
+
+        log.error("PinInfo olindi: {}", node.toPrettyString());
+
+        //make individual user dto
+        JsonNode data = node.withArray("data").get(0);
+        String fullName = data.get("surnamelat").asText() + " " + data.get("namelat").asText() + " " + data.get("patronymlat").asText("");
+        return new IndividualUserDto(fullName, Long.valueOf(pin), null);
     }
 }

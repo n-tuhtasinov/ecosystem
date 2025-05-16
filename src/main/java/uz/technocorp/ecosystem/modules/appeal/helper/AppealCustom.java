@@ -20,6 +20,7 @@ public class AppealCustom {
     private String date;
     private String status;
     private String legalTin;
+    private String number;
     private String legalName;
     private String regionName;
     private String districtName;
@@ -28,7 +29,7 @@ public class AppealCustom {
     private String email;
     private String phoneNumber;
     private String appealType;
-    private String inspectorName;
+    private String executorName;
     private String deadline;
     private String officeName;
 }

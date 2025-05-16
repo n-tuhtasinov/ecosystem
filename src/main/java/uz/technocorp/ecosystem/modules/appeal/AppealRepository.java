@@ -30,10 +30,11 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
                    a.region_name   as region,
                    a.district_name as district,
                    a.address       as address,
-                   a.phone_number  as phoneNumber
+                   a.phone_number  as phoneNumber,
+                   a.deadline as deadline
             from appeal a
             where a.deadline between :startDate and :endDate
-              and a.inspector_id = :inspectorId
+              and a.executor_id = :inspectorId
               and a.status = :appealStatus""")
-    List<AppealViewByPeriod> getAllByPeriodAndInspectorId(LocalDate startDate, LocalDate endDate, UUID inspectorId, AppealStatus appealStatus);
+    List<AppealViewByPeriod> getAllByPeriodAndInspectorId(LocalDate startDate, LocalDate endDate, UUID inspectorId, String appealStatus);
 }

@@ -36,8 +36,8 @@ public class Prevention extends BaseEntity {
     @Column
     private List<String> files;
 
-    @Column
-    private boolean viewed;
+    @Column(nullable = false)
+    private Boolean viewed;
 
     @Column
     private LocalDateTime viewDate;

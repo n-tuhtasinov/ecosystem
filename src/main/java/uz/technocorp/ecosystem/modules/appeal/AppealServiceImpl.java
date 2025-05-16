@@ -76,7 +76,7 @@ public class AppealServiceImpl implements AppealService {
         Appeal appeal = repository
                 .findById(dto.appealId())
                 .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.appealId()));
-        appeal.setInspectorId(dto.inspectorId());
+        appeal.setExecutorId(dto.inspectorId());
         appeal.setExecutorName(user.getName());
         appeal.setDeadline(LocalDate.parse(dto.deadline()));
         repository.save(appeal);
@@ -206,7 +206,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate) {
-        return repository.getAllByPeriodAndInspectorId(startDate, endDate, inspector.getId(), AppealStatus.IN_PROCESS);
+        return repository.getAllByPeriodAndInspectorId(startDate, endDate, inspector.getId(), AppealStatus.IN_PROCESS.name());
     }
 
     private JsonNode makeJsonData(AppealDto dto) {

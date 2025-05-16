@@ -20,5 +20,7 @@ public class IIPProperties {
     private String consumerKey;
     private String consumerSecret;
     private String legalUrl;
+    private String individualUrl;
+
 
 }
