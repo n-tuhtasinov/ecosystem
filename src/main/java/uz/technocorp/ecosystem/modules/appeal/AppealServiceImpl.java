@@ -13,6 +13,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcess;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
@@ -117,6 +118,7 @@ public class AppealServiceImpl implements AppealService {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
         Region region = regionRepository.findById(dto.getRegionId()).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId()));
         District district = districtRepository.findById(dto.getDistrictId()).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId()));
+        if (region.getOfficeId()==null) throw new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan");
         Office office = officeRepository.findById(region.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "ID", region.getOfficeId()));
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
@@ -207,6 +209,11 @@ public class AppealServiceImpl implements AppealService {
     @Override
     public List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate) {
         return repository.getAllByPeriodAndInspectorId(startDate, endDate, inspector.getId(), AppealStatus.IN_PROCESS.name());
+    }
+
+    @Override
+    public AppealViewById getById(UUID appealId) {
+        return null;
     }
 
     private JsonNode makeJsonData(AppealDto dto) {

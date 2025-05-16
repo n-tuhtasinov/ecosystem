@@ -14,6 +14,7 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AppealRepoImpl implements AppealRepo {
 
-    private EntityManager em;
+    private final EntityManager em;
 
     @Override
     public Page<AppealCustom> getAppealCustoms(Map<String, String> params) {
@@ -54,7 +55,8 @@ public class AppealRepoImpl implements AppealRepo {
         }
 
         if (params.get("date") != null && !params.get("date").isEmpty()) {
-            predicates.add(cb.equal(appeal.get("date"), params.get("date")));
+//            predicates.add(cb.equal(appeal.get("date"), params.get("date")));
+            predicates.add(cb.between(appeal.get("createdAt"), LocalDate.parse(params.get("startDate")), LocalDate.parse(params.get("endDate"))));
         }
 
         if (params.get("officeId") != null) {
@@ -71,7 +73,7 @@ public class AppealRepoImpl implements AppealRepo {
                 .construct(
                         AppealCustom.class,
                         appeal.get("id"),
-                        appeal.get("date"),
+                        appeal.get("createdAt"),
                         appeal.get("status"),
                         appeal.get("legalTin"),
                         appeal.get("number"),
@@ -79,7 +81,6 @@ public class AppealRepoImpl implements AppealRepo {
                         appeal.get("regionName"),
                         appeal.get("districtName"),
                         appeal.get("address"),
-                        appeal.get("email"),
                         appeal.get("phoneNumber"),
                         appeal.get("appealType"),
                         appeal.get("executorName"),
