@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Sukhrob
@@ -18,10 +19,10 @@ import java.time.LocalDateTime;
 public class PreventionView {
 
     private String id;
-    private String type;
+    private PreventionTypeView type;
     private String content;
     private Integer year;
-    private boolean viewed;
+    private Boolean viewed;
     private LocalDateTime viewDate;
     private LocalDateTime createdAt;
     private String createdBy;
@@ -29,4 +30,5 @@ public class PreventionView {
     private Long profileTin;
     private String profileName;
     private String profileAddress;
+    private List<String> files;
 }

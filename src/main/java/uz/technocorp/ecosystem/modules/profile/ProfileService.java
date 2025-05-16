@@ -1,7 +1,7 @@
 package uz.technocorp.ecosystem.modules.profile;
 
 
-import uz.technocorp.ecosystem.modules.prevention.dto.PagingDto;
+import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
@@ -21,5 +21,7 @@ public interface ProfileService {
 
     Integer getOfficeId(UUID profileId);
 
-    PagingDto<ProfileView> getProfilesForPrevention(Integer inspectorOfficeId, PreventionParamsDto params);
+    Long getProfileTin(UUID profileId);
+
+    Page<ProfileView> getProfilesForPrevention(Integer inspectorOfficeId, PreventionParamsDto params);
 }

@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.profile;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
-import uz.technocorp.ecosystem.modules.prevention.dto.PagingDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -90,16 +90,22 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public PagingDto<ProfileView> getProfilesForPrevention(Integer inspectorOfficeId, PreventionParamsDto params) {
+    public Long getProfileTin(UUID profileId) {
+        return profileRepository.findById(profileId).map(Profile::getTin).orElseThrow(
+                () -> new ResourceNotFoundException("Siz tashkilot sifatida tizimda mavjud emassiz (INN biriktirilmagan)"));
+    }
+
+    @Override
+    public Page<ProfileView> getProfilesForPrevention(Integer inspectorOfficeId, PreventionParamsDto params) {
         // Query
         Specification<Profile> hasQuery = (root, cq, cb) -> {
-            if (params.getQuery() == null || params.getQuery().isBlank()) {
+            if (params.getSearch() == null || params.getSearch().isBlank()) {
                 return cb.conjunction();
             }
-            Long tinOrPin = parseTinOrPin(params.getQuery());
-            return tinOrPin != null
-                    ? cb.or(cb.equal(root.get("tin"), tinOrPin), cb.equal(root.get("pin"), tinOrPin))
-                    : cb.like(cb.lower(root.get("legalName")), "%" + params.getQuery().toLowerCase() + "%");
+            Long tin = parseTin(params.getSearch());
+            return tin != null
+                    ? cb.equal(root.get("tin"), tin)
+                    : cb.like(cb.lower(root.get("legalName")), "%" + params.getSearch().toLowerCase() + "%");
         };
         Specification<Profile> spec = Specification
                 .where(profileSpecification.notInPreventionForYear(inspectorOfficeId, LocalDate.now().getYear()))
@@ -109,13 +115,9 @@ public class ProfileServiceImpl implements ProfileService {
         PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), sort);
 
         Page<Profile> profiles = profileRepository.findAll(spec, pageRequest);
-
         List<ProfileView> list = profiles.stream().map(this::map).toList();
 
-        // create Paging
-        PagingDto<ProfileView> paging = new PagingDto<>((int) profiles.getTotalElements(), params.getPage(), params.getSize());
-        paging.getItems().addAll(list);
-        return paging;
+        return new PageImpl<>(list, pageRequest, profiles.getTotalElements());
     }
 
     private void setRegion(Integer regionId, Profile profile) {
@@ -166,9 +168,9 @@ public class ProfileServiceImpl implements ProfileService {
         return district;
     }
 
-    private Long parseTinOrPin(String query) {
+    private Long parseTin(String query) {
         try {
-            return (query.length() == 9 || query.length() == 14) ? Long.parseLong(query) : null;
+            return query.length() == 9 ? Long.parseLong(query) : null;
         } catch (NumberFormatException ex) {
             return null;
         }

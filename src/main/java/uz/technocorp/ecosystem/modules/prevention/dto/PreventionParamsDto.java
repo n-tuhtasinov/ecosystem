@@ -19,7 +19,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class PreventionParamsDto {
 
-    private String query;
+    private Boolean isPassed;
+    private String search;
     private Integer page;
     private Integer size;
     private LocalDate startDate;

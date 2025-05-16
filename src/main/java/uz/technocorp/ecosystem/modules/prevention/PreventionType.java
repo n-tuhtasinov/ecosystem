@@ -3,6 +3,8 @@ package uz.technocorp.ecosystem.modules.prevention;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.stream.Stream;
+
 /**
  * @author Sukhrob
  * @version 1.0
@@ -27,10 +29,15 @@ public enum PreventionType {
     TYPE13(13, "Qonunchilik talablariga oid ma'lumotlar"),
     TYPE14(14, "Tarqatma materiallar"),
     TYPE15(15, "Qo'llanmalar"),
-    TYPE16(16, "Tekshirish ro'yxati (Cheklist)"),
+    TYPE16(16, "Tekshirish ro'yxati (Checklist)"),
     TYPE17(17, "Boshqa");
 
     private final Integer id;
     private final String name;
 
+    public static PreventionType find(Integer id) {
+        return Stream.of(PreventionType.values())
+                .filter(a -> id != null && id.equals(a.getId()))
+                .findFirst().orElse(null);
+    }
 }

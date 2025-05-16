@@ -2,8 +2,9 @@ package uz.technocorp.ecosystem.modules.prevention;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.region.Region;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
 public class Prevention extends BaseEntity {
 
     @Column
-    private String type;
+    private Integer typeId;
 
     @Column
     private String content;
