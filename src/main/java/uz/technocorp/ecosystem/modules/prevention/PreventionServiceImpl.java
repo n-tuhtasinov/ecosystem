@@ -101,7 +101,7 @@ public class PreventionServiceImpl implements PreventionService {
             throw new ResourceNotFoundException("Profilaktika", "ID", preventionId);
         }
         Prevention prevention = prevOpl.get();
-        if (!prevention.isViewed()) {
+        if (!prevention.getViewed()) {
             repository.updateView(prevention.getId(), LocalDateTime.now());
         }
         return map(prevention);
@@ -190,7 +190,7 @@ public class PreventionServiceImpl implements PreventionService {
         dto.setType(new PreventionTypeView(prevention.getTypeId(), PreventionType.find(prevention.getTypeId()).getName()));
         dto.setContent(prevention.getContent());
         dto.setYear(prevention.getYear());
-        dto.setViewed(prevention.isViewed());
+        dto.setViewed(prevention.getViewed());
         dto.setViewDate(prevention.getViewDate());
         dto.setCreatedAt(prevention.getCreatedAt());
         dto.setCreatedBy(prevention.getCreatedBy().toString());
