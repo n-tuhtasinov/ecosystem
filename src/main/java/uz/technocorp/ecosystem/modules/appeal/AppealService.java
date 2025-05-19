@@ -29,7 +29,7 @@ public interface AppealService {
 
     void changeAppealStatus(AppealStatusDto dto);
 
-    Page<AppealCustom> getAppealCustoms(Map<String, String> params);
+    Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params);
 
     UUID create(AppealDto dto, User user);
 
