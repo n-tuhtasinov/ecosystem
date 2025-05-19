@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal.view;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.time.LocalDate;
 
 /**
@@ -19,6 +21,7 @@ public interface AppealViewById {
     String getExecutorName();
     LocalDate getDeadline();
     String getOfficeName();
+    JsonNode getData();
 
 
 

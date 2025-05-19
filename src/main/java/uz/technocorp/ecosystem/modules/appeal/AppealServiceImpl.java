@@ -108,8 +108,8 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public Page<AppealCustom> getAppealCustoms(Map<String, String> params) {
-        return appealRepository.getAppealCustoms(params);
+    public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
+        return appealRepository.getAppealCustoms(user, params);
     }
 
     @Override
@@ -173,21 +173,18 @@ public class AppealServiceImpl implements AppealService {
 
         // Collect params to Map
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", user.getName());
+        parameters.put("name", profile.getFullName());
         parameters.put("legalName", profile.getLegalName());
         parameters.put("tin", profile.getTin().toString());
         parameters.put("regionName", regionRepository.findById(dto.getRegionId()).map(Region::getName).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId())));
         parameters.put("districtName", districtRepository.findById(dto.getDistrictId()).map(District::getName).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId())));
         parameters.put("hfName", dto.getName());
 
-        // Replace variables
-        String content = replaceVariables(template.getContent(), parameters);
-
         /**
          * attachmentga va folder ga save qilish kerak
          * file path ni qaytarib yuborish kerak
          */
-        return attachmentService.createPdfFromHtml(content, "appeals/hf-appeals");
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/hf-appeals", parameters);
     }
 
     @Override
@@ -213,7 +210,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public AppealViewById getById(UUID appealId) {
-        return null;
+        return appealRepository.getAppealById(appealId).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", appealId));
     }
 
     private JsonNode makeJsonData(AppealDto dto) {
@@ -245,13 +242,5 @@ public class AppealServiceImpl implements AppealService {
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
         }
         return executorName;
-    }
-
-    private String replaceVariables(String htmlContent, Map<String, String> variables) {
-        String result = htmlContent;
-        for (Map.Entry<String, String> entry : variables.entrySet()) {
-            result = result.replace("{" + entry.getKey() + "}", entry.getValue());
-        }
-        return result;
     }
 }

@@ -2,6 +2,8 @@ package uz.technocorp.ecosystem.modules.attachment;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -11,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface AttachmentService {
     String create(MultipartFile file, String folder);
 
-    String createPdfFromHtml(String htmlContent, String folder);
+    String createPdfFromHtml(String htmlContent, String folder, Map<String, String> parameters);
 
     String getHtmlByPath(String path);
 

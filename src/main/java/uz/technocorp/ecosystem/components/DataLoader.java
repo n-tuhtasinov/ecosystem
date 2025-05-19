@@ -66,7 +66,7 @@ public class DataLoader implements CommandLineRunner {
             regionRepository.save(region1);
 
             // save a legal
-            Profile legal1 = profileRepository.save(Profile.builder().tin(123654987L).legalName("Shaffof mchj").regionId(region1.getId()).districtId(district1.getId()).regionName(region1.getName()).districtName(district1.getName()).legalAddress("Ibn sino ko'chasi 48").build());
+            Profile legal1 = profileRepository.save(Profile.builder().tin(123654987L).legalName("Shaffof mchj").fullName("Shahzod Namazbayev").regionId(region1.getId()).districtId(district1.getId()).regionName(region1.getName()).districtName(district1.getName()).legalAddress("Ibn sino ko'chasi 48").build());
             userRepository.save(User.builder().username("tashkilot").password(passwordEncoder.encode("root1234")).role(Role.LEGAL).directions(List.of("APPEAL")).profileId(legal1.getId()).name("Shaffof mchj").enabled(true).build());
 
         }

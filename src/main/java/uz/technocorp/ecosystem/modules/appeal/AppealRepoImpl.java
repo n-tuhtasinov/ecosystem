@@ -9,6 +9,13 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.office.OfficeRepository;
+import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
@@ -30,14 +37,16 @@ import java.util.Map;
 public class AppealRepoImpl implements AppealRepo {
 
     private final EntityManager em;
+    private final ProfileRepository profileRepository;
+    private final OfficeRepository officeRepository;
 
     @Override
-    public Page<AppealCustom> getAppealCustoms(Map<String, String> params) {
+    public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
         Pageable pageable= PageRequest.of(
                 Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER))-1,
                 Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
                 Sort.Direction.DESC,
-                "createdAt");
+                "created_at");
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<AppealCustom> cq = cb.createQuery(AppealCustom.class);
         Root<Appeal> appeal = cq.from(Appeal.class);
@@ -54,7 +63,7 @@ public class AppealRepoImpl implements AppealRepo {
             predicates.add(cb.equal(appeal.get("legalTin"), params.get("legalTin")));
         }
 
-        if (params.get("date") != null && !params.get("date").isEmpty()) {
+        if (params.get("startDate") != null && !params.get("startDate").isEmpty()) {
 //            predicates.add(cb.equal(appeal.get("date"), params.get("date")));
             predicates.add(cb.between(appeal.get("createdAt"), LocalDate.parse(params.get("startDate")), LocalDate.parse(params.get("endDate"))));
         }
@@ -67,7 +76,26 @@ public class AppealRepoImpl implements AppealRepo {
             predicates.add(cb.equal(appeal.get("executorId"), params.get("executorId")));
         }
 
+        //get profile by user
+        Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", user.getProfileId()));
+
+
+        //to display data by user role
+        if (user.getRole().equals(Role.LEGAL)){
+            predicates.add(cb.equal(appeal.get("profileId"), user.getProfileId()));
+        } else if (user.getRole().equals(Role.INSPECTOR)) {
+            predicates.add(cb.equal(appeal.get("executorId"), user.getId()));
+        } else if (user.getRole().equals(Role.REGIONAL)) {
+            //TODO: Regional roli uchun ko'rinishni qilish kerak
+        }else {
+            //TODO: Qolgan roli uchun ko'rinishni qilish kerak
+        }
+
         cq.where(predicates.toArray(new Predicate[0]));
+
+        //sorting
+        cq.orderBy(cb.desc(appeal.get("createdAt")));
+
         // DTO yaratish
         cq.select(cb
                 .construct(
@@ -87,11 +115,14 @@ public class AppealRepoImpl implements AppealRepo {
                         appeal.get("deadline"),
                         appeal.get("officeName")
                 ));
+
         // Qidiruvni amalga oshirish
         TypedQuery<AppealCustom> query = em.createQuery(cq);
+
         // Pagination uchun sahifani sozlash
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
+
         // Umumiy natijalar sonini olish
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Appeal> countRoot = countQuery.from(Appeal.class);
