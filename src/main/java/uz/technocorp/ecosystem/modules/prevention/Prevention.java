@@ -3,7 +3,6 @@ package uz.technocorp.ecosystem.modules.prevention;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.modules.profile.Profile;
-import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDateTime;
@@ -57,4 +56,7 @@ public class Prevention extends BaseEntity {
 
     @Column
     private String profileAddress;
+
+    @Column
+    private Integer officeId;
 }

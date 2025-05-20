@@ -18,7 +18,6 @@ import java.util.UUID;
  * @since v1.0
  */
 public interface PreventionService {
-    void create(User user, PreventionDto dto);
 
     // Global
     Page<?> getAll(User user, PreventionParamsDto params);
@@ -27,14 +26,33 @@ public interface PreventionService {
 
     List<PreventionTypeView> getTypes();
 
-    // Local
+    // Committee
+    Page<PreventionView> getAllPassedForCommittee(PreventionParamsDto params);
+
+    Page<ProfileView> getAllWithoutPassedForCommittee(PreventionParamsDto params);
+
+    PreventionView getByIdForCommittee(UUID preventionId);
+
+    // Regional
+    Page<PreventionView> getAllPassedForRegional(User user, PreventionParamsDto params);
+
+    Page<ProfileView> getAllWithoutPassedForRegional(User user, PreventionParamsDto params);
+
+    PreventionView getByIdForRegional(User user, UUID preventionId);
+
+    // Inspector
+    Page<PreventionView> getAllPassedByInspector(User user, PreventionParamsDto params);
+
+    Page<ProfileView> getAllWithoutPassedForInspector(User user, PreventionParamsDto params);
+
     PreventionView getByIdForInspector(User user, UUID preventionId);
 
+    void create(User user, PreventionDto dto);
+
+    void deleteById(User user, UUID preventionId);
+
+    // Citizen
     PreventionView getByIdForCitizen(User user, UUID preventionId);
 
     Page<PreventionView> getAllByCitizen(User user);
-
-    Page<PreventionView> getAllByInspectorAndPassed(User user, PreventionParamsDto params);
-
-    Page<ProfileView> getAllWithoutPassed(User user, PreventionParamsDto params);
 }

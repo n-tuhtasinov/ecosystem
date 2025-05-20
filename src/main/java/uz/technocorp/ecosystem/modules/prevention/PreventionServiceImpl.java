@@ -1,6 +1,5 @@
 package uz.technocorp.ecosystem.modules.prevention;
 
-import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,6 +12,7 @@ import uz.technocorp.ecosystem.modules.prevention.dto.PreventionDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
 import uz.technocorp.ecosystem.modules.prevention.projection.PreventionTypeView;
 import uz.technocorp.ecosystem.modules.prevention.projection.PreventionView;
+import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -20,7 +20,10 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 
@@ -34,28 +37,27 @@ import static org.springframework.data.jpa.domain.Specification.where;
 @RequiredArgsConstructor
 public class PreventionServiceImpl implements PreventionService {
 
-    private final PreventionRepository repository;
     private final ProfileService profileService;
-
-    @Override
-    public void create(User user, PreventionDto dto) {
-        repository.save(Prevention.builder()
-                .typeId(PreventionType.find(dto.getTypeId()).getId())
-                .content(dto.getContent())
-                .year(LocalDate.now().getYear())
-                .files(dto.getFilePaths())
-                .profileTin(dto.getTin())
-                .viewed(false)
-                .build());
-    }
+    private final PreventionSpecification specification;
+    private final PreventionRepository repository;
 
     @Override
     public Page<?> getAll(User user, PreventionParamsDto params) {
         switch (user.getRole()) {
+            case Role.ADMIN, Role.CHAIRMAN, Role.HEAD, Role.MANAGER -> {
+                return params.getIsPassed()
+                        ? getAllPassedForCommittee(params)
+                        : getAllWithoutPassedForCommittee(params);
+            }
+            case Role.REGIONAL -> {
+                return params.getIsPassed()
+                        ? getAllPassedForRegional(user, params)
+                        : getAllWithoutPassedForRegional(user, params);
+            }
             case Role.INSPECTOR -> {
                 return params.getIsPassed()
-                        ? getAllByInspectorAndPassed(user, params)
-                        : getAllWithoutPassed(user, params);
+                        ? getAllPassedByInspector(user, params)
+                        : getAllWithoutPassedForInspector(user, params);
             }
             case Role.LEGAL -> {
                 return getAllByCitizen(user);
@@ -69,6 +71,12 @@ public class PreventionServiceImpl implements PreventionService {
     @Override
     public PreventionView getById(User user, UUID preventionId) {
         switch (user.getRole()) {
+            case Role.ADMIN, Role.CHAIRMAN, Role.HEAD, Role.MANAGER -> {
+                return getByIdForCommittee(preventionId);
+            }
+            case Role.REGIONAL -> {
+                return getByIdForRegional(user, preventionId);
+            }
             case Role.INSPECTOR -> {
                 return getByIdForInspector(user, preventionId);
             }
@@ -87,9 +95,180 @@ public class PreventionServiceImpl implements PreventionService {
     }
 
     @Override
+    public Page<PreventionView> getAllPassedForCommittee(PreventionParamsDto params) {
+
+        // Search
+        Specification<Prevention> hasSearch = specification.hasSearch(params.getSearch());
+
+        // OfficeId
+        Specification<Prevention> hasOfficeId = specification.hasOfficeId(params.getOfficeId());
+
+        // InspectorId
+        Specification<Prevention> hasInspectorId = specification.hasInspectorId(params.getInspectorId());
+
+        // Viewed
+        Specification<Prevention> hasViewed = specification.hasViewed(params.getViewed());
+
+        // Date range
+        Specification<Prevention> hasDateRange = specification.hasDateRange(params);
+
+        // Create a page request with sort
+        PageRequest pageRequest = getPageRequest(params);
+
+        // Get Preventions
+        Page<Prevention> preventions = repository.findAll(
+                where(hasSearch).and(hasOfficeId).and(hasInspectorId).and(hasViewed).and(hasDateRange), pageRequest);
+
+        // Create PageImpl
+        return new PageImpl<>(preventions.stream().map(this::map).toList(), pageRequest, preventions.getTotalElements());
+    }
+
+    @Override
+    public Page<ProfileView> getAllWithoutPassedForCommittee(PreventionParamsDto params) {
+        return profileService.getProfilesForPrevention(params);
+    }
+
+    @Override
+    public PreventionView getByIdForCommittee(UUID preventionId) {
+        return repository.findById(preventionId).map(this::map).orElseThrow(() -> new ResourceNotFoundException("Profilaktika", "ID", preventionId));
+    }
+
+    @Override
+    public Page<PreventionView> getAllPassedForRegional(User user, PreventionParamsDto params) {
+        // Get user profile office id
+        Integer officeId = profileService.getOfficeId(user.getProfileId());
+
+        // Search
+        Specification<Prevention> hasSearch = specification.hasSearch(params.getSearch());
+
+        // OfficeId
+        Specification<Prevention> hasOfficeId = specification.hasOfficeId(officeId);
+
+        // InspectorId
+        Specification<Prevention> hasInspectorId = specification.hasInspectorId(params.getInspectorId());
+
+        // Viewed
+        Specification<Prevention> hasViewed = specification.hasViewed(params.getViewed());
+
+        // Date range
+        Specification<Prevention> hasDateRange = specification.hasDateRange(params);
+
+        // Create a page request with sort
+        PageRequest pageRequest = getPageRequest(params);
+
+        // Get Prevention
+        Page<Prevention> preventions = repository.findAll(
+                where(hasSearch).and(hasOfficeId).and(hasInspectorId).and(hasViewed).and(hasDateRange), pageRequest);
+
+        // Create paging dto
+        return new PageImpl<>(preventions.stream().map(this::map).toList(), pageRequest, preventions.getTotalElements());
+    }
+
+    @Override
+    public Page<ProfileView> getAllWithoutPassedForRegional(User user, PreventionParamsDto params) {
+        // Get regional officeId by user profileId and set it to params
+        params.setOfficeId(profileService.getOfficeId(user.getProfileId()));
+
+        return profileService.getProfilesForPrevention(params);
+    }
+
+    @Override
+    public PreventionView getByIdForRegional(User user, UUID preventionId) {
+        // Get user profile office id
+        Integer profileOfficeId = profileService.getOfficeId(user.getProfileId());
+
+        Optional<Prevention> prevOpl = repository.findByIdAndOfficeId(preventionId, profileOfficeId);
+        return prevOpl.map(this::map).orElseThrow(() -> new ResourceNotFoundException("Sizning hududiy bo'limingizda bunday profilaktika topilmadi"));
+    }
+
+    @Override
+    public Page<PreventionView> getAllPassedByInspector(User user, PreventionParamsDto params) {
+        // InspectorId
+        Specification<Prevention> hasInspectorId = specification.hasInspectorId(user.getId());
+
+        // Search
+        Specification<Prevention> hasSearch = specification.hasSearch(params.getSearch());
+
+        // Date range
+        Specification<Prevention> hasDateRange = specification.hasDateRange(params);
+
+        // Has viewed
+        Specification<Prevention> hasViewed = specification.hasViewed(params.getViewed());
+
+        // Create a page request with sort
+        PageRequest pageRequest = getPageRequest(params);
+
+        // Get Prevention
+        Page<Prevention> preventions = repository.findAll(
+                where(hasInspectorId).and(hasSearch).and(hasDateRange).and(hasViewed), pageRequest);
+
+        // Create paging dto
+        return new PageImpl<>(preventions.stream().map(this::map).toList(), pageRequest, preventions.getTotalElements());
+    }
+
+    @Override
+    public Page<ProfileView> getAllWithoutPassedForInspector(User user, PreventionParamsDto params) {
+        // Get inspector officeId by userProfileId and set it to params
+        params.setOfficeId(profileService.getOfficeId(user.getProfileId()));
+
+        return profileService.getProfilesForPrevention(params);
+    }
+
+    @Override
     public PreventionView getByIdForInspector(User user, UUID preventionId) {
         Optional<Prevention> prevOpl = repository.findByIdAndCreatedBy(preventionId, user.getId());
         return prevOpl.map(this::map).orElseThrow(() -> new ResourceNotFoundException("Profilaktika", "ID", preventionId));
+    }
+
+    @Override
+    public void create(User user, PreventionDto dto) {
+        // Check and get a profile by tin
+        Profile profile = getProfileByTin(dto.getTin());
+
+        Integer currentYear = LocalDate.now().getYear();
+
+        // Check prevention
+        Prevention oldPrevention = getPreventionByProfileTinAndYear(profile.getTin(), currentYear);
+        if (oldPrevention != null) {
+            throw new ResourceNotFoundException("Bu tashkilotga (STIR : " + profile.getTin() + ") "
+                    + currentYear + " yil hisobi bo'yicha profilaktika o'tilgan");
+        }
+
+        Prevention prevention = new Prevention();
+
+        prevention.setTypeId(dto.getTypeId());
+        prevention.setContent(dto.getContent());
+        prevention.setYear(currentYear);
+        prevention.setFiles(dto.getFilePaths());
+        prevention.setViewed(false);
+        prevention.setViewDate(null);
+        prevention.setInspectorName(user.getName());
+        prevention.setProfileTin(profile.getTin());
+        prevention.setProfileName(profile.getLegalName());
+        prevention.setProfileAddress(profile.getLegalAddress());
+        prevention.setOfficeId(profile.getOfficeId());
+
+        repository.save(prevention);
+    }
+
+    @Override
+    public void deleteById(User user, UUID preventionId) {
+        Optional<Prevention> prevOpl = repository.getForDelete(preventionId, user.getId(), LocalDateTime.now().minusDays(3));
+        if (prevOpl.isEmpty()) {
+            throw new ResourceNotFoundException("Profilaktika o'tkazilganiga 3 kundan oshmagan va tashkilot uni ko'rmagan bo'lishi kerak");
+        }
+        repository.delete(prevOpl.get());
+    }
+
+    @Override
+    public Page<PreventionView> getAllByCitizen(User user) {
+        Long tin = getProfileTinById(user.getProfileId());
+
+        List<Prevention> preventionList = repository.findAllByProfileTinOrderByYearDesc(tin);
+        if (preventionList == null || preventionList.isEmpty()) {
+            return Page.empty();
+        }
+        return new PageImpl<>(preventionList.stream().map(this::map).toList());
     }
 
     @Override
@@ -107,79 +286,20 @@ public class PreventionServiceImpl implements PreventionService {
         return map(prevention);
     }
 
-    @Override
-    public Page<PreventionView> getAllByCitizen(User user) {
-        Long tin = getProfileTinById(user.getProfileId());
-
-        List<Prevention> preventionList = repository.findAllByProfileTinOrderByYearDesc(tin);
-        if (preventionList == null || preventionList.isEmpty()) {
-            return Page.empty();
-        }
-        return new PageImpl<>(preventionList.stream().map(this::map).toList());
+    private Profile getProfileByTin(Long tin) {
+        return profileService.findByTin(tin);
     }
 
-    @Override
-    public Page<PreventionView> getAllByInspectorAndPassed(User user, PreventionParamsDto params) {
-        // Query
-        Specification<Prevention> hasQuery = (root, cq, cb) -> {
-            if (params.getSearch() == null || params.getSearch().isBlank()) {
-                return null;
-            }
-            Long tin = parseTin(params.getSearch());
-            return tin != null
-                    ? cb.equal(root.get("profileTin"), tin)
-                    : cb.like(root.get("profileName"), "%" + params.getSearch() + "%");
-        };
-
-        // Date range
-        Specification<Prevention> hasDateRange = (root, query, cb) -> {
-            // Optimize by creating a list of predicates and adding only the necessary ones
-            List<Predicate> predicates = new ArrayList<>();
-            if (params.getStartDate() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), params.getStartDate()));
-            }
-            if (params.getEndDate() != null) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), params.getEndDate()));
-            }
-            // If no predicates, return default (all records match)
-            return predicates.isEmpty()
-                    ? cb.conjunction()
-                    : cb.and(predicates.toArray(new Predicate[0]));
-        };
-
-        // Has viewed
-        Specification<Prevention> hasViewed = (root, query, cb)
-                -> params.getViewed() != null ? cb.equal(root.get("viewed"), params.getViewed()) : null;
-
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), sort);
-
-        // Get Prevention
-        Page<Prevention> preventions = repository.findAll(
-                where(hasQuery).and(hasDateRange).and(hasViewed), pageRequest);
-
-        // Create paging dto
-        return new PageImpl<>(preventions.stream().map(this::map).toList(), pageRequest, preventions.getTotalElements());
-    }
-
-    @Override
-    public Page<ProfileView> getAllWithoutPassed(User user, PreventionParamsDto params) {
-        // Get inspector officeId by userProfileId
-        Integer inspectorOfficeId = profileService.getOfficeId(user.getProfileId());
-
-        return profileService.getProfilesForPrevention(inspectorOfficeId, params);
+    private Prevention getPreventionByProfileTinAndYear(Long tin, Integer year) {
+        return repository.findByProfileTinAndYear(tin, year).orElse(null);
     }
 
     private Long getProfileTinById(UUID profileId) {
         return profileService.getProfileTin(profileId);
     }
 
-    private Long parseTin(String query) {
-        try {
-            return query.length() == 9 ? Long.parseLong(query) : null;
-        } catch (NumberFormatException ex) {
-            return null;
-        }
+    private PageRequest getPageRequest(PreventionParamsDto params) {
+        return PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
     // MAPPER

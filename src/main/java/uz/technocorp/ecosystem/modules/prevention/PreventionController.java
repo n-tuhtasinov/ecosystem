@@ -39,6 +39,14 @@ public class PreventionController {
         return ResponseEntity.ok(new ApiResponse("Profilaktika ishlari olib borildi"));
     }
 
+    // TODO 2 ta API dan bittasini qoldirish kerak
+    // API-1 PostMapping version with param
+    @PostMapping("/list")
+    public ResponseEntity<ApiResponse> paging(@CurrentUser User user, @RequestBody PreventionParamsDto params) {
+        return ResponseEntity.ok(new ApiResponse(service.getAll(user, params)));
+    }
+
+    // API-2 GetMapping version with param
     @GetMapping
     public ResponseEntity<ApiResponse> getAll(@CurrentUser User user,
                                               @RequestParam(value = "isPassed", required = false, defaultValue = "false") Boolean isPassed,
@@ -47,8 +55,10 @@ public class PreventionController {
                                               @RequestParam(value = "size", required = false, defaultValue = "12") Integer size,
                                               @RequestParam(value = "startDate", required = false) LocalDate startDate,
                                               @RequestParam(value = "endDate", required = false) LocalDate endDate,
-                                              @RequestParam(value = "viewed", required = false) Boolean viewed) {
-        Page<?> paging = service.getAll(user, new PreventionParamsDto(isPassed, search, page, size, startDate, endDate, viewed));
+                                              @RequestParam(value = "viewed", required = false) Boolean viewed,
+                                              @RequestParam(value = "officeId", required = false) Integer officeId,
+                                              @RequestParam(value = "inspectorId", required = false) UUID inspectorId) {
+        Page<?> paging = service.getAll(user, new PreventionParamsDto(isPassed, search, page, size, startDate, endDate, viewed, officeId, inspectorId));
         return ResponseEntity.ok(new ApiResponse(paging));
     }
 
@@ -56,5 +66,11 @@ public class PreventionController {
     public ResponseEntity<ApiResponse> getById(@CurrentUser User user, @PathVariable("preventionId") UUID preventionId) {
         PreventionView prevention = service.getById(user, preventionId);
         return ResponseEntity.ok(new ApiResponse(prevention));
+    }
+
+    @DeleteMapping("/{preventionId}")
+    public ResponseEntity<ApiResponse> deleteById(@CurrentUser User user, @PathVariable("preventionId") UUID preventionId) {
+        service.deleteById(user, preventionId);
+        return ResponseEntity.ok(new ApiResponse("Profilaktika o'chirildi"));
     }
 }

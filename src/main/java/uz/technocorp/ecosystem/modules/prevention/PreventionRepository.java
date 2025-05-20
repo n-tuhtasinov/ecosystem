@@ -27,6 +27,13 @@ public interface PreventionRepository extends JpaRepository<Prevention, UUID>, J
 
     Optional<Prevention> findByIdAndCreatedBy(UUID preventionId, UUID id);
 
+    Optional<Prevention> findByIdAndOfficeId(UUID preventionId, Integer officeId);
+
+    Optional<Prevention> findByProfileTinAndYear(Long tin, Integer year);
+
+    @Query("select p from Prevention p where p.id = :preventionId and p.createdBy = :inspectorId and p.viewed is true and p.createdAt > :limitDate")
+    Optional<Prevention> getForDelete(UUID preventionId, UUID inspectorId, LocalDateTime limitDate);
+
     @Modifying
     @Transactional
     @Query("update Prevention p set p.viewed = true, p.viewDate = :now where p.id = :preventionId")

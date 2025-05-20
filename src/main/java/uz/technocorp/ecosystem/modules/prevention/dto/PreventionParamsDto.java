@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * @author Sukhrob
@@ -26,4 +27,6 @@ public class PreventionParamsDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private Boolean viewed;
+    private Integer officeId;
+    private UUID inspectorId;
 }

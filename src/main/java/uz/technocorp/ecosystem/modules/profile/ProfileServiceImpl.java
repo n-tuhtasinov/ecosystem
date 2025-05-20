@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.profile;
 
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.prevention.Prevention;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -17,8 +20,10 @@ import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+
+import static org.springframework.data.jpa.domain.Specification.where;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -30,7 +35,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
-    private final ProfileSpecification profileSpecification;
     private final ProfileRepository profileRepository;
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
@@ -96,9 +100,27 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Page<ProfileView> getProfilesForPrevention(Integer inspectorOfficeId, PreventionParamsDto params) {
-        // Query
-        Specification<Profile> hasQuery = (root, cq, cb) -> {
+    public Profile findByTin(Long tin) {
+        return profileRepository.findByTin(tin).orElseThrow(() -> new ResourceNotFoundException("INN bo'yicha tashkilot topilmadi"));
+    }
+
+    @Override
+    public Page<ProfileView> getProfilesForPrevention(PreventionParamsDto params) {
+
+        // Base condition
+        Specification<Profile> baseQuery = (root, query, cb) -> {
+            Subquery<Long> subquery = Objects.requireNonNull(query).subquery(Long.class);
+            Root<Prevention> preventionRoot = subquery.from(Prevention.class);
+            subquery.select(preventionRoot.get("profileTin"))
+                    .where(cb.equal(preventionRoot.get("year"), LocalDate.now().getYear()));
+            return cb.and(
+                    cb.isNotNull(root.get("tin")),
+                    cb.not(root.get("tin").in(subquery))
+            );
+        };
+
+        // Search
+        Specification<Profile> hasSearch = (root, cq, cb) -> {
             if (params.getSearch() == null || params.getSearch().isBlank()) {
                 return cb.conjunction();
             }
@@ -107,17 +129,19 @@ public class ProfileServiceImpl implements ProfileService {
                     ? cb.equal(root.get("tin"), tin)
                     : cb.like(cb.lower(root.get("legalName")), "%" + params.getSearch().toLowerCase() + "%");
         };
-        Specification<Profile> spec = Specification
-                .where(profileSpecification.notInPreventionForYear(inspectorOfficeId, LocalDate.now().getYear()))
-                .and(hasQuery);
 
-        Sort sort = Sort.by(Sort.Direction.ASC, "legalName");
-        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), sort);
+        // OfficeId
+        Specification<Profile> hasOfficeId = (root, cq, cb)
+                -> params.getOfficeId() == null ? cb.conjunction() : cb.equal(root.get("officeId"), params.getOfficeId());
 
-        Page<Profile> profiles = profileRepository.findAll(spec, pageRequest);
-        List<ProfileView> list = profiles.stream().map(this::map).toList();
+        // Create pageRequest with sort by legalName asc
+        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.ASC, "legalName"));
 
-        return new PageImpl<>(list, pageRequest, profiles.getTotalElements());
+        // Get Profiles
+        Page<Profile> profiles = profileRepository.findAll(where(baseQuery).and(hasSearch).and(hasOfficeId), pageRequest);
+
+        // Create PageImpl
+        return new PageImpl<>(profiles.stream().map(this::map).toList(), pageRequest, profiles.getTotalElements());
     }
 
     @Override
