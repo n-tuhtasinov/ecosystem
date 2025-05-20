@@ -101,7 +101,9 @@ public class AppealRepoImpl implements AppealRepo {
             predicates.add(cb.equal(appealRoot.get("executorId"), user.getId()));
             countPredicates.add(cb.equal(countRoot.get("executorId"), user.getId()));
         } else if (user.getRole().equals(Role.REGIONAL)) {
-            //TODO: Regional roli uchun ko'rinishni qilish kerak
+            if (profile.getOfficeId() == null) throw new RuntimeException(String.format("IDsi %s bo'lgan profile uchun hududiy bo'lim biriktirilmagan", profile.getId()));
+            predicates.add(cb.equal(appealRoot.get("officeId"), profile.getOfficeId()));
+            countPredicates.add(cb.equal(countRoot.get("officeId"), profile.getOfficeId()));
         }else {
             //TODO: Qolgan roli uchun ko'rinishni qilish kerak
         }

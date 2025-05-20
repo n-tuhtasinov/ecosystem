@@ -16,6 +16,5 @@ public interface OfficeViewById {
 
     String getName();
 
-    @Value("#{@regionRepository.getRegionIdsByOfficeId(target.id)}")
-    List<Integer> getRegionIds();
+    Integer getRegionId();
 }

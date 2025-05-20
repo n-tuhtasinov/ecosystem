@@ -3,7 +3,6 @@ package uz.technocorp.ecosystem.modules.integration.iip;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.util.encoders.UTF8;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,8 @@ import org.springframework.web.client.RestClient;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.dto.IndividualUserDto;
@@ -39,6 +40,7 @@ public class IIPServiceImpl implements IIPService {
     private final RestClient restClient;
     private final DistrictRepository districtRepository;
     private final RegionRepository regionRepository;
+    private final OfficeRepository officeRepository;
 
 
     private String getToken() {
@@ -89,7 +91,8 @@ public class IIPServiceImpl implements IIPService {
         //make legalUserDto
         District district = districtRepository.findBySoato(node.get("companyBillingAddress").get("soato").asInt()).orElseThrow(() -> new ResourceNotFoundException("Tuman", "SOATO", node.get("companyBillingAddress").get("soato").asInt()));
         Region region = regionRepository.findById(district.getRegionId()).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", district.getRegionId()));
-        if (region.getOfficeId()==null) throw new RuntimeException("Ushbu tashkilot joylashgan viloyat uchun hududiy bo'lim biriktirilmagan. Viloyat: " + region.getName());
+        Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Ushbu tashkilot joylashgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
+
         LegalUserDto dto = new LegalUserDto(
                 Long.valueOf(tin),
                 (node.get("company").get("shortName").asText()!=null && !node.get("company").get("shortName").asText().trim().isEmpty()) ? node.get("company").get("shortName").asText() : node.get("company").get("name").asText(),
@@ -100,7 +103,7 @@ public class IIPServiceImpl implements IIPService {
                 node.get("directorContact").get("phone").asText(),
                 node.get("company").get("kfs").asText(),
                 node.get("company").get("opf").asText(),
-                region.getOfficeId());
+                office.getId());
 
         return dto;
     }

@@ -31,13 +31,4 @@ public class Region {
 
     @Column(nullable = false, unique = true)
     private Integer number;
-
-    @JsonIgnore
-    @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "office_id", updatable = false, insertable = false)
-    private Office office;
-
-    @JsonIgnore
-    @Column(name = "office_id")
-    private Integer officeId;
 }

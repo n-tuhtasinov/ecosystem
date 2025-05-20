@@ -23,6 +23,8 @@ import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -50,6 +52,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
     private final ProfileRepository profileRepository;
+    private final OfficeRepository officeRepository;
 
     @Override
     public void create(HfRegistryDto dto) {
@@ -241,8 +244,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .findById(user.getProfileId())
                         .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", user.getProfileId()));
                 Integer officeId = profile.getOfficeId();
-                List<Integer> regionIds = regionRepository.findRegionIdsByOfficeId(officeId);
-                return repository.getAllByRegions(pageable, regionIds);
+                Office office = officeRepository.findById(officeId).orElseThrow(() -> new ResourceNotFoundException("Office", "ID", officeId));
+                return repository.getAllByRegion(pageable, office.getRegionId());
             } else if (registryNumber == null && startDate == null && endDate == null) {
                 return repository.getAllByRegion(pageable, regionId);
             } else if (startDate == null && endDate == null) {
