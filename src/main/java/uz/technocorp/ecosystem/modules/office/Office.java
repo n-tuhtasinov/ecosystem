@@ -28,6 +28,11 @@ public class Office {
     private String name;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "office", fetch = FetchType.LAZY)
-    private List<Region> regions;
+    @OneToOne(targetEntity = Region.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", updatable = false, insertable = false)
+    private Region region;
+
+    @JsonIgnore
+    @Column(name = "region_id")
+    private Integer regionId;
 }

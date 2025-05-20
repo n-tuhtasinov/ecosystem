@@ -47,8 +47,8 @@ public class AppealController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllAppeals(@RequestParam Map<String, String> params) {
-        Page<AppealCustom> appeals = service.getAppealCustoms(params);
+    public ResponseEntity<?> getAllAppeals(@CurrentUser User user, @RequestParam Map<String, String> params) {
+        Page<AppealCustom> appeals = service.getAppealCustoms(user, params);
         return ResponseEntity.ok(new ApiResponse(appeals));
     }
 

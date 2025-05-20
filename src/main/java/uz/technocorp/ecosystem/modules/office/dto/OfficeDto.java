@@ -15,7 +15,7 @@ import java.util.List;
 public record OfficeDto(
         @NotBlank(message = "Hududiy bo'lim nomi kiritilmadi")
         String name,
-        @NotEmpty(message = "Huduidy bo'lim qaysi viloyatlar uchun ekanligi tanlanmadi")
-        List<@NotNull(message = "Viloyat IDsi tanlanmadi") Integer> regionIds
+        @NotNull(message = "Hududiy bo'lim qaysi viloyat uchunligi tanlanmadi")
+        Integer regionId
 ) {
 }

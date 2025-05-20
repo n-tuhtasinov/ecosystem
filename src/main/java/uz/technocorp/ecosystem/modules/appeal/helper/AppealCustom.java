@@ -17,11 +17,10 @@ import java.util.UUID;
  * @since v1.0
  */
 @Data
-//@AllArgsConstructor
 @NoArgsConstructor
 public class AppealCustom {
     private UUID id;
-    private LocalDate createdDate;
+    private LocalDate createdAt;
     private AppealStatus status;
     private Long legalTin;
     private String number;
@@ -37,7 +36,7 @@ public class AppealCustom {
 
     public AppealCustom(UUID id, LocalDateTime createdAt, AppealStatus status, Long legalTin, String number, String legalName, String regionName, String districtName, String address, String phoneNumber, AppealType appealType, String executorName, LocalDate deadline, String officeName) {
         this.id = id;
-        this.createdDate = createdAt.toLocalDate();
+        this.createdAt = createdAt.toLocalDate();
         this.status = status;
         this.legalTin = legalTin;
         this.number = number;

@@ -28,47 +28,20 @@ public class OfficeServiceImpl implements OfficeService {
     private final RegionRepository regionRepository;
 
     @Override
-    @Transactional
     public void create(OfficeDto dto) {
-        Office office = officeRepository.save(Office.builder().name(dto.name()).build());
-
-        dto.regionIds().forEach(regionId -> {
-            Region region = regionRepository.findById(regionId).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "regionId", regionId));
-            region.setOfficeId(office.getId());
-            regionRepository.save(region);
-        });
+        officeRepository.save(Office.builder().name(dto.name()).regionId(dto.regionId()).build());
     }
 
     @Override
-    @Transactional
     public void update(Integer officeId, OfficeDto dto) {
         Office office = officeRepository.findById(officeId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "officeId", officeId));
         office.setName(dto.name());
-
-        //remove all regions
-        regionRepository.findAll().forEach(region -> {
-            if (region.getOfficeId()!=null && region.getOfficeId().equals(officeId)) {
-                region.setOfficeId(null);
-                regionRepository.save(region);
-            }
-        });
-
-        //update for new regions
-        dto.regionIds().forEach(regionId -> {
-            Region region = regionRepository.findById(regionId).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "regionId", regionId));
-            region.setOfficeId(office.getId());
-            regionRepository.save(region);
-        });
+        office.setRegionId(dto.regionId());
+        officeRepository.save(office);
     }
 
     @Override
     public void deleteById(Integer officeId) {
-        //remove regions
-        Office office = officeRepository.findById(officeId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "officeId", officeId));
-        office.setRegions(null);
-        officeRepository.save(office);
-
-        //delete office by id
         officeRepository.deleteById(officeId);
     }
 

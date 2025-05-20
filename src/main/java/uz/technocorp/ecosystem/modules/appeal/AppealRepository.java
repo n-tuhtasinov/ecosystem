@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.appeal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 
 import java.time.LocalDate;
@@ -37,4 +38,7 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
               and a.executor_id = :inspectorId
               and a.status = :appealStatus""")
     List<AppealViewByPeriod> getAllByPeriodAndInspectorId(LocalDate startDate, LocalDate endDate, UUID inspectorId, String appealStatus);
+
+
+    Optional<AppealViewById> getAppealById(UUID id);
 }
