@@ -10,6 +10,7 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +36,8 @@ public class HazardousFacility extends BaseEntity {
 
     @Column(nullable = false)
     private Long orderNumber;
+
+    private LocalDate registrationDate;
 
     @Column(nullable = false, unique = true)
     private String registryNumber;
@@ -157,27 +160,4 @@ public class HazardousFacility extends BaseEntity {
     //Arizaga javob xati
     private String replyLetterPath;
 
-//    public HazardousFacility(Long legalTin, String legalName, Integer regionId, Integer districtId,
-//                             UUID profileId, String legalAddress, String phoneNumber, String email,
-//                             String upperOrganization, String name, String address, UUID appealId,
-//                             Integer hazardousFacilityTypeId, String extraArea, String description,
-//                             String registryNumber) {
-//        this.legalTin = legalTin;
-//        this.legalName = legalName;
-//        this.regionId = regionId;
-//        this.districtId = districtId;
-//        this.profileId = profileId;
-//        this.legalAddress = legalAddress;
-//        this.phoneNumber = phoneNumber;
-//        this.email = email;
-//        this.upperOrganization = upperOrganization;
-//        this.name = name;
-//        this.address = address;
-//        this.appealId = appealId;
-//        this.hazardousFacilityTypeId = hazardousFacilityTypeId;
-//        this.extraArea = extraArea;
-//        this.description = description;
-//        this.registryNumber = registryNumber;
-//        this.active = true;
-//    }
 }

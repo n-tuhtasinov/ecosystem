@@ -43,4 +43,5 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(appeals));
     }
 
+
 }
