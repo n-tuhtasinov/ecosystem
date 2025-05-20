@@ -13,6 +13,8 @@ import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcess;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
@@ -23,6 +25,8 @@ import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hftype.HfType;
+import uz.technocorp.ecosystem.modules.hftype.HfTypeRepository;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
@@ -39,6 +43,7 @@ import uz.technocorp.ecosystem.utils.Generator;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -64,6 +69,7 @@ public class AppealServiceImpl implements AppealService {
     private final DocumentService documentService;
     private final Generator generator;
     private final AttachmentService attachmentService;
+    private final HfTypeRepository hfTypeRepository;
 
     @Override
     @Transactional
@@ -74,7 +80,7 @@ public class AppealServiceImpl implements AppealService {
         Appeal appeal = repository
                 .findById(dto.appealId())
                 .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.appealId()));
-        appeal.setInspectorId(dto.inspectorId());
+        appeal.setExecutorId(dto.inspectorId());
         appeal.setExecutorName(user.getName());
         appeal.setDeadline(LocalDate.parse(dto.deadline()));
         repository.save(appeal);
@@ -105,8 +111,8 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public Page<AppealCustom> getAppealCustoms(Map<String, String> params) {
-        return appealRepository.getAppealCustoms(params);
+    public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
+        return appealRepository.getAppealCustoms(user, params);
     }
 
     @Override
@@ -115,6 +121,7 @@ public class AppealServiceImpl implements AppealService {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
         Region region = regionRepository.findById(dto.getRegionId()).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId()));
         District district = districtRepository.findById(dto.getDistrictId()).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId()));
+        if (region.getOfficeId()==null) throw new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan");
         Office office = officeRepository.findById(region.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "ID", region.getOfficeId()));
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
@@ -142,7 +149,6 @@ public class AppealServiceImpl implements AppealService {
                 .legalAddress(profile.getLegalAddress())
                 .phoneNumber(dto.getPhoneNumber())
                 .deadline(dto.getDeadline())
-                .date(LocalDate.now())
                 .executorName(executorName)
                 .data(data)
                 .build();
@@ -161,6 +167,10 @@ public class AppealServiceImpl implements AppealService {
     @Override
     public String generatePdfWithParam(HfAppealDto dto, User user) {
 
+        //check the data(mainly IDs) of the dto
+        HfType hfType = hfTypeRepository.findById(dto.getHfTypeId()).orElseThrow(() -> new ResourceNotFoundException("HF_Type", "ID", dto.getHfTypeId()));
+        dto.setHfTypeName(hfType.getName());
+
         Template template = templateService.getByType(TemplateType.XICHO_APPEAL.name());
         if (template == null) {
             throw new ResourceNotFoundException("Xicho arizasi", "Template", TemplateType.XICHO_APPEAL.name());
@@ -169,21 +179,18 @@ public class AppealServiceImpl implements AppealService {
 
         // Collect params to Map
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", user.getName());
+        parameters.put("name", profile.getFullName());
         parameters.put("legalName", profile.getLegalName());
         parameters.put("tin", profile.getTin().toString());
         parameters.put("regionName", regionRepository.findById(dto.getRegionId()).map(Region::getName).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId())));
         parameters.put("districtName", districtRepository.findById(dto.getDistrictId()).map(District::getName).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId())));
         parameters.put("hfName", dto.getName());
 
-        // Replace variables
-        String content = replaceVariables(template.getContent(), parameters);
-
         /**
          * attachmentga va folder ga save qilish kerak
          * file path ni qaytarib yuborish kerak
          */
-        return attachmentService.createPdfFromHtml(content, "appeals/hf-appeals");
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/hf-appeals", parameters);
     }
 
     @Override
@@ -200,6 +207,16 @@ public class AppealServiceImpl implements AppealService {
 
         // Create a document
         documentService.create(new DocumentDto(dto.getType(), appealId, dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
+    }
+
+    @Override
+    public List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate) {
+        return repository.getAllByPeriodAndInspectorId(startDate, endDate, inspector.getId(), AppealStatus.IN_PROCESS.name());
+    }
+
+    @Override
+    public AppealViewById getById(UUID appealId) {
+        return appealRepository.getAppealById(appealId).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", appealId));
     }
 
     private JsonNode makeJsonData(AppealDto dto) {
@@ -231,13 +248,5 @@ public class AppealServiceImpl implements AppealService {
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
         }
         return executorName;
-    }
-
-    private String replaceVariables(String htmlContent, Map<String, String> variables) {
-        String result = htmlContent;
-        for (Map.Entry<String, String> entry : variables.entrySet()) {
-            result = result.replace("{" + entry.getKey() + "}", entry.getValue());
-        }
-        return result;
     }
 }

@@ -12,7 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
+import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.TokenResponse;
 import uz.technocorp.ecosystem.modules.auth.dto.AccessDataDto;
@@ -30,6 +33,7 @@ import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.security.JwtService;
 import uz.technocorp.ecosystem.utils.ApiIntegrator;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -52,6 +56,8 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final DistrictRepository districtRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IIPService iipService;
+    private final ProfileService profileService;
 
     @Value("${app.one-id.client_id}")
     private String oneIdClientId;
@@ -71,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public UserMeDto loginViaOneId(OneIdDto dto, HttpServletResponse response) {
 
         AccessDataDto accessData = getAccessData(dto);
@@ -90,30 +97,24 @@ public class AuthServiceImpl implements AuthService {
             }
 
             //create a new legal user. The legal user has only "appeal" in the direction list when he is first created
-            //TODO: soliq bilan integratsiya qilib tashkilot INN bo'yicha to'liq ma'lumotlarni olib kelish kerak. OfficeID ham topib set qilib ketish kerak
-            //Hozircha testvoviy ma'lumotlar yozib qo'yganman
-            District district = districtRepository.findBySoato(3462784).orElseThrow(() -> new ResourceNotFoundException("Tuman", "soato", "3462784"));
-            LegalUserDto legalUserDto = new LegalUserDto(Long.valueOf(legalTin), "Tashkilot nomi", "Tashkilot addresi", userInfoFromOneIdDto.getFull_name(), district.getRegionId(), district.getId(), userInfoFromOneIdDto.getMob_phone_no(), "Tashkilot mulkchilik shakli", "Tashkilot tashkiliy-huquqiy shakli");
-            User user = userService.create(legalUserDto);
+            //get gnk legal info from IIP
+            LegalUserDto legalInfo = iipService.getGnkInfo(legalTin);
+
+            User user = userService.create(legalInfo);
             return getUserMeWithToken(user, accessData.getAccess_token(), response);
         }
 
-        UserMeDto user1 = getUserMeDto(response, userInfoFromOneIdDto, accessData);
-        if (user1 != null) return user1;
+        //find user by username, if there is not, should create a new one
+        String pin = userInfoFromOneIdDto.getPin();
+        Optional<User> optional = userRepository.findByUsername(pin);
+        if (optional.isPresent()){
+            profileService.addPhoneNumber(optional.get().getProfileId(), userInfoFromOneIdDto.getMob_phone_no()); // update the profile with phoneNumber
+            return getUserMeWithToken(optional.get(), accessData.getAccess_token(), response);
+        }
 
-        //create individual user
+        //create a new individual user
         User user = userService.create(new IndividualUserDto(userInfoFromOneIdDto.getFull_name(), Long.valueOf(userInfoFromOneIdDto.getPin()), userInfoFromOneIdDto.getMob_phone_no()));
         return getUserMeWithToken(user, accessData.getAccess_token(), response);
-    }
-
-    private UserMeDto getUserMeDto(HttpServletResponse response, UserInfoFromOneIdDto userInfoFromOneIdDto, AccessDataDto accessData) {
-        //find individual user by username, if there is not, should create a new one
-        Optional<User> optional = userRepository.findByUsername(userInfoFromOneIdDto.getPin());
-        if (optional.isPresent()) {
-            User user = optional.get();
-            return getUserMeWithToken(user, accessData.getAccess_token(), response);
-        }
-        return null;
     }
 
     private UserMeDto getUserMeWithToken(User user, String tokenFromOneId, HttpServletResponse response) {

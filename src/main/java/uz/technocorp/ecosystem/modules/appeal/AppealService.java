@@ -7,9 +7,13 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,7 +29,7 @@ public interface AppealService {
 
     void changeAppealStatus(AppealStatusDto dto);
 
-    Page<AppealCustom> getAppealCustoms(Map<String, String> params);
+    Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params);
 
     UUID create(AppealDto dto, User user);
 
@@ -34,4 +38,8 @@ public interface AppealService {
     String generatePdfWithParam(HfAppealDto dto, User user);
 
     void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
+
+    List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate);
+
+    AppealViewById getById(UUID appealId);
 }

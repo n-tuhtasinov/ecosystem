@@ -1,6 +1,9 @@
 package uz.technocorp.ecosystem.modules.profile;
 
 
+import uz.technocorp.ecosystem.modules.prevention.dto.PagingDto;
+import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
+import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 
 import java.util.UUID;
@@ -13,5 +16,12 @@ import java.util.UUID;
  */
 public interface ProfileService {
     UUID create(UserDto dto);
+
     void update(UUID profileId, UserDto dto);
+
+    Integer getOfficeId(UUID profileId);
+
+    PagingDto<ProfileView> getProfilesForPrevention(Integer inspectorOfficeId, PreventionParamsDto params);
+
+    void addPhoneNumber(UUID profileId, String phoneNumber);
 }

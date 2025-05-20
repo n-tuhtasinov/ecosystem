@@ -9,11 +9,19 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.office.OfficeRepository;
+import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,15 +36,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AppealRepoImpl implements AppealRepo {
 
-    private EntityManager em;
+    private final EntityManager em;
+    private final ProfileRepository profileRepository;
+    private final OfficeRepository officeRepository;
 
     @Override
-    public Page<AppealCustom> getAppealCustoms(Map<String, String> params) {
+    public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
         Pageable pageable= PageRequest.of(
                 Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER))-1,
                 Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
                 Sort.Direction.DESC,
-                "createdAt");
+                "created_at");
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<AppealCustom> cq = cb.createQuery(AppealCustom.class);
         Root<Appeal> appeal = cq.from(Appeal.class);
@@ -53,25 +63,45 @@ public class AppealRepoImpl implements AppealRepo {
             predicates.add(cb.equal(appeal.get("legalTin"), params.get("legalTin")));
         }
 
-        if (params.get("date") != null && !params.get("date").isEmpty()) {
-            predicates.add(cb.equal(appeal.get("date"), params.get("date")));
+        if (params.get("startDate") != null && !params.get("startDate").isEmpty()) {
+//            predicates.add(cb.equal(appeal.get("date"), params.get("date")));
+            predicates.add(cb.between(appeal.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay(), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
         }
 
         if (params.get("officeId") != null) {
             predicates.add(cb.equal(appeal.get("officeId"), params.get("officeId")));
         }
 
-        if (params.get("inspectorId") != null) {
-            predicates.add(cb.equal(appeal.get("inspectorId"), params.get("inspectorId")));
+        if (params.get("executorId") != null) {
+            predicates.add(cb.equal(appeal.get("executorId"), params.get("executorId")));
+        }
+
+        //get profile by user
+        Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", user.getProfileId()));
+
+
+        //to display data by user role
+        if (user.getRole().equals(Role.LEGAL)){
+            predicates.add(cb.equal(appeal.get("profileId"), user.getProfileId()));
+        } else if (user.getRole().equals(Role.INSPECTOR)) {
+            predicates.add(cb.equal(appeal.get("executorId"), user.getId()));
+        } else if (user.getRole().equals(Role.REGIONAL)) {
+            //TODO: Regional roli uchun ko'rinishni qilish kerak
+        }else {
+            //TODO: Qolgan roli uchun ko'rinishni qilish kerak
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
+
+        //sorting
+        cq.orderBy(cb.desc(appeal.get("createdAt")));
+
         // DTO yaratish
         cq.select(cb
                 .construct(
                         AppealCustom.class,
                         appeal.get("id"),
-                        appeal.get("date"),
+                        appeal.get("createdAt"),
                         appeal.get("status"),
                         appeal.get("legalTin"),
                         appeal.get("number"),
@@ -79,18 +109,20 @@ public class AppealRepoImpl implements AppealRepo {
                         appeal.get("regionName"),
                         appeal.get("districtName"),
                         appeal.get("address"),
-                        appeal.get("email"),
                         appeal.get("phoneNumber"),
                         appeal.get("appealType"),
                         appeal.get("executorName"),
                         appeal.get("deadline"),
                         appeal.get("officeName")
                 ));
+
         // Qidiruvni amalga oshirish
         TypedQuery<AppealCustom> query = em.createQuery(cq);
+
         // Pagination uchun sahifani sozlash
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
+
         // Umumiy natijalar sonini olish
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Appeal> countRoot = countQuery.from(Appeal.class);

@@ -66,7 +66,8 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.save(User.builder()
                 .username(dto.getUsername())
-                .password(passwordEncoder.encode(UUID.randomUUID().toString().substring(24)))
+//                .password(passwordEncoder.encode(UUID.randomUUID().toString().substring(24)))
+                .password(passwordEncoder.encode("root1234")) //TODO: vaqtinchalik password, keyinchalik udalit qilish kerak
                 .role(Role.valueOf(dto.getRole()))
                 .name(dto.getName())
                 .directions(dto.getDirections())
@@ -137,6 +138,7 @@ public class UserServiceImpl implements UserService {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
         return new UserHelperById(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), profile.getDepartmentId(), profile.getOfficeId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
     }
+
 
     private CommitteeUserHelper convertToCommitteeView(User user) {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));

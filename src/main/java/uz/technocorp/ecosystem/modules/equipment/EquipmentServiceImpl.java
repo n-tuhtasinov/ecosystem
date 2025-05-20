@@ -87,7 +87,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .fuel(dto.fuel())
                 .labelPath(dto.labelPath())
                 .description(dto.description())
-                .inspectorId(appeal.getInspectorId())
+                .inspectorId(appeal.getExecutorId())
                 .saleContractPath(dto.saleContractPath())
                 .equipmentCertPath(dto.equipmentCertPath())
                 .assignmentDecreePath(dto.assignmentDecreePath())

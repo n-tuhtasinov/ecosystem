@@ -35,6 +35,7 @@ public class HfAppealDto implements AppealDto {
 
     private String upperOrganization;
 
+    @NotBlank(message = "Xicho nomi kiritilmadi")
     private String name;
 
     @NotBlank(message = "Manzil kiritilmadi!")
@@ -42,6 +43,8 @@ public class HfAppealDto implements AppealDto {
 
     @NotNull(message = "XICHO turi tanlanmadi!")
     private Integer hfTypeId;
+
+    private String hfTypeName;
 
     private String extraArea;
 

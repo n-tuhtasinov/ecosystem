@@ -102,11 +102,11 @@ public class Appeal extends BaseEntity {
     private String officeName;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
-    @JoinColumn(name = "inspector_id", insertable = false, updatable = false)
-    private User inspector;
+    @JoinColumn(name = "executor_id", insertable = false, updatable = false)
+    private User executor;
 
-    @Column(name = "inspector_id")
-    private UUID inspectorId;
+    @Column(name = "executor_id")
+    private UUID executorId;
 
     private String executorName; //ijrosini ta'minlovchi shaxs (inspektor yoki qo'mita hodimi)
 
@@ -123,8 +123,6 @@ public class Appeal extends BaseEntity {
     private String phoneNumber;
 
     private LocalDate deadline;
-
-    private LocalDate date;
 
     @Column(columnDefinition = "jsonb", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)

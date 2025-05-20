@@ -4,13 +4,21 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -38,10 +46,23 @@ public class AppealController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllAppeals(@RequestParam Map<String, String> params) {
-        Page<AppealCustom> appeals = service.getAppealCustoms(params);
+    public ResponseEntity<?> getAllAppeals(@CurrentUser User user, @RequestParam Map<String, String> params) {
+        Page<AppealCustom> appeals = service.getAppealCustoms(user, params);
         return ResponseEntity.ok(new ApiResponse(appeals));
     }
 
+
+//    @PreAuthorize("hasRole('INSPECTOR')")
+    @GetMapping("/period")
+    public ResponseEntity<?> getAllByPeriodAndInspector(@CurrentUser User user, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate) {
+        List<AppealViewByPeriod> list = service.getAllByPeriodAndInspector(user, startDate, endDate);
+        return ResponseEntity.ok(new ApiResponse(list));
+    }
+
+    @GetMapping("/{appealId}")
+    public ResponseEntity<?> getById(@PathVariable UUID appealId) {
+        AppealViewById byId = service.getById(appealId);
+        return ResponseEntity.ok(new ApiResponse(byId));
+    }
 
 }
