@@ -25,6 +25,8 @@ import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hftype.HfType;
+import uz.technocorp.ecosystem.modules.hftype.HfTypeRepository;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
@@ -67,6 +69,7 @@ public class AppealServiceImpl implements AppealService {
     private final DocumentService documentService;
     private final Generator generator;
     private final AttachmentService attachmentService;
+    private final HfTypeRepository hfTypeRepository;
 
     @Override
     @Transactional
@@ -146,7 +149,6 @@ public class AppealServiceImpl implements AppealService {
                 .legalAddress(profile.getLegalAddress())
                 .phoneNumber(dto.getPhoneNumber())
                 .deadline(dto.getDeadline())
-                .date(LocalDate.now())
                 .executorName(executorName)
                 .data(data)
                 .build();
@@ -164,6 +166,10 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public String generatePdfWithParam(HfAppealDto dto, User user) {
+
+        //check the data(mainly IDs) of the dto
+        HfType hfType = hfTypeRepository.findById(dto.getHfTypeId()).orElseThrow(() -> new ResourceNotFoundException("HF_Type", "ID", dto.getHfTypeId()));
+        dto.setHfTypeName(hfType.getName());
 
         Template template = templateService.getByType(TemplateType.XICHO_APPEAL.name());
         if (template == null) {

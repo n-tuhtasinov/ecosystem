@@ -44,6 +44,8 @@ public class HfAppealDto implements AppealDto {
     @NotNull(message = "XICHO turi tanlanmadi!")
     private Integer hfTypeId;
 
+    private String hfTypeName;
+
     private String extraArea;
 
     @NotNull(message = "Viloyat tanlanmadi!")
