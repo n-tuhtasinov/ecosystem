@@ -124,8 +124,6 @@ public class Appeal extends BaseEntity {
 
     private LocalDate deadline;
 
-    private LocalDate date;
-
     @Column(columnDefinition = "jsonb", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode data;

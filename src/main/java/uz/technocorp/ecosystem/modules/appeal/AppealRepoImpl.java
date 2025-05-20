@@ -65,7 +65,7 @@ public class AppealRepoImpl implements AppealRepo {
 
         if (params.get("startDate") != null && !params.get("startDate").isEmpty()) {
 //            predicates.add(cb.equal(appeal.get("date"), params.get("date")));
-            predicates.add(cb.between(appeal.get("createdAt"), LocalDate.parse(params.get("startDate")), LocalDate.parse(params.get("endDate"))));
+            predicates.add(cb.between(appeal.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay(), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
         }
 
         if (params.get("officeId") != null) {
