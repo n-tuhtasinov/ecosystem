@@ -42,10 +42,7 @@ import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.utils.Generator;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Rasulov Komil
@@ -118,11 +115,11 @@ public class AppealServiceImpl implements AppealService {
     @Override
     public UUID create(AppealDto dto, User user) {
 
+        //make data
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
         Region region = regionRepository.findById(dto.getRegionId()).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId()));
         District district = districtRepository.findById(dto.getDistrictId()).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId()));
-        if (region.getOfficeId()==null) throw new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan");
-        Office office = officeRepository.findById(region.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "ID", region.getOfficeId()));
+        Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
         JsonNode data = makeJsonData(dto);
@@ -142,7 +139,7 @@ public class AppealServiceImpl implements AppealService {
                 .legalDistrictName(profile.getDistrictName())
                 .districtId(dto.getDistrictId())
                 .districtName(district.getName())
-                .officeId(region.getOfficeId())
+                .officeId(office.getId())
                 .officeName(office.getName())
                 .status(AppealStatus.NEW)
                 .address(dto.getAddress())

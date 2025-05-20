@@ -59,11 +59,7 @@ public class DataLoader implements CommandLineRunner {
             District district1 = districtRepository.save(District.builder().name("Shayhontoxur tumani").soato(17222564).number(256585).regionId(region1.getId()).build());
 
             // save office
-            Office office = officeRepository.save(Office.builder().name("Toshkent shahri bo'linmasi").build());
-
-            // set office to the region
-            region1.setOfficeId(office.getId());
-            regionRepository.save(region1);
+            Office office = officeRepository.save(Office.builder().name("Toshkent shahri bo'linmasi").regionId(region1.getId()).build());
 
             // save a legal
             Profile legal1 = profileRepository.save(Profile.builder().tin(123654987L).legalName("Shaffof mchj").fullName("Shahzod Namazbayev").regionId(region1.getId()).districtId(district1.getId()).regionName(region1.getName()).districtName(district1.getName()).legalAddress("Ibn sino ko'chasi 48").build());
