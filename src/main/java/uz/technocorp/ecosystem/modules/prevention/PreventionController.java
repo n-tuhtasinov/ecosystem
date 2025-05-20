@@ -39,14 +39,6 @@ public class PreventionController {
         return ResponseEntity.ok(new ApiResponse("Profilaktika ishlari olib borildi"));
     }
 
-    // TODO 2 ta API dan bittasini qoldirish kerak
-    // API-1 PostMapping version with param
-    @PostMapping("/list")
-    public ResponseEntity<ApiResponse> paging(@CurrentUser User user, @RequestBody PreventionParamsDto params) {
-        return ResponseEntity.ok(new ApiResponse(service.getAll(user, params)));
-    }
-
-    // API-2 GetMapping version with param
     @GetMapping
     public ResponseEntity<ApiResponse> getAll(@CurrentUser User user,
                                               @RequestParam(value = "isPassed", required = false, defaultValue = "false") Boolean isPassed,
