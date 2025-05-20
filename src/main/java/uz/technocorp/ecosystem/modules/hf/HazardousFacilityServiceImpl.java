@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
@@ -13,15 +17,20 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
+import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,6 +49,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private final AppealRepository appealRepository;
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
+    private final ProfileRepository profileRepository;
 
     @Override
     public void create(HfRegistryDto dto) {
@@ -78,6 +88,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .hfTypeId(hfAppealDto.getHfTypeId())
                         .extraArea(hfAppealDto.getExtraArea())
                         .registryNumber(registryNumber)
+                        .registrationDate(LocalDate.now())
                         .active(true)
                         .spheres(hfAppealDto.getSpheres())
                         .appointmentOrderPath(hfAppealDto.getAppointmentOrderPath())
@@ -115,11 +126,12 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .location(dto.location())
                         .hazardousSubstance(dto.hazardousSubstance())
                         .spheres(dto.spheres())
-
+                        .registrationDate(dto.registrationDate())
                         .hfTypeId(dto.hfTypeId())
                         .extraArea(dto.extraArea())
                         .description(dto.description())
                         .registryNumber(dto.registryNumber())
+
                         .active(true)
                         .appointmentOrderPath(dto.appointmentOrderPath())
                         .cadastralPassportPath(dto.cadastralPassportPath())
@@ -160,6 +172,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setDescription(dto.description());
         hazardousFacility.setRegistryNumber(dto.registryNumber());
         hazardousFacility.setSpheres(dto.spheres());
+        hazardousFacility.setRegistrationDate(dto.registrationDate());
 
         hazardousFacility.setAppointmentOrderPath(dto.appointmentOrderPath());
         hazardousFacility.setCadastralPassportPath(dto.cadastralPassportPath());
@@ -212,6 +225,32 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     @Override
     public List<HfSelectView> findAllByProfile(User user) {
         return repository.findAllByProfileId(user.getProfileId());
+    }
+
+    @Override
+    public Page<HfPageView> getAll(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate) {
+        Pageable pageable = PageRequest.of(page-1, size, Sort.Direction.DESC, "registrationDate");
+        Role role = user.getRole();
+        if (role == Role.INDIVIDUAL || role == Role.LEGAL) {
+            return repository.getAllByProfileId(user.getProfileId(), pageable);
+        } else if (role == Role.HEAD || role == Role.MANAGER) {
+            return repository.getAll(pageable);
+        } else {
+            if (regionId == null && registryNumber == null && startDate == null && endDate == null && tin == null) {
+                Profile profile = profileRepository
+                        .findById(user.getProfileId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", user.getProfileId()));
+                Integer officeId = profile.getOfficeId();
+                List<Integer> regionIds = regionRepository.findRegionIdsByOfficeId(officeId);
+                return repository.getAllByRegions(pageable, regionIds);
+            } else if (registryNumber == null && startDate == null && endDate == null) {
+                return repository.getAllByRegion(pageable, regionId);
+            } else if (startDate == null && endDate == null) {
+                return repository.getAllByRegion(pageable, regionId);
+            }
+        }
+
+        return null;
     }
 
     private HfAppealDto parseJsonData(JsonNode jsonNode) {

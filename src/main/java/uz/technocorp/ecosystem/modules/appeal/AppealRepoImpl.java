@@ -47,33 +47,46 @@ public class AppealRepoImpl implements AppealRepo {
                 Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
                 Sort.Direction.DESC,
                 "created_at");
+
+        // select uchun alohida query va root
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<AppealCustom> cq = cb.createQuery(AppealCustom.class);
-        Root<Appeal> appeal = cq.from(Appeal.class);
+        Root<Appeal> appealRoot = cq.from(Appeal.class);
         List<Predicate> predicates = new ArrayList<>();
+
+        // count uchun alohida query va root
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<Appeal> countRoot = countQuery.from(Appeal.class);
+        List<Predicate> countPredicates = new ArrayList<>();
 
         // Dinamik qidiruv shartlarini qo'shish
         if (params.get("status")!= null && !params.get("status").isEmpty()) {
-            predicates.add(cb.equal(appeal.get("status"), AppealStatus.valueOf(params.get("status"))));
+            predicates.add(cb.equal(appealRoot.get("status"), AppealStatus.valueOf(params.get("status"))));
+            countPredicates.add(cb.equal(countRoot.get("status"), AppealStatus.valueOf(params.get("status"))));
         }
         if (params.get("appealType") != null && !params.get("appealType").isEmpty()) {
-            predicates.add(cb.equal(appeal.get("appealType"), AppealType.valueOf(params.get("params"))));
+            predicates.add(cb.equal(appealRoot.get("appealType"), AppealType.valueOf(params.get("params"))));
+            countPredicates.add(cb.equal(countRoot.get("appealType"), AppealType.valueOf(params.get("params"))));
         }
         if (params.get("legalTin")!= null && !params.get("legalTin").isEmpty()) {
-            predicates.add(cb.equal(appeal.get("legalTin"), params.get("legalTin")));
+            predicates.add(cb.equal(appealRoot.get("legalTin"), params.get("legalTin")));
+            countPredicates.add(cb.equal(countRoot.get("legalTin"), params.get("legalTin")));
         }
 
         if (params.get("startDate") != null && !params.get("startDate").isEmpty()) {
 //            predicates.add(cb.equal(appeal.get("date"), params.get("date")));
-            predicates.add(cb.between(appeal.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay(), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
+            predicates.add(cb.between(appealRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay(), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
+            countPredicates.add(cb.between(countRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay(), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
         }
 
         if (params.get("officeId") != null) {
-            predicates.add(cb.equal(appeal.get("officeId"), params.get("officeId")));
+            predicates.add(cb.equal(appealRoot.get("officeId"), params.get("officeId")));
+            countPredicates.add(cb.equal(countRoot.get("officeId"), params.get("officeId")));
         }
 
         if (params.get("executorId") != null) {
-            predicates.add(cb.equal(appeal.get("executorId"), params.get("executorId")));
+            predicates.add(cb.equal(appealRoot.get("executorId"), params.get("executorId")));
+            countPredicates.add(cb.equal(countRoot.get("executorId"), params.get("executorId")));
         }
 
         //get profile by user
@@ -82,9 +95,11 @@ public class AppealRepoImpl implements AppealRepo {
 
         //to display data by user role
         if (user.getRole().equals(Role.LEGAL)){
-            predicates.add(cb.equal(appeal.get("profileId"), user.getProfileId()));
+            predicates.add(cb.equal(appealRoot.get("profileId"), user.getProfileId()));
+            countPredicates.add(cb.equal(countRoot.get("profileId"), user.getProfileId()));
         } else if (user.getRole().equals(Role.INSPECTOR)) {
-            predicates.add(cb.equal(appeal.get("executorId"), user.getId()));
+            predicates.add(cb.equal(appealRoot.get("executorId"), user.getId()));
+            countPredicates.add(cb.equal(countRoot.get("executorId"), user.getId()));
         } else if (user.getRole().equals(Role.REGIONAL)) {
             //TODO: Regional roli uchun ko'rinishni qilish kerak
         }else {
@@ -94,26 +109,26 @@ public class AppealRepoImpl implements AppealRepo {
         cq.where(predicates.toArray(new Predicate[0]));
 
         //sorting
-        cq.orderBy(cb.desc(appeal.get("createdAt")));
+        cq.orderBy(cb.desc(appealRoot.get("createdAt")));
 
         // DTO yaratish
         cq.select(cb
                 .construct(
                         AppealCustom.class,
-                        appeal.get("id"),
-                        appeal.get("createdAt"),
-                        appeal.get("status"),
-                        appeal.get("legalTin"),
-                        appeal.get("number"),
-                        appeal.get("legalName"),
-                        appeal.get("regionName"),
-                        appeal.get("districtName"),
-                        appeal.get("address"),
-                        appeal.get("phoneNumber"),
-                        appeal.get("appealType"),
-                        appeal.get("executorName"),
-                        appeal.get("deadline"),
-                        appeal.get("officeName")
+                        appealRoot.get("id"),
+                        appealRoot.get("createdAt"),
+                        appealRoot.get("status"),
+                        appealRoot.get("legalTin"),
+                        appealRoot.get("number"),
+                        appealRoot.get("legalName"),
+                        appealRoot.get("regionName"),
+                        appealRoot.get("districtName"),
+                        appealRoot.get("address"),
+                        appealRoot.get("phoneNumber"),
+                        appealRoot.get("appealType"),
+                        appealRoot.get("executorName"),
+                        appealRoot.get("deadline"),
+                        appealRoot.get("officeName")
                 ));
 
         // Qidiruvni amalga oshirish
@@ -123,15 +138,8 @@ public class AppealRepoImpl implements AppealRepo {
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
 
-        // Umumiy natijalar sonini olish
-        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        Root<Appeal> countRoot = countQuery.from(Appeal.class);
-
-//        if (!predicates.isEmpty()) {
-//            countQuery.where(predicates.toArray(new Predicate[0]));
-//        }
-
         countQuery.select(cb.count(countRoot));
+        countQuery.where(countPredicates.toArray(new Predicate[0]));
         Long totalElements = em.createQuery(countQuery).getSingleResult();
 
         return new PageImpl<>(query.getResultList(), pageable, totalElements);

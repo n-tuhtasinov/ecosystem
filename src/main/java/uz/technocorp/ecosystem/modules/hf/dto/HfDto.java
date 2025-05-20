@@ -4,6 +4,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ import java.util.List;
 public record HfDto(Long legalTin, String legalName, Integer regionId, Integer districtId, String legalAddress,
                     String phoneNumber, String email, String upperOrganization, String name, String address,
                     String location, String hazardousSubstance,
-                    Integer hfTypeId, String extraArea, String description, String registryNumber,
+                    Integer hfTypeId, String extraArea, String description, String registryNumber, LocalDate registrationDate,
                     String appointmentOrderPath, String cadastralPassportPath, String certificationPath, String permitPath,
                     String deviceTestingPath, String licensePath, String ecologicalConclusionPath, String expertOpinionPath,
                     String industrialSafetyDeclarationPath, String insurancePolicyPath, String projectDocumentationPath,
