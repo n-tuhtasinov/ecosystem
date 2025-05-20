@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * @author Sukhrob
@@ -19,10 +20,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class PreventionParamsDto {
 
-    private String query;
+    private Boolean isPassed;
+    private String search;
     private Integer page;
     private Integer size;
     private LocalDate startDate;
     private LocalDate endDate;
     private Boolean viewed;
+    private Integer officeId;
+    private UUID inspectorId;
 }

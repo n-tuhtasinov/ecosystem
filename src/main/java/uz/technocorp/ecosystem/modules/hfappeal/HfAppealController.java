@@ -58,7 +58,7 @@ public class HfAppealController {
 
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        String path = appealService.generatePdfWithParam(hfDto, user);
+        String path = appealService.preparePdfWithParam(hfDto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 }

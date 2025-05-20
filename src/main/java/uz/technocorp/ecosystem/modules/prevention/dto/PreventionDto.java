@@ -26,12 +26,15 @@ import java.util.List;
 @NoArgsConstructor
 public class PreventionDto {
 
+    @NotNull(message = "Tashkilot INN si jo'natilmadi")
+    private Long tin;
+
     @PastOrPresent(message = "Profilaktika sanasi kelajakda bo'lishi mumkin emas")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    @NotBlank(message = "Profilaktika shakli jo'natilmadi")
-    private String type;
+    @NotNull(message = "Profilaktika shakli jo'natilmadi")
+    private Integer typeId;
 
     private String content;
 
@@ -39,7 +42,5 @@ public class PreventionDto {
     @NotEmpty(message = "Fayllar roʻyxati bo'sh bo'lmasligi kerak")
     private List<@NotBlank(message = "Fayl url bo'sh bo'lmasligi kerak") String> filePaths;
 
-    @NotNull(message = "Tashkilot INN si jo'natilmadi")
-    private Long tin;
 
 }

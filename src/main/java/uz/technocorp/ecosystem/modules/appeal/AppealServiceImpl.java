@@ -42,7 +42,10 @@ import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.utils.Generator;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -116,9 +119,9 @@ public class AppealServiceImpl implements AppealService {
     public UUID create(AppealDto dto, User user) {
 
         //make data
-        Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
-        Region region = regionRepository.findById(dto.getRegionId()).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId()));
-        District district = districtRepository.findById(dto.getDistrictId()).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId()));
+        Profile profile = getProfile(user.getProfileId());
+        Region region = getRegion(dto.getRegionId());
+        District district = getDistrict(dto.getDistrictId());
         Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
@@ -162,25 +165,22 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public String generatePdfWithParam(HfAppealDto dto, User user) {
+    public String preparePdfWithParam(HfAppealDto dto, User user) {
 
         //check the data(mainly IDs) of the dto
         HfType hfType = hfTypeRepository.findById(dto.getHfTypeId()).orElseThrow(() -> new ResourceNotFoundException("HF_Type", "ID", dto.getHfTypeId()));
         dto.setHfTypeName(hfType.getName());
 
-        Template template = templateService.getByType(TemplateType.XICHO_APPEAL.name());
-        if (template == null) {
-            throw new ResourceNotFoundException("Xicho arizasi", "Template", TemplateType.XICHO_APPEAL.name());
-        }
-        Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", user.getProfileId()));
+        Template template = getTemplate(TemplateType.XICHO_APPEAL);
+        Profile profile = getProfile(user.getProfileId());
 
         // Collect params to Map
         Map<String, String> parameters = new HashMap<>();
         parameters.put("name", profile.getFullName());
         parameters.put("legalName", profile.getLegalName());
         parameters.put("tin", profile.getTin().toString());
-        parameters.put("regionName", regionRepository.findById(dto.getRegionId()).map(Region::getName).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", dto.getRegionId())));
-        parameters.put("districtName", districtRepository.findById(dto.getDistrictId()).map(District::getName).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", dto.getDistrictId())));
+        parameters.put("regionName", getRegion(dto.getRegionId()).getName());
+        parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
         parameters.put("hfName", dto.getName());
 
         /**
@@ -188,6 +188,29 @@ public class AppealServiceImpl implements AppealService {
          * file path ni qaytarib yuborish kerak
          */
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/hf-appeals", parameters);
+    }
+
+    @Override
+    public String prepareReplyPdfWithParam(User user, ReplyDto replyDto) {
+        // TODO change template type
+        Template template = getTemplate(TemplateType.EQUIPMENT_APPEAL);
+        /*
+        Appeal appeal = repository.findById(replyDto.getAppealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", replyDto.getAppealId()));
+
+        // Collect params to Map
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("officeName", "");
+        parameters.put("inspectorName", "");
+        parameters.put("legalName", "");
+        parameters.put("legalTin", "");
+        parameters.put("legalAddress", "");
+
+        // Replace variables
+        String content = replaceVariables(template.getContent(), parameters);
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(content, "appeals/reply");*/
+        return null;
     }
 
     @Override
@@ -245,5 +268,25 @@ public class AppealServiceImpl implements AppealService {
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
         }
         return executorName;
+    }
+
+    private Region getRegion(Integer regionId) {
+        return regionRepository.findById(regionId).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", regionId));
+    }
+
+    private District getDistrict(Integer districtId) {
+        return districtRepository.findById(districtId).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", districtId));
+    }
+
+    private Profile getProfile(UUID profileId) {
+        return profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", profileId));
+    }
+
+    private Template getTemplate(TemplateType type) {
+        Template template = templateService.getByType(type.name());
+        if (template == null) {
+            throw new ResourceNotFoundException("Shablon", type.name(), "");
+        }
+        return template;
     }
 }

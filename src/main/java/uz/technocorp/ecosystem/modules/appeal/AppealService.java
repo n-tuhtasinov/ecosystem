@@ -2,10 +2,7 @@ package uz.technocorp.ecosystem.modules.appeal;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
@@ -35,7 +32,9 @@ public interface AppealService {
 
     void update(UUID id, AppealDto dto);
 
-    String generatePdfWithParam(HfAppealDto dto, User user);
+    String preparePdfWithParam(HfAppealDto dto, User user);
+
+    String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
 
     void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
 

@@ -1,11 +1,15 @@
 package uz.technocorp.ecosystem.modules.prevention;
 
-import uz.technocorp.ecosystem.modules.prevention.dto.PagingDto;
+import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
+import uz.technocorp.ecosystem.modules.prevention.projection.PreventionTypeView;
 import uz.technocorp.ecosystem.modules.prevention.projection.PreventionView;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.user.User;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Sukhrob
@@ -14,9 +18,41 @@ import uz.technocorp.ecosystem.modules.user.User;
  * @since v1.0
  */
 public interface PreventionService {
+
+    // Global
+    Page<?> getAll(User user, PreventionParamsDto params);
+
+    PreventionView getById(User user, UUID preventionId);
+
+    List<PreventionTypeView> getTypes();
+
+    // Committee
+    Page<PreventionView> getAllPassedForCommittee(PreventionParamsDto params);
+
+    Page<ProfileView> getAllWithoutPassedForCommittee(PreventionParamsDto params);
+
+    PreventionView getByIdForCommittee(UUID preventionId);
+
+    // Regional
+    Page<PreventionView> getAllPassedForRegional(User user, PreventionParamsDto params);
+
+    Page<ProfileView> getAllWithoutPassedForRegional(User user, PreventionParamsDto params);
+
+    PreventionView getByIdForRegional(User user, UUID preventionId);
+
+    // Inspector
+    Page<PreventionView> getAllPassedByInspector(User user, PreventionParamsDto params);
+
+    Page<ProfileView> getAllWithoutPassedForInspector(User user, PreventionParamsDto params);
+
+    PreventionView getByIdForInspector(User user, UUID preventionId);
+
     void create(User user, PreventionDto dto);
 
-    PagingDto<PreventionView> getOrganizationsWithEventsByInspector(User user, PreventionParamsDto params);
+    void deleteById(User user, UUID preventionId);
 
-    PagingDto<ProfileView> getOrganizationsWithoutEvents(User user, PreventionParamsDto params);
+    // Citizen
+    PreventionView getByIdForCitizen(User user, UUID preventionId);
+
+    Page<PreventionView> getAllByCitizen(User user);
 }
