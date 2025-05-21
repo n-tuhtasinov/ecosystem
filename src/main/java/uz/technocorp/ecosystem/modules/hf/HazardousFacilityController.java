@@ -2,18 +2,22 @@ package uz.technocorp.ecosystem.modules.hf;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
+import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,5 +76,19 @@ public class HazardousFacilityController {
     public ResponseEntity<?> findAllByProfile(@CurrentUser User user) {
         List<HfSelectView> allByProfile = service.findAllByProfile(user);
         return ResponseEntity.ok(new ApiResponse(allByProfile));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAll(@CurrentUser User user,
+                                    @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                    @RequestParam(value = "legalTin", required = false) Long legalTin,
+                                    @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                    @RequestParam(value = "regionId", required = false) Integer regionId,
+                                    @RequestParam(value = "startDate", required = false) LocalDate startDate,
+                                    @RequestParam(value = "endDate", required = false) LocalDate endDate
+                                    ) {
+        Page<HfCustom> all = service.getAll(user, page, size, legalTin, registryNumber, regionId, startDate, endDate);
+        return ResponseEntity.ok(new ApiResponse(all));
     }
 }
