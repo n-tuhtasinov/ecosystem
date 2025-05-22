@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.user;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
  * @created 29.01.2025
  * @since v1.0
  */
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
 
     Optional<User> findByUsername(String username);
 

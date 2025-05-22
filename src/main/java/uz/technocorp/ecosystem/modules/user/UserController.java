@@ -1,12 +1,14 @@
 package uz.technocorp.ecosystem.modules.user;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.modules.user.dto.CommitteeUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.OfficeUserDto;
@@ -15,6 +17,7 @@ import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
 import uz.technocorp.ecosystem.security.CurrentUser;
+import uz.technocorp.ecosystem.shared.ApiResponse;
 
 import java.util.Map;
 import java.util.UUID;
@@ -102,6 +105,18 @@ public class UserController {
     ResponseEntity<?> getOfficeUsers(@RequestParam(required = false) Map<String, String> params) {
         Page<OfficeUserHelper> page = userService.getOfficeUsers(params);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(page));
+    }
+
+    @Operation(
+            summary = "Inspector listini olish",
+            parameters = {
+                    @Parameter(name = "officeId", description = "Hududiy bo'lim ID si", schema = @Schema(type = "string")),
+                    @Parameter(name = "inspectorName", description = "Inspector ismi bo'yicha filter", schema = @Schema(type = "string"))
+            }
+    )
+    @GetMapping("/office-users/inspectors/select")
+    ResponseEntity<ApiResponse> getInspectors(@CurrentUser User user, @RequestParam(required = false) Map<String, String> params) {
+        return ResponseEntity.ok(new ApiResponse(userService.getInspectors(user, params)));
     }
 
     @GetMapping("/{userId}")
