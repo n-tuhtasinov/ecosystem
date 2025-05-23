@@ -17,6 +17,7 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
+import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
@@ -134,6 +135,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .extraArea(dto.extraArea())
                         .description(dto.description())
                         .registryNumber(dto.registryNumber())
+                        .registrationDate(dto.registrationDate())
 
                         .active(true)
                         .appointmentOrderPath(dto.appointmentOrderPath())
@@ -231,29 +233,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     }
 
     @Override
-    public Page<HfPageView> getAll(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate) {
-        Pageable pageable = PageRequest.of(page-1, size, Sort.Direction.DESC, "registrationDate");
-        Role role = user.getRole();
-        if (role == Role.INDIVIDUAL || role == Role.LEGAL) {
-            return repository.getAllByProfileId(user.getProfileId(), pageable);
-        } else if (role == Role.HEAD || role == Role.MANAGER) {
-            return repository.getAll(pageable);
-        } else {
-            if (regionId == null && registryNumber == null && startDate == null && endDate == null && tin == null) {
-                Profile profile = profileRepository
-                        .findById(user.getProfileId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", user.getProfileId()));
-                Integer officeId = profile.getOfficeId();
-                Office office = officeRepository.findById(officeId).orElseThrow(() -> new ResourceNotFoundException("Office", "ID", officeId));
-                return repository.getAllByRegion(pageable, office.getRegionId());
-            } else if (registryNumber == null && startDate == null && endDate == null) {
-                return repository.getAllByRegion(pageable, regionId);
-            } else if (startDate == null && endDate == null) {
-                return repository.getAllByRegion(pageable, regionId);
-            }
-        }
-
-        return null;
+    public Page<HfCustom> getAll(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate) {
+        return repository.getHfCustoms(user, page, size, tin, registryNumber, regionId, startDate, endDate);
     }
 
     private HfAppealDto parseJsonData(JsonNode jsonNode) {
