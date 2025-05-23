@@ -38,6 +38,8 @@ public interface AppealService {
 
     void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
 
+    void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
+
     List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate);
 
     AppealViewById getById(UUID appealId);

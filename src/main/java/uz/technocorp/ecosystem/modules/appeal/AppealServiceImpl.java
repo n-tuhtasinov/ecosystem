@@ -39,13 +39,10 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
-import uz.technocorp.ecosystem.utils.Generator;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * @author Rasulov Komil
@@ -67,7 +64,6 @@ public class AppealServiceImpl implements AppealService {
     private final OfficeRepository officeRepository;
     private final TemplateService templateService;
     private final DocumentService documentService;
-    private final Generator generator;
     private final AttachmentService attachmentService;
     private final HfTypeRepository hfTypeRepository;
 
@@ -83,6 +79,7 @@ public class AppealServiceImpl implements AppealService {
         appeal.setExecutorId(dto.inspectorId());
         appeal.setExecutorName(user.getName());
         appeal.setDeadline(LocalDate.parse(dto.deadline()));
+        appeal.setResolution(dto.resolution());
         repository.save(appeal);
         repository.flush();
         appealExecutionProcessRepository.save(
@@ -183,34 +180,39 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
         parameters.put("hfName", dto.getName());
 
-        /**
-         * attachmentga va folder ga save qilish kerak
-         * file path ni qaytarib yuborish kerak
-         */
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/hf-appeals", parameters);
     }
 
     @Override
     public String prepareReplyPdfWithParam(User user, ReplyDto replyDto) {
-        // TODO change template type
-        Template template = getTemplate(TemplateType.EQUIPMENT_APPEAL);
-        /*
+        Template template = getTemplate(TemplateType.REPLY_APPEAL);
+
         Appeal appeal = repository.findById(replyDto.getAppealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", replyDto.getAppealId()));
+
+        // Current date
+        String[] formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.of("uz"))).split(" ");
 
         // Collect params to Map
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("officeName", "");
-        parameters.put("inspectorName", "");
-        parameters.put("legalName", "");
-        parameters.put("legalTin", "");
-        parameters.put("legalAddress", "");
-
-        // Replace variables
-        String content = replaceVariables(template.getContent(), parameters);
+        parameters.put("day", formattedDate[0]);
+        parameters.put("month", formattedDate[1]);
+        parameters.put("year", formattedDate[2]);
+        parameters.put("officeName", appeal.getOfficeName());
+        parameters.put("inspectorName", user.getName());
+        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalTin", appeal.getLegalTin().toString());
+        parameters.put("regionName", appeal.getRegionName());
+        parameters.put("districtName", appeal.getDistrictName());
+        parameters.put("address", appeal.getAddress());
+        parameters.put("name", appeal.getData().get("name").asText());
+        parameters.put("upperOrganization", appeal.getData().get("upperOrganization").asText());
+        parameters.put("appealType", appeal.getAppealType().getLabel());
+        parameters.put("extraArea", appeal.getData().get("extraArea").asText());
+        parameters.put("hazardousSubstance", appeal.getData().get("hazardousSubstance").asText());
+        parameters.put("conclusion", replyDto.getConclusion());
 
         // Save to an attachment and folder & Return a file path
-        return attachmentService.createPdfFromHtml(content, "appeals/reply");*/
-        return null;
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters);
     }
 
     @Override
@@ -227,6 +229,22 @@ public class AppealServiceImpl implements AppealService {
 
         // Create a document
         documentService.create(new DocumentDto(dto.getType(), appealId, dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
+    }
+
+    @Override
+    @Transactional
+    public void saveReplyAndSign(User user, SignedReplyDto dto, HttpServletRequest request) {
+        /**
+         * @goal ID boyicha arizani olib xulosa save qilish kerak va document yaratish kerak
+         *
+         */
+
+        // Check and get appeal by ID
+        Appeal appeal = repository.findById(dto.getDto().getAppealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.getDto().getAppealId()));
+
+
+        // Create a document
+//        documentService.create(new DocumentDto(dto.getType(), appealId, dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
     }
 
     @Override

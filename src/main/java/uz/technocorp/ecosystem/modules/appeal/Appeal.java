@@ -1,18 +1,18 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
-import jakarta.persistence.*;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -123,6 +123,12 @@ public class Appeal extends BaseEntity {
     private String phoneNumber;
 
     private LocalDate deadline;
+
+    @Column
+    private String resolution; // Hududiy boshqarma boshlig'i rezolyutsiyasi
+
+    @Column
+    private String conclusion; // Inspector xulosasi
 
     @Column(columnDefinition = "jsonb", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)

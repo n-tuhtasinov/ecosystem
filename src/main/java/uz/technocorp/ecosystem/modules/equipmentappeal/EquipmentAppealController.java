@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uz.technocorp.ecosystem.shared.ApiResponse;
-import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.*;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -32,6 +32,13 @@ public class EquipmentAppealController {
         appealService.create(craneDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
+
+    // TODO
+    /*@PostMapping("/generate-crane-pdf")
+    public ResponseEntity<ApiResponse> generatePdfFrom(@CurrentUser User user, @Valid @RequestBody CraneDto craneDto) {
+        String path = pdfPreparationService.preparePdfWithParam(craneDto, user);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }*/
 
     @PostMapping("/container")
     public ResponseEntity<?> createContainer (@CurrentUser User user, @Valid @RequestBody ContainerDto containerDto) {
