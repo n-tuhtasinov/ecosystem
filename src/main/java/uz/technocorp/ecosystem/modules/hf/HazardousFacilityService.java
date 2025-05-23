@@ -5,6 +5,7 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
+import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -27,5 +28,5 @@ public interface HazardousFacilityService {
     void deregister(UUID id, HfDeregisterDto dto);
     void periodicUpdate(UUID id, HfPeriodicUpdateDto dto);
     List<HfSelectView> findAllByProfile(User user);
-    Page<HfPageView> getAll(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate);
+    Page<HfCustom> getAll(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate);
 }
