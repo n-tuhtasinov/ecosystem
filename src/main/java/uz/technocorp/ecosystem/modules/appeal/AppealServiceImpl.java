@@ -234,17 +234,14 @@ public class AppealServiceImpl implements AppealService {
     @Override
     @Transactional
     public void saveReplyAndSign(User user, SignedReplyDto dto, HttpServletRequest request) {
-        /**
-         * @goal ID boyicha arizani olib xulosa save qilish kerak va document yaratish kerak
-         *
-         */
-
         // Check and get appeal by ID
         Appeal appeal = repository.findById(dto.getDto().getAppealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.getDto().getAppealId()));
 
+        // Set conclusion
+        repository.setConclusion(appeal.getId(), dto.getDto().getConclusion());
 
         // Create a document
-//        documentService.create(new DocumentDto(dto.getType(), appealId, dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
+        documentService.create(new DocumentDto(dto.getType(), appeal.getId(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
     }
 
     @Override
