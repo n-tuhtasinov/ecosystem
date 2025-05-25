@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.user.helper.UserViewByInspectorPin;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.department.Department;
 import uz.technocorp.ecosystem.modules.department.DepartmentRepository;
@@ -150,6 +151,11 @@ public class UserServiceImpl implements UserService {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
         Office office = officeRepository.findById(profile.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "id", profile.getOfficeId()));
         return new OfficeUserHelper(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), office.getName(), office.getId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
+    }
+
+    @Override
+    public UserViewByInspectorPin getInspectorByPin(long pin) {
+        return userRepository.getInspectorByPin(pin, Role.INSPECTOR).orElseThrow(() -> new ResourceNotFoundException("User (roli inspector bo'lgan)", "pin", pin));
     }
 
 

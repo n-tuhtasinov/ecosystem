@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
+import uz.technocorp.ecosystem.modules.user.helper.UserViewByInspectorPin;
 
 import java.util.Map;
 import java.util.UUID;
@@ -36,4 +37,6 @@ public interface UserService {
     Page<OfficeUserHelper> getOfficeUsers(Map<String, String> params);
 
     UserHelperById getById(UUID userId);
+
+    UserViewByInspectorPin getInspectorByPin(long pin);
 }
