@@ -13,27 +13,26 @@ import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
+import uz.technocorp.ecosystem.modules.appeal.processor.AppealPdfProcessor;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcess;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.district.District;
-import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
-import uz.technocorp.ecosystem.modules.hftype.HfType;
-import uz.technocorp.ecosystem.modules.hftype.HfTypeRepository;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
-import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
+import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
-import uz.technocorp.ecosystem.modules.region.RegionRepository;
+import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.template.Template;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
@@ -58,14 +57,15 @@ public class AppealServiceImpl implements AppealService {
     private final AppealExecutionProcessRepository appealExecutionProcessRepository;
     private final UserRepository userRepository;
     private final AppealRepository appealRepository;
-    private final ProfileRepository profileRepository;
-    private final RegionRepository regionRepository;
-    private final DistrictRepository districtRepository;
+    private final ProfileService profileService;
+    private final RegionService regionService;
+    private final DistrictService districtService;
     private final OfficeRepository officeRepository;
-    private final TemplateService templateService;
     private final DocumentService documentService;
+    private final TemplateService templateService;
     private final AttachmentService attachmentService;
-    private final HfTypeRepository hfTypeRepository;
+
+    private final Map<Class<? extends AppealDto>, AppealPdfProcessor> processors;
 
     @Override
     @Transactional
@@ -116,9 +116,9 @@ public class AppealServiceImpl implements AppealService {
     public UUID create(AppealDto dto, User user) {
 
         //make data
-        Profile profile = getProfile(user.getProfileId());
-        Region region = getRegion(dto.getRegionId());
-        District district = getDistrict(dto.getDistrictId());
+        Profile profile = profileService.getProfile(user.getProfileId());
+        Region region = regionService.getById(dto.getRegionId());
+        District district = districtService.getDistrict(dto.getDistrictId());
         Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
@@ -137,7 +137,7 @@ public class AppealServiceImpl implements AppealService {
                 .regionName(region.getName())
                 .legalDistrictId(profile.getDistrictId())
                 .legalDistrictName(profile.getDistrictName())
-                .districtId(dto.getDistrictId())
+                .districtId(district.getId())
                 .districtName(district.getName())
                 .officeId(office.getId())
                 .officeName(office.getName())
@@ -162,9 +162,13 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public String preparePdfWithParam(HfAppealDto dto, User user) {
-
-        //check the data(mainly IDs) of the dto
+    public String preparePdfWithParam(AppealDto dto, User user) {
+        AppealPdfProcessor processor = processors.get(dto.getClass());
+        if (processor == null) {
+            throw new ResourceNotFoundException("Form obyekt turi xato: " + dto.getClass().getSimpleName());
+        }
+        return processor.preparePdfWithParam(dto, user);
+        /*//check the data(mainly IDs) of the dto
         HfType hfType = hfTypeRepository.findById(dto.getHfTypeId()).orElseThrow(() -> new ResourceNotFoundException("HF_Type", "ID", dto.getHfTypeId()));
         dto.setHfTypeName(hfType.getName());
 
@@ -180,12 +184,12 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
         parameters.put("hfName", dto.getName());
 
-        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/hf-appeals", parameters);
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/hf-appeals", parameters);*/
     }
 
     @Override
     public String prepareReplyPdfWithParam(User user, ReplyDto replyDto) {
-        Template template = getTemplate(TemplateType.REPLY_APPEAL);
+        Template template = templateService.getByType(TemplateType.REPLY_APPEAL.name());
 
         Appeal appeal = repository.findById(replyDto.getAppealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", replyDto.getAppealId()));
 
@@ -283,25 +287,5 @@ public class AppealServiceImpl implements AppealService {
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
         }
         return executorName;
-    }
-
-    private Region getRegion(Integer regionId) {
-        return regionRepository.findById(regionId).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", regionId));
-    }
-
-    private District getDistrict(Integer districtId) {
-        return districtRepository.findById(districtId).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", districtId));
-    }
-
-    private Profile getProfile(UUID profileId) {
-        return profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", profileId));
-    }
-
-    private Template getTemplate(TemplateType type) {
-        Template template = templateService.getByType(type.name());
-        if (template == null) {
-            throw new ResourceNotFoundException("Shablon", type.name(), "");
-        }
-        return template;
     }
 }
