@@ -16,8 +16,6 @@ public interface AppealViewById {
     LocalDateTime getCreatedAt();
     String getAppealType();
     String getNumber();
-    String getRegionName();
-    String getDistrictName();
     String getAddress();
     String getExecutorName();
     LocalDate getDeadline();

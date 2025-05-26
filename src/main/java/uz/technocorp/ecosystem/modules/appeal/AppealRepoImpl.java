@@ -123,8 +123,6 @@ public class AppealRepoImpl implements AppealRepo {
                         appealRoot.get("legalTin"),
                         appealRoot.get("number"),
                         appealRoot.get("legalName"),
-                        appealRoot.get("regionName"),
-                        appealRoot.get("districtName"),
                         appealRoot.get("address"),
                         appealRoot.get("phoneNumber"),
                         appealRoot.get("appealType"),

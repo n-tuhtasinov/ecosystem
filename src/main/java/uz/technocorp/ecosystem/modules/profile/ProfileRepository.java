@@ -15,4 +15,6 @@ import java.util.UUID;
  */
 public interface ProfileRepository extends JpaRepository<Profile, UUID>, JpaSpecificationExecutor<Profile> {
     Optional<Profile> findByTin(Long tin);
+
+
 }

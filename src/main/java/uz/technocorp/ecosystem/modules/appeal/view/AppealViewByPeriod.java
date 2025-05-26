@@ -15,8 +15,6 @@ public interface AppealViewByPeriod {
     String getNumber();
     String getLegalName();
     Long getLegalTin();
-    String getRegion();
-    String getDistrict();
     String getAddress();
     String getPhoneNumber();
     LocalDate getDeadline();

@@ -54,17 +54,12 @@ public class Appeal extends BaseEntity {
     @Column(name = "legal_region_id", nullable = false)
     private Integer legalRegionId;
 
-    @Column(nullable = false)
-    private String legalRegionName;
-
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class)
     @JoinColumn(name = "region_id", insertable = false, updatable = false)
     private Region region;
 
     @Column(name = "region_id")
     private Integer regionId;
-
-    private String regionName;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class, optional = false)
     @JoinColumn(name = "legal_district_id", insertable = false, updatable = false)
@@ -73,17 +68,12 @@ public class Appeal extends BaseEntity {
     @Column(name = "legal_district_id", nullable = false)
     private Integer legalDistrictId;
 
-    @Column(nullable = false)
-    private String legalDistrictName;
-
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class)
     @JoinColumn(name = "district_id", insertable = false, updatable = false)
     private District district;
 
     @Column(name = "district_id")
     private Integer districtId;
-
-    private String districtName;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
     @JoinColumn(name = "profile_id", insertable = false, updatable = false)

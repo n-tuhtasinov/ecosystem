@@ -1,6 +1,5 @@
 package uz.technocorp.ecosystem.modules.appeal.helper;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
@@ -25,8 +24,6 @@ public class AppealCustom {
     private Long legalTin;
     private String number;
     private String legalName;
-    private String regionName;
-    private String districtName;
     private String address;
     private String phoneNumber;
     private AppealType appealType;
@@ -34,15 +31,13 @@ public class AppealCustom {
     private LocalDate deadline;
     private String officeName;
 
-    public AppealCustom(UUID id, LocalDateTime createdAt, AppealStatus status, Long legalTin, String number, String legalName, String regionName, String districtName, String address, String phoneNumber, AppealType appealType, String executorName, LocalDate deadline, String officeName) {
+    public AppealCustom(UUID id, LocalDateTime createdAt, AppealStatus status, Long legalTin, String number, String legalName, String address, String phoneNumber, AppealType appealType, String executorName, LocalDate deadline, String officeName) {
         this.id = id;
         this.createdAt = createdAt.toLocalDate();
         this.status = status;
         this.legalTin = legalTin;
         this.number = number;
         this.legalName = legalName;
-        this.regionName = regionName;
-        this.districtName = districtName;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.appealType = appealType;

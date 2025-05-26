@@ -6,9 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
@@ -18,20 +15,16 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
-import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
-import uz.technocorp.ecosystem.modules.office.Office;
-import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.User;
-import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -53,7 +46,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
     private final ProfileRepository profileRepository;
-    private final OfficeRepository officeRepository;
 
     @Override
     public void create(HfRegistryDto dto) {
@@ -85,7 +77,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .email(hfAppealDto.getEmail())
                         .upperOrganization(hfAppealDto.getUpperOrganization())
                         .name(hfAppealDto.getName())
-                        .address(hfAppealDto.getAddress())
+                        .address(appeal.getAddress())
                         .location(hfAppealDto.getLocation())
                         .hazardousSubstance(hfAppealDto.getHazardousSubstance())
                         .appealId(appeal.getId())
@@ -114,19 +106,30 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     @Override
     public void create(HfDto dto) {
+
+        Region region = regionRepository
+                .findById(dto.regionId())
+                .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", dto.regionId()));
+
+        District district = districtRepository
+                .findById(dto.districtId())
+                .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", dto.districtId()));
+
+        Profile profile = profileRepository.findByTin(dto.legalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "Tin", dto.legalTin()));
+
         repository.save(
                 HazardousFacility.builder()
                         .legalTin(dto.legalTin())
-                        .legalName(dto.legalName())
+                        .legalName(profile.getLegalName())
                         .regionId(dto.regionId())
                         .districtId(dto.districtId())
-//                        .profileId(dto.profileId())
-                        .legalAddress(dto.legalAddress())
+                        .profileId(profile.getId())
+                        .legalAddress(profile.getLegalAddress())
                         .phoneNumber(dto.phoneNumber())
                         .email(dto.email())
                         .upperOrganization(dto.upperOrganization())
                         .name(dto.name())
-                        .address(dto.address())
+                        .address(region.getName()+", "+district.getName()+", "+dto.address())
                         .location(dto.location())
                         .hazardousSubstance(dto.hazardousSubstance())
                         .spheres(dto.spheres())
@@ -136,7 +139,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .description(dto.description())
                         .registryNumber(dto.registryNumber())
                         .registrationDate(dto.registrationDate())
-
                         .active(true)
                         .appointmentOrderPath(dto.appointmentOrderPath())
                         .cadastralPassportPath(dto.cadastralPassportPath())
@@ -160,11 +162,14 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         HazardousFacility hazardousFacility = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("XICHO", "Id", id));
+
+        Profile profile = profileRepository.findByTin(dto.legalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "Tin", dto.legalTin()));
+
         hazardousFacility.setLegalTin(dto.legalTin());
-        hazardousFacility.setLegalName(dto.legalName());
+        hazardousFacility.setLegalName(profile.getLegalName());
         hazardousFacility.setRegionId(dto.regionId());
         hazardousFacility.setDistrictId(dto.districtId());
-        hazardousFacility.setLegalAddress(dto.legalAddress());
+        hazardousFacility.setLegalAddress(profile.getLegalAddress());
         hazardousFacility.setPhoneNumber(dto.phoneNumber());
         hazardousFacility.setEmail(dto.email());
         hazardousFacility.setUpperOrganization(dto.upperOrganization());

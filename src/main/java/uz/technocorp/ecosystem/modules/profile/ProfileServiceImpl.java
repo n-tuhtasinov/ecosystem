@@ -18,9 +18,11 @@ import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.data.jpa.domain.Specification.where;
