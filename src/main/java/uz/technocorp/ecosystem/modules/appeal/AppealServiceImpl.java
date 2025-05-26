@@ -54,7 +54,6 @@ import java.util.*;
 public class AppealServiceImpl implements AppealService {
 
     private final AppealRepository repository;
-    private final AppealExecutionProcessRepository appealExecutionProcessRepository;
     private final UserRepository userRepository;
     private final AppealRepository appealRepository;
     private final ProfileService profileService;
@@ -64,6 +63,7 @@ public class AppealServiceImpl implements AppealService {
     private final DocumentService documentService;
     private final TemplateService templateService;
     private final AttachmentService attachmentService;
+    private final AppealExecutionProcessRepository appealExecutionProcessRepository;
 
     private final Map<Class<? extends AppealDto>, AppealPdfProcessor> processors;
 
@@ -168,23 +168,6 @@ public class AppealServiceImpl implements AppealService {
             throw new ResourceNotFoundException("Form obyekt turi xato: " + dto.getClass().getSimpleName());
         }
         return processor.preparePdfWithParam(dto, user);
-        /*//check the data(mainly IDs) of the dto
-        HfType hfType = hfTypeRepository.findById(dto.getHfTypeId()).orElseThrow(() -> new ResourceNotFoundException("HF_Type", "ID", dto.getHfTypeId()));
-        dto.setHfTypeName(hfType.getName());
-
-        Template template = getTemplate(TemplateType.XICHO_APPEAL);
-        Profile profile = getProfile(user.getProfileId());
-
-        // Collect params to Map
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", profile.getFullName());
-        parameters.put("legalName", profile.getLegalName());
-        parameters.put("tin", profile.getTin().toString());
-        parameters.put("regionName", getRegion(dto.getRegionId()).getName());
-        parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
-        parameters.put("hfName", dto.getName());
-
-        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/hf-appeals", parameters);*/
     }
 
     @Override

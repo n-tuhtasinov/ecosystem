@@ -74,7 +74,7 @@ public class AppealController {
     }
 
     @PostMapping("/reply")
-    public ResponseEntity<ApiResponse> test(@CurrentUser User user, @Valid @RequestBody SignedReplyDto replyDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> reply(@CurrentUser User user, @Valid @RequestBody SignedReplyDto replyDto, HttpServletRequest request) {
         service.saveReplyAndSign(user, replyDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }

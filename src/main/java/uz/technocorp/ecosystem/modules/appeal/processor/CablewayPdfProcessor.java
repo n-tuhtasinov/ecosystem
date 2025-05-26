@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.appeal.processor;
 
 import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CablewayDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 
@@ -10,26 +10,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class HfAppealPdfProcessor extends BaseAppealPdfProcessor {
+public class CablewayPdfProcessor extends BaseAppealPdfProcessor {
 
     @Override
     public Class<? extends AppealDto> getSupportedType() {
-        return HfAppealDto.class;
+        return CablewayDto.class;
     }
 
     @Override
     protected TemplateType getTemplateType() {
-        return TemplateType.XICHO_APPEAL;
+        return TemplateType.EQUIPMENT_APPEAL;
     }
 
     @Override
     protected String folderPath() {
-        return "appeals/hf-appeals";
+        return "appeals/cableway";
     }
 
     @Override
     protected Map<String, String> buildParameters(AppealDto appealDto, Profile profile) {
-        HfAppealDto dto = (HfAppealDto) appealDto;
+        CablewayDto dto = (CablewayDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("name", profile.getFullName());
@@ -37,7 +37,6 @@ public class HfAppealPdfProcessor extends BaseAppealPdfProcessor {
         parameters.put("tin", profile.getTin().toString());
         parameters.put("regionName", getRegion(dto.getRegionId()).getName());
         parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
-        parameters.put("hfName", dto.getName());
 
         return parameters;
     }

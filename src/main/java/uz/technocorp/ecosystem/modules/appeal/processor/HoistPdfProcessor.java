@@ -2,8 +2,7 @@ package uz.technocorp.ecosystem.modules.appeal.processor;
 
 import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.HoistDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 
@@ -11,11 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class CraneAppealPdfProcessor extends BaseAppealPdfProcessor {
+public class HoistPdfProcessor extends BaseAppealPdfProcessor {
 
     @Override
     public Class<? extends AppealDto> getSupportedType() {
-        return CraneDto.class;
+        return HoistDto.class;
     }
 
     @Override
@@ -25,19 +24,19 @@ public class CraneAppealPdfProcessor extends BaseAppealPdfProcessor {
 
     @Override
     protected String folderPath() {
-        return "appeals/crane-appeals";
+        return "appeals/hoist";
     }
 
     @Override
-    protected Map<String, String> buildParameters(AppealDto dto, Profile profile) {
-        CraneDto craneDto = (CraneDto) dto;
+    protected Map<String, String> buildParameters(AppealDto appealDto, Profile profile) {
+        HoistDto dto = (HoistDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("name", profile.getFullName());
         parameters.put("legalName", profile.getLegalName());
         parameters.put("tin", profile.getTin().toString());
-        parameters.put("regionName", getRegion(craneDto.getRegionId()).getName());
-        parameters.put("districtName", getDistrict(craneDto.getDistrictId()).getName());
+        parameters.put("regionName", getRegion(dto.getRegionId()).getName());
+        parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
 
         return parameters;
     }

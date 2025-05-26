@@ -33,12 +33,6 @@ public class EquipmentAppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    @PostMapping("/generate-crane-pdf")
-    public ResponseEntity<ApiResponse> generatePdfFrom(@CurrentUser User user, @Valid @RequestBody CraneDto craneDto) {
-        String path = appealService.preparePdfWithParam(craneDto, user);
-        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
-    }
-
     @PostMapping("/container")
     public ResponseEntity<?> createContainer (@CurrentUser User user, @Valid @RequestBody ContainerDto containerDto) {
         appealService.create(containerDto,user);
