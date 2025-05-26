@@ -30,4 +30,6 @@ public interface ProfileService {
     Page<ProfileView> getProfilesForPrevention(PreventionParamsDto params);
 
     void addPhoneNumber(UUID profileId, String phoneNumber);
+
+
 }

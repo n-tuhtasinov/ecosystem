@@ -29,8 +29,6 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
                    a.number        as number,
                    a.legal_name    as legalName,
                    a.legal_tin     as legalTin,
-                   a.region_name   as region,
-                   a.district_name as district,
                    a.address       as address,
                    a.phone_number  as phoneNumber,
                    a.deadline as deadline
