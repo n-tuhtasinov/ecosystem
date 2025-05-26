@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.ReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
@@ -69,5 +71,11 @@ public class AppealController {
     public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody ReplyDto replyDto) {
         String path = service.prepareReplyPdfWithParam(user, replyDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @PostMapping("/reply")
+    public ResponseEntity<ApiResponse> reply(@CurrentUser User user, @Valid @RequestBody SignedReplyDto replyDto, HttpServletRequest request) {
+        service.saveReplyAndSign(user, replyDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 }

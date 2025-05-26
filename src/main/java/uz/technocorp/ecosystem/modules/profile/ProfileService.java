@@ -25,6 +25,8 @@ public interface ProfileService {
 
     Profile findByTin(Long tin);
 
+    Profile getProfile(UUID profileId);
+
     Page<ProfileView> getProfilesForPrevention(PreventionParamsDto params);
 
     void addPhoneNumber(UUID profileId, String phoneNumber);

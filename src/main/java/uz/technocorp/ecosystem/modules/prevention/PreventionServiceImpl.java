@@ -44,7 +44,7 @@ public class PreventionServiceImpl implements PreventionService {
     @Override
     public Page<?> getAll(User user, PreventionParamsDto params) {
         switch (user.getRole()) {
-            case Role.ADMIN, Role.CHAIRMAN, Role.HEAD, Role.MANAGER -> {
+            case Role.CHAIRMAN, Role.HEAD, Role.MANAGER -> {
                 return params.getIsPassed()
                         ? getAllPassedForCommittee(params)
                         : getAllWithoutPassedForCommittee(params);
@@ -71,7 +71,7 @@ public class PreventionServiceImpl implements PreventionService {
     @Override
     public PreventionView getById(User user, UUID preventionId) {
         switch (user.getRole()) {
-            case Role.ADMIN, Role.CHAIRMAN, Role.HEAD, Role.MANAGER -> {
+            case Role.CHAIRMAN, Role.HEAD, Role.MANAGER -> {
                 return getByIdForCommittee(preventionId);
             }
             case Role.REGIONAL -> {

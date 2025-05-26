@@ -107,6 +107,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public Profile getProfile(UUID profileId) {
+        return profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", profileId));
+    }
+
+    @Override
     public Page<ProfileView> getProfilesForPrevention(PreventionParamsDto params) {
 
         // Base condition
