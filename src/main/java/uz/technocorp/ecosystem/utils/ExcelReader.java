@@ -70,6 +70,8 @@ public class ExcelReader {
 
             }
 
+            return results;
+
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -83,21 +85,18 @@ public class ExcelReader {
         LocalDate registrationDate = LocalDate.parse(row.getCell(1).getStringCellValue());
         UserViewByInspectorPin inspector = userService.getInspectorByPin(Long.parseLong(row.getCell(4).getStringCellValue()));
 
-        HazardousFacility.builder()
-                .legalTin(legalProfile.getTin())
-                        .legalName(legalProfile.getLegalName())
-                .orderNumber(7L)
-                .registrationDate(registrationDate)
-                .registryNumber(row.getCell(2).getStringCellValue())
-                .regionId()
-                .build();
 
-
-        new HazardousFacility(
-
-
-                )
-
+//        HazardousFacility.builder()
+//                .legalTin(legalProfile.getTin())
+//                .legalName(legalProfile.getLegalName())
+//                .orderNumber(7L)
+//                .registrationDate(registrationDate)
+//                .registryNumber(row.getCell(2).getStringCellValue())
+//                .regionId(Integer.parseInt(row.getCell(10).getStringCellValue()))
+//                .districtId(Integer.parseInt(row.getCell(12).getStringCellValue()))
+//                .profileId(legalProfile.getId())
+//                .
+//                .build();
 
         return null;
     }

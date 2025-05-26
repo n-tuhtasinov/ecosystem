@@ -77,18 +77,12 @@ public class Equipment extends BaseEntity {
     @Column(name = "region_id", nullable = false)
     private Integer regionId;
 
-    @Column(nullable = false)
-    private String regionName;
-
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class, optional = false)
     @JoinColumn(name = "district_id", insertable = false, updatable = false)
     private District district;
 
     @Column(name = "district_id", nullable = false)
     private Integer districtId;
-
-    @Column(nullable = false)
-    private String districtName;
 
     @Column(nullable = false)
     private String address;
