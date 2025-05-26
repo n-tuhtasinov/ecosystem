@@ -184,8 +184,6 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("inspectorName", user.getName());
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("legalTin", appeal.getLegalTin().toString());
-        parameters.put("regionName", appeal.getRegionName());
-        parameters.put("districtName", appeal.getDistrictName());
         parameters.put("address", appeal.getAddress());
         parameters.put("name", appeal.getData().get("name").asText());
         parameters.put("upperOrganization", appeal.getData().get("upperOrganization").asText());
