@@ -8,7 +8,8 @@ import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
-import uz.technocorp.ecosystem.modules.user.helper.UserViewByInspectorPin;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
 
 import java.util.List;
 import java.util.Map;
@@ -43,4 +44,6 @@ public interface UserService {
     UserHelperById getById(UUID userId);
 
     UserViewByInspectorPin getInspectorByPin(long pin);
+
+    UserViewByLegal getLegalUserByTin(Long tin);
 }
