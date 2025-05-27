@@ -33,7 +33,7 @@ public interface UserService {
 
     void changeUserEnabled(UUID userId, Boolean enabled);
 
-    void updateLegalUser(UUID userId, LegalUserDto dto);
+    void updateLegalUser(Long tin);
 
     Page<CommitteeUserHelper> getCommitteeUsers(Map<String, String> params);
 

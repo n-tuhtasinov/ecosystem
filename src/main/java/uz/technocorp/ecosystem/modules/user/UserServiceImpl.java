@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateLegalUser(UUID userId, LegalUserDto dto) {
+    public void updateLegalUser(Long tin) {
         //TODO: Legal userni ma'lumotlarini soliq bilan integratsiya orqali yangilab qo'yish
     }
 
