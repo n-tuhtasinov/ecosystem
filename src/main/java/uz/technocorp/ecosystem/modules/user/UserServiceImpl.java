@@ -14,7 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.user.helper.UserViewByInspectorPin;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.department.Department;
 import uz.technocorp.ecosystem.modules.department.DepartmentRepository;
@@ -32,7 +33,6 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
-import uz.technocorp.ecosystem.shared.AppConstants;
 
 import java.util.*;
 
@@ -208,6 +208,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserViewByInspectorPin getInspectorByPin(long pin) {
         return userRepository.getInspectorByPin(pin, Role.INSPECTOR).orElseThrow(() -> new ResourceNotFoundException("User (roli inspector bo'lgan)", "pin", pin));
+    }
+
+    @Override
+    public UserViewByLegal getLegalUserByTin(Long tin) {
+        return userRepository.getLegalUserByTin(tin);
     }
 
 

@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.user.helper;
+package uz.technocorp.ecosystem.modules.user.view;
 
 import java.util.UUID;
 

@@ -31,25 +31,25 @@ public class CraneDto extends EquipmentAppealDto implements AppealDto{
     @NotBlank(message = "Yuk ko'tara olish qiymati jo'natilmadi")
     private String liftingCapacity;
 
-    @NotBlank(message = "Qurilmaning birkasi bilan surati pathi jo'natilmadi")
-    private String labelPath;
+//    @NotBlank(message = "Qurilmaning birkasi bilan surati pathi jo'natilmadi")
+//    private String labelPath;
 
-    @NotBlank(message = "Qurilmaning oldi-sotdi shartnomasi pathi jo'natilmadi")
-    private String agreementPath;
+//    @NotBlank(message = "Qurilmaning oldi-sotdi shartnomasi pathi jo'natilmadi")
+//    private String agreementPath;
 
-    @NotBlank(message = "Qurilmaning sertifikati fayli pathi jo'natilmadi")
-    private String equipmentCertPath;
+//    @NotBlank(message = "Qurilmaning sertifikati fayli pathi jo'natilmadi")
+//    private String equipmentCertPath;
 
-    @NotBlank(message = "Qurilmaning mas'ul shaxs tayinlanganligi to'g'risidagi buyrug'i pathi jo'natilmadi")
-    private String assignmentDecreePath;
+//    @NotBlank(message = "Qurilmaning mas'ul shaxs tayinlanganligi to'g'risidagi buyrug'i pathi jo'natilmadi")
+//    private String assignmentDecreePath;
 
-    @NotBlank(message = "Qurilmaning expertiza loyihasi pathi jo'natilmadi")
-    private String expertisePath;
+//    @NotBlank(message = "Qurilmaning expertiza loyihasi pathi jo'natilmadi")
+//    private String expertisePath;
 
-    @NotBlank(message = "Qurilmaning montaj guvohnomasi fayli pathi jo'natilmadi")
-    private String installationCertPath;
+//    @NotBlank(message = "Qurilmaning montaj guvohnomasi fayli pathi jo'natilmadi")
+//    private String installationCertPath;
 
-    private String additionalFilePath;
+//    private String additionalFilePath;
 
     @Override
     public AppealType getAppealType() {
