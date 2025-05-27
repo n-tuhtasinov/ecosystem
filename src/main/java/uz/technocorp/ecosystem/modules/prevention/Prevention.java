@@ -2,7 +2,9 @@ package uz.technocorp.ecosystem.modules.prevention;
 
 import jakarta.persistence.*;
 import lombok.*;
+import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDateTime;
@@ -23,13 +25,13 @@ import java.util.List;
 @Table(name = "prevention", uniqueConstraints = @UniqueConstraint(columnNames = {"year", "profile_tin"}))
 public class Prevention extends BaseEntity {
 
-    @Column
+    @Column(nullable = false)
     private Integer typeId;
 
-    @Column
+    @Column(nullable = false)
     private String content;
 
-    @Column
+    @Column(nullable = false)
     private Integer year;
 
     @Column
@@ -41,7 +43,7 @@ public class Prevention extends BaseEntity {
     @Column
     private LocalDateTime viewDate;
 
-    @Column
+    @Column(nullable = false)
     private String inspectorName;
 
     @ManyToOne(targetEntity = Profile.class, fetch = FetchType.LAZY)
@@ -51,12 +53,23 @@ public class Prevention extends BaseEntity {
     @Column(name = "profile_tin")
     private Long profileTin;
 
-    @Column
-    private String profileName;
+    @Column(nullable = false)
+    private String legalName;
 
-    @Column
-    private String profileAddress;
+    @Column(nullable = false)
+    private String legalAddress;
 
-    @Column
-    private Integer officeId;
+    @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", insertable = false, updatable = false)
+    private Region region;
+
+    @Column(name = "region_id")
+    private Integer regionId;
+
+    @ManyToOne(targetEntity = District.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "district_id", insertable = false, updatable = false)
+    private District district;
+
+    @Column(name = "district_id")
+    private Integer districtId;
 }

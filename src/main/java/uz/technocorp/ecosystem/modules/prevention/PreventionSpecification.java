@@ -54,9 +54,14 @@ public class PreventionSpecification {
                 -> inspectorId == null ? cb.conjunction() : cb.equal(root.get("createdBy"), inspectorId);
     }
 
-    public Specification<Prevention> hasOfficeId(Integer officeId) {
+    public Specification<Prevention> hasRegionId(Integer regionId) {
         return (root, cq, cb)
-                -> officeId == null ? cb.conjunction() : cb.equal(root.get("officeId"), officeId);
+                -> regionId == null ? cb.conjunction() : cb.equal(root.get("regionId"), regionId);
+    }
+
+    public Specification<Prevention> hasDistrictId(Integer districtId) {
+        return (root, cq, cb)
+                -> districtId == null ? cb.conjunction() : cb.equal(root.get("districtId"), districtId);
     }
 
     public Specification<Prevention> hasViewed(Boolean viewed) {
