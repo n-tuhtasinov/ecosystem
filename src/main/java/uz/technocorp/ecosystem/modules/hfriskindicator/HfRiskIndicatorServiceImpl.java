@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityRepository;
+import uz.technocorp.ecosystem.modules.inspection.Inspection;
+import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
@@ -20,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +40,7 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
     private final HazardousFacilityRepository hazardousFacilityRepository;
     private final RiskAssessmentRepository riskAssessmentRepository;
     private final RiskAnalysisIntervalRepository intervalRepository;
+    private final InspectionRepository inspectionRepository;
 
     @Override
     public void create(HFRIndicatorDto dto) {
@@ -136,12 +141,12 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
 
         List<RiskAssessmentDto> allGroupByHazardousFacilityAndTin = repository.findAllGroupByHfIdAndTin(riskAnalysisInterval.getId());
         // Barcha qiymatlarni guruhlash: TIN + hazardousFacilityId
-        Map<Short, List<RiskAssessmentDto>> groupedByTin = allGroupByHazardousFacilityAndTin.stream()
+        Map<Long, List<RiskAssessmentDto>> groupedByTin = allGroupByHazardousFacilityAndTin.stream()
                 .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
 
         // Har bir TIN uchun hisoblash
-        for (Map.Entry<Short, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
-            Short tin = entry.getKey();
+        for (Map.Entry<Long, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
+            Long tin = entry.getKey();
             List<RiskAssessmentDto> dtoList = entry.getValue();
 
             // Null bo'lgan va bo'lmaganlarni ajratib olish
@@ -149,7 +154,8 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                     .filter(dto -> dto.objectId() == null)
                     .findFirst();
 
-            int nullScore = nullFacility.map(RiskAssessmentDto::sumScore).orElse(0);
+            int organizationScore = nullFacility.map(RiskAssessmentDto::sumScore).orElse(0);
+
 
             // Endi null bo'lmaganlarga qo‘shib saqlaymiz
             dtoList.stream()
@@ -157,7 +163,7 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                     .forEach(dto -> {
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
-                                        .sumScore(dto.sumScore() + nullScore)
+                                        .sumScore(dto.sumScore() + organizationScore)
                                         .objectName(
                                                 hazardousFacilityRepository.findById(dto.objectId())
                                                         .map(HazardousFacility::getName)
@@ -166,8 +172,28 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                                         )
                                         .tin(tin)
                                         .hazardousFacilityId(dto.objectId())
+                                        .riskAnalysisInterval(riskAnalysisInterval)
                                         .build()
                         );
+                        HazardousFacility hazardousFacility = hazardousFacilityRepository
+                                .findById(dto.objectId())
+                                .orElse(null);
+                        assert hazardousFacility != null;
+                        Integer regionId = hazardousFacility.getRegionId();
+                        if (dto.sumScore() + organizationScore > 80) {
+                            List<Inspection> inspectionList = inspectionRepository
+                                    .findAllByRegionIdAndTinAndIntervalId(regionId, tin, riskAnalysisInterval.getId());
+                            if (inspectionList.isEmpty()) {
+                                inspectionRepository.save(
+                                        Inspection
+                                                .builder()
+                                                .tin(dto.tin())
+                                                .regionId(regionId)
+                                                .districtId(hazardousFacility.getDistrictId())
+                                                .build()
+                                );
+                            }
+                        }
                     });
         }
 

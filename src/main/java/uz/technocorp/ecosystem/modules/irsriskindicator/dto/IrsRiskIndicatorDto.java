@@ -14,6 +14,7 @@ public record IrsRiskIndicatorDto(
         RiskAssessmentIndicator indicatorType,
         UUID irsId,
         String description,
-        Long tin
+        Long tin,
+        Integer intervalId
 ) {
 }

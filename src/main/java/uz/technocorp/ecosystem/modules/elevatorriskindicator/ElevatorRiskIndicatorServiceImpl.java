@@ -8,6 +8,8 @@ import uz.technocorp.ecosystem.modules.elevatorriskindicator.dto.EquipmentRiskIn
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentRepository;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
+import uz.technocorp.ecosystem.modules.inspection.Inspection;
+import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +38,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
     private final EquipmentRepository equipmentRepository;
     private final RiskAssessmentRepository riskAssessmentRepository;
     private final RiskAnalysisIntervalRepository intervalRepository;
+    private final InspectionRepository inspectionRepository;
 
     @Override
     public void create(EquipmentRiskIndicatorDto dto) {
@@ -109,12 +113,12 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
 
         List<RiskAssessmentDto> allGroupByEquipmentAndTin = repository.findAllGroupByEquipmentAndTin(riskAnalysisInterval.getId());
         // Barcha qiymatlarni guruhlash: TIN + EquipmentId
-        Map<Short, List<RiskAssessmentDto>> groupedByTin = allGroupByEquipmentAndTin.stream()
+        Map<Long, List<RiskAssessmentDto>> groupedByTin = allGroupByEquipmentAndTin.stream()
                 .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
 
         // Har bir TIN uchun hisoblash
-        for (Map.Entry<Short, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
-            Short tin = entry.getKey();
+        for (Map.Entry<Long, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
+            Long tin = entry.getKey();
             List<RiskAssessmentDto> dtoList = entry.getValue();
 
             // Null bo'lgan va bo'lmaganlarni ajratib olish
@@ -122,7 +126,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
                     .filter(dto -> dto.objectId() == null)
                     .findFirst();
 
-            int nullScore = nullEquipment.map(RiskAssessmentDto::sumScore).orElse(0);
+            int organizationScore = nullEquipment.map(RiskAssessmentDto::sumScore).orElse(0);
 
             // Endi null bo'lmaganlarga qo‘shib saqlaymiz
             dtoList.stream()
@@ -130,7 +134,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
                     .forEach(dto -> {
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
-                                        .sumScore(dto.sumScore() + nullScore)
+                                        .sumScore(dto.sumScore() + organizationScore)
                                         .objectName(
                                                 equipmentRepository.findById(dto.objectId())
                                                         .map(Equipment::getRegistryNumber)
@@ -141,6 +145,25 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
                                         .equipmentId(dto.objectId())
                                         .build()
                         );
+                        Equipment equipment = equipmentRepository
+                                .findById(dto.objectId())
+                                .orElse(null);
+                        assert equipment != null;
+                        Integer regionId = equipment.getRegionId();
+                        if (dto.sumScore() + organizationScore > 80) {
+                            List<Inspection> inspectionList = inspectionRepository
+                                    .findAllByRegionIdAndTinAndIntervalId(regionId, tin, riskAnalysisInterval.getId());
+                            if (inspectionList.isEmpty()) {
+                                inspectionRepository.save(
+                                        Inspection
+                                                .builder()
+                                                .tin(dto.tin())
+                                                .regionId(regionId)
+                                                .districtId(equipment.getDistrictId())
+                                                .build()
+                                );
+                            }
+                        }
                     });
         }
 

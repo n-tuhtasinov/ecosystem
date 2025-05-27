@@ -8,5 +8,5 @@ import java.util.UUID;
  * @created 17.04.2025
  * @since v1.0
  */
-public record RiskAssessmentDto(Short tin, Integer sumScore, UUID objectId) {
+public record RiskAssessmentDto(Long tin, Integer sumScore, UUID objectId) {
 }

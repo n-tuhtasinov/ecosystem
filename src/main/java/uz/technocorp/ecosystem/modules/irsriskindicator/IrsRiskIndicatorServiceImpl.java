@@ -5,6 +5,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
+import uz.technocorp.ecosystem.modules.inspection.Inspection;
+import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceRepository;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -35,14 +39,11 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
     private final IonizingRadiationSourceRepository irsRepository;
     private final RiskAssessmentRepository riskAssessmentRepository;
     private final RiskAnalysisIntervalRepository intervalRepository;
+    private final InspectionRepository inspectionRepository;
 
     @Override
     public void create(IrsRiskIndicatorDto dto) {
-        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
-                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
-                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
-
-        List<IrsRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.irsId());
+        List<IrsRiskIndicator> allByQuarter = repository.findAllByQuarter(dto.intervalId(), dto.irsId());
 
         IrsRiskIndicator existRiskIndicator = allByQuarter.stream().filter(riskIndicator -> riskIndicator.getIndicatorType().equals(dto.indicatorType())).toList().getFirst();
         if (existRiskIndicator != null) {
@@ -103,12 +104,12 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
 
         List<RiskAssessmentDto> allGroupByIrsAndTin = repository.findAllGroupByIrsAndTin(riskAnalysisInterval.getId());
         // Barcha qiymatlarni guruhlash: TIN + IrsId
-        Map<Short, List<RiskAssessmentDto>> groupedByTin = allGroupByIrsAndTin.stream()
+        Map<Long, List<RiskAssessmentDto>> groupedByTin = allGroupByIrsAndTin.stream()
                 .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
 
         // Har bir TIN uchun hisoblash
-        for (Map.Entry<Short, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
-            Short tin = entry.getKey();
+        for (Map.Entry<Long, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
+            Long tin = entry.getKey();
             List<RiskAssessmentDto> dtoList = entry.getValue();
 
             // Null bo'lgan va bo'lmaganlarni ajratib olish
@@ -116,15 +117,16 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                     .filter(dto -> dto.objectId() == null)
                     .findFirst();
 
-            int nullScore = nullIrs.map(RiskAssessmentDto::sumScore).orElse(0);
+            int organizationScore = nullIrs.map(RiskAssessmentDto::sumScore).orElse(0);
 
             // Endi null bo'lmaganlarga qo‘shib saqlaymiz
             dtoList.stream()
                     .filter(dto -> dto.objectId() != null)
                     .forEach(dto -> {
+
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
-                                        .sumScore(dto.sumScore() + nullScore)
+                                        .sumScore(dto.sumScore() + organizationScore)
                                         .objectName(
                                                 irsRepository.findById(dto.objectId())
                                                         .map(IonizingRadiationSource::getSymbol)
@@ -133,8 +135,30 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                                         )
                                         .tin(tin)
                                         .ionizingRadiationSourceId(dto.objectId())
+                                        .riskAnalysisInterval(riskAnalysisInterval)
                                         .build()
                         );
+
+
+                        if (dto.sumScore() + organizationScore > 80) {
+                            IonizingRadiationSource ionizingRadiationSource = irsRepository
+                                    .findById(dto.objectId())
+                                    .orElse(null);
+                            assert ionizingRadiationSource != null;
+                            Integer regionId = ionizingRadiationSource.getRegionId();
+                            List<Inspection> inspectionList = inspectionRepository
+                                    .findAllByRegionIdAndTinAndIntervalId(regionId, tin, riskAnalysisInterval.getId());
+                            if (inspectionList.isEmpty()) {
+                                inspectionRepository.save(
+                                        Inspection
+                                                .builder()
+                                                .tin(dto.tin())
+                                                .regionId(regionId)
+                                                .districtId(ionizingRadiationSource.getDistrictId())
+                                                .build()
+                                );
+                            }
+                        }
                     });
         }
 
