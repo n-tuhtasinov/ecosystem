@@ -8,10 +8,10 @@ import java.util.UUID;
  * @created 18.02.2025
  * @since v1.0
  */
-public interface DocumentProjection {
+public interface DocumentView {
 
     UUID getId();
-    String getName();
-    Boolean getAgreed();
+    String getDocumentType();
+    Boolean getIsSigned();
     String getPath();
 }

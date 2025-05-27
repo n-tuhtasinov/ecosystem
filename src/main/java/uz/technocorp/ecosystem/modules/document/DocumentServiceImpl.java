@@ -7,7 +7,7 @@ import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.dto.Signer;
-import uz.technocorp.ecosystem.modules.document.projection.DocumentProjection;
+import uz.technocorp.ecosystem.modules.document.projection.DocumentView;
 import uz.technocorp.ecosystem.modules.eimzo.EImzoProxy;
 import uz.technocorp.ecosystem.modules.eimzo.json.pcks7.Pkcs7VerifyAttachedJson;
 
@@ -49,7 +49,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<DocumentProjection> findByAppealId(UUID appealId) {
+    public List<DocumentView> findByAppealId(UUID appealId) {
         return documentRepository.getByAppealId(appealId);
     }
 

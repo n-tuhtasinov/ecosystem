@@ -1,9 +1,7 @@
 package uz.technocorp.ecosystem.modules.document;
 
-import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
-import uz.technocorp.ecosystem.modules.document.projection.DocumentProjection;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.SignedHfAppealDto;
+import uz.technocorp.ecosystem.modules.document.projection.DocumentView;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +15,7 @@ import java.util.UUID;
 public interface DocumentService {
 
     void create(DocumentDto documentDto);
-    List<DocumentProjection> findByAppealId(UUID appealId);
+    List<DocumentView> findByAppealId(UUID appealId);
     void delete(UUID id);
 
 }

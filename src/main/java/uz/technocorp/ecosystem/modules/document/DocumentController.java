@@ -31,8 +31,8 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/appealId")
-    public ResponseEntity<?> getAllByAppealId(UUID appealId) {
+    @GetMapping("/{appealId}")
+    public ResponseEntity<?> getAllByAppealId(@PathVariable UUID appealId) {
         return ResponseEntity.ok(service.findByAppealId(appealId));
     }
 }

@@ -90,10 +90,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi holati muvaffaqiyatli o'zgartirildi"));
     }
 
-    @PutMapping("/{userId}")
-    ResponseEntity<?> updateLegalUser(@PathVariable UUID userId, @RequestBody LegalUserDto dto) {
-        userService.updateLegalUser(userId, dto);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi holati muvaffaqiyatli o'zgartirildi"));
+    @PutMapping("/legal/{tin}")
+    ResponseEntity<?> updateLegalUser(@PathVariable Long tin) {
+        userService.updateLegalUser(tin);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi ma'lumotlari muvaffaqiyatli o'zgartirildi"));
     }
 
     @GetMapping("/committee-users")
@@ -126,8 +126,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(byId));
     }
 
-    @GetMapping("/legal")
-    ResponseEntity<?> getLegalUsers(@RequestParam Long tin) {
+    @GetMapping("/legal/{tin}")
+    ResponseEntity<?> getLegalUsers(@PathVariable Long tin) {
         UserViewByLegal user = userService.getLegalUserByTin(tin);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(user));
     }
