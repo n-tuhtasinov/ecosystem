@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.document;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 
@@ -31,8 +32,9 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/{appealId}")
-    public ResponseEntity<?> getAllByAppealId(@PathVariable UUID appealId) {
-        return ResponseEntity.ok(service.findByAppealId(appealId));
+    @GetMapping("/{documentId}")
+    public ResponseEntity<?> getById(@PathVariable UUID documentId) {
+        return ResponseEntity.ok(service.getById(documentId));
     }
+
 }

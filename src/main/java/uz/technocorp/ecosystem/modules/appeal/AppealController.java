@@ -13,6 +13,9 @@ import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
+import uz.technocorp.ecosystem.modules.document.DocumentService;
+import uz.technocorp.ecosystem.modules.document.view.DocumentViewByReply;
+import uz.technocorp.ecosystem.modules.document.view.DocumentViewByRequest;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -35,6 +38,7 @@ import java.util.UUID;
 public class AppealController {
 
     private final AppealService service;
+    private final DocumentService documentService;
 
     @PatchMapping("/set-inspector")
     public ResponseEntity<?> setInspector(@Valid @RequestBody SetInspectorDto dto) {
@@ -77,5 +81,17 @@ public class AppealController {
     public ResponseEntity<ApiResponse> reply(@CurrentUser User user, @Valid @RequestBody SignedReplyDto replyDto, HttpServletRequest request) {
         service.saveReplyAndSign(user, replyDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @GetMapping("/{appealId}/request-docs")
+    public ResponseEntity<?> getRequestDocsById(@PathVariable UUID appealId) {
+        List<DocumentViewByRequest> list = documentService.getRequestDocumentsByAppealId(appealId);
+        return ResponseEntity.ok(new ApiResponse(list));
+    }
+
+    @GetMapping("/{appealId}/reply-docs")
+    public ResponseEntity<?> getReplyDocsById(@CurrentUser User user, @PathVariable UUID appealId) {
+        List<DocumentViewByReply> list = documentService.getReplyDocumentsByAppealId(user, appealId);
+        return ResponseEntity.ok(new ApiResponse(list));
     }
 }

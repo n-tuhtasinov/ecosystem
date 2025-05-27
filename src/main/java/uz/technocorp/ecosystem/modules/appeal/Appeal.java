@@ -8,6 +8,7 @@ import org.hibernate.type.SqlTypes;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.district.District;
+import uz.technocorp.ecosystem.modules.document.Document;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -123,5 +124,19 @@ public class Appeal extends BaseEntity {
     @Column(columnDefinition = "jsonb", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode data;
+
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Document.class)
+    @JoinColumn(name = "appeal_document_id", updatable = false, insertable = false)
+    private Document appealDocument;
+
+    @Column(name = "appeal_document_id")
+    private UUID appealDocumentId;
+
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Document.class)
+    @JoinColumn(name = "reply_document_id", updatable = false, insertable = false)
+    private Document replyDocument;
+
+    @Column(name = "reply_document_id")
+    private UUID replyDocumentId;
 
 }
