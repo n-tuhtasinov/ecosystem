@@ -27,7 +27,7 @@ public interface PreventionRepository extends JpaRepository<Prevention, UUID>, J
 
     Optional<Prevention> findByIdAndCreatedBy(UUID preventionId, UUID id);
 
-    Optional<Prevention> findByIdAndOfficeId(UUID preventionId, Integer officeId);
+    Optional<Prevention> findByIdAndRegionId(UUID preventionId, Integer regionId);
 
     Optional<Prevention> findByProfileTinAndYear(Long tin, Integer year);
 
