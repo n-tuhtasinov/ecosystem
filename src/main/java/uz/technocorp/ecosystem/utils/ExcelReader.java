@@ -10,13 +10,12 @@ import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
-import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.uploadexcel.dto.HfUploadDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
-import uz.technocorp.ecosystem.modules.user.helper.UserViewByInspectorPin;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
 
 import java.io.IOException;
 import java.io.InputStream;

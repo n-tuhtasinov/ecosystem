@@ -16,6 +16,7 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 
@@ -124,4 +125,13 @@ public class UserController {
         UserHelperById byId = userService.getById(userId);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(byId));
     }
+
+    @GetMapping("/legal")
+    ResponseEntity<?> getLegalUsers(@RequestParam Long tin) {
+        UserViewByLegal user = userService.getLegalUserByTin(tin);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(user));
+    }
+
+
+
 }
