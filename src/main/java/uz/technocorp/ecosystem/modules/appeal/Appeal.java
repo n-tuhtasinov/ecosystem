@@ -1,18 +1,19 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.district.District;
+import uz.technocorp.ecosystem.modules.document.Document;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
-import jakarta.persistence.*;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -54,17 +55,12 @@ public class Appeal extends BaseEntity {
     @Column(name = "legal_region_id", nullable = false)
     private Integer legalRegionId;
 
-    @Column(nullable = false)
-    private String legalRegionName;
-
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class)
     @JoinColumn(name = "region_id", insertable = false, updatable = false)
     private Region region;
 
     @Column(name = "region_id")
     private Integer regionId;
-
-    private String regionName;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class, optional = false)
     @JoinColumn(name = "legal_district_id", insertable = false, updatable = false)
@@ -73,17 +69,12 @@ public class Appeal extends BaseEntity {
     @Column(name = "legal_district_id", nullable = false)
     private Integer legalDistrictId;
 
-    @Column(nullable = false)
-    private String legalDistrictName;
-
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class)
     @JoinColumn(name = "district_id", insertable = false, updatable = false)
     private District district;
 
     @Column(name = "district_id")
     private Integer districtId;
-
-    private String districtName;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
     @JoinColumn(name = "profile_id", insertable = false, updatable = false)
@@ -124,8 +115,28 @@ public class Appeal extends BaseEntity {
 
     private LocalDate deadline;
 
+    @Column
+    private String resolution; // Hududiy boshqarma boshlig'i rezolyutsiyasi
+
+    @Column
+    private String conclusion; // Inspector xulosasi
+
     @Column(columnDefinition = "jsonb", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode data;
+
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Document.class)
+    @JoinColumn(name = "appeal_document_id", updatable = false, insertable = false)
+    private Document appealDocument;
+
+    @Column(name = "appeal_document_id")
+    private UUID appealDocumentId;
+
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Document.class)
+    @JoinColumn(name = "reply_document_id", updatable = false, insertable = false)
+    private Document replyDocument;
+
+    @Column(name = "reply_document_id")
+    private UUID replyDocumentId;
 
 }

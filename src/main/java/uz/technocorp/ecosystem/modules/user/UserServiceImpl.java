@@ -1,15 +1,21 @@
 package uz.technocorp.ecosystem.modules.user;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.department.Department;
 import uz.technocorp.ecosystem.modules.department.DepartmentRepository;
@@ -18,6 +24,7 @@ import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
@@ -27,9 +34,9 @@ import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
+import static org.springframework.data.jpa.domain.Specification.where;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -107,13 +114,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateLegalUser(UUID userId, LegalUserDto dto) {
+    public void updateLegalUser(Long tin) {
         //TODO: Legal userni ma'lumotlarini soliq bilan integratsiya orqali yangilab qo'yish
     }
 
     @Override
     public Page<CommitteeUserHelper> getCommitteeUsers(Map<String, String> params) {
-        Pageable pageable= PageRequest.of(
+        Pageable pageable = PageRequest.of(
                 Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER)) - 1,
                 Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
                 Sort.Direction.DESC,
@@ -124,12 +131,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<OfficeUserHelper> getOfficeUsers(Map<String, String> params) {
-        Pageable pageable= PageRequest.of(
+        Pageable pageable = PageRequest.of(
                 Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER)) - 1,
                 Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
                 Sort.Direction.DESC,
                 "name");
         return userRepository.findAllByRoles(pageable, Set.of(Role.REGIONAL, Role.INSPECTOR)).map(this::convertToOfficeView);
+    }
+
+    @Override
+    public List<InspectorDto> getInspectors(User user, Map<String, String> params) {
+        switch (user.getRole()) {
+            case Role.CHAIRMAN, Role.HEAD, Role.MANAGER -> {
+                return getInspectorList(params);
+            }
+            case Role.REGIONAL -> {
+                Integer regionalOfficeId = profileService.getOfficeId(user.getProfileId());
+                params.put("officeId", regionalOfficeId.toString());
+                return getInspectorList(params);
+            }
+            default -> {
+                return List.of();
+            }
+        }
     }
 
     @Override
@@ -139,6 +163,35 @@ public class UserServiceImpl implements UserService {
         return new UserHelperById(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), profile.getDepartmentId(), profile.getOfficeId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
     }
 
+    private List<InspectorDto> getInspectorList(Map<String, String> params) {
+        Specification<User> conditions = (root, cq, cb) -> {
+            // Join to Profile
+            Join<User, Profile> profileJoin = root.join("profile", JoinType.INNER);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Role
+            predicates.add(cb.equal(root.get("role"), Role.INSPECTOR));
+
+            // Agar name berilgan bo'lsa
+            String inspectorName = params.getOrDefault("inspectorName", null);
+            if (inspectorName != null && !inspectorName.isBlank()) {
+                predicates.add(cb.like(cb.lower(root.get("name")), "%" + inspectorName.toLowerCase() + "%"));
+            }
+
+            // OfficeId
+            String officeId = params.getOrDefault("officeId", null);
+            if (officeId != null) {
+                predicates.add(cb.equal(profileJoin.get("officeId"), Integer.parseInt(officeId)));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        // Get users
+        List<User> users = userRepository.findAll(where(conditions), Sort.by(Sort.Direction.ASC, "name"));
+
+        return users.stream().map(u -> new InspectorDto(u.getId(), u.getName())).toList();
+    }
 
     private CommitteeUserHelper convertToCommitteeView(User user) {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
@@ -150,6 +203,16 @@ public class UserServiceImpl implements UserService {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
         Office office = officeRepository.findById(profile.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "id", profile.getOfficeId()));
         return new OfficeUserHelper(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), office.getName(), office.getId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
+    }
+
+    @Override
+    public UserViewByInspectorPin getInspectorByPin(long pin) {
+        return userRepository.getInspectorByPin(pin, Role.INSPECTOR).orElseThrow(() -> new ResourceNotFoundException("User (roli inspector bo'lgan)", "pin", pin));
+    }
+
+    @Override
+    public UserViewByLegal getLegalUserByTin(Long tin) {
+        return userRepository.getLegalUserByTin(tin);
     }
 
 

@@ -9,5 +9,7 @@ package uz.technocorp.ecosystem.modules.template;
 public enum TemplateType {
     IRS,
     XICHO_APPEAL,
-    EQUIPMENT_APPEAL;
+    EQUIPMENT_APPEAL,
+
+    REPLY_APPEAL;
 }

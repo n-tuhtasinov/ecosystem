@@ -6,7 +6,6 @@ import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
@@ -32,11 +31,13 @@ public interface AppealService {
 
     void update(UUID id, AppealDto dto);
 
-    String preparePdfWithParam(HfAppealDto dto, User user);
+    String preparePdfWithParam(AppealDto dto, User user);
 
     String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
 
     void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
+
+    void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
 
     List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate);
 

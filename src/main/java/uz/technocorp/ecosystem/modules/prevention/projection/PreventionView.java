@@ -28,7 +28,9 @@ public class PreventionView {
     private String createdBy;
     private String inspectorName;
     private Long profileTin;
-    private String profileName;
-    private String profileAddress;
+    private String legalName;
+    private String legalAddress;
+    private Integer regionId;
+    private Integer districtId;
     private List<String> files;
 }

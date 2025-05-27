@@ -27,7 +27,7 @@ public class PreventionSpecification {
             Long tin = parseTin(search);
             return tin != null
                     ? cb.equal(root.get("profileTin"), tin)
-                    : cb.like(root.get("profileName"), "%" + search + "%");
+                    : cb.like(cb.lower(root.get("profileName")), "%" + search.toLowerCase() + "%");
         };
     }
 
@@ -54,9 +54,14 @@ public class PreventionSpecification {
                 -> inspectorId == null ? cb.conjunction() : cb.equal(root.get("createdBy"), inspectorId);
     }
 
-    public Specification<Prevention> hasOfficeId(Integer officeId) {
+    public Specification<Prevention> hasRegionId(Integer regionId) {
         return (root, cq, cb)
-                -> officeId == null ? cb.conjunction() : cb.equal(root.get("officeId"), officeId);
+                -> regionId == null ? cb.conjunction() : cb.equal(root.get("regionId"), regionId);
+    }
+
+    public Specification<Prevention> hasDistrictId(Integer districtId) {
+        return (root, cq, cb)
+                -> districtId == null ? cb.conjunction() : cb.equal(root.get("districtId"), districtId);
     }
 
     public Specification<Prevention> hasViewed(Boolean viewed) {

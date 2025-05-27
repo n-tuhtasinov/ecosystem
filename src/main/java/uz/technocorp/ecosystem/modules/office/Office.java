@@ -28,11 +28,11 @@ public class Office {
     private String name;
 
     @JsonIgnore
-    @OneToOne(targetEntity = Region.class, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = Region.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "region_id", updatable = false, insertable = false)
     private Region region;
 
     @JsonIgnore
-    @Column(name = "region_id")
+    @Column(name = "region_id", nullable = false)
     private Integer regionId;
 }

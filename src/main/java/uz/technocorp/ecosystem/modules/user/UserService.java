@@ -1,13 +1,17 @@
 package uz.technocorp.ecosystem.modules.user;
 
 import org.springframework.data.domain.Page;
+import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,11 +33,17 @@ public interface UserService {
 
     void changeUserEnabled(UUID userId, Boolean enabled);
 
-    void updateLegalUser(UUID userId, LegalUserDto dto);
+    void updateLegalUser(Long tin);
 
     Page<CommitteeUserHelper> getCommitteeUsers(Map<String, String> params);
 
     Page<OfficeUserHelper> getOfficeUsers(Map<String, String> params);
 
+    List<InspectorDto> getInspectors(User user, Map<String, String> params);
+
     UserHelperById getById(UUID userId);
+
+    UserViewByInspectorPin getInspectorByPin(long pin);
+
+    UserViewByLegal getLegalUserByTin(Long tin);
 }

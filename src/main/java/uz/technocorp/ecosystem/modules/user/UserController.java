@@ -1,12 +1,14 @@
 package uz.technocorp.ecosystem.modules.user;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.modules.user.dto.CommitteeUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.OfficeUserDto;
@@ -14,7 +16,9 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
 import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
 import uz.technocorp.ecosystem.security.CurrentUser;
+import uz.technocorp.ecosystem.shared.ApiResponse;
 
 import java.util.Map;
 import java.util.UUID;
@@ -86,10 +90,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi holati muvaffaqiyatli o'zgartirildi"));
     }
 
-    @PutMapping("/{userId}")
-    ResponseEntity<?> updateLegalUser(@PathVariable UUID userId, @RequestBody LegalUserDto dto) {
-        userService.updateLegalUser(userId, dto);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi holati muvaffaqiyatli o'zgartirildi"));
+    @PutMapping("/legal/{tin}")
+    ResponseEntity<?> updateLegalUser(@PathVariable Long tin) {
+        userService.updateLegalUser(tin);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Foydalanuvchi ma'lumotlari muvaffaqiyatli o'zgartirildi"));
     }
 
     @GetMapping("/committee-users")
@@ -104,9 +108,30 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(page));
     }
 
+    @Operation(
+            summary = "Inspector listini olish",
+            parameters = {
+                    @Parameter(name = "officeId", description = "Hududiy bo'lim ID si", schema = @Schema(type = "string")),
+                    @Parameter(name = "inspectorName", description = "Inspector ismi bo'yicha filter", schema = @Schema(type = "string"))
+            }
+    )
+    @GetMapping("/office-users/inspectors/select")
+    ResponseEntity<ApiResponse> getInspectors(@CurrentUser User user, @RequestParam(required = false) Map<String, String> params) {
+        return ResponseEntity.ok(new ApiResponse(userService.getInspectors(user, params)));
+    }
+
     @GetMapping("/{userId}")
     ResponseEntity<?> getUserById(@PathVariable UUID userId) {
         UserHelperById byId = userService.getById(userId);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(byId));
     }
+
+    @GetMapping("/legal/{tin}")
+    ResponseEntity<?> getLegalUsers(@PathVariable Long tin) {
+        UserViewByLegal user = userService.getLegalUserByTin(tin);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(user));
+    }
+
+
+
 }

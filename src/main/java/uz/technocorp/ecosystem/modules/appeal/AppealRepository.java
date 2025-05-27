@@ -1,8 +1,9 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 
@@ -28,8 +29,6 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
                    a.number        as number,
                    a.legal_name    as legalName,
                    a.legal_tin     as legalTin,
-                   a.region_name   as region,
-                   a.district_name as district,
                    a.address       as address,
                    a.phone_number  as phoneNumber,
                    a.deadline as deadline
@@ -41,4 +40,9 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
 
 
     Optional<AppealViewById> getAppealById(UUID id);
+
+    @Modifying
+    @Transactional
+    @Query("update Appeal set conclusion = :conclusion where id = :id")
+    void setConclusion(UUID id, String conclusion);
 }

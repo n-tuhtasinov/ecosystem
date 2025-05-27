@@ -1,5 +1,10 @@
 package uz.technocorp.ecosystem.modules.hf.enums;
 
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -7,10 +12,29 @@ package uz.technocorp.ecosystem.modules.hf.enums;
  * @since v1.0
  */
 public enum HFSphere {
-    OIL,
-    GAS,
-    BOILER,
-    CHEMISTRY,
-    COAL,
-    GEOLOGY
+    OIL("Neft"),
+    GAS("Gaz"),
+    BOILER("Issiq suv"),
+    CHEMISTRY("Himiya"),
+    COAL("Ko'mir"),
+    GEOLOGY("Geologiya");
+
+    public final String label;
+    private static final Map<String, HFSphere> BY_LABEL = new HashMap<>();
+
+    HFSphere(String label) {
+        this.label = label;
+    }
+
+    static {
+        for (HFSphere sphere : HFSphere.values()) {
+            BY_LABEL.put(sphere.label, sphere);
+        }
+    }
+
+    public static HFSphere getEnumByLabel(String label){
+        if (!BY_LABEL.containsKey(label)) throw new ResourceNotFoundException("Xicho tarmog'i", "nom", label);
+        return BY_LABEL.get(label);
+    }
+
 }

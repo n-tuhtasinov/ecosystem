@@ -105,6 +105,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    public Profile getProfile(UUID profileId) {
+        return profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", profileId));
+    }
+
+    @Override
     public Page<ProfileView> getProfilesForPrevention(PreventionParamsDto params) {
 
         // Base condition
@@ -130,15 +135,19 @@ public class ProfileServiceImpl implements ProfileService {
                     : cb.like(cb.lower(root.get("legalName")), "%" + params.getSearch().toLowerCase() + "%");
         };
 
-        // OfficeId
-        Specification<Profile> hasOfficeId = (root, cq, cb)
-                -> params.getOfficeId() == null ? cb.conjunction() : cb.equal(root.get("officeId"), params.getOfficeId());
+        // Region
+        Specification<Profile> hasRegion = (root, cq, cb)
+                -> params.getRegionId() == null ? cb.conjunction() : cb.equal(root.get("regionId"), params.getRegionId());
+
+        // District
+        Specification<Profile> hasDistrict = (root, cq, cb)
+                -> params.getDistrictId() == null ? cb.conjunction() : cb.equal(root.get("districtId"), params.getDistrictId());
 
         // Create pageRequest with sort by legalName asc
         PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.ASC, "legalName"));
 
         // Get Profiles
-        Page<Profile> profiles = profileRepository.findAll(where(baseQuery).and(hasSearch).and(hasOfficeId), pageRequest);
+        Page<Profile> profiles = profileRepository.findAll(where(baseQuery).and(hasSearch).and(hasRegion).and(hasDistrict), pageRequest);
 
         // Create PageImpl
         return new PageImpl<>(profiles.stream().map(this::map).toList(), pageRequest, profiles.getTotalElements());
@@ -212,12 +221,11 @@ public class ProfileServiceImpl implements ProfileService {
     // MAPPER
     private ProfileView map(Profile profile) {
         ProfileView view = new ProfileView();
+
         view.setId(profile.getId().toString());
         view.setTin(profile.getTin());
         view.setLegalName(profile.getLegalName());
         view.setLegalAddress(profile.getLegalAddress());
-        view.setPin(profile.getPin());
-        view.setDistrictName(profile.getDistrictName());
 
         return view;
     }

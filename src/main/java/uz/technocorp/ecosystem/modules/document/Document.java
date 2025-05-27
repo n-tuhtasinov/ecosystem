@@ -46,4 +46,8 @@ public class Document extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private DocumentType documentType;
+
+    private Boolean isConfirmed;
+
+    private String description;
 }

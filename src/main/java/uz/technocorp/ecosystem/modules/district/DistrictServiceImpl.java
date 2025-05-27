@@ -7,11 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.district.dto.DistrictDto;
 import uz.technocorp.ecosystem.modules.district.projection.DistrictView;
 import uz.technocorp.ecosystem.modules.district.projection.DistrictViewById;
 import uz.technocorp.ecosystem.modules.district.projection.DistrictViewBySelect;
+import uz.technocorp.ecosystem.shared.AppConstants;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,6 @@ import java.util.Map;
 public class DistrictServiceImpl implements DistrictService {
 
     private final DistrictRepository districtRepository;
-
 
     @Override
     public void create(DistrictDto dto) {
@@ -74,5 +73,10 @@ public class DistrictServiceImpl implements DistrictService {
     @Override
     public DistrictViewById getById(Integer districtId) {
         return districtRepository.getDistrictById(districtId).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", districtId));
+    }
+
+    @Override
+    public District getDistrict(Integer districtId) {
+        return districtRepository.findById(districtId).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", districtId));
     }
 }
