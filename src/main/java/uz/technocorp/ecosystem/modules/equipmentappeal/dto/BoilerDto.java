@@ -3,6 +3,8 @@ package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
@@ -14,6 +16,8 @@ import java.time.LocalDate;
  * @created 24.04.2025
  * @since v1.0
  */
+@NoArgsConstructor
+@AllArgsConstructor
 public class BoilerDto extends EquipmentAppealDto implements AppealDto {
 
     @NotNull(message = "Qurilmaning putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi jo'natilmadi")
@@ -38,4 +42,5 @@ public class BoilerDto extends EquipmentAppealDto implements AppealDto {
     public LocalDate getDeadline() {
         return null;
     }
+
 }

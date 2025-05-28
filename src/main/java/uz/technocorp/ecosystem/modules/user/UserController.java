@@ -111,7 +111,7 @@ public class UserController {
     @Operation(
             summary = "Inspector listini olish",
             parameters = {
-                    @Parameter(name = "officeId", description = "Hududiy bo'lim ID si", schema = @Schema(type = "string")),
+                    @Parameter(name = "officeId", description = "Hududiy bo'lim ID si", schema = @Schema(type = "UUID")),
                     @Parameter(name = "inspectorName", description = "Inspector ismi bo'yicha filter", schema = @Schema(type = "string"))
             }
     )
