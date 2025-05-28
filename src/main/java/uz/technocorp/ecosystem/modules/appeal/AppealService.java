@@ -21,25 +21,25 @@ import java.util.UUID;
  */
 public interface AppealService {
 
+    void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
+
+    void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
+
+    UUID create(AppealDto dto, User user);
+
+    void update(UUID id, AppealDto dto);
+
     void setInspector(SetInspectorDto dto);
 
     void changeAppealStatus(AppealStatusDto dto);
 
     Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params);
 
-    UUID create(AppealDto dto, User user);
+    List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate);
 
-    void update(UUID id, AppealDto dto);
+    AppealViewById getById(UUID appealId);
 
     String preparePdfWithParam(AppealDto dto, User user);
 
     String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
-
-    void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
-
-    void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
-
-    List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate);
-
-    AppealViewById getById(UUID appealId);
 }
