@@ -1,16 +1,17 @@
 package uz.technocorp.ecosystem.modules.document;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import uz.technocorp.ecosystem.shared.BaseEntity;
-import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.document.dto.Signer;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -31,13 +32,6 @@ public class Document extends BaseEntity {
 
     @Column(columnDefinition = "text")
     private String signedContent;
-
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
-    @JoinColumn(name = "appeal_id", insertable = false, updatable = false)
-    private Appeal appeal;
-
-    @Column(name = "appeal_id")
-    private UUID appealId;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)

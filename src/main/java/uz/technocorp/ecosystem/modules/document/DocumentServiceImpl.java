@@ -37,68 +37,70 @@ public class DocumentServiceImpl implements DocumentService {
     private String host;
 
     private final EImzoProxy eImzoProxy;
-    private final DocumentRepository documentRepository;
+    private final DocumentRepository repository;
     private final AttachmentService attachmentService;
 
     @Override
-    public void create(DocumentDto dto) {
+    public UUID create(DocumentDto dto) {
         Signer signer = new Signer(getSigner(dto.sign(), dto.ip()), dto.executedBy(), LocalDateTime.now());
 
-        documentRepository.save(Document.builder()
-                .path(dto.path())
-                .signedContent(dto.sign())
-                .appealId(dto.belongId())
-                .signers(List.of(signer)) // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
-                .documentType(dto.documentType())
-                .build());
+        Document document = new Document();
+
+        document.setPath(dto.path());
+        document.setSignedContent(dto.sign());
+        document.setSigners(List.of(signer)); // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
+        document.setDocumentType(dto.documentType());
+        document.setIsConfirmed(false);
+        document.setDescription(null);
+
+        document = repository.save(document);
 
         // Delete attachment without the file
         attachmentService.deleteByPath(dto.path());
-    }
 
+        return document.getId();
+    }
 
 
     @Override
     public void delete(UUID id) {
-        documentRepository.deleteById(id);
+        repository.deleteById(id);
     }
 
     @Override
     public DocumentViewByReply getById(UUID documentId) {
-        return documentRepository.getDocumentById(documentId).orElseThrow(()-> new ResourceNotFoundException("Document", "ID", documentId));
+        return repository.getDocumentById(documentId).orElseThrow(() -> new ResourceNotFoundException("Document", "ID", documentId));
     }
 
     @Override
     public List<DocumentViewByRequest> getRequestDocumentsByAppealId(UUID appealId) {
-        return documentRepository.getRequestDocumentsByAppealId(appealId, DocumentType.APPEAL.name());
+        return repository.getRequestDocumentsByAppealId(appealId, DocumentType.APPEAL.name());
     }
 
     @Override
     public List<DocumentViewByReply> getReplyDocumentsByAppealId(User user, UUID appealId) {
         if (user.getRole().equals(Role.LEGAL) || user.getRole().equals(Role.INDIVIDUAL)) {
-            return documentRepository.getReplyDocumentsByAppealIdAndConfirmed(appealId, DocumentType.APPEAL.name(), true);
+            return repository.getReplyDocumentsByAppealIdAndConfirmed(appealId, DocumentType.APPEAL.name(), true);
         }
 
-        return documentRepository.getReplyDocumentsByAppealIdAndConfirmed(appealId, DocumentType.APPEAL.name(), null);
-    }
-
-    private String getSigner(String sign, String ip) {
-        Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, ip, sign);
-
-        if (!"1".equals(pkcs7VerifyAttached.getStatus())) {
-            throw new ResourceNotFoundException("Document verification failed");
-        }
-
-        String subjectName = pkcs7VerifyAttached.getPkcs7Info().getSigners().getLast().getCertificate().getFirst().getSubjectName();
-        return subjectName.split(",")[0].replace("CN=", "").trim();
+        return repository.getReplyDocumentsByAppealIdAndConfirmed(appealId, DocumentType.APPEAL.name(), null);
     }
 
     public List<Signer> convertToList(String signers) {
         try {
-            return objectMapper.readValue(signers, new TypeReference<List<Signer>>(){} );
+            return objectMapper.readValue(signers, new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
+    private String getSigner(String sign, String ip) {
+        Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, ip, sign);
+        if (!"1".equals(pkcs7VerifyAttached.getStatus())) {
+            throw new ResourceNotFoundException("Document verification failed");
+        }
+        String subjectName = pkcs7VerifyAttached.getPkcs7Info().getSigners().getLast().getCertificate().getFirst().getSubjectName();
+        return subjectName.split(",")[0].replace("CN=", "").trim();
+    }
 }
