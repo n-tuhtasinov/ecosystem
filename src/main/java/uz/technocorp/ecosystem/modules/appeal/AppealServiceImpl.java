@@ -91,16 +91,17 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    @Transactional
-    public void saveReplyAndSign(User user, SignedReplyDto dto, HttpServletRequest request) {
-        // Check and get appeal by ID
-        Appeal appeal = getAppealById(dto.getDto().getAppealId());
-
+    public void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request) {
+        // Check appeal by (appealId, status, inspectorId)
+        Appeal appeal = repository.findByIdAndStatusAndExecutorId(replyDto.getDto().getAppealId(), AppealStatus.IN_PROCESS, user.getId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Bu ariza sizga biriktirilmagan yoki ariza holati o'zgargan")
+                );
         // Create a reply document
-        UUID replyDocumentId = createDocument(new DocumentDto(dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
+        UUID replyDocumentId = createDocument(new DocumentDto(replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
 
-        // Set a conclusion and replyDocumentId
-        repository.setConclusionAndReplyId(appeal.getId(), dto.getDto().getConclusion(), replyDocumentId);
+        // Change appealStatus & Set a conclusion and replyDocumentId
+        repository.changeStatusAndSetConclusionAndReplyId(appeal.getId(), replyDto.getDto().getConclusion(), replyDocumentId, AppealStatus.IN_AGREEMENT);
     }
 
     @Override
@@ -215,6 +216,7 @@ public class AppealServiceImpl implements AppealService {
 
         // Current date
         String[] formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.of("uz"))).split(" ");
+        String[] fullAddress = appeal.getAddress().split(","); // Region , District , Address
 
         // Collect params to Map
         Map<String, String> parameters = new HashMap<>();
@@ -225,7 +227,9 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("inspectorName", user.getName());
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("legalTin", appeal.getLegalTin().toString());
-        parameters.put("address", appeal.getAddress());
+        parameters.put("regionName", fullAddress[0]);
+        parameters.put("districtName", fullAddress[1]);
+        parameters.put("address", fullAddress[2]);
         parameters.put("name", appeal.getData().get("name").asText());
         parameters.put("upperOrganization", appeal.getData().get("upperOrganization").asText());
         parameters.put("appealType", appeal.getAppealType().getLabel());
