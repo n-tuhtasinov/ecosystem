@@ -13,7 +13,6 @@ import java.util.UUID;
  */
 public record DocumentDto(
         DocumentType documentType,
-        UUID belongId,
         String path,
         String sign,
         String ip,

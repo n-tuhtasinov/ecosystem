@@ -1,9 +1,7 @@
 package uz.technocorp.ecosystem.modules.region;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.modules.office.Office;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -26,7 +24,7 @@ public class Region {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private Integer soato;
 
     @Column(nullable = false, unique = true)
