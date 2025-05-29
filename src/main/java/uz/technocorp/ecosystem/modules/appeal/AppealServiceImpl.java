@@ -25,6 +25,8 @@ import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerUtilizerDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -69,48 +71,37 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     @Transactional
-    public void setInspector(SetInspectorDto dto) {
-        User user = userRepository
-                .findById(dto.inspectorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Inspektor", "Id", dto.inspectorId()));
-        Appeal appeal = repository
-                .findById(dto.appealId())
-                .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.appealId()));
-        appeal.setExecutorId(dto.inspectorId());
-        appeal.setExecutorName(user.getName());
-        appeal.setDeadline(dto.deadline());
-        appeal.setResolution(dto.resolution());
-        appeal.setStatus(AppealStatus.IN_PROCESS);
-        repository.save(appeal);
-        repository.flush();
-        appealExecutionProcessRepository.save(
-                new AppealExecutionProcess(
-                        dto.appealId(),
-                        "Ariza inspektorga biriktirildi!"
-                )
-        );
+    public void saveAndSign(User user, SignedAppealDto dto, HttpServletRequest request) {
+        UUID appealId;
+        switch (dto.getDto()) {
+            case HfAppealDto hfAppealDto -> appealId = create(hfAppealDto, user);
+            case BoilerDto boilerDto -> appealId = create(boilerDto, user);
+            case BoilerUtilizerDto boilerUtilizerDto -> appealId = create(boilerUtilizerDto, user);
+            case CraneDto craneDto -> appealId = create(craneDto, user);
+            case IrsAppealDto irsAppealDto -> appealId = create(irsAppealDto, user);
+            // TODO barcha qurilmalar uchun case yozish kerak
+            default -> throw new ResourceNotFoundException("Mavjud bo'lmagan obyekt turi keldi");
+        }
+
+        // Create a document
+        UUID documentId = createDocument(new DocumentDto(dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
+
+        // Set documentId to appeal
+        repository.setDocumentId(appealId, documentId);
     }
 
     @Override
-    @Transactional
-    public void changeAppealStatus(AppealStatusDto dto) {
-        Appeal appeal = repository
-                .findById(dto.appealId())
-                .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.appealId()));
+    public void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request) {
+        // Check appeal by (appealId, status, inspectorId)
+        Appeal appeal = repository.findByIdAndStatusAndExecutorId(replyDto.getDto().getAppealId(), AppealStatus.IN_PROCESS, user.getId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Bu ariza sizga biriktirilmagan yoki ariza holati o'zgargan")
+                );
+        // Create a reply document
+        UUID replyDocumentId = createDocument(new DocumentDto(replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
 
-        appeal.setStatus(dto.status());
-        repository.save(appeal);
-        appealExecutionProcessRepository.save(
-                new AppealExecutionProcess(
-                        dto.appealId(),
-                        dto.description()
-                )
-        );
-    }
-
-    @Override
-    public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
-        return appealRepository.getAppealCustoms(user, params);
+        // Change appealStatus & Set a conclusion and replyDocumentId
+        repository.changeStatusAndSetConclusionAndReplyId(appeal.getId(), replyDto.getDto().getConclusion(), replyDocumentId, AppealStatus.IN_AGREEMENT);
     }
 
     @Override
@@ -139,7 +130,7 @@ public class AppealServiceImpl implements AppealService {
                 .officeId(office.getId())
                 .officeName(office.getName())
                 .status(AppealStatus.NEW)
-                .address(region.getName()+", "+district.getName()+", "+dto.getAddress())
+                .address(region.getName() + ", " + district.getName() + ", " + dto.getAddress())
                 .legalAddress(profile.getLegalAddress())
                 .phoneNumber(dto.getPhoneNumber())
                 .deadline(dto.getDeadline())
@@ -151,11 +142,61 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public void update(UUID id, AppealDto dto) {
-        Appeal appeal = repository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho arizasi", "Id", id));
+        Appeal appeal = getAppealById(id);
         appeal.setData(makeJsonData(dto));
         repository.save(appeal);
+    }
+
+    @Override
+    @Transactional
+    public void setInspector(SetInspectorDto dto) {
+        User user = userRepository
+                .findById(dto.inspectorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Inspektor", "Id", dto.inspectorId()));
+        Appeal appeal = getAppealById(dto.appealId());
+
+        appeal.setExecutorId(dto.inspectorId());
+        appeal.setExecutorName(user.getName());
+        appeal.setDeadline(LocalDate.parse(dto.deadline()));
+        appeal.setResolution(dto.resolution());
+        repository.save(appeal);
+        repository.flush();
+        appealExecutionProcessRepository.save(
+                new AppealExecutionProcess(
+                        dto.appealId(),
+                        "Ariza inspektorga biriktirildi!"
+                )
+        );
+    }
+
+    @Override
+    @Transactional
+    public void changeAppealStatus(AppealStatusDto dto) {
+        Appeal appeal = getAppealById(dto.appealId());
+
+        appeal.setStatus(dto.status());
+        repository.save(appeal);
+        appealExecutionProcessRepository.save(
+                new AppealExecutionProcess(
+                        dto.appealId(),
+                        dto.description()
+                )
+        );
+    }
+
+    @Override
+    public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
+        return appealRepository.getAppealCustoms(user, params);
+    }
+
+    @Override
+    public List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate) {
+        return repository.getAllByPeriodAndInspectorId(startDate, endDate, inspector.getId(), AppealStatus.IN_PROCESS.name());
+    }
+
+    @Override
+    public AppealViewById getById(UUID appealId) {
+        return appealRepository.getAppealById(appealId).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", appealId));
     }
 
     @Override
@@ -171,10 +212,11 @@ public class AppealServiceImpl implements AppealService {
     public String prepareReplyPdfWithParam(User user, ReplyDto replyDto) {
         Template template = templateService.getByType(TemplateType.REPLY_APPEAL.name());
 
-        Appeal appeal = repository.findById(replyDto.getAppealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", replyDto.getAppealId()));
+        Appeal appeal = getAppealById(replyDto.getAppealId());
 
         // Current date
         String[] formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.of("uz"))).split(" ");
+        String[] fullAddress = appeal.getAddress().split(","); // Region , District , Address
 
         // Collect params to Map
         Map<String, String> parameters = new HashMap<>();
@@ -185,7 +227,9 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("inspectorName", user.getName());
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("legalTin", appeal.getLegalTin().toString());
-        parameters.put("address", appeal.getAddress());
+        parameters.put("regionName", fullAddress[0]);
+        parameters.put("districtName", fullAddress[1]);
+        parameters.put("address", fullAddress[2]);
         parameters.put("name", appeal.getData().get("name").asText());
         parameters.put("upperOrganization", appeal.getData().get("upperOrganization").asText());
         parameters.put("appealType", appeal.getAppealType().getLabel());
@@ -195,45 +239,6 @@ public class AppealServiceImpl implements AppealService {
 
         // Save to an attachment and folder & Return a file path
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters);
-    }
-
-    @Override
-    @Transactional
-    public void saveAndSign(User user, SignedAppealDto dto, HttpServletRequest request) {
-        UUID appealId;
-        switch (dto.getDto()) {
-            case HfAppealDto hfAppealDto -> appealId = create(hfAppealDto, user);
-            case IrsAppealDto irsAppealDto -> appealId = create(irsAppealDto, user);
-            case BoilerDto boilerDto -> appealId = create(boilerDto, user);
-            // TODO barcha qurilmalar uchun case yozish kerak
-            default -> throw new RuntimeException("Mavjud bo'lmagan obyekt turi keldi");
-        }
-
-        // Create a document
-        documentService.create(new DocumentDto(dto.getType(), appealId, dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
-    }
-
-    @Override
-    @Transactional
-    public void saveReplyAndSign(User user, SignedReplyDto dto, HttpServletRequest request) {
-        // Check and get appeal by ID
-        Appeal appeal = repository.findById(dto.getDto().getAppealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.getDto().getAppealId()));
-
-        // Set conclusion
-        repository.setConclusion(appeal.getId(), dto.getDto().getConclusion());
-
-        // Create a document
-        documentService.create(new DocumentDto(dto.getType(), appeal.getId(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
-    }
-
-    @Override
-    public List<AppealViewByPeriod> getAllByPeriodAndInspector(User inspector, LocalDate startDate, LocalDate endDate) {
-        return repository.getAllByPeriodAndInspectorId(startDate, endDate, inspector.getId(), AppealStatus.IN_PROCESS.name());
-    }
-
-    @Override
-    public AppealViewById getById(UUID appealId) {
-        return appealRepository.getAppealById(appealId).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", appealId));
     }
 
     private JsonNode makeJsonData(AppealDto dto) {
@@ -265,5 +270,13 @@ public class AppealServiceImpl implements AppealService {
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
         }
         return executorName;
+    }
+
+    private UUID createDocument(DocumentDto dto) {
+        return documentService.create(dto);
+    }
+
+    private Appeal getAppealById(UUID id) {
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", id));
     }
 }

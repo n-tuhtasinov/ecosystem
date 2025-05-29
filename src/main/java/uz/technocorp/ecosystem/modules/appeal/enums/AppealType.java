@@ -12,11 +12,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum AppealType {
-
+    // TODO
     // Xavfli Ishlab Chiqarish Obyektini ro‘yxatga olish, o'zgartirish va chiqarish
-    REGISTER_HF(""),
-    DEREGISTER_HF(""),
-    MODIFY_HF(""),
+    REGISTER_HF("REGISTER_HF"),
+    DEREGISTER_HF("DEREGISTER_HF"),
+    MODIFY_HF("MODIFY_HF"),
 
     //Crane
     REGISTER_CRANE(""),

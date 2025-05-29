@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public interface DocumentService {
 
-    void create(DocumentDto documentDto);
+    UUID create(DocumentDto documentDto);
 
     void delete(UUID id);
 
