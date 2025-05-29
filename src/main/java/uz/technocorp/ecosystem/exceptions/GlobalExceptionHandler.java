@@ -31,7 +31,7 @@ import java.util.Map;
  * @since v1.0
  * @description all custom exceptions which occur any time
  */
-//@RestControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 

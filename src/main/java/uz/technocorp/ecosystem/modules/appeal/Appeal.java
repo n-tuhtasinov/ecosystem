@@ -125,18 +125,4 @@ public class Appeal extends BaseEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode data;
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = Document.class)
-    @JoinColumn(name = "appeal_document_id", updatable = false, insertable = false)
-    private Document appealDocument;
-
-    @Column(name = "appeal_document_id")
-    private UUID appealDocumentId;
-
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = Document.class)
-    @JoinColumn(name = "reply_document_id", updatable = false, insertable = false)
-    private Document replyDocument;
-
-    @Column(name = "reply_document_id")
-    private UUID replyDocumentId;
-
 }
