@@ -48,7 +48,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
         Region region = regionRepository
                 .findById(appeal.getRegionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", appeal.getRegionId()));
-        String registryNumber = String.format("%02d", region.getNumber()) + "-S-" +  String.format("%04d", maxOrderNumber);
+        String registryNumber = String.format("%02d", region.getNumber()) + "-S-" + String.format("%04d", maxOrderNumber);
         IrsAppealDto irsAppealDto = parseJsonData(appeal.getData());
         repository.save(
                 IonizingRadiationSource
@@ -66,7 +66,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                         .sphere(irsAppealDto.getSphere())
                         .factoryNumber(irsAppealDto.getFactoryNumber())
                         .orderNumber(maxOrderNumber)
-//                        .activity()
+                        .activity(irsAppealDto.getActivity())
                         .category(IrsCategory.valueOf(irsAppealDto.getCategory()))
                         .type(irsAppealDto.getType())
                         .country(irsAppealDto.getCountry())
@@ -77,7 +77,6 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                         .storageLocation(irsAppealDto.getStorageLocation())
                         .passportPath(irsAppealDto.getPassportPath())
                         .additionalFilePath(irsAppealDto.getAdditionalFilePath())
-//                        .description()
                         .regionId(appeal.getRegionId())
                         .districtId(appeal.getDistrictId())
                         .appealId(appeal.getId())
@@ -86,40 +85,6 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
         );
     }
 
-//    @Override
-//    public void create(IrsDto dto) {
-//        repository.save(
-//                IonizingRadiationSource
-//                        .builder()
-//                        .address(dto.address())
-//                        .parentOrganization(dto.parentOrganization())
-//                        .supervisorName(dto.supervisorName())
-//                        .supervisorEducation(dto.supervisorEducation())
-//                        .supervisorStatus(dto.supervisorStatus())
-//                        .supervisorPosition(dto.supervisorPosition())
-//                        .supervisorPhoneNumber(dto.supervisorPhoneNumber())
-//                        .division(dto.division())
-//                        .identifierType(IrsIdentifierType.valueOf(dto.identifierType()))
-//                        .symbol(dto.symbol())
-//                        .sphere(dto.sphere())
-//                        .factoryNumber(dto.factoryNumber())
-////                        .activity()
-//                        .category(IrsCategory.valueOf(dto.category()))
-//                        .type(dto.type())
-//                        .country(dto.country())
-//                        .manufacturedAt(LocalDate.parse(dto.manufacturedAt()))
-//                        .acceptedFrom(dto.acceptedFrom())
-//                        .isValid(dto.isValid())
-//                        .usageType(IrsUsageType.valueOf(dto.usageType()))
-//                        .storageLocation(dto.storageLocation())
-//                        .passportPath(dto.passportPath())
-//                        .additionalFilePath(dto.additionalFilePath())
-////                        .description()
-//                        .regionId(dto.regionId())
-//                        .districtId(dto.districtId())
-//                        .build()
-//        );
-//    }
 
     @Override
     public void update(UUID id, IrsDto dto) {

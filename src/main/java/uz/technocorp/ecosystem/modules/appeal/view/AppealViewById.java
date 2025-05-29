@@ -21,7 +21,11 @@ public interface AppealViewById {
     LocalDate getDeadline();
     String getOfficeName();
     String getStatus();
+    Long getLegalTin();
+    String getLegalName();
     JsonNode getData();
+
+
 
 
 
