@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
@@ -20,7 +19,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HeatPipelineDto extends EquipmentAppealDto implements AppealDto {
+public class HeatPipelineDto extends EquipmentAppealDto {
 
     @NotBlank(message = "Diametr jo'natilmadi")
     private String diameter;

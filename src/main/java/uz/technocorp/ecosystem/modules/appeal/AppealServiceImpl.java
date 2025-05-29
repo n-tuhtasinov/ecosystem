@@ -27,6 +27,7 @@ import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerUtilizerDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -84,10 +85,7 @@ public class AppealServiceImpl implements AppealService {
         }
 
         // Create a document
-        UUID documentId = createDocument(new DocumentDto(dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
-
-        // Set documentId to appeal
-//        repository.setDocumentId(appealId, documentId);
+        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
     }
 
     @Override
@@ -98,10 +96,10 @@ public class AppealServiceImpl implements AppealService {
                         () -> new ResourceNotFoundException("Bu ariza sizga biriktirilmagan yoki ariza holati o'zgargan")
                 );
         // Create a reply document
-        UUID replyDocumentId = createDocument(new DocumentDto(replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
+        documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
 
-        // Change appealStatus & Set a conclusion and replyDocumentId
-//        repository.changeStatusAndSetConclusionAndReplyId(appeal.getId(), replyDto.getDto().getConclusion(), replyDocumentId, AppealStatus.IN_AGREEMENT);
+        // Change appealStatus and set conclusion
+        repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);
     }
 
     @Override
@@ -202,7 +200,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public String preparePdfWithParam(AppealDto dto, User user) {
-        AppealPdfProcessor processor = processors.get(dto.getClass());
+        AppealPdfProcessor processor = findProcessor(dto);
         if (processor == null) {
             throw new ResourceNotFoundException("Form obyekt turi xato: " + dto.getClass().getSimpleName());
         }
@@ -273,11 +271,21 @@ public class AppealServiceImpl implements AppealService {
         return executorName;
     }
 
-    private UUID createDocument(DocumentDto dto) {
-        return documentService.create(dto);
-    }
-
     private Appeal getAppealById(UUID id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", id));
+    }
+
+    private AppealPdfProcessor findProcessor(AppealDto dto) {
+        // 1. Exact match qidirish
+        AppealPdfProcessor processor = processors.get(dto.getClass());
+        if (processor != null) {
+            return processor;
+        }
+
+        // 2. Parent class orqali qidirish
+        if (dto instanceof EquipmentAppealDto) {
+            return processors.get(EquipmentAppealDto.class);
+        }
+        return null;
     }
 }
