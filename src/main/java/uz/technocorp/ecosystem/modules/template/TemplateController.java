@@ -5,13 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.shared.ApiResponse;
-import uz.technocorp.ecosystem.shared.ResponseMessage;
-import uz.technocorp.ecosystem.modules.template.form.ContentForm;
 import uz.technocorp.ecosystem.modules.template.form.TemplateEditForm;
 import uz.technocorp.ecosystem.modules.template.form.TemplateForm;
 import uz.technocorp.ecosystem.modules.template.projection.TemplateView;
 import uz.technocorp.ecosystem.modules.template.projection.TemplateViewBySelect;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -59,9 +58,8 @@ public class TemplateController {
     }
 
     @PatchMapping("/content/{templateId}")
-    public ResponseEntity<ApiResponse> update(@PathVariable Integer templateId, @Valid @RequestBody ContentForm form) {
-        form.setId(templateId);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED, service.updateContent(form)));
+    public ResponseEntity<ApiResponse> update(@PathVariable Integer templateId, @RequestBody String content) {
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED, service.updateContent(templateId, content)));
     }
 
     @DeleteMapping("/{templateId}")
