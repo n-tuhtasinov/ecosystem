@@ -8,9 +8,9 @@ package uz.technocorp.ecosystem.modules.appeal.enums;
  */
 public enum AppealStatus {
     NEW,
-    IN_PROCESS, //inspektor biriktirilganda
-    IN_AGREEMENT, // hududiy bo'lim boshlig'iga o'tganda
-    IN_APPROVAL, // qo'mita mas'ul hodimiga o'tganda
-    COMPLETED, // qo'mita mas'ul hodimi tasdiqlaganda
-    REJECTED // ariza tushishi bilan kamchilik yoki xatolik sababli qaytarilsa
+    IN_PROCESS, //inspektor biriktirilganda (jarayonda)
+    IN_AGREEMENT, // hududiy bo'lim boshlig'iga o'tganda (kelishishda)
+    IN_APPROVAL, // qo'mita mas'ul hodimiga o'tganda (tasdiqlashda)
+    COMPLETED, // qo'mita mas'ul hodimi tasdiqlaganda (yakunlangan)
+    REJECTED // ariza tushishi bilan kamchilik yoki xatolik sababli qaytarilsa (qaytarilgan)
 }

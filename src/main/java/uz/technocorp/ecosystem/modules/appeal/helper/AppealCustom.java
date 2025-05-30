@@ -30,6 +30,7 @@ public class AppealCustom {
     private String executorName;
     private LocalDate deadline;
     private String officeName;
+    private String description;
 
     public AppealCustom(UUID id, LocalDateTime createdAt, AppealStatus status, Long legalTin, String number, String legalName, String address, String phoneNumber, AppealType appealType, String executorName, LocalDate deadline, String officeName) {
         this.id = id;

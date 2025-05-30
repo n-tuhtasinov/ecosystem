@@ -125,7 +125,4 @@ public class Appeal extends BaseEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode data;
 
-    @Column(columnDefinition = "text")
-    private String description; //qaytarilish sababi
-
 }

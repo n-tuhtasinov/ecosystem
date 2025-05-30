@@ -39,7 +39,6 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
               and a.status = :appealStatus""")
     List<AppealViewByPeriod> getAllByPeriodAndInspectorId(LocalDate startDate, LocalDate endDate, UUID inspectorId, String appealStatus);
 
-
     Optional<AppealViewById> getAppealById(UUID id);
 
     Optional<Appeal> findByIdAndStatusAndExecutorId(UUID appealId, AppealStatus appealStatus, UUID inspectorId);
