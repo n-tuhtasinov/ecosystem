@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealStatusDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.ReplyDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
-import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
@@ -93,5 +90,11 @@ public class AppealController {
     public ResponseEntity<?> getReplyDocsById(@CurrentUser User user, @PathVariable UUID appealId) {
         List<DocumentViewByReply> list = documentService.getReplyDocumentsByAppealId(user, appealId);
         return ResponseEntity.ok(new ApiResponse(list));
+    }
+
+    @PostMapping("/rejection")
+    public ResponseEntity<?> reject(@Valid @RequestBody RejectDto rejectDto) {
+        service.reject(rejectDto);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.REJECTED));
     }
 }

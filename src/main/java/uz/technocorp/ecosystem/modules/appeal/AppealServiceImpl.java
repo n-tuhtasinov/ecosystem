@@ -41,6 +41,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -238,6 +239,14 @@ public class AppealServiceImpl implements AppealService {
 
         // Save to an attachment and folder & Return a file path
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters);
+    }
+
+    @Override
+    public void reject(RejectDto dto) {
+        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+        appeal.setStatus(AppealStatus.IN_PROCESS);
+        appeal.setDescription(dto.description());
+        appealRepository.save(appeal);
     }
 
     private JsonNode makeJsonData(AppealDto dto) {
