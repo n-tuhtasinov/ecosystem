@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
@@ -20,7 +19,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EscalatorDto extends EquipmentAppealDto implements AppealDto {
+public class EscalatorDto extends EquipmentAppealDto {
 
     @NotBlank(message = "O'tkazish qobilyati jo'natilmadi")
     private String passengersPerMinute;

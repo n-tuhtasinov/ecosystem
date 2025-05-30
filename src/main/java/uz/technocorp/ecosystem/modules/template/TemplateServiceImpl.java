@@ -7,12 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.shared.AppConstants;
-import uz.technocorp.ecosystem.modules.template.form.ContentForm;
 import uz.technocorp.ecosystem.modules.template.form.TemplateEditForm;
 import uz.technocorp.ecosystem.modules.template.form.TemplateForm;
 import uz.technocorp.ecosystem.modules.template.projection.TemplateView;
 import uz.technocorp.ecosystem.modules.template.projection.TemplateViewBySelect;
+import uz.technocorp.ecosystem.shared.AppConstants;
 
 import java.util.List;
 import java.util.Map;
@@ -80,10 +79,10 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public Integer updateContent(ContentForm form) {
-        Template template = repository.findById(form.getId()).orElseThrow(() -> new ResourceNotFoundException("Shablon", "ID", form.getId()));
+    public Integer updateContent(Integer templateId, String content) {
+        Template template = repository.findById(templateId).orElseThrow(() -> new ResourceNotFoundException("Shablon", "ID", templateId));
 
-        template.setContent(form.getContent());
+        template.setContent(content);
 
         return repository.save(template).getId();
     }

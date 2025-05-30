@@ -2,7 +2,7 @@ package uz.technocorp.ecosystem.modules.appeal.processor;
 
 import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.HoistDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 
@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class HoistPdfProcessor extends BaseAppealPdfProcessor {
+public class EquipmentPdfProcessor extends BaseAppealPdfProcessor {
 
     @Override
     public Class<? extends AppealDto> getSupportedType() {
-        return HoistDto.class;
+        return EquipmentAppealDto.class;
     }
 
     @Override
@@ -24,19 +24,25 @@ public class HoistPdfProcessor extends BaseAppealPdfProcessor {
 
     @Override
     protected String folderPath() {
-        return "appeals/hoist";
+        return "appeals/equipment";
     }
 
     @Override
     protected Map<String, String> buildParameters(AppealDto appealDto, Profile profile) {
-        HoistDto dto = (HoistDto) appealDto;
+        EquipmentAppealDto dto = (EquipmentAppealDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", profile.getFullName());
         parameters.put("legalName", profile.getLegalName());
-        parameters.put("tin", profile.getTin().toString());
+        parameters.put("legalTin", profile.getTin().toString());
+        parameters.put("facilityName", "UNKNOWN-XICHO");
         parameters.put("regionName", getRegion(dto.getRegionId()).getName());
         parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
+        parameters.put("address", dto.getAddress());
+        parameters.put("factoryNumber", dto.getFactoryNumber());
+        parameters.put("model", dto.getModel());
+        parameters.put("factory", dto.getFactory());
+        parameters.put("equipmentType", dto.getAppealType().name());
+        parameters.put("fullName", profile.getFullName());
 
         return parameters;
     }

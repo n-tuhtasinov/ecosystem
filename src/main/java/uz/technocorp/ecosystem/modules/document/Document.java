@@ -12,6 +12,7 @@ import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -26,6 +27,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Document extends BaseEntity {
+
+//    @Column(nullable = false)
+    @Column // TODO
+    private UUID belongId;
 
     @Column(nullable = false, unique = true)
     private String path;

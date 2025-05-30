@@ -41,11 +41,12 @@ public class DocumentServiceImpl implements DocumentService {
     private final AttachmentService attachmentService;
 
     @Override
-    public UUID create(DocumentDto dto) {
+    public void create(DocumentDto dto) {
         Signer signer = new Signer(getSigner(dto.sign(), dto.ip()), dto.executedBy(), LocalDateTime.now());
 
         Document document = new Document();
 
+        document.setBelongId(dto.belongId());
         document.setPath(dto.path());
         document.setSignedContent(dto.sign());
         document.setSigners(List.of(signer)); // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
@@ -53,12 +54,10 @@ public class DocumentServiceImpl implements DocumentService {
         document.setIsConfirmed(false);
         document.setDescription(null);
 
-        document = repository.save(document);
+        repository.save(document);
 
         // Delete attachment without the file
         attachmentService.deleteByPath(dto.path());
-
-        return document.getId();
     }
 
 
