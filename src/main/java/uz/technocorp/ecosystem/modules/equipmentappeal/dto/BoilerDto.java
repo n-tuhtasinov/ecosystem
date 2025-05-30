@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
@@ -22,7 +21,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Setter
 @Getter
-public class BoilerDto extends EquipmentAppealDto implements AppealDto {
+public class BoilerDto extends EquipmentAppealDto {
 
     @NotNull(message = "Qurilmaning putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi jo'natilmadi")
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -46,5 +45,4 @@ public class BoilerDto extends EquipmentAppealDto implements AppealDto {
     public LocalDate getDeadline() {
         return null;
     }
-
 }

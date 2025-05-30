@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
 
@@ -22,7 +21,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElevatorDto extends EquipmentAppealDto implements AppealDto {
+public class ElevatorDto extends EquipmentAppealDto {
 
     @NotNull(message = "Soha tanlanmadi")
     private Sphere sphere;

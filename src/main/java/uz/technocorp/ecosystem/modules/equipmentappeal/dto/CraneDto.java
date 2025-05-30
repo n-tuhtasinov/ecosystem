@@ -1,17 +1,13 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -23,7 +19,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CraneDto extends EquipmentAppealDto implements AppealDto{
+public class CraneDto extends EquipmentAppealDto {
 
     @NotBlank(message = "Strelasining uzunligi jo'natilmadi")
     private String boomLength;

@@ -1,7 +1,6 @@
 package uz.technocorp.ecosystem.modules.template;
 
 import org.springframework.data.domain.Page;
-import uz.technocorp.ecosystem.modules.template.form.ContentForm;
 import uz.technocorp.ecosystem.modules.template.form.TemplateEditForm;
 import uz.technocorp.ecosystem.modules.template.form.TemplateForm;
 import uz.technocorp.ecosystem.modules.template.projection.TemplateView;
@@ -30,7 +29,7 @@ public interface TemplateService {
 
     Integer update(TemplateEditForm form);
 
-    Integer updateContent(ContentForm form);
+    Integer updateContent(Integer templateId, String content);
 
     void deleteById(Integer templateId);
 }

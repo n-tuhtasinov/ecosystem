@@ -29,7 +29,7 @@ public enum AppealType {
     RE_REGISTER_CONTAINER(""),
 
     //Boiler - bug'qozon
-    REGISTER_BOILER(""),
+    REGISTER_BOILER("Boiler"),
     DEREGISTER_BOILER(""),
     RE_REGISTER_BOILER(""),
 
