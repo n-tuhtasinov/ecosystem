@@ -23,6 +23,8 @@ public interface AppealViewById {
     String getStatus();
     Long getLegalTin();
     String getLegalName();
+    String getResolution();
+    String getConclusion();
     JsonNode getData();
 
 

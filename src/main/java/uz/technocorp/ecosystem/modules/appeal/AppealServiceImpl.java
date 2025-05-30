@@ -90,6 +90,7 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
+    @Transactional
     public void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request) {
         // Check appeal by (appealId, status, inspectorId)
         Appeal appeal = repository.findByIdAndStatusAndExecutorId(replyDto.getDto().getAppealId(), AppealStatus.IN_PROCESS, user.getId())
@@ -245,7 +246,22 @@ public class AppealServiceImpl implements AppealService {
     public void reject(RejectDto dto) {
         Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
         appeal.setStatus(AppealStatus.IN_PROCESS);
-        appeal.setDescription(dto.description());
+        appealRepository.save(appeal);
+
+        //TODO documentning descriptionga set qilish kerak, isConfirmaed ni false qilish kerak
+    }
+
+    @Override
+    public void confirm(User user, ConfirmationDto dto) {
+        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            appeal.setStatus(AppealStatus.IN_APPROVAL);
+        } else if (role == Role.MANAGER) {
+            appeal.setStatus(AppealStatus.COMPLETED);
+        } else {
+            throw new RuntimeException("Hali bu rol uchun logika yoailmagan. Backchenchilarga ayting ))) ...");
+        }
         appealRepository.save(appeal);
     }
 

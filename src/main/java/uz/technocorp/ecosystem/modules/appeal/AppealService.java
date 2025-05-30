@@ -44,5 +44,7 @@ public interface AppealService {
 
     String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
 
-    void reject(@Valid RejectDto dto);
+    void reject(RejectDto dto);
+
+    void confirm(User user, ConfirmationDto dto);
 }

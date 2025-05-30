@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
@@ -44,15 +45,8 @@ public class DocumentServiceImpl implements DocumentService {
     public void create(DocumentDto dto) {
         Signer signer = new Signer(getSigner(dto.sign(), dto.ip()), dto.executedBy(), LocalDateTime.now());
 
-        Document document = new Document();
-
-        document.setBelongId(dto.belongId());
-        document.setPath(dto.path());
-        document.setSignedContent(dto.sign());
-        document.setSigners(List.of(signer)); // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
-        document.setDocumentType(dto.documentType());
-        document.setIsConfirmed(false);
-        document.setDescription(null);
+        List<Signer> signer1 = List.of(signer); // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
+        Document document = new Document(dto.belongId(), dto.path(), dto.sign(), signer1, dto.documentType(), null, null );
 
         repository.save(document);
 

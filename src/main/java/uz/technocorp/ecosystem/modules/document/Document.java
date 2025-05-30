@@ -28,8 +28,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Document extends BaseEntity {
 
-//    @Column(nullable = false)
-    @Column // TODO
+    @Column(nullable = false)
     private UUID belongId;
 
     @Column(nullable = false, unique = true)
@@ -48,5 +47,6 @@ public class Document extends BaseEntity {
 
     private Boolean isConfirmed;
 
+    @Column(columnDefinition = "text")
     private String description;
 }
