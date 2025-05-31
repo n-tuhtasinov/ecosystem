@@ -28,7 +28,7 @@ public class EquipmentGeneratePdfController {
     private final AppealService appealService;
 
     @PostMapping("/boiler")
-    public ResponseEntity<ApiResponse> generateBoilerPdf(@CurrentUser User user, @Valid @RequestBody BoilerDto boilerDto) {
+    public ResponseEntity<ApiResponse> generateBoilerPdf(@CurrentUser User user, @RequestBody BoilerDto boilerDto) {
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(boilerDto, user)));
     }
 

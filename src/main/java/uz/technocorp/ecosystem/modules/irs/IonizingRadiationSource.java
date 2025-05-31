@@ -102,9 +102,6 @@ public class IonizingRadiationSource extends BaseEntity {
 
     private String additionalFilePath;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
     @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "region_id", updatable = false, insertable = false)
     private Region region;

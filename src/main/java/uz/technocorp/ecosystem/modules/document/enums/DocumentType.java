@@ -9,14 +9,14 @@ package uz.technocorp.ecosystem.modules.document.enums;
 public enum DocumentType {
 
     REPORT("Ma'lumotnoma"),
-    PROTOCOL("Bayonnoma"),
+//    PROTOCOL("Bayonnoma"),
     ACT("Dalolatnoma"),
-    ORDER("Buyruq"),
+//    ORDER("Buyruq"),
     DECREE("Qaror"),
-    NOTIFICATION("Xabarnoma"),
+//    NOTIFICATION("Xabarnoma"),
     APPEAL("Ariza"),
-    REPLY_LETTER("Javob xati"),
-    ACCREDITATION_CERTIFICATE("Akkreditatsiya attestati");
+    REPLY_LETTER("Javob xati");
+//    ACCREDITATION_CERTIFICATE("Akkreditatsiya attestati");
 
     public final String displayName;
 

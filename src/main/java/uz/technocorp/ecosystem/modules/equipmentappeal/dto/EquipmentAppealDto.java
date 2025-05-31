@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -21,7 +23,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EquipmentAppealDto{
+public abstract class EquipmentAppealDto implements AppealDto {
 
     @NotBlank(message = "Telefon nomer jo'natilmadi")
     private String phoneNumber;

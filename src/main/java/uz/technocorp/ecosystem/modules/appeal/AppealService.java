@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
@@ -42,4 +43,8 @@ public interface AppealService {
     String preparePdfWithParam(AppealDto dto, User user);
 
     String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
+
+    void reject(RejectDto dto);
+
+    void confirm(User user, ConfirmationDto dto);
 }

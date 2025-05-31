@@ -27,6 +27,7 @@ import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerUtilizerDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -40,6 +41,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -84,13 +86,11 @@ public class AppealServiceImpl implements AppealService {
         }
 
         // Create a document
-        UUID documentId = createDocument(new DocumentDto(dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
-
-        // Set documentId to appeal
-        repository.setDocumentId(appealId, documentId);
+        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
     }
 
     @Override
+    @Transactional
     public void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request) {
         // Check appeal by (appealId, status, inspectorId)
         Appeal appeal = repository.findByIdAndStatusAndExecutorId(replyDto.getDto().getAppealId(), AppealStatus.IN_PROCESS, user.getId())
@@ -98,10 +98,10 @@ public class AppealServiceImpl implements AppealService {
                         () -> new ResourceNotFoundException("Bu ariza sizga biriktirilmagan yoki ariza holati o'zgargan")
                 );
         // Create a reply document
-        UUID replyDocumentId = createDocument(new DocumentDto(replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
+        documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
 
-        // Change appealStatus & Set a conclusion and replyDocumentId
-        repository.changeStatusAndSetConclusionAndReplyId(appeal.getId(), replyDto.getDto().getConclusion(), replyDocumentId, AppealStatus.IN_AGREEMENT);
+        // Change appealStatus and set conclusion
+        repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);
     }
 
     @Override
@@ -157,8 +157,9 @@ public class AppealServiceImpl implements AppealService {
 
         appeal.setExecutorId(dto.inspectorId());
         appeal.setExecutorName(user.getName());
-        appeal.setDeadline(LocalDate.parse(dto.deadline()));
+        appeal.setDeadline(dto.deadline());
         appeal.setResolution(dto.resolution());
+        appeal.setStatus(AppealStatus.IN_PROCESS);
         repository.save(appeal);
         repository.flush();
         appealExecutionProcessRepository.save(
@@ -201,7 +202,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public String preparePdfWithParam(AppealDto dto, User user) {
-        AppealPdfProcessor processor = processors.get(dto.getClass());
+        AppealPdfProcessor processor = findProcessor(dto);
         if (processor == null) {
             throw new ResourceNotFoundException("Form obyekt turi xato: " + dto.getClass().getSimpleName());
         }
@@ -241,6 +242,29 @@ public class AppealServiceImpl implements AppealService {
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters);
     }
 
+    @Override
+    public void reject(RejectDto dto) {
+        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+        appeal.setStatus(AppealStatus.IN_PROCESS);
+        appealRepository.save(appeal);
+
+        //TODO documentning descriptionga set qilish kerak, isConfirmaed ni false qilish kerak
+    }
+
+    @Override
+    public void confirm(User user, ConfirmationDto dto) {
+        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            appeal.setStatus(AppealStatus.IN_APPROVAL);
+        } else if (role == Role.MANAGER) {
+            appeal.setStatus(AppealStatus.COMPLETED);
+        } else {
+            throw new RuntimeException("Hali bu rol uchun logika yoailmagan. Backchenchilarga ayting ))) ...");
+        }
+        appealRepository.save(appeal);
+    }
+
     private JsonNode makeJsonData(AppealDto dto) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -272,11 +296,21 @@ public class AppealServiceImpl implements AppealService {
         return executorName;
     }
 
-    private UUID createDocument(DocumentDto dto) {
-        return documentService.create(dto);
-    }
-
     private Appeal getAppealById(UUID id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", id));
+    }
+
+    private AppealPdfProcessor findProcessor(AppealDto dto) {
+        // 1. Exact match qidirish
+        AppealPdfProcessor processor = processors.get(dto.getClass());
+        if (processor != null) {
+            return processor;
+        }
+
+        // 2. Parent class orqali qidirish
+        if (dto instanceof EquipmentAppealDto) {
+            return processors.get(EquipmentAppealDto.class);
+        }
+        return null;
     }
 }
