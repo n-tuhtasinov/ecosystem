@@ -15,7 +15,7 @@ import java.util.UUID;
  */
 public interface InspectionReportService {
 
-    void create(UUID reportId, InspectionReportDto dto);
+    void create(UUID inspectionId, InspectionReportDto dto);
     void update(User user, UUID id, InspectionReportDto dto);
     List<InspectionReportView> getAllByInspectionId(UUID inspectionId);
 }

@@ -68,8 +68,11 @@ public class InspectionRepoImpl implements InspectionRepo {
                     .orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
             Integer regionId = profile.getRegionId();
 
-            predicates.add(criteriaBuilder.equal(inspectionRoot.get("regionId"), regionId));
-            countPredicates.add(criteriaBuilder.equal(countRoot.get("regionId"), regionId));
+            Join<Inspection, Integer> regionsJoin = inspectionRoot.join("regionIds");
+            predicates.add(criteriaBuilder.equal(regionsJoin, regionId));
+
+            Join<Inspection, Integer> countRegionsJoin = countRoot.join("regionIds");
+            countPredicates.add(criteriaBuilder.equal(countRegionsJoin, regionId));
 
         } else if (user.getRole().equals(Role.INSPECTOR)) {
             Join<Inspection, UUID> inspectorJoin = inspectionRoot.join("inspectorIds");

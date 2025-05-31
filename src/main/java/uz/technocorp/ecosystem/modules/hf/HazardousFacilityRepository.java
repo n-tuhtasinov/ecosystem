@@ -9,6 +9,7 @@ import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -86,4 +87,11 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             where hf.region_id = :regionId
             """, nativeQuery = true)
     Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId);
+
+    @Query(value = """
+            select distinct(region_id)
+                from hazardous_facility
+                where legal_tin = :tin
+            """, nativeQuery = true)
+    Set<Integer> getAllRegionIdByLegalTin(Long tin);
 }

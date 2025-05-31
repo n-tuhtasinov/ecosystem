@@ -34,13 +34,13 @@ public class InspectionReportExecutionServiceImpl implements InspectionReportExe
                         .reportId(reportId)
                         .status(InspectionReportExecutionStatus.IN_PROCESS)
                         .fileUploadDate(LocalDate.now())
-                        .fixedBugsFilePath(dto.paramValue())
+                        .executionFilePath(dto.paramValue())
                         .build()
         );
     }
 
     @Override
-    public void rejected(User user, UUID id, IRExecutionDto dto) {
+    public void reject(User user, UUID id, IRExecutionDto dto) {
         InspectionReportExecution inspectionReportExecution = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
@@ -53,7 +53,7 @@ public class InspectionReportExecutionServiceImpl implements InspectionReportExe
     }
 
     @Override
-    public void accepted(User user, UUID id) {
+    public void accept(User user, UUID id) {
         InspectionReportExecution inspectionReportExecution = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));

@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.irs;
 
 import jakarta.persistence.*;
 import lombok.*;
+import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.district.District;
@@ -127,4 +128,14 @@ public class IonizingRadiationSource extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String registryNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
+    @JoinColumn(name = "profile_id", insertable = false, updatable = false)
+    private Profile profile;
+
+    @Column(name = "profile_id")
+    private UUID profileId;
+
+    @Column(nullable = false)
+    private Long legalTin;
 }

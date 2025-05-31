@@ -10,6 +10,7 @@ import uz.technocorp.ecosystem.modules.equipment.EquipmentRepository;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
+import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
@@ -17,10 +18,7 @@ import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -39,6 +37,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
     private final RiskAssessmentRepository riskAssessmentRepository;
     private final RiskAnalysisIntervalRepository intervalRepository;
     private final InspectionRepository inspectionRepository;
+    private final ProfileRepository profileRepository;
 
     @Override
     public void create(EquipmentRiskIndicatorDto dto) {
@@ -145,23 +144,28 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
                                         .equipmentId(dto.objectId())
                                         .build()
                         );
-                        Equipment equipment = equipmentRepository
-                                .findById(dto.objectId())
-                                .orElse(null);
-                        assert equipment != null;
-                        Integer regionId = equipment.getRegionId();
                         if (dto.sumScore() + organizationScore > 80) {
-                            List<Inspection> inspectionList = inspectionRepository
-                                    .findAllByRegionIdAndTinAndIntervalId(regionId, tin, riskAnalysisInterval.getId());
-                            if (inspectionList.isEmpty()) {
-                                inspectionRepository.save(
-                                        Inspection
-                                                .builder()
-                                                .tin(dto.tin())
-                                                .regionId(regionId)
-                                                .districtId(equipment.getDistrictId())
-                                                .build()
-                                );
+                            Optional<Inspection> inspectionOptional = inspectionRepository
+                                    .findAllByTinAndIntervalId(tin, riskAnalysisInterval.getId());
+                            Set<Integer> regionIds = equipmentRepository.getAllRegionIdByLegalTin(tin);
+                            if (inspectionOptional.isEmpty()) {
+                                profileRepository.findByTin(tin).ifPresent(profile -> {
+                                    inspectionRepository.save(
+                                            Inspection
+                                                    .builder()
+                                                    .tin(dto.tin())
+                                                    .regionId(profile.getRegionId())
+                                                    .districtId(profile.getDistrictId())
+                                                    .build()
+                                    );
+                                });
+
+                            } else {
+                                Inspection inspection = inspectionOptional.get();
+                                Set<Integer> existRegionIds = inspection.getRegionIds();
+                                existRegionIds.addAll(regionIds);
+                                inspection.setRegionIds(existRegionIds);
+                                inspectionRepository.save(inspection);
                             }
                         }
                     });

@@ -31,7 +31,7 @@ public class InspectionReportExecution extends BaseEntity {
     @Column(name = "report_id")
     private UUID reportId;
 
-    private String fixedBugsFilePath;
+    private String executionFilePath;
 
     private LocalDate fileUploadDate;
 

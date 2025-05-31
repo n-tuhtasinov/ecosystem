@@ -12,6 +12,7 @@ import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -58,6 +59,11 @@ public class Inspection extends BaseEntity {
 
     @Column(name = "region_id")
     private Integer regionId;
+
+    @ElementCollection(fetch = FetchType.LAZY, targetClass = Integer.class)
+    @CollectionTable(name = "inspection_region", joinColumns = @JoinColumn(name = "inspection_id"))
+    @Column(name = "region_id")
+    private Set<Integer> regionIds;
 
     @ManyToOne(targetEntity = District.class, fetch = FetchType.LAZY )
     @JoinColumn(name = "district_id", insertable = false, updatable = false)

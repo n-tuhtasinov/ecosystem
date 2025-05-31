@@ -9,6 +9,7 @@ import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityRepository;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
+import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
@@ -19,10 +20,7 @@ import uz.technocorp.ecosystem.modules.hfriskindicator.dto.HFRIndicatorDto;
 import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -41,6 +39,7 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
     private final RiskAssessmentRepository riskAssessmentRepository;
     private final RiskAnalysisIntervalRepository intervalRepository;
     private final InspectionRepository inspectionRepository;
+    private final ProfileRepository profileRepository;
 
     @Override
     public void create(HFRIndicatorDto dto) {
@@ -53,7 +52,7 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                 HazardousFacility hazardousFacility = hazardousFacilityRepository
                         .findById(dto.hazardousFacilityId())
                         .orElseThrow(() -> new ResourceNotFoundException("XICHO", "Id", dto.hazardousFacilityId()));
-               String identificationCardPath = hazardousFacility.getIdentificationCardPath();
+                String identificationCardPath = hazardousFacility.getIdentificationCardPath();
                 String expertOpinionPath = hazardousFacility.getExpertOpinionPath();
                 String industrialSafetyDeclarationPath = hazardousFacility.getIndustrialSafetyDeclarationPath();
                 String insurancePolicyPath = hazardousFacility.getInsurancePolicyPath();
@@ -175,23 +174,30 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                                         .riskAnalysisInterval(riskAnalysisInterval)
                                         .build()
                         );
-                        HazardousFacility hazardousFacility = hazardousFacilityRepository
-                                .findById(dto.objectId())
-                                .orElse(null);
-                        assert hazardousFacility != null;
-                        Integer regionId = hazardousFacility.getRegionId();
                         if (dto.sumScore() + organizationScore > 80) {
-                            List<Inspection> inspectionList = inspectionRepository
-                                    .findAllByRegionIdAndTinAndIntervalId(regionId, tin, riskAnalysisInterval.getId());
-                            if (inspectionList.isEmpty()) {
-                                inspectionRepository.save(
-                                        Inspection
-                                                .builder()
-                                                .tin(dto.tin())
-                                                .regionId(regionId)
-                                                .districtId(hazardousFacility.getDistrictId())
-                                                .build()
-                                );
+                            Optional<Inspection> inspectionOptional = inspectionRepository
+                                    .findAllByTinAndIntervalId(tin, riskAnalysisInterval.getId());
+                            Set<Integer> regionIds = hazardousFacilityRepository.getAllRegionIdByLegalTin(tin);
+                            if (inspectionOptional.isEmpty()) {
+                                profileRepository
+                                        .findByTin(tin)
+                                        .ifPresent(profile -> {
+                                            inspectionRepository.save(
+                                                    Inspection
+                                                            .builder()
+                                                            .tin(dto.tin())
+                                                            .regionId(profile.getRegionId())
+                                                            .regionIds(regionIds)
+                                                            .districtId(profile.getDistrictId())
+                                                            .build()
+                                            );
+                                        });
+                            } else {
+                                Inspection inspection = inspectionOptional.get();
+                                Set<Integer> existRegionIds = inspection.getRegionIds();
+                                existRegionIds.addAll(regionIds);
+                                inspection.setRegionIds(existRegionIds);
+                                inspectionRepository.save(inspection);
                             }
                         }
                     });

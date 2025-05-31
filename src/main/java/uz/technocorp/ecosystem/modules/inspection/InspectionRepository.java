@@ -24,8 +24,8 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
             select *
             from inspection
             where interval_id = :intervalId
-            and tin = :tin and region_id = :regionId
+            and tin = :tin
             """, nativeQuery=true)
-    List<Inspection> findAllByRegionIdAndTinAndIntervalId(Integer regionId, Long tin, Integer intervalId);
+    Optional<Inspection> findAllByTinAndIntervalId(Long tin, Integer intervalId);
 
 }

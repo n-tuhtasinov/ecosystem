@@ -10,6 +10,7 @@ import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceRepository;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
+import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
@@ -17,10 +18,7 @@ import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -40,6 +38,7 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
     private final RiskAssessmentRepository riskAssessmentRepository;
     private final RiskAnalysisIntervalRepository intervalRepository;
     private final InspectionRepository inspectionRepository;
+    private final ProfileRepository profileRepository;
 
     @Override
     public void create(IrsRiskIndicatorDto dto) {
@@ -141,22 +140,29 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
 
 
                         if (dto.sumScore() + organizationScore > 80) {
-                            IonizingRadiationSource ionizingRadiationSource = irsRepository
-                                    .findById(dto.objectId())
-                                    .orElse(null);
-                            assert ionizingRadiationSource != null;
-                            Integer regionId = ionizingRadiationSource.getRegionId();
-                            List<Inspection> inspectionList = inspectionRepository
-                                    .findAllByRegionIdAndTinAndIntervalId(regionId, tin, riskAnalysisInterval.getId());
-                            if (inspectionList.isEmpty()) {
-                                inspectionRepository.save(
-                                        Inspection
-                                                .builder()
-                                                .tin(dto.tin())
-                                                .regionId(regionId)
-                                                .districtId(ionizingRadiationSource.getDistrictId())
-                                                .build()
-                                );
+                            Set<Integer> regionIds = irsRepository.getAllRegionIdByLegalTin(tin);
+                            Optional<Inspection> inspectionOptional = inspectionRepository
+                                    .findAllByTinAndIntervalId(tin, riskAnalysisInterval.getId());
+                            if (inspectionOptional.isEmpty()) {
+                                profileRepository
+                                        .findByTin(tin)
+                                        .ifPresent(profile -> {
+                                            inspectionRepository.save(
+                                                    Inspection
+                                                            .builder()
+                                                            .tin(dto.tin())
+                                                            .regionId(profile.getRegionId())
+                                                            .districtId(profile.getDistrictId())
+                                                            .build()
+                                            );
+                                        });
+
+                            } else {
+                                Inspection inspection = inspectionOptional.get();
+                                Set<Integer> existRegionIds = inspection.getRegionIds();
+                                existRegionIds.addAll(regionIds);
+                                inspection.setRegionIds(existRegionIds);
+                                inspectionRepository.save(inspection);
                             }
                         }
                     });

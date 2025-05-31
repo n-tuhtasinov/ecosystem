@@ -15,6 +15,6 @@ public interface InspectionReportExecutionService {
 
 
     void create(UUID reportId, IRExecutionDto dto);
-    void rejected(User user, UUID id, IRExecutionDto dto);
-    void accepted(User user, UUID id);
+    void reject(User user, UUID id, IRExecutionDto dto);
+    void accept(User user, UUID id);
 }
