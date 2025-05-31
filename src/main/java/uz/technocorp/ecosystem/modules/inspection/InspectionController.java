@@ -51,7 +51,7 @@ public class InspectionController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
-    @GetMapping("}")
+    @GetMapping
     public ResponseEntity<?> getAll(@CurrentUser User user,
                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
