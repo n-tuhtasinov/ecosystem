@@ -32,9 +32,4 @@ public class DocumentController {
         }
     }
 
-    @GetMapping("/{documentId}")
-    public ResponseEntity<?> getById(@PathVariable UUID documentId) {
-        return ResponseEntity.ok(service.getById(documentId));
-    }
-
 }

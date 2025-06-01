@@ -18,7 +18,7 @@ public interface DocumentViewByReply {
     String getDocumentType();
     Boolean getIsSigned();
     String getPath();
-    Boolean getIsConfirmed();
+    String getAgreementStatus();
     String getDescription();
     @Value("#{@documentServiceImpl.convertToList(target.signers)}")
     List<Signer> getSigners();

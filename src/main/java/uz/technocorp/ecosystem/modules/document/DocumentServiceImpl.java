@@ -61,10 +61,6 @@ public class DocumentServiceImpl implements DocumentService {
         repository.deleteById(id);
     }
 
-    @Override
-    public DocumentViewByReply getById(UUID documentId) {
-        return repository.getDocumentById(documentId).orElseThrow(() -> new ResourceNotFoundException("Document", "ID", documentId));
-    }
 
     @Override
     public List<DocumentViewByRequest> getRequestDocumentsByAppealId(UUID appealId) {
