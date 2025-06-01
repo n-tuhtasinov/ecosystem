@@ -21,8 +21,6 @@ public interface DocumentService {
 
     void delete(UUID id);
 
-    DocumentViewByReply getById(UUID documentId);
-
     List<DocumentViewByRequest> getRequestDocumentsByAppealId(UUID appealId);
 
     List<DocumentViewByReply> getReplyDocumentsByAppealId(User user, UUID appealId);

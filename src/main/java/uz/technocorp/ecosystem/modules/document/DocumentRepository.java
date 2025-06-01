@@ -17,15 +17,6 @@ import java.util.UUID;
  */
 public interface DocumentRepository extends JpaRepository<Document, UUID> {
 
-    @Query(nativeQuery = true, value = """
-             select id            as id,
-                    document_type as documentType,
-                    path          as path,
-                    1 = 1         as isSigned
-             from document
-             where id = :documentId
-            """)
-    Optional<DocumentViewByReply> getDocumentById(UUID documentId);
 
     @Query(nativeQuery = true, value = """
             select id            as documentId,
@@ -41,11 +32,11 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
     List<DocumentViewByRequest> getRequestDocumentsByAppealId(UUID appealId, String documentType);
 
     @Query(nativeQuery = true, value = """
-            select id            as documentId,
-                   document_type as documentType,
-                   1 = 1         as is_signed,
+            select id                as documentId,
+                   document_type     as documentType,
+                   1 = 1             as is_signed,
                    path,
-                   is_confirmed  as isConfirmed,
+                   agreement_status  as agreementStatus,
                    description,
                    signers
             from document
