@@ -43,12 +43,6 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.COMPLETED));
     }
 
-//    @PatchMapping("/status")
-//    public ResponseEntity<?> changeAppealStatus(@Valid @RequestBody AppealStatusDto dto) {
-//        service.changeAppealStatus(dto);
-//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.COMPLETED));
-//    }
-
     @GetMapping
     public ResponseEntity<?> getAllAppeals(@CurrentUser User user, @RequestParam Map<String, String> params) {
         Page<AppealCustom> appeals = service.getAppealCustoms(user, params);
@@ -93,8 +87,8 @@ public class AppealController {
     }
 
     @PostMapping("/rejection")
-    public ResponseEntity<?> reject(@Valid @RequestBody RejectDto rejectDto) {
-        service.reject(rejectDto);
+    public ResponseEntity<?> reject(@CurrentUser User user, @Valid @RequestBody RejectDto rejectDto) {
+        service.reject(user, rejectDto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.REJECTED));
     }
 

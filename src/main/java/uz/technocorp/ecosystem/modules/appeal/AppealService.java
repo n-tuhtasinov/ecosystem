@@ -26,13 +26,11 @@ public interface AppealService {
 
     void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
 
-    UUID create(AppealDto dto, User user);
+    UUID create(AppealDto dto, User user); //TODO Barcha ariza yaratiladigan controllerlar saveAndSign ga o'tkazilgandan keyin Service dan o'chirib, ServiceImplda private method qilib qo'yish kerak
 
     void update(UUID id, AppealDto dto);
 
     void setInspector(SetInspectorDto dto);
-
-    void changeAppealStatus(AppealStatusDto dto);
 
     Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params);
 
@@ -44,7 +42,7 @@ public interface AppealService {
 
     String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
 
-    void reject(RejectDto dto);
+    void reject(User user, RejectDto dto);
 
     void confirm(User user, ConfirmationDto dto);
 }
