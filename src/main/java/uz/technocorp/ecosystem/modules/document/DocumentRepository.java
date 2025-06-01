@@ -34,7 +34,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
                    path,
                    signers
             from document
-            where appeal_id = :appealId
+            where belong_id = :appealId
               and document_type = :documentType
             order by created_at desc
             """)
@@ -49,10 +49,12 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
                    description,
                    signers
             from document
-            where appeal_id = :appealId
+            where belong_id = :appealId
               and document_type != :documentType
-              and (:isConfirmed is null or is_confirmed = :isConfirmed)
+              and (:agreementStatus is null or agreement_status = :agreementStatus)
             order by created_at desc
             """)
-    List<DocumentViewByReply> getReplyDocumentsByAppealIdAndConfirmed(UUID appealId, String documentType, Boolean isConfirmed);
+    List<DocumentViewByReply> getReplyDocumentsByAppealIdAndAgreementStatus(UUID appealId, String documentType, String agreementStatus);
+
+    Optional<Document> findByBelongId(UUID belongId);
 }

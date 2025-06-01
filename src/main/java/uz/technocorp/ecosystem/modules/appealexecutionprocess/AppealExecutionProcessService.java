@@ -14,6 +14,6 @@ import java.util.UUID;
  */
 public interface AppealExecutionProcessService {
 
-    void writeExecutionProcess(AppealExecutionProcessDto dto);
+    void create(AppealExecutionProcessDto dto);
     List<AppealExecutionProcessProjection> getAll(UUID appealId);
 }

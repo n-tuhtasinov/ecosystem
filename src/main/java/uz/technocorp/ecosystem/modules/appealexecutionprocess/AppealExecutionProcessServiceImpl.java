@@ -21,10 +21,11 @@ public class AppealExecutionProcessServiceImpl implements AppealExecutionProcess
     private final AppealExecutionProcessRepository repository;
 
     @Override
-    public void writeExecutionProcess(AppealExecutionProcessDto dto) {
+    public void create(AppealExecutionProcessDto dto) {
         repository.save(
                 new AppealExecutionProcess(
                         dto.appealId(),
+                        dto.appealStatus(),
                         dto.description()
                 )
         );

@@ -125,4 +125,7 @@ public class Appeal extends BaseEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode data;
 
+    @Column(nullable = false)
+    private Boolean isRejected;
+
 }
