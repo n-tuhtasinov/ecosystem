@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.riskassessment;
 
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.riskassessment.projection.RiskAssessmentView;
+import uz.technocorp.ecosystem.modules.user.User;
 
 /**
  * @author Rasulov Komil
@@ -11,5 +12,7 @@ import uz.technocorp.ecosystem.modules.riskassessment.projection.RiskAssessmentV
  */
 public interface RiskAssessmentService {
 
-    Page<RiskAssessmentView> getAll(int page, int size);
+    Page<RiskAssessmentView> getAllHf(Long tin, Integer regionId, Integer intervalId, int page, int size);
+    Page<RiskAssessmentView> getAllIrs(Long tin, Integer regionId, Integer intervalId, int page, int size);
+    Page<RiskAssessmentView> getAllEquipments(Long tin, Integer regionId, Integer intervalId, int page, int size);
 }

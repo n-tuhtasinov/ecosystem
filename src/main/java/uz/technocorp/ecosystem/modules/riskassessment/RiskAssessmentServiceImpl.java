@@ -18,9 +18,22 @@ import uz.technocorp.ecosystem.modules.riskassessment.projection.RiskAssessmentV
 @RequiredArgsConstructor
 public class RiskAssessmentServiceImpl implements RiskAssessmentService {
     private final RiskAssessmentRepository repository;
+
     @Override
-    public Page<RiskAssessmentView> getAll(int page, int size) {
+    public Page<RiskAssessmentView> getAllHf(Long tin, Integer regionId, Integer intervalId, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "sum_score");
-        return repository.getAll(pageable);
+        return repository.getAllHfByTinAndRegionId(pageable, regionId, intervalId, tin);
+    }
+
+    @Override
+    public Page<RiskAssessmentView> getAllIrs(Long tin, Integer regionId, Integer intervalId, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "sum_score");
+        return repository.getAllIrsByTinAndRegionId(pageable, regionId, intervalId, tin);
+    }
+
+    @Override
+    public Page<RiskAssessmentView> getAllEquipments(Long tin, Integer regionId, Integer intervalId, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "sum_score");
+        return repository.getAllEquipmentsByTinAndRegionId(pageable, regionId, intervalId, tin);
     }
 }

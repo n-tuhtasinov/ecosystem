@@ -3,7 +3,9 @@ package uz.technocorp.ecosystem.modules.irs;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -15,4 +17,11 @@ import java.util.UUID;
 public interface IonizingRadiationSourceRepository extends JpaRepository<IonizingRadiationSource, UUID> {
     @Query("SELECT i.orderNumber FROM IonizingRadiationSource i ORDER BY i.orderNumber DESC LIMIT 1")
     Optional<Long> findMaxOrderNumber();
+
+    @Query(value = """
+            select distinct(region_id)
+                from ionizing_radiation_source
+                where legal_tin = :tin
+            """, nativeQuery = true)
+    Set<Integer> getAllRegionIdByLegalTin(Long tin);
 }
