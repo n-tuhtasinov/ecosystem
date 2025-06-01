@@ -53,6 +53,8 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
         repository.save(
                 IonizingRadiationSource
                         .builder()
+                        .profileId(appeal.getProfileId())
+                        .legalTin(appeal.getLegalTin())
                         .address(appeal.getAddress())
                         .parentOrganization(irsAppealDto.getParentOrganization())
                         .supervisorName(irsAppealDto.getSupervisorName())

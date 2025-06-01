@@ -1,0 +1,31 @@
+package uz.technocorp.ecosystem.modules.inspectionreport;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportView;
+
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * @author Rasulov Komil
+ * @version 1.0
+ * @created 29.05.2025
+ * @since v1.0
+ */
+public interface InspectionReportRepository extends JpaRepository<InspectionReport, UUID> {
+
+    @Query(value = """
+            select ir.id as id,
+                assigned_tasks as assignedTasks,
+                file_upload_date as fileUploadDate,
+                fixed_bugs_file_path as fixedBugsFilePath,
+                rejected_cause as rejectedCause,
+                status,
+                ire.id as reportExecutionId
+                from inspection_report ir
+                join inspection_report_execution ire on ir.id = ire.report_id
+                where ir.inspection_id = :inspectionId
+            """, nativeQuery = true)
+    List<InspectionReportView> findAlByInspectionId(UUID inspectionId);
+}
