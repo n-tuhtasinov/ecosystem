@@ -37,7 +37,7 @@ public class AppealController {
     private final AppealService service;
     private final DocumentService documentService;
 
-    @PatchMapping("/set-inspector")
+    @PostMapping("/set-inspector")
     public ResponseEntity<?> setInspector(@Valid @RequestBody SetInspectorDto dto) {
         service.setInspector(dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.COMPLETED));

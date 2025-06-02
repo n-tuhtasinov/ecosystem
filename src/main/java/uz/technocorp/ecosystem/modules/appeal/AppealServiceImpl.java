@@ -127,6 +127,7 @@ public class AppealServiceImpl implements AppealService {
                 .legalTin(profile.getTin())
                 .legalName(profile.getLegalName())
                 .legalRegionId(profile.getRegionId())
+                .profileId(profile.getId())
                 .regionId(dto.getRegionId())
                 .legalDistrictId(profile.getDistrictId())
                 .districtId(dto.getDistrictId())
@@ -139,6 +140,7 @@ public class AppealServiceImpl implements AppealService {
                 .deadline(dto.getDeadline())
                 .executorName(executorName)
                 .data(data)
+                .isRejected(false)
                 .build();
         repository.save(appeal);
 
