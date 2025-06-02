@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +29,16 @@ public class EquipmentAppealController {
     private final AppealService appealService;
 
     @PostMapping("/crane")
-    public ResponseEntity<?> createCrane (@CurrentUser User user, @Valid @RequestBody CraneDto craneDto) {
-        appealService.create(craneDto,user);
+    public ResponseEntity<?> createCrane (@CurrentUser User user, @Valid @RequestBody CraneDto craneDto, HttpServletRequest request) {
+        appealService.create(craneDto, user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
+
+    /*@PostMapping("/crane")
+    public ResponseEntity<?> createCrane (@CurrentUser User user, @Valid @RequestBody CraneDto craneDto, HttpServletRequest request) {
+        appealService.create(craneDto, user);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }*/
 
     @PostMapping("/container")
     public ResponseEntity<?> createContainer (@CurrentUser User user, @Valid @RequestBody ContainerDto containerDto) {
@@ -40,8 +47,8 @@ public class EquipmentAppealController {
     }
 
     @PostMapping("/boiler")
-    public ResponseEntity<?> createBoiler (@CurrentUser User user, @Valid @RequestBody BoilerDto boilerDto) {
-        appealService.create(boilerDto,user);
+    public ResponseEntity<?> createBoiler (@CurrentUser User user, @Valid @RequestBody BoilerDto boilerDto, HttpServletRequest request) {
+        appealService.create(boilerDto, user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 

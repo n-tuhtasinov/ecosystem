@@ -1,21 +1,21 @@
-package uz.technocorp.ecosystem.modules.appeal.dto;
+package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 
 /**
- * @author Nurmuhammad Tuhtasinov
+ * @author Sukhrob
  * @version 1.0
- * @created 27.03.2025
+ * @created 30.05.2025
  * @since v1.0
  */
-public interface SignedAppealDto {
+public interface SignedEquipmentDto {
+
     String getFilePath();
 
     String getSign();
 
-    Object getDto();
+    EquipmentAppealDto getDto();
 
     @Schema(hidden = true)
     DocumentType getType();
