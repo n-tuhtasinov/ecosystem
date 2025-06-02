@@ -1,15 +1,17 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
+
+import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -29,6 +31,12 @@ public class EquipmentController {
         equipmentService.create(equipmentRegistryDto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
+
+//    @GetMapping
+//    public ResponseEntity<?> getAll(@CurrentUser User user, @RequestParam Map<String, String> params) {
+//        equipmentService.getAll(user, params);
+//        return ResponseEntity.ok(new ApiResponse())
+//    }
 
 
 }

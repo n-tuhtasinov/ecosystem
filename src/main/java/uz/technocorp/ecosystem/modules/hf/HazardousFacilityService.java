@@ -1,12 +1,11 @@
 package uz.technocorp.ecosystem.modules.hf;
 
 import org.springframework.data.domain.Page;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
-import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
-import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.user.User;
 
@@ -22,7 +21,7 @@ import java.util.UUID;
  */
 public interface HazardousFacilityService {
 
-    void create(HfRegistryDto dto);
+    void create(Appeal appeal);
     void create(HfDto dto);
     void update(UUID id, HfDto dto);
     void deregister(UUID id, HfDeregisterDto dto);
