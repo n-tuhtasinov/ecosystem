@@ -25,10 +25,7 @@ import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
-import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
-import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -58,7 +55,6 @@ public class AppealServiceImpl implements AppealService {
 
     private final AppealRepository repository;
     private final UserRepository userRepository;
-    private final AppealRepository appealRepository;
     private final ProfileService profileService;
     private final RegionService regionService;
     private final DistrictService districtService;
@@ -170,7 +166,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
-        return appealRepository.getAppealCustoms(user, params);
+        return repository.getAppealCustoms(user, params);
     }
 
     @Override
@@ -180,7 +176,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public AppealViewById getById(UUID appealId) {
-        return appealRepository.getAppealById(appealId).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", appealId));
+        return repository.getAppealById(appealId).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", appealId));
     }
 
     @Override
@@ -228,10 +224,10 @@ public class AppealServiceImpl implements AppealService {
     @Override
     @Transactional
     public void reject(User user, RejectDto dto) {
-        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+        Appeal appeal = repository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
         appeal.setStatus(AppealStatus.IN_PROCESS);
         appeal.setIsRejected(true);
-        appealRepository.save(appeal);
+        repository.save(appeal);
 
         //set rejection to the document
         documentService.reject(user, dto);
@@ -243,7 +239,7 @@ public class AppealServiceImpl implements AppealService {
     @Override
     @Transactional
     public void confirm(User user, ConfirmationDto dto) {
-        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+        Appeal appeal = repository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
 
         Role role = user.getRole();
         AppealStatus appealStatus;
@@ -257,7 +253,7 @@ public class AppealServiceImpl implements AppealService {
 
         appeal.setStatus(appealStatus);
         appeal.setIsRejected(false); //because it may be confirming the previously rejected appeal.
-        appealRepository.save(appeal);
+        repository.save(appeal);
 
         //set confirmation to the document
         documentService.confirmationByAppeal(user, dto.documentId());
@@ -267,7 +263,7 @@ public class AppealServiceImpl implements AppealService {
 
         //create registry for the appeal if the appeal's status is completed
         if (appealStatus == AppealStatus.COMPLETED) {
-            switch (appeal.getAppealType()){
+            switch (appeal.getAppealType()) {
                 case AppealType.REGISTER_HF -> hazardousFacilityService.create(appeal);
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }
@@ -282,7 +278,7 @@ public class AppealServiceImpl implements AppealService {
     }
 
     private OrderNumberDto makeNumber(AppealType appealType) {
-        Long orderNumber = appealRepository.getMax().orElse(0L) + 1;
+        Long orderNumber = repository.getMax().orElse(0L) + 1;
 
         String number = null;
 
