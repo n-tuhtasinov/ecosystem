@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import uz.technocorp.ecosystem.modules.document.dto.Signer;
+import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
@@ -28,8 +29,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Document extends BaseEntity {
 
-//    @Column(nullable = false)
-    @Column // TODO
+    @Column(nullable = false)
     private UUID belongId;
 
     @Column(nullable = false, unique = true)
@@ -46,7 +46,9 @@ public class Document extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DocumentType documentType;
 
-    private Boolean isConfirmed;
+    @Enumerated(EnumType.STRING)
+    private AgreementStatus agreementStatus;
 
+    @Column(columnDefinition = "text")
     private String description;
 }

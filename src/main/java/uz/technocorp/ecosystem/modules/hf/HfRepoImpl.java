@@ -98,13 +98,13 @@ public class HfRepoImpl implements HfRepo {
         // Qidiruvni amalga oshirish
         TypedQuery<HfCustom> query = em.createQuery(cq);
 
-        // Pagination uchun sahifani sozlash
-        query.setFirstResult((int) pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
-
         countQuery.select(cb.count(countRoot));
         countQuery.where(countPredicates.toArray(new Predicate[0]));
         Long totalElements = em.createQuery(countQuery).getSingleResult();
+
+        // Pagination uchun sahifani sozlash
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
 
         return new PageImpl<>(query.getResultList(), pageable, totalElements);
     }

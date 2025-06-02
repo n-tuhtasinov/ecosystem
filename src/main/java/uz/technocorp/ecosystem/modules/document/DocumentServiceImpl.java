@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.appeal.dto.RejectDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.dto.Signer;
+import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByReply;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByRequest;
@@ -44,15 +46,8 @@ public class DocumentServiceImpl implements DocumentService {
     public void create(DocumentDto dto) {
         Signer signer = new Signer(getSigner(dto.sign(), dto.ip()), dto.executedBy(), LocalDateTime.now());
 
-        Document document = new Document();
-
-        document.setBelongId(dto.belongId());
-        document.setPath(dto.path());
-        document.setSignedContent(dto.sign());
-        document.setSigners(List.of(signer)); // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
-        document.setDocumentType(dto.documentType());
-        document.setIsConfirmed(false);
-        document.setDescription(null);
+        List<Signer> signer1 = List.of(signer); // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
+        Document document = new Document(dto.belongId(), dto.path(), dto.sign(), signer1, dto.documentType(), null, null);
 
         repository.save(document);
 
@@ -66,10 +61,6 @@ public class DocumentServiceImpl implements DocumentService {
         repository.deleteById(id);
     }
 
-    @Override
-    public DocumentViewByReply getById(UUID documentId) {
-        return repository.getDocumentById(documentId).orElseThrow(() -> new ResourceNotFoundException("Document", "ID", documentId));
-    }
 
     @Override
     public List<DocumentViewByRequest> getRequestDocumentsByAppealId(UUID appealId) {
@@ -79,10 +70,43 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public List<DocumentViewByReply> getReplyDocumentsByAppealId(User user, UUID appealId) {
         if (user.getRole().equals(Role.LEGAL) || user.getRole().equals(Role.INDIVIDUAL)) {
-            return repository.getReplyDocumentsByAppealIdAndConfirmed(appealId, DocumentType.APPEAL.name(), true);
+            return repository.getReplyDocumentsByAppealIdAndAgreementStatus(appealId, DocumentType.APPEAL.name(), AgreementStatus.APPROVED.name());
         }
 
-        return repository.getReplyDocumentsByAppealIdAndConfirmed(appealId, DocumentType.APPEAL.name(), null);
+        return repository.getReplyDocumentsByAppealIdAndAgreementStatus(appealId, DocumentType.APPEAL.name(), null);
+    }
+
+    @Override
+    public void reject(User user, RejectDto dto) {
+        Document document = repository.findByBelongId(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Document", "belongID", dto.appealId()));
+        document.setDescription(dto.description());
+
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            document.setAgreementStatus(AgreementStatus.NOT_AGREED);
+        } else if (role == Role.MANAGER) {
+            document.setAgreementStatus(AgreementStatus.NOT_APPROVED);
+        } else {
+            throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting )))");
+        }
+
+        repository.save(document);
+    }
+
+    @Override
+    public void confirmationByAppeal(User user, UUID appealId) {
+        Document document = repository.findByBelongId(appealId).orElseThrow(() -> new ResourceNotFoundException("Document", "belongID", appealId));
+
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            document.setAgreementStatus(AgreementStatus.AGREED);
+        } else if (role == Role.MANAGER) {
+            document.setAgreementStatus(AgreementStatus.APPROVED);
+        } else {
+            throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting )))");
+        }
+
+        repository.save(document);
     }
 
     public List<Signer> convertToList(String signers) {

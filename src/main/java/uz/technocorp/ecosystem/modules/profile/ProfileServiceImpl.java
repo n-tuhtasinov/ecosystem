@@ -14,6 +14,7 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.prevention.Prevention;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
+import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
@@ -160,6 +161,13 @@ public class ProfileServiceImpl implements ProfileService {
             profile.setPhoneNumber(phoneNumber);
             profileRepository.save(profile);
         }
+    }
+
+    @Override
+    public ProfileInfoView getProfileInfo(Long tin) {
+        return profileRepository
+                .getProfileByTin(tin)
+                .orElseThrow(()-> new ResourceNotFoundException("Tashkilot haqida ma'lumot", "STIR", tin));
     }
 
     private void setRegion(Integer regionId, Profile profile) {

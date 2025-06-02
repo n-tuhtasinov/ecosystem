@@ -16,8 +16,8 @@ import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.processor.AppealPdfProcessor;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
-import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcess;
-import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
+import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
+import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
@@ -41,6 +41,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -66,7 +67,7 @@ public class AppealServiceImpl implements AppealService {
     private final DocumentService documentService;
     private final TemplateService templateService;
     private final AttachmentService attachmentService;
-    private final AppealExecutionProcessRepository appealExecutionProcessRepository;
+    private final AppealExecutionProcessService appealExecutionProcessService;
 
     private final Map<Class<? extends AppealDto>, AppealPdfProcessor> processors;
 
@@ -89,6 +90,7 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
+    @Transactional
     public void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request) {
         // Check appeal by (appealId, status, inspectorId)
         Appeal appeal = repository.findByIdAndStatusAndExecutorId(replyDto.getDto().getAppealId(), AppealStatus.IN_PROCESS, user.getId())
@@ -100,6 +102,9 @@ public class AppealServiceImpl implements AppealService {
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);
+
+        // Create an execution process by the appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.IN_AGREEMENT, null));
     }
 
     @Override
@@ -135,7 +140,12 @@ public class AppealServiceImpl implements AppealService {
                 .executorName(executorName)
                 .data(data)
                 .build();
-        return repository.save(appeal).getId();
+        repository.save(appeal);
+
+        //create appeal execution process
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.NEW, null));
+
+        return appeal.getId();
     }
 
     @Override
@@ -159,28 +169,9 @@ public class AppealServiceImpl implements AppealService {
         appeal.setResolution(dto.resolution());
         appeal.setStatus(AppealStatus.IN_PROCESS);
         repository.save(appeal);
-        repository.flush();
-        appealExecutionProcessRepository.save(
-                new AppealExecutionProcess(
-                        dto.appealId(),
-                        "Ariza inspektorga biriktirildi!"
-                )
-        );
-    }
 
-    @Override
-    @Transactional
-    public void changeAppealStatus(AppealStatusDto dto) {
-        Appeal appeal = getAppealById(dto.appealId());
-
-        appeal.setStatus(dto.status());
-        repository.save(appeal);
-        appealExecutionProcessRepository.save(
-                new AppealExecutionProcess(
-                        dto.appealId(),
-                        dto.description()
-                )
-        );
+        // create an execution process by appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), AppealStatus.IN_PROCESS, null));
     }
 
     @Override
@@ -238,6 +229,47 @@ public class AppealServiceImpl implements AppealService {
 
         // Save to an attachment and folder & Return a file path
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters);
+    }
+
+    @Override
+    @Transactional
+    public void reject(User user, RejectDto dto) {
+        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+        appeal.setStatus(AppealStatus.IN_PROCESS);
+        appeal.setIsRejected(true);
+        appealRepository.save(appeal);
+
+        //set rejection to the document
+        documentService.reject(user, dto);
+
+        // create an execution process by appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), AppealStatus.IN_PROCESS, dto.description()));
+    }
+
+    @Override
+    @Transactional
+    public void confirm(User user, ConfirmationDto dto) {
+        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+
+        Role role = user.getRole();
+        AppealStatus appealStatus;
+        if (role == Role.REGIONAL) {
+            appealStatus = AppealStatus.IN_APPROVAL;
+        } else if (role == Role.MANAGER) {
+            appealStatus = AppealStatus.COMPLETED;
+        } else {
+            throw new RuntimeException(role.name() + " roli uchun hali logika yoailmagan. Backchenchilarga ayting ))) ...");
+        }
+
+        appeal.setStatus(appealStatus);
+        appeal.setIsRejected(false); //because it may be confirming the previously rejected appeal.
+        appealRepository.save(appeal);
+
+        //set confirmation to the document
+        documentService.confirmationByAppeal(user, dto.appealId());
+
+        // create an execution process by appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), appealStatus, null));
     }
 
     private JsonNode makeJsonData(AppealDto dto) {

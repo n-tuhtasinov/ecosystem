@@ -2,6 +2,8 @@ package uz.technocorp.ecosystem.modules.riskassessment;
 
 import jakarta.persistence.*;
 import lombok.*;
+import uz.technocorp.ecosystem.modules.region.Region;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
@@ -23,7 +25,7 @@ import java.util.UUID;
 @Setter
 public class RiskAssessment extends BaseEntity {
 
-    private short tin;
+    private long tin;
 
     private int sumScore;
 
@@ -50,4 +52,14 @@ public class RiskAssessment extends BaseEntity {
 
     @Column(name = "equipment_id")
     private UUID equipmentId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RiskAnalysisInterval riskAnalysisInterval;
+
+    @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY )
+    @JoinColumn(name = "region_id", insertable = false, updatable = false)
+    private Region region;
+
+    @Column(name = "region_id")
+    private Integer regionId;
 }

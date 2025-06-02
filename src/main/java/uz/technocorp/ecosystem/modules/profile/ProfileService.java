@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.profile;
 
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
+import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 
@@ -31,5 +32,5 @@ public interface ProfileService {
 
     void addPhoneNumber(UUID profileId, String phoneNumber);
 
-
+    ProfileInfoView getProfileInfo(Long tin);
 }

@@ -13,6 +13,8 @@ public interface ResponseMessage {
     String COMPLETED="Muvaffaqiyatli amalga oshirildi";
     String DELETED="Muvaffaqiyatli o'chirildi";
     String CONFLICT="Xatolik yuz berdi";
+    String REJECTED= "Muvaffaqiyatli qaytarildi";
+
     String INVALID_TOKEN="Token yaroqsiz";
     String INCOMPLETE="Ma'lumotlar to'liq kiritilmagan";
     String CANCELLED="Amaliyot bekor qilindi";

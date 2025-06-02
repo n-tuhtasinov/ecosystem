@@ -23,16 +23,6 @@ public class AppealExecutionProcessController {
 
     private final AppealExecutionProcessService service;
 
-    @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody AppealExecutionProcessDto dto) {
-        try {
-            service.writeExecutionProcess(dto);
-            return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @GetMapping("/{appealId}")
     public ResponseEntity<?> get(@PathVariable UUID appealId) {
         return ResponseEntity.ok(service.getAll(appealId));
