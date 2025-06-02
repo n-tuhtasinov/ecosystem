@@ -24,12 +24,7 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerUtilizerDto;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
-import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -73,17 +68,9 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     @Transactional
-    public void saveAndSign(User user, SignedAppealDto dto, HttpServletRequest request) {
-        UUID appealId;
-        switch (dto.getDto()) {
-            case HfAppealDto hfAppealDto -> appealId = create(hfAppealDto, user);
-            case BoilerDto boilerDto -> appealId = create(boilerDto, user);
-            case BoilerUtilizerDto boilerUtilizerDto -> appealId = create(boilerUtilizerDto, user);
-            case CraneDto craneDto -> appealId = create(craneDto, user);
-            case IrsAppealDto irsAppealDto -> appealId = create(irsAppealDto, user);
-            // TODO barcha qurilmalar uchun case yozish kerak
-            default -> throw new ResourceNotFoundException("Mavjud bo'lmagan obyekt turi keldi");
-        }
+    public void saveAndSign(User user, SignedAppealDto<? extends AppealDto> dto, HttpServletRequest request) {
+        // Create and save appeal
+        UUID appealId = create(dto.getDto(), user);
 
         // Create a document
         documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
@@ -224,7 +211,7 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("address", fullAddress[2]);
         parameters.put("name", appeal.getData().get("name").asText());
         parameters.put("upperOrganization", appeal.getData().get("upperOrganization").asText());
-        parameters.put("appealType", appeal.getAppealType().getLabel());
+        parameters.put("appealType", appeal.getAppealType().label);
         parameters.put("extraArea", appeal.getData().get("extraArea").asText());
         parameters.put("hazardousSubstance", appeal.getData().get("hazardousSubstance").asText());
         parameters.put("conclusion", replyDto.getConclusion());
@@ -285,9 +272,10 @@ public class AppealServiceImpl implements AppealService {
 
         String number = null;
 
-        switch (appealType) {
-            case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
-            case REGISTER_HF, DEREGISTER_HF -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
+        switch (appealType.sort) {
+            case "irs" -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
+            case "hf" -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
+            case "equipment" -> number = orderNumber + "-QUR-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
         return new OrderNumberDto(orderNumber, number);
