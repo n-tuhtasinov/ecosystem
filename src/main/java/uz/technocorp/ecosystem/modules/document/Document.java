@@ -32,7 +32,7 @@ public class Document extends BaseEntity {
     @Column(nullable = false)
     private UUID belongId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String path;
 
     @Column(columnDefinition = "text")
