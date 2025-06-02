@@ -28,6 +28,8 @@ import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerUtilizerDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
+import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
+import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -68,6 +70,7 @@ public class AppealServiceImpl implements AppealService {
     private final TemplateService templateService;
     private final AttachmentService attachmentService;
     private final AppealExecutionProcessService appealExecutionProcessService;
+    private final HazardousFacilityService hazardousFacilityService;
 
     private final Map<Class<? extends AppealDto>, AppealPdfProcessor> processors;
 
@@ -268,10 +271,19 @@ public class AppealServiceImpl implements AppealService {
         appealRepository.save(appeal);
 
         //set confirmation to the document
-        documentService.confirmationByAppeal(user, dto.appealId());
+        documentService.confirmationByAppeal(user, dto.documentId());
 
         // create an execution process by appeal
         appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), appealStatus, null));
+
+        //create registry for the appeal if the appeal's status is completed
+        if (appealStatus == AppealStatus.COMPLETED) {
+            switch (appeal.getAppealType()){
+                case AppealType.REGISTER_HF -> hazardousFacilityService.create(appeal);
+                //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
+            }
+        }
+
     }
 
     private JsonNode makeJsonData(AppealDto dto) {

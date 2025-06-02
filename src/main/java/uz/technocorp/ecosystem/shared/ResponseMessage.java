@@ -14,6 +14,7 @@ public interface ResponseMessage {
     String DELETED="Muvaffaqiyatli o'chirildi";
     String CONFLICT="Xatolik yuz berdi";
     String REJECTED= "Muvaffaqiyatli qaytarildi";
+    String CONFIRMED ="Muvaffaqiyatli tasdiqlandi";
 
     String INVALID_TOKEN="Token yaroqsiz";
     String INCOMPLETE="Ma'lumotlar to'liq kiritilmagan";
@@ -28,4 +29,5 @@ public interface ResponseMessage {
     String FILE_NOT_CREATED="Faylni saqlash jarayonida xatolik yuz berdi!";
     String DIRECTORY_NOT_CREATED="Papkani saqlash jarayonida xatolik yuz berdi!";
     String ERROR_DATA="Ma'lumotlar nomlanishida yoki to'liqligida xatolik mavjud!";
+
 }

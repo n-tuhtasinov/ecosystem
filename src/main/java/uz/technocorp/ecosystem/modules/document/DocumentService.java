@@ -27,5 +27,5 @@ public interface DocumentService {
 
     void reject(User user, RejectDto dto);
 
-    void confirmationByAppeal(User user, UUID appealId);
+    void confirmationByAppeal(User user, UUID documentId);
 }

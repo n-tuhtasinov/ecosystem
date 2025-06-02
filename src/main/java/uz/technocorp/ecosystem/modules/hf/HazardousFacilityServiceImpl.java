@@ -10,16 +10,14 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import uz.technocorp.ecosystem.modules.district.District;
+import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
+import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
-import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
-import uz.technocorp.ecosystem.modules.district.District;
-import uz.technocorp.ecosystem.modules.district.DistrictRepository;
-import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -48,22 +46,20 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private final ProfileRepository profileRepository;
 
     @Override
-    public void create(HfRegistryDto dto) {
-
-        Appeal appeal = appealRepository
-                .findById(dto.appealId())
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho arizasi", "Id", dto.appealId()));
-        appeal.setStatus(AppealStatus.COMPLETED);
-        appealRepository.save(appeal);
+    public void create(Appeal appeal) {
         Long maxOrderNumber = repository.findMaxOrderNumber().orElse(0L) + 1;
+
         District district = districtRepository
                 .findById(appeal.getDistrictId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", appeal.getDistrictId()));
+
         Region region = regionRepository
                 .findById(appeal.getRegionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", appeal.getRegionId()));
+
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
         HfAppealDto hfAppealDto = parseJsonData(appeal.getData());
+
         repository.save(
                 HazardousFacility.builder()
                         .legalTin(appeal.getLegalTin())
