@@ -23,7 +23,8 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
                    document_type as documentType,
                    1 = 1         as isSigned,
                    path,
-                   signers
+                   signers,
+                   created_at as createdAt
             from document
             where belong_id = :appealId
               and document_type = :documentType
@@ -38,7 +39,8 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
                    path,
                    agreement_status  as agreementStatus,
                    description,
-                   signers
+                   signers,
+                   created_at as createdAt
             from document
             where belong_id = :appealId
               and document_type != :documentType

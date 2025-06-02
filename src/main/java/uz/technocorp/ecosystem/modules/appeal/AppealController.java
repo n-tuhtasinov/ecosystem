@@ -95,6 +95,6 @@ public class AppealController {
     @PostMapping("/confirmation")
     public ResponseEntity<?> confirm(@CurrentUser User user, @Valid @RequestBody ConfirmationDto confirmationDto) {
         service.confirm(user, confirmationDto);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.REJECTED));
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CONFIRMED));
     }
 }

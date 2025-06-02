@@ -8,8 +8,10 @@ package uz.technocorp.ecosystem.modules.user.enums;
  */
 public enum Direction {
     APPEAL,
+    REGISTRY,
     CERTIFICATE,
     ATTESTAT,
     ATTESTATION,
     ACCREDITATION;
+
 }

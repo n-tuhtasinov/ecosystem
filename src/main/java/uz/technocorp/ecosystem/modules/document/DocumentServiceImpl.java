@@ -78,7 +78,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public void reject(User user, RejectDto dto) {
-        Document document = repository.findByBelongId(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Document", "belongID", dto.appealId()));
+        Document document = repository.findById(dto.documentId()).orElseThrow(() -> new ResourceNotFoundException("Document", "ID", dto.documentId()));
         document.setDescription(dto.description());
 
         Role role = user.getRole();
@@ -94,8 +94,8 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public void confirmationByAppeal(User user, UUID appealId) {
-        Document document = repository.findByBelongId(appealId).orElseThrow(() -> new ResourceNotFoundException("Document", "belongID", appealId));
+    public void confirmationByAppeal(User user, UUID documentId) {
+        Document document = repository.findById(documentId).orElseThrow(() -> new ResourceNotFoundException("Document", "ID", documentId));
 
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
