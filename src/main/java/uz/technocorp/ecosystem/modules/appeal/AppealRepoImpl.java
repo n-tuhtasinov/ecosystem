@@ -128,7 +128,8 @@ public class AppealRepoImpl implements AppealRepo {
                         appealRoot.get("appealType"),
                         appealRoot.get("executorName"),
                         appealRoot.get("deadline"),
-                        appealRoot.get("officeName")
+                        appealRoot.get("officeName"),
+                        appealRoot.get("isRejected")
                 ));
 
         // Qidiruvni amalga oshirish
