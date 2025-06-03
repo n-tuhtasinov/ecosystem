@@ -25,14 +25,13 @@ import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
-import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.modules.user.enums.Direction;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
-import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
-import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
-import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
+import uz.technocorp.ecosystem.modules.user.view.CommitteeUserView;
+import uz.technocorp.ecosystem.modules.user.view.OfficeUserView;
+import uz.technocorp.ecosystem.modules.user.view.UserViewById;
 
 import java.util.*;
 
@@ -119,7 +118,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<CommitteeUserHelper> getCommitteeUsers(Map<String, String> params) {
+    public Page<CommitteeUserView> getCommitteeUsers(Map<String, String> params) {
         Pageable pageable = PageRequest.of(
                 Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER)) - 1,
                 Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
@@ -130,7 +129,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<OfficeUserHelper> getOfficeUsers(Map<String, String> params) {
+    public Page<OfficeUserView> getOfficeUsers(Map<String, String> params) {
         Pageable pageable = PageRequest.of(
                 Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER)) - 1,
                 Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
@@ -157,10 +156,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserHelperById getById(UUID userId) {
+    public UserViewById getById(UUID userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
-        return new UserHelperById(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), profile.getDepartmentId(), profile.getOfficeId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
+        return new UserViewById(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), profile.getDepartmentId(), profile.getOfficeId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
     }
 
     private List<InspectorDto> getInspectorList(Map<String, String> params) {
@@ -193,16 +192,16 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(u -> new InspectorDto(u.getId(), u.getName())).toList();
     }
 
-    private CommitteeUserHelper convertToCommitteeView(User user) {
+    private CommitteeUserView convertToCommitteeView(User user) {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
         Department department = departmentRepository.findById(profile.getDepartmentId()).orElseThrow(() -> new ResourceNotFoundException("Department", "id", profile.getDepartmentId()));
-        return new CommitteeUserHelper(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), department.getName(), profile.getDepartmentId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
+        return new CommitteeUserView(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), department.getName(), profile.getDepartmentId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
     }
 
-    private OfficeUserHelper convertToOfficeView(User user) {
+    private OfficeUserView convertToOfficeView(User user) {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
         Office office = officeRepository.findById(profile.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "id", profile.getOfficeId()));
-        return new OfficeUserHelper(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), office.getName(), office.getId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
+        return new OfficeUserView(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), office.getName(), office.getId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
     }
 
     @Override

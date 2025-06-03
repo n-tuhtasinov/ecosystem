@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.user.helper;
+package uz.technocorp.ecosystem.modules.user.view;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,14 +10,14 @@ import java.util.UUID;
  * @since v1.0
  */
 
-public record CommitteeUserHelper(
+public record OfficeUserView(
         UUID id,
         String fullName,
         Long pin,
         String role,
         List<String> directions,
-        String department,
-        Integer departmentId,
+        String office,
+        Integer officeId,
         String position,
         String phoneNumber,
         Boolean enabled

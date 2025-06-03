@@ -51,4 +51,7 @@ public class Document extends BaseEntity {
 
     @Column(columnDefinition = "text")
     private String description;
+
+//    @Column(nullable = false)
+    private Boolean isFullySigned;
 }

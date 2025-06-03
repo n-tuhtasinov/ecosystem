@@ -18,7 +18,7 @@ public interface DocumentViewByReply {
     LocalDate getCreatedAt();
     UUID getDocumentId();
     String getDocumentType();
-    Boolean getIsSigned();
+    Boolean getIsFullySigned();
     String getPath();
     String getAgreementStatus();
     String getDescription();

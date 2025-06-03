@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.document.dto;
 
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -17,5 +18,6 @@ public record DocumentDto(
         String path,
         String sign,
         String ip,
-        UUID executedBy) {
+        UUID singerId,
+        List<UUID> executorIds) {
 }

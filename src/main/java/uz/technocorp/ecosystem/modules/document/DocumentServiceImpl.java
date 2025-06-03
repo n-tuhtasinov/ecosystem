@@ -18,9 +18,11 @@ import uz.technocorp.ecosystem.modules.document.view.DocumentViewByRequest;
 import uz.technocorp.ecosystem.modules.eimzo.EImzoProxy;
 import uz.technocorp.ecosystem.modules.eimzo.json.pcks7.Pkcs7VerifyAttachedJson;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +37,7 @@ import java.util.UUID;
 public class DocumentServiceImpl implements DocumentService {
 
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
     @Value("${app.e-imzo.host}")
     private String host;
 
@@ -44,10 +47,24 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public void create(DocumentDto dto) {
-        Signer signer = new Signer(getSigner(dto.sign(), dto.ip()), dto.executedBy(), LocalDateTime.now());
 
-        List<Signer> signer1 = List.of(signer); // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
-        Document document = new Document(dto.belongId(), dto.path(), dto.sign(), signer1, dto.documentType(), null, null);
+        List<Signer> signers = new ArrayList<>();
+
+        for (UUID id : dto.executorIds()) {
+
+            if (id == dto.singerId()) {
+                String signerName = getSigner(dto.sign(), dto.ip());
+                Signer signer = new Signer(signerName, id, LocalDateTime.now(), true);
+                signers.add(signer);
+                continue;
+            }
+
+            User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "ID", id));
+            Signer signer = new Signer(user.getName(), id, null, false);
+            signers.add(signer);
+        }
+
+        Document document = new Document(dto.belongId(), dto.path(), dto.sign(), signers, dto.documentType(), null, null, signers.size() == 1);
 
         repository.save(document);
 
