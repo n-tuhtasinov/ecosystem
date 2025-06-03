@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.hf;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -15,6 +16,7 @@ import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
+import uz.technocorp.ecosystem.modules.hf.dto.TestDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
@@ -241,6 +243,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private HfAppealDto parseJsonData(JsonNode jsonNode) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
         try {
             return mapper.treeToValue(jsonNode, HfAppealDto.class);
         } catch (JsonProcessingException e) {
