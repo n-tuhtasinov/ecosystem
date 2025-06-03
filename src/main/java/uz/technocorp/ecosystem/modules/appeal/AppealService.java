@@ -1,12 +1,12 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
@@ -22,7 +22,7 @@ import java.util.UUID;
  */
 public interface AppealService {
 
-    void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
+    void saveAndSign(User user, SignedAppealDto<? extends AppealDto> dto, HttpServletRequest request);
 
     void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
 
