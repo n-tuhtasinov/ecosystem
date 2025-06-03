@@ -77,7 +77,7 @@ public class AppealServiceImpl implements AppealService {
         UUID appealId = create(dto.getDto(), user);
 
         // Create a document
-        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
+        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class AppealServiceImpl implements AppealService {
         }
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
+        documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);

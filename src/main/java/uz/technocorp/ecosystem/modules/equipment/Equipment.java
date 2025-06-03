@@ -237,4 +237,6 @@ public class Equipment extends BaseEntity {
     private String technicalStatusActPath; //texnik holat dalolatnomasi (atraksion)
 
     private String usageRightsPath; //foydalanish huquqi (atraksion)
+
+    private String acceptanceCertPath; //foydalanishga qabul qilish guvohnomasi (atraksion)
 }

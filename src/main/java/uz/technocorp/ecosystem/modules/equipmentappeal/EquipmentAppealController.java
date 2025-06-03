@@ -107,4 +107,10 @@ public class EquipmentAppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
+    @PostMapping("/attraction-passport")
+    public ResponseEntity<?> createAttractionPassport(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<LpgPoweredDto> lpgPoweredDto, HttpServletRequest request) {
+        appealService.saveAndSign(user, lpgPoweredDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
 }

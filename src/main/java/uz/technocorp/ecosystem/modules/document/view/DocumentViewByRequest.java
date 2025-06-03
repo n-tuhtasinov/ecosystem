@@ -18,7 +18,7 @@ public interface DocumentViewByRequest {
     LocalDate getCreatedAt();
     UUID getDocumentId();
     String getDocumentType();
-    Boolean getIsSigned();
+    Boolean getIsFullySigned();
     String getPath();
     @Value("#{@documentServiceImpl.convertToList(target.signers)}")
     List<Signer> getSigners();

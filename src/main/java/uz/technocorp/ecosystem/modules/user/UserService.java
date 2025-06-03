@@ -2,12 +2,11 @@ package uz.technocorp.ecosystem.modules.user;
 
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
-import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
-import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
-import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
-import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
+import uz.technocorp.ecosystem.modules.user.view.CommitteeUserView;
+import uz.technocorp.ecosystem.modules.user.view.OfficeUserView;
+import uz.technocorp.ecosystem.modules.user.view.UserViewById;
 import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
 import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
 
@@ -35,13 +34,13 @@ public interface UserService {
 
     void updateLegalUser(Long tin);
 
-    Page<CommitteeUserHelper> getCommitteeUsers(Map<String, String> params);
+    Page<CommitteeUserView> getCommitteeUsers(Map<String, String> params);
 
-    Page<OfficeUserHelper> getOfficeUsers(Map<String, String> params);
+    Page<OfficeUserView> getOfficeUsers(Map<String, String> params);
 
     List<InspectorDto> getInspectors(User user, Map<String, String> params);
 
-    UserHelperById getById(UUID userId);
+    UserViewById getById(UUID userId);
 
     UserViewByInspectorPin getInspectorByPin(long pin);
 
