@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.irs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -9,10 +10,8 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDeregisterDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
-import uz.technocorp.ecosystem.modules.irs.dto.IrsRegistryDto;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
@@ -38,18 +37,15 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
     private final RegionRepository regionRepository;
 
     @Override
-    public void create(IrsRegistryDto dto) {
-        Appeal appeal = appealRepository
-                .findById(dto.appealId())
-                .orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", dto.appealId()));
-        appeal.setStatus(AppealStatus.COMPLETED);
-        appealRepository.save(appeal);
+    public void create(Appeal appeal) {
+
         Long maxOrderNumber = repository.findMaxOrderNumber().orElse(0L) + 1;
         Region region = regionRepository
                 .findById(appeal.getRegionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", appeal.getRegionId()));
         String registryNumber = String.format("%02d", region.getNumber()) + "-S-" + String.format("%04d", maxOrderNumber);
         IrsAppealDto irsAppealDto = parseJsonData(appeal.getData());
+
         repository.save(
                 IonizingRadiationSource
                         .builder()
@@ -128,6 +124,8 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
     private IrsAppealDto parseJsonData(JsonNode jsonNode) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
         try {
             return mapper.treeToValue(jsonNode, IrsAppealDto.class);
         } catch (JsonProcessingException e) {

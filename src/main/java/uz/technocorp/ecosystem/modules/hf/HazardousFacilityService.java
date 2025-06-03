@@ -22,7 +22,7 @@ import java.util.UUID;
 public interface HazardousFacilityService {
 
     void create(Appeal appeal);
-    void create(HfDto dto);
+//    void create(HfDto dto);
     void update(UUID id, HfDto dto);
     void deregister(UUID id, HfDeregisterDto dto);
     void periodicUpdate(UUID id, HfPeriodicUpdateDto dto);

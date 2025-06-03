@@ -10,9 +10,8 @@ import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
@@ -32,8 +31,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     private final ProfileRepository profileRepository;
 
     @Override
-    public void create(EquipmentRegistryDto equipmentRegistryDto) {
-        Appeal appeal = appealRepository.findById(equipmentRegistryDto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", equipmentRegistryDto.appealId()));
+    public void create(Appeal appeal) {
         Profile profile = profileRepository.findByTin(appeal.getLegalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "STIR", appeal.getLegalTin()));
 
         EquipmentDto dto = parseJsonToObject(appeal.getData());
