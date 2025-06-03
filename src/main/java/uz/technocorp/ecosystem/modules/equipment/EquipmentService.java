@@ -1,7 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
-import jakarta.validation.Valid;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -10,5 +9,5 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
  * @since v1.0
  */
 public interface EquipmentService {
-    void create(@Valid EquipmentRegistryDto dto);
+    void create(Appeal appeal);
 }

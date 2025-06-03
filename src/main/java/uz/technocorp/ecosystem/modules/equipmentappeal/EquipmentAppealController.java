@@ -54,8 +54,8 @@ public class EquipmentAppealController {
     }
 
     @PostMapping("/escalator")
-    public ResponseEntity<?> createEscalator(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ElevatorDto> elevatorDto, HttpServletRequest request) {
-        appealService.saveAndSign(user, elevatorDto, request);
+    public ResponseEntity<?> createEscalator(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<EscalatorDto> escalator, HttpServletRequest request) {
+        appealService.saveAndSign(user, escalator, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 

@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.hf;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -44,6 +45,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
     private final ProfileRepository profileRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void create(Appeal appeal) {
@@ -100,58 +102,58 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .build());
     }
 
-    @Override
-    public void create(HfDto dto) {
-
-        Region region = regionRepository
-                .findById(dto.regionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", dto.regionId()));
-
-        District district = districtRepository
-                .findById(dto.districtId())
-                .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", dto.districtId()));
-
-        Profile profile = profileRepository.findByTin(dto.legalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "Tin", dto.legalTin()));
-
-        repository.save(
-                HazardousFacility.builder()
-                        .legalTin(dto.legalTin())
-                        .legalName(profile.getLegalName())
-                        .regionId(dto.regionId())
-                        .districtId(dto.districtId())
-                        .profileId(profile.getId())
-                        .legalAddress(profile.getLegalAddress())
-                        .phoneNumber(dto.phoneNumber())
-                        .email(dto.email())
-                        .upperOrganization(dto.upperOrganization())
-                        .name(dto.name())
-                        .address(region.getName()+", "+district.getName()+", "+dto.address())
-                        .location(dto.location())
-                        .hazardousSubstance(dto.hazardousSubstance())
-                        .spheres(dto.spheres())
-                        .registrationDate(dto.registrationDate())
-                        .hfTypeId(dto.hfTypeId())
-                        .extraArea(dto.extraArea())
-                        .description(dto.description())
-                        .registryNumber(dto.registryNumber())
-                        .registrationDate(dto.registrationDate())
-                        .active(true)
-                        .appointmentOrderPath(dto.appointmentOrderPath())
-                        .cadastralPassportPath(dto.cadastralPassportPath())
-                        .certificationPath(dto.certificationPath())
-                        .permitPath(dto.permitPath())
-                        .deviceTestingPath(dto.deviceTestingPath())
-                        .licensePath(dto.licensePath())
-                        .ecologicalConclusionPath(dto.ecologicalConclusionPath())
-                        .expertOpinionPath(dto.expertOpinionPath())
-                        .industrialSafetyDeclarationPath(dto.industrialSafetyDeclarationPath())
-                        .insurancePolicyPath(dto.insurancePolicyPath())
-                        .projectDocumentationPath(dto.projectDocumentationPath())
-                        .replyLetterPath(dto.replyLetterPath())
-                        .identificationCardPath(dto.identificationCardPath())
-                        .receiptPath(dto.receiptPath())
-                        .build());
-    }
+//    @Override
+//    public void create(HfDto dto) {
+//
+//        Region region = regionRepository
+//                .findById(dto.regionId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", dto.regionId()));
+//
+//        District district = districtRepository
+//                .findById(dto.districtId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", dto.districtId()));
+//
+//        Profile profile = profileRepository.findByTin(dto.legalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "Tin", dto.legalTin()));
+//
+//        repository.save(
+//                HazardousFacility.builder()
+//                        .legalTin(dto.legalTin())
+//                        .legalName(profile.getLegalName())
+//                        .regionId(dto.regionId())
+//                        .districtId(dto.districtId())
+//                        .profileId(profile.getId())
+//                        .legalAddress(profile.getLegalAddress())
+//                        .phoneNumber(dto.phoneNumber())
+//                        .email(dto.email())
+//                        .upperOrganization(dto.upperOrganization())
+//                        .name(dto.name())
+//                        .address(region.getName()+", "+district.getName()+", "+dto.address())
+//                        .location(dto.location())
+//                        .hazardousSubstance(dto.hazardousSubstance())
+//                        .spheres(dto.spheres())
+//                        .registrationDate(dto.registrationDate())
+//                        .hfTypeId(dto.hfTypeId())
+//                        .extraArea(dto.extraArea())
+//                        .description(dto.description())
+//                        .registryNumber(dto.registryNumber())
+//                        .registrationDate(dto.registrationDate())
+//                        .active(true)
+//                        .appointmentOrderPath(dto.appointmentOrderPath())
+//                        .cadastralPassportPath(dto.cadastralPassportPath())
+//                        .certificationPath(dto.certificationPath())
+//                        .permitPath(dto.permitPath())
+//                        .deviceTestingPath(dto.deviceTestingPath())
+//                        .licensePath(dto.licensePath())
+//                        .ecologicalConclusionPath(dto.ecologicalConclusionPath())
+//                        .expertOpinionPath(dto.expertOpinionPath())
+//                        .industrialSafetyDeclarationPath(dto.industrialSafetyDeclarationPath())
+//                        .insurancePolicyPath(dto.insurancePolicyPath())
+//                        .projectDocumentationPath(dto.projectDocumentationPath())
+//                        .replyLetterPath(dto.replyLetterPath())
+//                        .identificationCardPath(dto.identificationCardPath())
+//                        .receiptPath(dto.receiptPath())
+//                        .build());
+//    }
 
     @Override
     public void update(UUID id, HfDto dto) {
@@ -241,8 +243,10 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private HfAppealDto parseJsonData(JsonNode jsonNode) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
         try {
-            return mapper.treeToValue(jsonNode, HfAppealDto.class);
+            return objectMapper.treeToValue(jsonNode, HfAppealDto.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON deserialization error", e);
         }

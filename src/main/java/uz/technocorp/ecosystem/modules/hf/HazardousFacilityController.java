@@ -33,11 +33,11 @@ public class HazardousFacilityController {
 
     private final HazardousFacilityService service;
 
-    @PostMapping("/without-appeal")
-    public ResponseEntity<?> create(@Valid @RequestBody HfDto dto) {
-        service.create(dto);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
+//    @PostMapping("/without-appeal")
+//    public ResponseEntity<?> create(@Valid @RequestBody HfDto dto) {
+//        service.create(dto);
+//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+//    }
 
     @PutMapping("/{hfId}")
     public ResponseEntity<?> update(@PathVariable UUID hfId, @Valid @RequestBody HfDto dto) {

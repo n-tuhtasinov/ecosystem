@@ -13,84 +13,84 @@ import lombok.Getter;
 public enum AppealType {
     // TODO
     // Xavfli Ishlab Chiqarish Obyektini ro‘yxatga olish, o'zgartirish va chiqarish
-    REGISTER_HF("", "hf", ""),
-    DEREGISTER_HF("", "hf", ""),
-    MODIFY_HF("", "hf", ""),
+    REGISTER_HF("", "registerHf", ""),
+    DEREGISTER_HF("", "deregisterHf", ""),
+    MODIFY_HF("", "hf", "modifyHf"),
 
     //Crane
-    REGISTER_CRANE("", "equipment", "P"),
-    DEREGISTER_CRANE("", "equipment", "P"),
-    RE_REGISTER_CRANE("", "equipment", "P"),
+    REGISTER_CRANE("", "registerEquipment", "P"),
+    DEREGISTER_CRANE("", "deregisterEquipment", "P"),
+    RE_REGISTER_CRANE("", "reRegisterEquipment", "P"),
 
     //Container - bosim ostida ishlovchi idish
-    REGISTER_CONTAINER("", "equipment", "A"),
-    DEREGISTER_CONTAINER("", "equipment", "A"),
-    RE_REGISTER_CONTAINER("", "equipment", "A"),
+    REGISTER_CONTAINER("", "registerEquipment", "A"),
+    DEREGISTER_CONTAINER("", "deregisterEquipment", "A"),
+    RE_REGISTER_CONTAINER("", "reRegisterEquipment", "A"),
 
     //Boiler - bug'qozon
-    REGISTER_BOILER("", "equipment", "K"),
-    DEREGISTER_BOILER("", "equipment", "K"),
-    RE_REGISTER_BOILER("", "equipment", "K"),
+    REGISTER_BOILER("", "registerEquipment", "K"),
+    DEREGISTER_BOILER("", "deregisterEquipment", "K"),
+    RE_REGISTER_BOILER("", "reRegisterEquipment", "K"),
 
     //Elevator - lift
-    REGISTER_ELEVATOR("", "equipment", "L"),
-    DEREGISTER_ELEVATOR("", "equipment", "L"),
-    RE_REGISTER_ELEVATOR("", "equipment", "L"),
+    REGISTER_ELEVATOR("", "registerEquipment", "L"),
+    DEREGISTER_ELEVATOR("", "deregisterEquipment", "L"),
+    RE_REGISTER_ELEVATOR("", "reRegisterEquipment", "L"),
 
     //Escalator
-    REGISTER_ESCALATOR("", "equipment", "E"),
-    DEREGISTER_ESCALATOR("", "equipment", "E"),
-    RE_REGISTER_ESCALATOR("", "equipment", "E"),
+    REGISTER_ESCALATOR("", "registerEquipment", "E"),
+    DEREGISTER_ESCALATOR("", "deregisterEquipment", "E"),
+    RE_REGISTER_ESCALATOR("", "reRegisterEquipment", "E"),
 
     //Cableway - osma qarqonli yuruvchi yo'l
-    REGISTER_CABLEWAY("", "equipment", "KD"),
-    DEREGISTER_CABLEWAY("", "equipment", "KD"),
-    RE_REGISTER_CABLEWAY("", "equipment", "KD"),
+    REGISTER_CABLEWAY("", "registerEquipment", "KD"),
+    DEREGISTER_CABLEWAY("", "deregisterEquipment", "KD"),
+    RE_REGISTER_CABLEWAY("", "reRegisterEquipment", "KD"),
 
     //hoist - yuk ko'targich
-    REGISTER_HOIST("", "equipment", "V"),
-    DEREGISTER_HOIST("", "equipment", "V"),
-    RE_REGISTER_HOIST("", "equipment", "V"),
+    REGISTER_HOIST("", "registerEquipment", "V"),
+    DEREGISTER_HOIST("", "deregisterEquipment", "V"),
+    RE_REGISTER_HOIST("", "reRegisterEquipment", "V"),
 
     //pipeline - quvur
-    REGISTER_PIPELINE("", "equipment", "T"),
-    DEREGISTER_PIPELINE("", "equipment", "T"),
-    RE_REGISTER_PIPELINE("", "equipment", "T"),
+    REGISTER_PIPELINE("", "registerEquipment", "T"),
+    DEREGISTER_PIPELINE("", "deregisterEquipment", "T"),
+    RE_REGISTER_PIPELINE("", "reRegisterEquipment", "T"),
 
     //attraction_passport - Attraksion pasporti
-    REGISTER_ATTRACTION_PASSPORT("", "equipment", "AT"),
-    DEREGISTER_ATTRACTION_PASSPORT("", "equipment", "AT"),
-    RE_REGISTER_ATTRACTION_PASSPORT("", "equipment", "AT"),
+    REGISTER_ATTRACTION_PASSPORT("", "registerEquipment", "AT"),
+    DEREGISTER_ATTRACTION_PASSPORT("", "deregisterEquipment", "AT"),
+    RE_REGISTER_ATTRACTION_PASSPORT("", "reRegisterEquipment", "AT"),
 
     //attraction - Attraksion
-    REGISTER_ATTRACTION("", "equipment", "ADR"),
-    DEREGISTER_ATTRACTION("", "equipment", "ADR"),
-    RE_REGISTER_ATTRACTION("", "equipment", "ADR"),
+    REGISTER_ATTRACTION("", "registerEquipment", "ADR"),
+    DEREGISTER_ATTRACTION("", "deregisterEquipment", "ADR"),
+    RE_REGISTER_ATTRACTION("", "reRegisterEquipment", "ADR"),
 
     //Chemical container - bosim ostida ishlovchi idish (kimyoviy)
-    REGISTER_CHEMICAL_CONTAINER("", "equipment", "XA"),
-    DEREGISTER_CHEMICAL_CONTAINER("", "equipment", "XA"),
-    RE_REGISTER_CHEMICAL_CONTAINER("", "equipment", "XA"),
+    REGISTER_CHEMICAL_CONTAINER("", "registerEquipment", "XA"),
+    DEREGISTER_CHEMICAL_CONTAINER("", "deregisterEquipment", "XA"),
+    RE_REGISTER_CHEMICAL_CONTAINER("", "reRegisterEquipment", "XA"),
 
     //Heat pipe - bug' va issiqsuv quvuri
-    REGISTER_HEAT_PIPELINE("", "equipment", "PAX"),
-    DEREGISTER_HEAT_PIPELINE("", "equipment", "PAX"),
-    RE_REGISTER_HEAT_PIPELINE("", "equipment", "PAX"),
+    REGISTER_HEAT_PIPELINE("", "registerEquipment", "PAX"),
+    DEREGISTER_HEAT_PIPELINE("", "deregisterEquipment", "PAX"),
+    RE_REGISTER_HEAT_PIPELINE("", "reRegisterEquipment", "PAX"),
 
     //Boiler utilizer - qozon utilizator
-    REGISTER_BOILER_UTILIZER("", "equipment", "KC"),
-    DEREGISTER_BOILER_UTILIZER("", "equipment", "KC"),
-    RE_REGISTER_BOILER_UTILIZER("", "equipment", "KC"),
+    REGISTER_BOILER_UTILIZER("", "registerEquipment", "KC"),
+    DEREGISTER_BOILER_UTILIZER("", "deregisterEquipment", "KC"),
+    RE_REGISTER_BOILER_UTILIZER("", "reRegisterEquipment", "KC"),
 
     //LPG container (Liquefied Petroleum Gas) - bosim ostida ishlovchi idish (SUG)
-    REGISTER_LPG_CONTAINER("", "equipment", "AG"),
-    DEREGISTER_LPG_CONTAINER("", "equipment", "AG"),
-    RE_REGISTER_LPG_CONTAINER("", "equipment", "AG"),
+    REGISTER_LPG_CONTAINER("", "registerEquipment", "AG"),
+    DEREGISTER_LPG_CONTAINER("", "deregisterEquipment", "AG"),
+    RE_REGISTER_LPG_CONTAINER("", "reRegisterEquipment", "AG"),
 
     //LPG powered (Liquefied Petroleum Gas) - SUG bilan ishlovchi qurilmalar
-    REGISTER_LPG_POWERED("", "equipment", "TG"),
-    DEREGISTER_LPG_POWERED("", "equipment", "TG"),
-    RE_REGISTER_LPG_POWERED("", "equipment", "TG"),
+    REGISTER_LPG_POWERED("", "registerEquipment", "TG"),
+    DEREGISTER_LPG_POWERED("", "deregisterEquipment", "TG"),
+    RE_REGISTER_LPG_POWERED("", "reRegisterEquipment", "TG"),
 
     // Xavfli ishlab chiqarish obyektlari xodimlarini attestatsiyadan o‘tkazish
     CERTIFY_HF_EMPLOYEE("", "", ""),

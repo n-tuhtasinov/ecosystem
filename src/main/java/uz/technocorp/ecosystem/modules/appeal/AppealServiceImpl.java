@@ -24,8 +24,10 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
+import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
+import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -64,8 +66,9 @@ public class AppealServiceImpl implements AppealService {
     private final AttachmentService attachmentService;
     private final AppealExecutionProcessService appealExecutionProcessService;
     private final HazardousFacilityService hazardousFacilityService;
-
     private final Map<Class<? extends AppealDto>, AppealPdfProcessor> processors;
+    private final IonizingRadiationSourceService ionizingRadiationSourceService;
+    private final EquipmentService equipmentService;
 
     @Override
     @Transactional
@@ -85,6 +88,13 @@ public class AppealServiceImpl implements AppealService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Bu ariza sizga biriktirilmagan yoki ariza holati o'zgargan")
                 );
+
+        //change appeal's isRejected, if it is true
+        if (appeal.getIsRejected()) {
+            appeal.setIsRejected(false);
+            repository.save(appeal);
+        }
+
         // Create a reply document
         documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
 
@@ -263,12 +273,13 @@ public class AppealServiceImpl implements AppealService {
 
         //create registry for the appeal if the appeal's status is completed
         if (appealStatus == AppealStatus.COMPLETED) {
-            switch (appeal.getAppealType()) {
-                case AppealType.REGISTER_HF -> hazardousFacilityService.create(appeal);
+            switch (appeal.getAppealType().sort) {
+                case "registerHf" -> hazardousFacilityService.create(appeal);
+                case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
+                case "registerEquipment" -> equipmentService.create(appeal);
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }
         }
-
     }
 
     private JsonNode makeJsonData(AppealDto dto) {
@@ -283,9 +294,10 @@ public class AppealServiceImpl implements AppealService {
         String number = null;
 
         switch (appealType.sort) {
-            case "irs" -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
-            case "hf" -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
-            case "equipment" -> number = orderNumber + "-QUR-" + LocalDate.now().getYear();
+            case "registerIrs" -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
+            case "registerHf" -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
+            case "registerEquipment", "reRegisterEquipment" ->
+                    number = orderNumber + "-QUR-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
         return new OrderNumberDto(orderNumber, number);
