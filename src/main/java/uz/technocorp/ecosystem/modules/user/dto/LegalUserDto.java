@@ -41,55 +41,46 @@ public class LegalUserDto implements UserDto{
     private Integer officeId; //tashkilot qaysi officega tegishli (profilaktika uchun kerak)
 
     @Override
-    @JsonIgnore
     public String getUsername() {
         return this.tin.toString();
     }
 
     @Override
-    @JsonIgnore
     public String getRole() {
         return Role.LEGAL.name();
     }
 
     @Override
-    @JsonIgnore
     public List<String> getDirections() {
         return List.of(Direction.APPEAL.name());
     }
 
     @Override
-    @JsonIgnore
     public String getName() {
         return this.legalName;
     }
 
     @Override
-    @JsonIgnore
     public Long getPin() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public Integer getDepartmentId() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public String getPosition() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public String getLegalOwnershipType() {
         return this.legalOwnershipType;
     }
 
     @Override
-    @JsonIgnore
     public String getLegalForm() {
         return this.legalForm;
     }

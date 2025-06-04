@@ -10,12 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.user.dto.CommitteeUserDto;
-import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.OfficeUserDto;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
-import uz.technocorp.ecosystem.modules.user.helper.CommitteeUserHelper;
-import uz.technocorp.ecosystem.modules.user.helper.OfficeUserHelper;
-import uz.technocorp.ecosystem.modules.user.helper.UserHelperById;
+import uz.technocorp.ecosystem.modules.user.view.CommitteeUserView;
+import uz.technocorp.ecosystem.modules.user.view.OfficeUserView;
+import uz.technocorp.ecosystem.modules.user.view.UserViewById;
 import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -98,13 +97,13 @@ public class UserController {
 
     @GetMapping("/committee-users")
     ResponseEntity<?> getCommitteeUsers(@RequestParam(required = false) Map<String, String> params) {
-        Page<CommitteeUserHelper> page = userService.getCommitteeUsers(params);
+        Page<CommitteeUserView> page = userService.getCommitteeUsers(params);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(page));
     }
 
     @GetMapping("/office-users")
     ResponseEntity<?> getOfficeUsers(@RequestParam(required = false) Map<String, String> params) {
-        Page<OfficeUserHelper> page = userService.getOfficeUsers(params);
+        Page<OfficeUserView> page = userService.getOfficeUsers(params);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(page));
     }
 
@@ -122,7 +121,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     ResponseEntity<?> getUserById(@PathVariable UUID userId) {
-        UserHelperById byId = userService.getById(userId);
+        UserViewById byId = userService.getById(userId);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(byId));
     }
 

@@ -40,6 +40,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
+import uz.technocorp.ecosystem.utils.JsonUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -77,7 +78,7 @@ public class AppealServiceImpl implements AppealService {
         UUID appealId = create(dto.getDto(), user);
 
         // Create a document
-        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
+        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
     }
 
     @Override
@@ -96,7 +97,7 @@ public class AppealServiceImpl implements AppealService {
         }
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
+        documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);
@@ -115,7 +116,7 @@ public class AppealServiceImpl implements AppealService {
         Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
-        JsonNode data = makeJsonData(dto);
+        JsonNode data = JsonUtils.makeJsonSkipFields(dto);
 
         Appeal appeal = Appeal
                 .builder()

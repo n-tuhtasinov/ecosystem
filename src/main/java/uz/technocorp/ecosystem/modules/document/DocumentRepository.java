@@ -19,9 +19,9 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
 
 
     @Query(nativeQuery = true, value = """
-            select id            as documentId,
-                   document_type as documentType,
-                   1 = 1         as isSigned,
+            select id               as documentId,
+                   document_type    as documentType,
+                   is_fully_signed  as isFullySigned,
                    path,
                    signers,
                    created_at as createdAt
@@ -35,7 +35,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
     @Query(nativeQuery = true, value = """
             select id                as documentId,
                    document_type     as documentType,
-                   1 = 1             as is_signed,
+                   is_fully_signed   as isFullySigned,
                    path,
                    agreement_status  as agreementStatus,
                    description,

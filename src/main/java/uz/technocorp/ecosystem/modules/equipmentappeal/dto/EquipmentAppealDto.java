@@ -1,6 +1,8 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,8 +10,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -20,8 +25,8 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public abstract class EquipmentAppealDto implements AppealDto {
 
     @NotBlank(message = "Telefon nomer jo'natilmadi")
@@ -65,23 +70,51 @@ public abstract class EquipmentAppealDto implements AppealDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fullCheckDate;
 
+    @SkipDb
     @NotBlank(message = "Qurilmaning birkasi bilan surati pathi jo'natilmadi")
     private String labelPath;
 
+    @SkipDb
     @NotBlank(message = "Qurilmaning oldi-sotdi shartnomasi pathi jo'natilmadi")
     private String saleContractPath;
 
+    @SkipDb
     @NotBlank(message = "Qurilmaning sertifikati fayli pathi jo'natilmadi")
     private String equipmentCertPath;
 
+    @SkipDb
     @NotBlank(message = "Qurilmaning mas'ul shaxs tayinlanganligi to'g'risidagi buyrug'i pathi jo'natilmadi")
     private String assignmentDecreePath;
 
+    @SkipDb
     @NotBlank(message = "Qurilmaning expertiza loyihasi pathi jo'natilmadi")
     private String expertisePath;
 
+    @SkipDb
     @NotBlank(message = "Qurilmaning montaj guvohnomasi fayli pathi jo'natilmadi")
     private String installationCertPath;
 
+    @SkipDb
     private String additionalFilePath;
+
+    @Schema(hidden = true)
+    private Map<String, String> files = new HashMap<>();
+
+    public void buildFiles() {
+        files.put("labelPath", labelPath);
+        files.put("saleContractPath", saleContractPath);
+        files.put("equipmentCertPath", equipmentCertPath);
+        files.put("assignmentDecreePath", assignmentDecreePath);
+        files.put("expertisePath", expertisePath);
+        files.put("installationCertPath", installationCertPath);
+        files.put("additionalFilePath", additionalFilePath);
+    }
+
+    @AssertTrue
+    public boolean isBuilt() {
+        buildFiles();
+        return true;
+    }
+
+
 }

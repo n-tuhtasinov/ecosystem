@@ -10,5 +10,10 @@ import java.util.UUID;
  * @created 29.04.2025
  * @since v1.0
  */
-public record Signer(String signedBy, UUID createdBy, LocalDateTime createdAt) implements Serializable {
+public record Signer(
+        String signedBy,
+        UUID executorId,
+        LocalDateTime createdAt,
+        Boolean isSigned
+) implements Serializable {
 }
