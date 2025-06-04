@@ -13,7 +13,7 @@ import java.util.Map;
 public interface AttachmentService {
     String create(MultipartFile file, String folder);
 
-    String createPdfFromHtml(String htmlContent, String folder, Map<String, String> parameters);
+    String createPdfFromHtml(String htmlContent, String folder, Map<String, String> parameters, Boolean saveToDb);
 
     String getHtmlByPath(String path);
 

@@ -160,4 +160,6 @@ public class HazardousFacility extends BaseEntity {
     //Arizaga javob xati
     private String replyLetterPath;
 
+    // Reestr fayl path
+    private String registryFilePath;
 }
