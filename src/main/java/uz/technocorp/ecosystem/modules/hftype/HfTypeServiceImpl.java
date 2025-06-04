@@ -65,4 +65,9 @@ public class HfTypeServiceImpl implements HfTypeService {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.ASC, "name");
         return repository.findAllPageByName(pageable, search);
     }
+
+    @Override
+    public String getHfTypeNameById(Integer hfTypeId) {
+        return repository.findById(hfTypeId).orElseThrow(() -> new ResourceNotFoundException("XICHO turi", "ID", hfTypeId)).getName();
+    }
 }

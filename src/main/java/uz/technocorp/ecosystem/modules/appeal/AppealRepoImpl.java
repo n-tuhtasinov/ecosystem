@@ -74,9 +74,13 @@ public class AppealRepoImpl implements AppealRepo {
         }
 
         if (params.get("startDate") != null && !params.get("startDate").isEmpty()) {
-//            predicates.add(cb.equal(appeal.get("date"), params.get("date")));
-            predicates.add(cb.between(appealRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay(), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
-            countPredicates.add(cb.between(countRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay(), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
+            predicates.add(cb.greaterThanOrEqualTo(appealRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay()));
+            countPredicates.add(cb.greaterThanOrEqualTo(countRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay()));
+        }
+
+        if (params.get("endDate") != null && !params.get("endDate").isEmpty()) {
+            predicates.add(cb.lessThanOrEqualTo(appealRoot.get("endDate"), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
+            countPredicates.add(cb.lessThanOrEqualTo(countRoot.get("createdAt"), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
         }
 
         if (params.get("officeId") != null) {

@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.hfappeal.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +16,7 @@ import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rasulov Komil
@@ -41,6 +43,7 @@ public class HfAppealDto implements AppealDto {
     @NotBlank(message = "Manzil kiritilmadi!")
     private String address;
 
+    @JsonIgnore
     @NotNull(message = "XICHO turi tanlanmadi!")
     private Integer hfTypeId;
 

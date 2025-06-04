@@ -10,6 +10,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfDeregisterAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfModificationAppealDto;
+import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -29,9 +30,12 @@ import java.util.UUID;
 public class HfAppealController {
 
     private final AppealService appealService;
+    private final HfTypeService hfTypeService;
 
     @PostMapping
     public ResponseEntity<ApiResponse> createAndSign(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<HfAppealDto> signedDto, HttpServletRequest request) {
+        String hfTypeName = hfTypeService.getHfTypeNameById(signedDto.getDto().getHfTypeId());
+        signedDto.getDto().setHfTypeName(hfTypeName);
         appealService.saveAndSign(user, signedDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
@@ -61,4 +65,6 @@ public class HfAppealController {
         String path = appealService.preparePdfWithParam(hfDto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
+
+
 }
