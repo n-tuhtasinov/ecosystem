@@ -102,7 +102,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Profile findByTin(Long tin) {
-        return profileRepository.findByTin(tin).orElseThrow(() -> new ResourceNotFoundException("INN bo'yicha tashkilot topilmadi"));
+        return profileRepository.findByTin(tin).orElseThrow(() -> new ResourceNotFoundException("Tashkilot", "STIR", tin));
     }
 
     @Override
@@ -167,7 +167,7 @@ public class ProfileServiceImpl implements ProfileService {
     public ProfileInfoView getProfileInfo(Long tin) {
         return profileRepository
                 .getProfileByTin(tin)
-                .orElseThrow(()-> new ResourceNotFoundException("Tashkilot haqida ma'lumot", "STIR", tin));
+                .orElseThrow(() -> new ResourceNotFoundException("Tashkilot haqida ma'lumot", "STIR", tin));
     }
 
     private void setRegion(Integer regionId, Profile profile) {

@@ -52,7 +52,7 @@ public abstract class BaseAppealPdfProcessor implements AppealPdfProcessor {
         Map<String, String> parameters = buildParameters(dto, profile);
         String folderPath = folderPath();
 
-        return attachmentService.createPdfFromHtml(template.getContent(), folderPath, parameters);
+        return attachmentService.createPdfFromHtml(template.getContent(), folderPath, parameters, true);
     }
 
     // General methods
