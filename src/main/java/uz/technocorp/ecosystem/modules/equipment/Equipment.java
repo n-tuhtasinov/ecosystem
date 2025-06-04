@@ -2,6 +2,8 @@ package uz.technocorp.ecosystem.modules.equipment;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSort;
@@ -15,6 +17,7 @@ import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -190,6 +193,14 @@ public class Equipment extends BaseEntity {
 
     @Column(name = "inspector_id")
     private UUID inspectorId;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> files;
+
+
+
+
 
     @Column(nullable = false)
     private String saleContractPath; // oldi-sotdi shartnomasi

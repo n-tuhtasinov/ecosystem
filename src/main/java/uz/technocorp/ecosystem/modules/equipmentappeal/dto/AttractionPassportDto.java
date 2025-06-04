@@ -81,30 +81,4 @@ public class AttractionPassportDto {
     @NotBlank(message = "Foydalanishga qabul qilish guvohnomasi yuklanmadi")
     private String acceptanceCertPath;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

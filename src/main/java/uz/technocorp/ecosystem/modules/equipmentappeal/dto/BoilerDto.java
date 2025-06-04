@@ -10,6 +10,8 @@ import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -18,7 +20,6 @@ import java.time.LocalDate;
  * @since v1.0
  */
 @NoArgsConstructor
-@AllArgsConstructor
 @Setter
 @Getter
 public class BoilerDto extends EquipmentAppealDto {
@@ -45,4 +46,6 @@ public class BoilerDto extends EquipmentAppealDto {
     public LocalDate getDeadline() {
         return null;
     }
+
+
 }
