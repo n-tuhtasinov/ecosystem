@@ -63,7 +63,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
         HfAppealDto hfAppealDto = parseJsonData(appeal.getData());
 
-       /* // Make parameters
+        /*// Make parameters
         Map<String, String> parameters = new HashMap<>();
         parameters.put("upperOrganization", hfAppealDto.getUpperOrganization());
         parameters.put("legalName", appeal.getLegalName());

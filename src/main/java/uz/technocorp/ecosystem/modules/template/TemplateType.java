@@ -13,6 +13,7 @@ public enum TemplateType {
 
     REGISTRY_HF, // Reestr HF
     REGISTRY_EQUIPMENT, // Reestr Equipment
+    REGISTRY_ATTRACTION, // Reestr Attraction passport
 
     REPLY_APPEAL;
 }

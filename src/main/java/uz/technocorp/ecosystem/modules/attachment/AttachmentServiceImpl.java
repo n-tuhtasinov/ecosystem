@@ -77,14 +77,12 @@ public class AttachmentServiceImpl implements AttachmentService {
         // Generate PDF
         byte[] pdfBytes = generator.convertHtmlToPdf(content);
         try {
-            // Save to DB and return the file path
+            // Write file to folder
             Files.write(filePath, pdfBytes);
 
-            if (saveToDb) {
-                return saveToDatabase(filePath, content);
-            } else {
-                return getStandardizedPath(filePath);
-            }
+            return saveToDb
+                    ? saveToDatabase(filePath, content) // save to database and return path
+                    : getStandardizedPath(filePath); // just return path
         } catch (IOException e) {
             log.error("Error saving PDF file: {}", e.getMessage());
             throw new RuntimeException("Error saving PDF file", e);
