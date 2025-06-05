@@ -235,7 +235,7 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("conclusion", replyDto.getConclusion());
 
         // Save to an attachment and folder & Return a file path
-        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters);
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters, true);
     }
 
     @Override

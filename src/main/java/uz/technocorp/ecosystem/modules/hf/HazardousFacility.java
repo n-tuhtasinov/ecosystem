@@ -161,4 +161,7 @@ public class HazardousFacility extends BaseEntity {
     //Ekologiya qo'mitasi xulosasi -> Qurilmalar ekspertizasi
     private String ecologicalConclusionPath;
 
+
+    // Reestr fayl path
+    private String registryFilePath;
 }

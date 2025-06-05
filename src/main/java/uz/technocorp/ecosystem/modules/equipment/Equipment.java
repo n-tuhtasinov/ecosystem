@@ -203,7 +203,7 @@ public class Equipment extends BaseEntity {
     @Column(columnDefinition = "jsonb", nullable = false)
     private Map<String, String> files;
 
-
+    private String registryFilePath; // Reestr file path
 
 
 

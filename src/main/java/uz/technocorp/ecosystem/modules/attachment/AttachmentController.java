@@ -27,7 +27,7 @@ public class AttachmentController {
 
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> createPdfFromHtml(@RequestBody String htmlContent) {
-        String path = service.createPdfFromHtml(htmlContent, "generated-documents", null);
+        String path = service.createPdfFromHtml(htmlContent, "generated-documents", null, true);
         return ResponseEntity.ok(new ApiResponse("PDF yaratildi", path));
     }
 

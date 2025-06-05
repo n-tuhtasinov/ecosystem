@@ -10,9 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.district.District;
-import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
@@ -20,13 +20,18 @@ import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
-import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
+import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
-import uz.technocorp.ecosystem.modules.region.RegionRepository;
+import uz.technocorp.ecosystem.modules.region.RegionService;
+import uz.technocorp.ecosystem.modules.template.Template;
+import uz.technocorp.ecosystem.modules.template.TemplateService;
+import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -41,26 +46,43 @@ import java.util.UUID;
 public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     private final HazardousFacilityRepository repository;
-    private final AppealRepository appealRepository;
-    private final RegionRepository regionRepository;
-    private final DistrictRepository districtRepository;
-    private final ProfileRepository profileRepository;
+    private final RegionService regionService;
+    private final DistrictService districtService;
+    private final AttachmentService attachmentService;
+    private final TemplateService templateService;
+    private final ProfileService profileService;
     private final ObjectMapper objectMapper;
 
     @Override
     public void create(Appeal appeal) {
         Long maxOrderNumber = repository.findMaxOrderNumber().orElse(0L) + 1;
 
-        District district = districtRepository
-                .findById(appeal.getDistrictId())
-                .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", appeal.getDistrictId()));
-
-        Region region = regionRepository
-                .findById(appeal.getRegionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", appeal.getRegionId()));
+        Region region = regionService.getById(appeal.getRegionId());
+        District district = districtService.getDistrict(appeal.getDistrictId());
 
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
         HfAppealDto hfAppealDto = parseJsonData(appeal.getData());
+
+        /*// Make parameters
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("upperOrganization", hfAppealDto.getUpperOrganization());
+        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalTin", appeal.getLegalTin().toString());
+        parameters.put("email", hfAppealDto.getEmail());
+        parameters.put("name", hfAppealDto.getName());
+        parameters.put("region", region.getName());
+        parameters.put("district", district.getName());
+        parameters.put("address", hfAppealDto.getAddress());
+        parameters.put("hfTypeName", hfAppealDto.getHfTypeName());
+        parameters.put("registrationDate", LocalDate.now().toString());
+        parameters.put("extraArea", hfAppealDto.getExtraArea());
+        parameters.put("hazardousSubstance", hfAppealDto.getHazardousSubstance());
+
+        // Find template
+        Template template = templateService.getByType(TemplateType.REGISTRY_HF.name());
+
+        // Create file
+        String registryFilePath = attachmentService.createPdfFromHtml(template.getContent(), "reestr/hf", parameters, false);*/
 
         repository.save(
                 HazardousFacility.builder()
@@ -98,6 +120,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .projectDocumentationPath(hfAppealDto.getProjectDocumentationPath())
                         .identificationCardPath(hfAppealDto.getIdentificationCardPath())
                         .receiptPath(hfAppealDto.getReceiptPath())
+//                        .registryFilePath(registryFilePath)
                         .build());
     }
 
@@ -158,7 +181,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     public void update(UUID id, HfDto dto) {
         HazardousFacility hazardousFacility = findById(id);
 
-        Profile profile = profileRepository.findByTin(dto.legalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "Tin", dto.legalTin()));
+        Profile profile = profileService.findByTin(dto.legalTin());
 
         hazardousFacility.setLegalTin(dto.legalTin());
         hazardousFacility.setLegalName(profile.getLegalName());
