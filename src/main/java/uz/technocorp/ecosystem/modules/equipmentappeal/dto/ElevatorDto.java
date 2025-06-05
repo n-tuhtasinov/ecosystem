@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
+import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
 
@@ -26,9 +28,11 @@ public class ElevatorDto extends EquipmentAppealDto {
     @NotNull(message = "Soha tanlanmadi")
     private Sphere sphere;
 
+    @SkipDb
     @NotBlank(message = "Yuk ko'tara olish qiymati jo'natilmadi")
     private String liftingCapacity;
 
+    @SkipDb
     @NotBlank(message = "To'xtashlar soni jo'natilmadi")
     private String stopCount;
 
@@ -40,5 +44,16 @@ public class ElevatorDto extends EquipmentAppealDto {
     @Override
     public LocalDate getDeadline() {
         return null;
+    }
+
+    public void buildParameters() {
+        super.getParameters().put("liftingCapacity", liftingCapacity);
+        super.getParameters().put("stopCount", stopCount);
+    }
+
+    @AssertTrue
+    public boolean isParametersBuilt() {
+        buildParameters();
+        return true;
     }
 }

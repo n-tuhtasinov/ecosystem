@@ -119,13 +119,18 @@ public class Equipment extends BaseEntity {
     @Column(name = "old_equipment_id")
     private UUID oldEquipmentId;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> parameters;
+
+
     private String boomLength; //strelasining uzunligi (kran)
 
     private String liftingCapacity; //yuk ko'tarishi (kran, lift, yuk ko'targich)
 
     private String capacity; // hajmi (sosud, kimyoviy idish, qozon, sug, 100ming)
 
-    private String environment; // muhit (sosud, quvur, qozon, sug, )
+    private String environment; // muhit (sosud, quvur, qozon, sug)
 
     private String pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug, 100ming)
 

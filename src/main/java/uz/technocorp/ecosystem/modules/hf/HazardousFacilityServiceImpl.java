@@ -96,7 +96,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .industrialSafetyDeclarationPath(hfAppealDto.getIndustrialSafetyDeclarationPath())
                         .insurancePolicyPath(hfAppealDto.getInsurancePolicyPath())
                         .projectDocumentationPath(hfAppealDto.getProjectDocumentationPath())
-                        .replyLetterPath(hfAppealDto.getReplyLetterPath())
                         .identificationCardPath(hfAppealDto.getIdentificationCardPath())
                         .receiptPath(hfAppealDto.getReceiptPath())
                         .build());
@@ -157,9 +156,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     @Override
     public void update(UUID id, HfDto dto) {
-        HazardousFacility hazardousFacility = repository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("XICHO", "Id", id));
+        HazardousFacility hazardousFacility = findById(id);
 
         Profile profile = profileRepository.findByTin(dto.legalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "Tin", dto.legalTin()));
 
@@ -181,7 +178,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setRegistryNumber(dto.registryNumber());
         hazardousFacility.setSpheres(dto.spheres());
         hazardousFacility.setRegistrationDate(dto.registrationDate());
-
         hazardousFacility.setAppointmentOrderPath(dto.appointmentOrderPath());
         hazardousFacility.setCadastralPassportPath(dto.cadastralPassportPath());
         hazardousFacility.setCertificationPath(dto.certificationPath());
@@ -192,7 +188,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setExpertOpinionPath(dto.expertOpinionPath());
         hazardousFacility.setInsurancePolicyPath(dto.insurancePolicyPath());
         hazardousFacility.setProjectDocumentationPath(dto.projectDocumentationPath());
-        hazardousFacility.setReplyLetterPath(dto.replyLetterPath());
         hazardousFacility.setIdentificationCardPath(dto.identificationCardPath());
         hazardousFacility.setDeviceTestingPath(dto.deviceTestingPath());
         hazardousFacility.setReceiptPath(dto.receiptPath());
@@ -201,10 +196,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     @Override
     public void deregister(UUID id, HfDeregisterDto dto) {
-        HazardousFacility hazardousFacility = repository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", id));
-
+        HazardousFacility hazardousFacility = findById(id);
         hazardousFacility.setActive(false);
         hazardousFacility.setDeregisterFilePath(dto.deregisterFilePath());
         hazardousFacility.setDeregisterReason(dto.deregisterReason());
@@ -217,10 +209,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     @Override
     public void periodicUpdate(UUID id, HfPeriodicUpdateDto dto) {
-        HazardousFacility hazardousFacility = repository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", id));
-
+        HazardousFacility hazardousFacility = findById(id);
         hazardousFacility.setPeriodicUpdateFilePath(dto.periodicUpdateFilePath());
         hazardousFacility.setPeriodicUpdateReason(dto.periodicUpdateReason());
         hazardousFacility.setRegistryNumber(
@@ -240,6 +229,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         return repository.getHfCustoms(user, page, size, tin, registryNumber, regionId, startDate, endDate);
     }
 
+    @Override
+    public String getHfNameById(UUID hfId) {
+        return findById(hfId).getName();
+    }
+
     private HfAppealDto parseJsonData(JsonNode jsonNode) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -250,5 +244,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON deserialization error", e);
         }
+    }
+
+    public HazardousFacility findById(UUID id){
+        return repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
     }
 }

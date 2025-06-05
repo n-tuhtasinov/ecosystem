@@ -19,14 +19,18 @@ import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
@@ -70,6 +74,8 @@ public class AppealServiceImpl implements AppealService {
     private final Map<Class<? extends AppealDto>, AppealPdfProcessor> processors;
     private final IonizingRadiationSourceService ionizingRadiationSourceService;
     private final EquipmentService equipmentService;
+    private final HfTypeService hfTypeService;
+    private final ChildEquipmentService childEquipmentService;
 
     @Override
     @Transactional
@@ -281,6 +287,22 @@ public class AppealServiceImpl implements AppealService {
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }
         }
+    }
+
+    @Override
+    public void setHfNameAndChildEquipmentName(EquipmentAppealDto dto) {
+        if (dto.getHazardousFacilityId()!=null){
+            String hfName = hazardousFacilityService.getHfNameById(dto.getHazardousFacilityId());
+            dto.setHazardousFacilityName(hfName);
+        }
+        String name = childEquipmentService.getChildEquipmentNameById(dto.getChildEquipmentId());
+        dto.setChildEquipmentName(name);
+    }
+
+    @Override
+    public void setHfTypeName(HfAppealDto appealDto) {
+        String hfTypeName = hfTypeService.getHfTypeNameById(appealDto.getHfTypeId());
+        appealDto.setHfTypeName(hfTypeName);
     }
 
     private JsonNode makeJsonData(AppealDto dto) {

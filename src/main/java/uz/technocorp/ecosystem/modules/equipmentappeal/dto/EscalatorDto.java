@@ -1,11 +1,13 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
 
@@ -21,15 +23,19 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EscalatorDto extends EquipmentAppealDto {
 
+    @SkipDb
     @NotBlank(message = "O'tkazish qobilyati jo'natilmadi")
     private String passengersPerMinute;
 
+    @SkipDb
     @NotBlank(message = "Uzunligi jo'natilmadi")
     private String length;
 
+    @SkipDb
     @NotBlank(message = "Tezligi jo'natilmadi")
     private String speed;
 
+    @SkipDb
     @NotBlank(message = "Ko'tarish balandligi jo'natilmadi")
     private String height;
 
@@ -41,5 +47,18 @@ public class EscalatorDto extends EquipmentAppealDto {
     @Override
     public LocalDate getDeadline() {
         return null;
+    }
+
+    public void buildParameters() {
+        super.getParameters().put("passengersPerMinute", passengersPerMinute);
+        super.getParameters().put("length", length);
+        super.getParameters().put("speed", speed);
+        super.getParameters().put("height", height);
+    }
+
+    @AssertTrue
+    public boolean isParametersBuilt() {
+        buildParameters();
+        return true;
     }
 }

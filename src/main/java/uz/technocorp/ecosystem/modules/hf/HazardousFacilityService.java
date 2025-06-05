@@ -28,4 +28,5 @@ public interface HazardousFacilityService {
     void periodicUpdate(UUID id, HfPeriodicUpdateDto dto);
     List<HfSelectView> findAllByProfile(User user);
     Page<HfCustom> getAll(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate);
+    String getHfNameById(UUID hfId);
 }
