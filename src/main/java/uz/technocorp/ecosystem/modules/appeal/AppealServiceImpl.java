@@ -1,8 +1,6 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,7 +24,6 @@ import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
@@ -44,7 +41,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
-import uz.technocorp.ecosystem.utils.JsonUtils;
+import uz.technocorp.ecosystem.utils.JsonMaker;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -122,7 +119,7 @@ public class AppealServiceImpl implements AppealService {
         Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
-        JsonNode data = JsonUtils.makeJsonSkipFields(dto);
+        JsonNode data = JsonMaker.makeJsonSkipFields(dto);
 
         Appeal appeal = Appeal
                 .builder()
@@ -158,7 +155,7 @@ public class AppealServiceImpl implements AppealService {
     @Override
     public void update(UUID id, AppealDto dto) {
         Appeal appeal = getAppealById(id);
-        appeal.setData(makeJsonData(dto));
+        appeal.setData(JsonMaker.makeJsonSkipFields(dto));
         repository.save(appeal);
     }
 
@@ -303,12 +300,6 @@ public class AppealServiceImpl implements AppealService {
     public void setHfTypeName(HfAppealDto appealDto) {
         String hfTypeName = hfTypeService.getHfTypeNameById(appealDto.getHfTypeId());
         appealDto.setHfTypeName(hfTypeName);
-    }
-
-    private JsonNode makeJsonData(AppealDto dto) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        return mapper.valueToTree(dto);
     }
 
     private OrderNumberDto makeNumber(AppealType appealType) {

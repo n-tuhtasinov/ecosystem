@@ -107,19 +107,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .registrationDate(LocalDate.now())
                         .active(true)
                         .spheres(hfAppealDto.getSpheres())
-                        .appointmentOrderPath(hfAppealDto.getAppointmentOrderPath())
-                        .cadastralPassportPath(hfAppealDto.getCadastralPassportPath())
-                        .certificationPath(hfAppealDto.getCertificationPath())
-                        .permitPath(hfAppealDto.getPermitPath())
-                        .deviceTestingPath(hfAppealDto.getDeviceTestingPath())
-                        .licensePath(hfAppealDto.getLicensePath())
-                        .ecologicalConclusionPath(hfAppealDto.getEcologicalConclusionPath())
-                        .expertOpinionPath(hfAppealDto.getExpertOpinionPath())
-                        .industrialSafetyDeclarationPath(hfAppealDto.getIndustrialSafetyDeclarationPath())
-                        .insurancePolicyPath(hfAppealDto.getInsurancePolicyPath())
-                        .projectDocumentationPath(hfAppealDto.getProjectDocumentationPath())
-                        .identificationCardPath(hfAppealDto.getIdentificationCardPath())
-                        .receiptPath(hfAppealDto.getReceiptPath())
+                        .files(hfAppealDto.getFiles())
 //                        .registryFilePath(registryFilePath)
                         .build());
     }
@@ -201,19 +189,20 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setRegistryNumber(dto.registryNumber());
         hazardousFacility.setSpheres(dto.spheres());
         hazardousFacility.setRegistrationDate(dto.registrationDate());
-        hazardousFacility.setAppointmentOrderPath(dto.appointmentOrderPath());
-        hazardousFacility.setCadastralPassportPath(dto.cadastralPassportPath());
-        hazardousFacility.setCertificationPath(dto.certificationPath());
-        hazardousFacility.setPermitPath(dto.permitPath());
-        hazardousFacility.setIndustrialSafetyDeclarationPath(dto.industrialSafetyDeclarationPath());
-        hazardousFacility.setLicensePath(dto.licensePath());
-        hazardousFacility.setEcologicalConclusionPath(dto.ecologicalConclusionPath());
-        hazardousFacility.setExpertOpinionPath(dto.expertOpinionPath());
-        hazardousFacility.setInsurancePolicyPath(dto.insurancePolicyPath());
-        hazardousFacility.setProjectDocumentationPath(dto.projectDocumentationPath());
-        hazardousFacility.setIdentificationCardPath(dto.identificationCardPath());
-        hazardousFacility.setDeviceTestingPath(dto.deviceTestingPath());
-        hazardousFacility.setReceiptPath(dto.receiptPath());
+        //TODO HfDtoga filesni set qilishni yozish kerak
+//        hazardousFacility.setAppointmentOrderPath(dto.appointmentOrderPath());
+//        hazardousFacility.setCadastralPassportPath(dto.cadastralPassportPath());
+//        hazardousFacility.setCertificationPath(dto.certificationPath());
+//        hazardousFacility.setPermitPath(dto.permitPath());
+//        hazardousFacility.setIndustrialSafetyDeclarationPath(dto.industrialSafetyDeclarationPath());
+//        hazardousFacility.setLicensePath(dto.licensePath());
+//        hazardousFacility.setEcologicalConclusionPath(dto.ecologicalConclusionPath());
+//        hazardousFacility.setExpertOpinionPath(dto.expertOpinionPath());
+//        hazardousFacility.setInsurancePolicyPath(dto.insurancePolicyPath());
+//        hazardousFacility.setProjectDocumentationPath(dto.projectDocumentationPath());
+//        hazardousFacility.setIdentificationCardPath(dto.identificationCardPath());
+//        hazardousFacility.setDeviceTestingPath(dto.deviceTestingPath());
+//        hazardousFacility.setReceiptPath(dto.receiptPath());
         repository.save(hazardousFacility);
     }
 

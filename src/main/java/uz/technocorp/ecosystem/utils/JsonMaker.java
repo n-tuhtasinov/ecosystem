@@ -3,7 +3,6 @@ package uz.technocorp.ecosystem.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.experimental.UtilityClass;
 import uz.technocorp.ecosystem.shared.SkipDb;
@@ -12,7 +11,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 @UtilityClass
-public class JsonUtils {
+public class JsonMaker {
 
     private final ObjectMapper MAPPER = new ObjectMapper().registerModule(new JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 

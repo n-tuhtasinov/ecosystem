@@ -122,44 +122,44 @@ public class HazardousFacility extends BaseEntity {
     @Column(columnDefinition = "jsonb", nullable = false)
     private Map<String, String> files;
 
-    //Identifikatsiya varag'i
-    private String identificationCardPath;
-
-    //XICHOni ro'yxatga olish uchun to'lov kvitansiyasi
-    private String receiptPath;
-
-    //Ekspertiza xulosasi
-    private String expertOpinionPath;
-
-    //Loyiha hujjatlari
-    private String projectDocumentationPath;
-
-    //XICHO kadastr pasporti
-    private String cadastralPassportPath;
-
-    //Sanoat xavfsizligi deklaratsiyasi
-    private String industrialSafetyDeclarationPath;
-
-    //Sug'urta polisi
-    private String insurancePolicyPath;
-
-    //Litsenziya
-    private String licensePath;
-
-    //Ruxsatnoma
-    private String permitPath;
-
-    //XICHO xodimlarining sanoat xavfsizligi bo'yicha attestatsiyadan o'tganligi
-    private String certificationPath;
-
-    //Qurilmalarni sinovdan o'tganligi
-    private String deviceTestingPath;
-
-    //Mas'ul xodim tayinlanganligi buyrug'i
-    private String appointmentOrderPath;
-
-    //Ekologiya qo'mitasi xulosasi -> Qurilmalar ekspertizasi
-    private String ecologicalConclusionPath;
+//    //Identifikatsiya varag'i
+//    private String identificationCardPath;
+//
+//    //XICHOni ro'yxatga olish uchun to'lov kvitansiyasi
+//    private String receiptPath;
+//
+//    //Ekspertiza xulosasi
+//    private String expertOpinionPath;
+//
+//    //Loyiha hujjatlari
+//    private String projectDocumentationPath;
+//
+//    //XICHO kadastr pasporti
+//    private String cadastralPassportPath;
+//
+//    //Sanoat xavfsizligi deklaratsiyasi
+//    private String industrialSafetyDeclarationPath;
+//
+//    //Sug'urta polisi
+//    private String insurancePolicyPath;
+//
+//    //Litsenziya
+//    private String licensePath;
+//
+//    //Ruxsatnoma
+//    private String permitPath;
+//
+//    //XICHO xodimlarining sanoat xavfsizligi bo'yicha attestatsiyadan o'tganligi
+//    private String certificationPath;
+//
+//    //Qurilmalarni sinovdan o'tganligi
+//    private String deviceTestingPath;
+//
+//    //Mas'ul xodim tayinlanganligi buyrug'i
+//    private String appointmentOrderPath;
+//
+//    //Ekologiya qo'mitasi xulosasi -> Qurilmalar ekspertizasi
+//    private String ecologicalConclusionPath;
 
     // Reestr fayl path
     private String registryFilePath;
