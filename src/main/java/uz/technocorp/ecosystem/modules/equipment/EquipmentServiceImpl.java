@@ -8,13 +8,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
+import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSortService;
+import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
+import uz.technocorp.ecosystem.modules.template.TemplateService;
+import uz.technocorp.ecosystem.modules.template.TemplateType;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -27,8 +36,12 @@ import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 public class EquipmentServiceImpl implements EquipmentService {
 
     private final EquipmentRepository equipmentRepository;
-    private final AppealRepository appealRepository;
     private final ProfileRepository profileRepository;
+    private final DistrictService districtService;
+    private final AttachmentService attachmentService;
+    private final TemplateService templateService;
+    private final ChildEquipmentService childEquipmentService;
+    private final ChildEquipmentSortService childEquipmentSortService;
 
     @Override
     public void create(Appeal appeal) {
@@ -36,6 +49,11 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         EquipmentDto dto = parseJsonToObject(appeal.getData());
         EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
+
+        // Create PDF with parameters
+        String registryFilepath = dto.type().equals(EquipmentType.ATTRACTION_PASSPORT)
+                ? createAttractionPassportPdf(dto, profile.getLegalAddress()) // Attraction Passport
+                : createEquipmentPdf(dto, profile.getLegalAddress()); // Other Equipments
 
         Equipment equipment = Equipment.builder()
                 .type(info.equipmentType())
@@ -95,6 +113,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .seasonalReadinessActPath(dto.seasonalReadinessActPath())
                 .safetyDecreePath(dto.safetyDecreePath())
                 .gasSupplyProjectPath(dto.gasSupplyProjectPath())
+                .registryFilePath(registryFilepath)
                 .build();
 
         equipmentRepository.save(equipment);
@@ -123,4 +142,50 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
     }
 
+    private String createAttractionPassportPdf(EquipmentDto dto, String legalAddress) {
+        Map<String, String> parameters = new HashMap<>();
+
+        parameters.put("attractionName", dto.attractionName());
+        parameters.put("attractionType", childEquipmentService.getById(dto.childEquipmentId()).getName());
+        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+        parameters.put("legalName", dto.legalName());
+        parameters.put("legalTin", dto.legalTin().toString());
+        parameters.put("legalAddress", legalAddress);
+        parameters.put("registryNumber", dto.number());
+        parameters.put("factoryNumber", dto.factoryNumber());
+        parameters.put("factory", dto.factory());
+        parameters.put("regionName", dto.regionName());
+        parameters.put("districtName", districtService.getDistrict(dto.districtId()).getName());
+        parameters.put("address", dto.address());
+        parameters.put("riskLevel", dto.riskLevel().value);
+
+        String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
+
+        return attachmentService.createPdfFromHtml(content, "reestr/attraction", parameters, false);
+    }
+
+    private String createEquipmentPdf(EquipmentDto dto, String legalAddress) {
+        Map<String, String> parameters = new HashMap<>();
+
+        parameters.put("legalAddress", legalAddress);
+        parameters.put("equipmentType", childEquipmentService.getById(dto.childEquipmentId()).getName());
+        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+        parameters.put("legalTin", dto.legalTin().toString());
+        parameters.put("factoryNumber", dto.factoryNumber());
+        parameters.put("factory", dto.factory());
+        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+        parameters.put("number", dto.number());
+        parameters.put("registrationDate", LocalDate.now().toString());
+        parameters.put("address", dto.address());
+        parameters.put("parameters", "PARAMETERS"); // TODO
+
+        String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
+
+        return attachmentService.createPdfFromHtml(content, "reestr/equipment", parameters, false);
+    }
+
+    private String getTemplateContent(TemplateType type) {
+        return templateService.getByType(type.name()).getContent();
+    }
 }
