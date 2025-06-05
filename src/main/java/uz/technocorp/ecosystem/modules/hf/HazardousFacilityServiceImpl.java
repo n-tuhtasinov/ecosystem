@@ -63,7 +63,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
         HfAppealDto hfAppealDto = parseJsonData(appeal.getData());
 
-        // Make parameters
+        /*// Make parameters
         Map<String, String> parameters = new HashMap<>();
         parameters.put("upperOrganization", hfAppealDto.getUpperOrganization());
         parameters.put("legalName", appeal.getLegalName());
@@ -82,7 +82,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         Template template = templateService.getByType(TemplateType.REGISTRY_HF.name());
 
         // Create file
-        String registryFilePath = attachmentService.createPdfFromHtml(template.getContent(), "reestr/hf", parameters, false);
+        String registryFilePath = attachmentService.createPdfFromHtml(template.getContent(), "reestr/hf", parameters, false);*/
 
         repository.save(
                 HazardousFacility.builder()
@@ -121,7 +121,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .replyLetterPath(hfAppealDto.getReplyLetterPath())
                         .identificationCardPath(hfAppealDto.getIdentificationCardPath())
                         .receiptPath(hfAppealDto.getReceiptPath())
-                        .registryFilePath(registryFilePath)
+//                        .registryFilePath(registryFilePath)
                         .build());
     }
 

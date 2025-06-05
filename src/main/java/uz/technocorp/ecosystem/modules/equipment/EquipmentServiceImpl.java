@@ -50,10 +50,10 @@ public class EquipmentServiceImpl implements EquipmentService {
         EquipmentDto dto = parseJsonToObject(appeal.getData());
         EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
 
-        // Create PDF with parameters
+        /*// Create PDF with parameters
         String registryFilepath = dto.type().equals(EquipmentType.ATTRACTION_PASSPORT)
                 ? createAttractionPassportPdf(dto, profile.getLegalAddress()) // Attraction Passport
-                : createEquipmentPdf(dto, profile.getLegalAddress()); // Other Equipments
+                : createEquipmentPdf(dto, profile.getLegalAddress()); // Other Equipments*/
 
         Equipment equipment = Equipment.builder()
                 .type(info.equipmentType())
@@ -113,7 +113,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .seasonalReadinessActPath(dto.seasonalReadinessActPath())
                 .safetyDecreePath(dto.safetyDecreePath())
                 .gasSupplyProjectPath(dto.gasSupplyProjectPath())
-                .registryFilePath(registryFilepath)
+//                .registryFilePath(registryFilepath)
                 .build();
 
         equipmentRepository.save(equipment);
