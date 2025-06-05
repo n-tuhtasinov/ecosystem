@@ -34,8 +34,14 @@ public abstract class EquipmentAppealDto implements AppealDto {
 
     private UUID hazardousFacilityId;
 
+    @Schema(hidden = true)
+    private String hazardousFacilityName;
+
     @NotNull(message = "Qurilma turi tanlanmadi")
     private Integer childEquipmentId;
+
+    @Schema(hidden = true)
+    private String childEquipmentName;
 
     @NotBlank(message = "Zavod raqami jo'natilmadi")
     private String factoryNumber;
@@ -100,6 +106,9 @@ public abstract class EquipmentAppealDto implements AppealDto {
     @Schema(hidden = true)
     private Map<String, String> files = new HashMap<>();
 
+    @Schema(hidden = true)
+    private Map<String, String> parameters = new HashMap<>();
+
     public void buildFiles() {
         files.put("labelPath", labelPath);
         files.put("saleContractPath", saleContractPath);
@@ -111,7 +120,7 @@ public abstract class EquipmentAppealDto implements AppealDto {
     }
 
     @AssertTrue
-    public boolean isBuilt() {
+    public boolean isFilesBuilt() {
         buildFiles();
         return true;
     }

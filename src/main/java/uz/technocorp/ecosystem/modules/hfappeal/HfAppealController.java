@@ -34,8 +34,7 @@ public class HfAppealController {
 
     @PostMapping
     public ResponseEntity<ApiResponse> createAndSign(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<HfAppealDto> signedDto, HttpServletRequest request) {
-        String hfTypeName = hfTypeService.getHfTypeNameById(signedDto.getDto().getHfTypeId());
-        signedDto.getDto().setHfTypeName(hfTypeName);
+        appealService.setHfTypeName(signedDto.getDto());
         appealService.saveAndSign(user, signedDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }

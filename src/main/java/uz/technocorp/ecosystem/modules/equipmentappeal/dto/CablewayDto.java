@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
 
@@ -27,12 +29,15 @@ public class CablewayDto extends EquipmentAppealDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate nonDestructiveCheckDate;
 
+    @SkipDb
     @NotBlank(message = "Tezlik jo'natilmadi")
     private String speed;
 
+    @SkipDb
     @NotBlank(message = "Harakatlanuvchi sostav soni jo'natilamdi")
     private String passengerCount;
 
+    @SkipDb
     @NotBlank(message = "Uzunligi jo'natilmadi")
     private String length;
 
@@ -44,5 +49,17 @@ public class CablewayDto extends EquipmentAppealDto {
     @Override
     public LocalDate getDeadline() {
         return null;
+    }
+
+    public void buildParameters() {
+        super.getParameters().put("speed", speed);
+        super.getParameters().put("passengerCount", passengerCount);
+        super.getParameters().put("length", length);
+    }
+
+    @AssertTrue
+    public boolean isParametersBuilt() {
+        buildParameters();
+        return true;
     }
 }

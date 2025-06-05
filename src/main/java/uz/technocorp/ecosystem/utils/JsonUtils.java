@@ -2,6 +2,8 @@ package uz.technocorp.ecosystem.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.experimental.UtilityClass;
 import uz.technocorp.ecosystem.shared.SkipDb;
@@ -12,7 +14,7 @@ import java.util.*;
 @UtilityClass
 public class JsonUtils {
 
-    private final ObjectMapper MAPPER = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper MAPPER = new ObjectMapper().registerModule(new JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     public JsonNode makeJsonSkipFields(Object dto) {
         Map<String, Object> result = new HashMap<>();
@@ -41,7 +43,6 @@ public class JsonUtils {
             fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
             clazz = clazz.getSuperclass(); // Parent classga o'tish
         }
-
         return fields;
     }
 }

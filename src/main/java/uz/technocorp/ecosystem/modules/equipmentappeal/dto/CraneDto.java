@@ -1,11 +1,13 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -22,9 +24,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CraneDto extends EquipmentAppealDto {
 
+    @SkipDb
     @NotBlank(message = "Strelasining uzunligi jo'natilmadi")
     private String boomLength;
 
+    @SkipDb
     @NotBlank(message = "Yuk ko'tara olish qiymati jo'natilmadi")
     private String liftingCapacity;
 
@@ -38,10 +42,15 @@ public class CraneDto extends EquipmentAppealDto {
         return null;
     }
 
-//    public CraneDto(String phoneNumber, UUID hazardousFacilityId, Integer childEquipmentId, String factoryNumber, Integer regionId, Integer districtId, String address, String model, String factory, String location, LocalDate manufacturedAt, LocalDate partialCheckDate, LocalDate fullCheckDate, String labelPath, String saleContractPath, String equipmentCertPath, String assignmentDecreePath, String expertisePath, String installationCertPath, String additionalFilePath, String boomLength, String liftingCapacity) {
-//        super(phoneNumber, hazardousFacilityId, childEquipmentId, factoryNumber, regionId, districtId, address, model, factory, location, manufacturedAt, partialCheckDate, fullCheckDate, labelPath, saleContractPath, equipmentCertPath, assignmentDecreePath, expertisePath, installationCertPath, additionalFilePath);
-//        this.boomLength = boomLength;
-//        this.liftingCapacity = liftingCapacity;
-//    }
+    public void buildParameters() {
+        super.getParameters().put("boomLength", boomLength);
+        super.getParameters().put("liftingCapacity", liftingCapacity);
+    }
+
+    @AssertTrue
+    public boolean isParametersBuilt() {
+        buildParameters();
+        return true;
+    }
 
 }
