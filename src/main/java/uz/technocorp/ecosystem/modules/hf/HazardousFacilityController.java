@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
+import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
@@ -78,10 +79,11 @@ public class HazardousFacilityController {
                                     @RequestParam(value = "legalTin", required = false) Long legalTin,
                                     @RequestParam(value = "registryNumber", required = false) String registryNumber,
                                     @RequestParam(value = "regionId", required = false) Integer regionId,
+                                    @RequestParam(value = "districtId", required = false) Integer districtId,
                                     @RequestParam(value = "startDate", required = false) LocalDate startDate,
                                     @RequestParam(value = "endDate", required = false) LocalDate endDate
                                     ) {
-        Page<HfCustom> all = service.getAll(user, page, size, legalTin, registryNumber, regionId, startDate, endDate);
+        Page<HfCustom> all = service.getAll(user, new HfParams(page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 }

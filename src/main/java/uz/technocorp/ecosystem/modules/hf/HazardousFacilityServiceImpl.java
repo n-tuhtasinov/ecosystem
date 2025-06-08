@@ -15,6 +15,7 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
+import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
@@ -94,7 +95,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .profileId(appeal.getProfileId())
                         .legalAddress(appeal.getLegalAddress())
                         .phoneNumber(appeal.getPhoneNumber())
-                        .email(hfAppealDto.getEmail())
                         .upperOrganization(hfAppealDto.getUpperOrganization())
                         .name(hfAppealDto.getName())
                         .address(appeal.getAddress())
@@ -177,7 +177,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setDistrictId(dto.districtId());
         hazardousFacility.setLegalAddress(profile.getLegalAddress());
         hazardousFacility.setPhoneNumber(dto.phoneNumber());
-        hazardousFacility.setEmail(dto.email());
         hazardousFacility.setUpperOrganization(dto.upperOrganization());
         hazardousFacility.setName(dto.name());
         hazardousFacility.setAddress(dto.address());
@@ -237,8 +236,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     }
 
     @Override
-    public Page<HfCustom> getAll(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate) {
-        return repository.getHfCustoms(user, page, size, tin, registryNumber, regionId, startDate, endDate);
+    public Page<HfCustom> getAll(User user, HfParams params) {
+        return repository.getHfCustoms(user, params);
     }
 
     @Override

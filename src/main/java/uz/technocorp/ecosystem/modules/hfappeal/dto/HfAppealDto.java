@@ -37,8 +37,6 @@ public class HfAppealDto implements AppealDto {
     @NotBlank(message = "Telefon raqami kiritilmadi!")
     private String phoneNumber;
 
-    private String email;
-
     private String upperOrganization;
 
     @NotBlank(message = "Xicho nomi kiritilmadi")

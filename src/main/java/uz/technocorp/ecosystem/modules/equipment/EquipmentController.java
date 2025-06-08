@@ -1,8 +1,15 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
+
+import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov

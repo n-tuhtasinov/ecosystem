@@ -4,12 +4,12 @@ import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
+import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.user.User;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +27,6 @@ public interface HazardousFacilityService {
     void deregister(UUID id, HfDeregisterDto dto);
     void periodicUpdate(UUID id, HfPeriodicUpdateDto dto);
     List<HfSelectView> findAllByProfile(User user);
-    Page<HfCustom> getAll(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate);
+    Page<HfCustom> getAll(User user, HfParams params);
     String getHfNameById(UUID hfId);
 }
