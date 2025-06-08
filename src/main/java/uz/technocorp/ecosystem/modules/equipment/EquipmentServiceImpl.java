@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
@@ -16,7 +17,9 @@ import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSortServ
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
@@ -24,8 +27,6 @@ import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -90,15 +91,17 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .description(dto.description())
                 .inspectorId(appeal.getExecutorId())
 //                .registryFilePath(registryFilepath)
+                .registrationDate(LocalDate.now())
                 .build();
 
         equipmentRepository.save(equipment);
     }
 
     @Override
-    public void getAll(User user, Map<String, String> params) {
-
+    public Page<EquipmentView> getAll(User user, EquipmentParams params) {
+        return equipmentRepository.getAllByParams(user,params);
     }
+
 
     private EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
         return switch (appealType) {

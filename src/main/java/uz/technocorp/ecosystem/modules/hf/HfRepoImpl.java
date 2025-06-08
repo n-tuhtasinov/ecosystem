@@ -52,7 +52,7 @@ public class HfRepoImpl implements HfRepo {
 
         // count uchun alohida query va root
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        Root<Appeal> countRoot = countQuery.from(Appeal.class);
+        Root<HazardousFacility> countRoot = countQuery.from(HazardousFacility.class);
         List<Predicate> countPredicates = new ArrayList<>();
 
         // Dinamik qidiruv shartlarini qo'shish
