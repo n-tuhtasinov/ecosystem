@@ -105,7 +105,6 @@ public class Equipment extends BaseEntity {
 
     private LocalDate partialCheckDate; // qisman texnik ko'rik / tashqi va ichki ko'rik
 
-//    @Column(nullable = false)
     private LocalDate fullCheckDate;  // to'liq texnik ko'rik / gidrosinov/ keyimgi tekshirish (100ming)
 
     //previous registration number.
@@ -206,7 +205,8 @@ public class Equipment extends BaseEntity {
 
     private String registryFilePath; // Reestr file path
 
-
+    @Column(nullable = false)
+    private LocalDate registrationDate;
 
 //    @Column(nullable = false)
 //    private String saleContractPath; // oldi-sotdi shartnomasi

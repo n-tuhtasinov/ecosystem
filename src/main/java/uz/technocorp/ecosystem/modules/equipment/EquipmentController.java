@@ -1,14 +1,23 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
+import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
+import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.AppConstants;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 /**
@@ -24,12 +33,21 @@ public class EquipmentController {
 
     private final EquipmentService equipmentService;
 
-
-//    @GetMapping
-//    public ResponseEntity<?> getAll(@CurrentUser User user, @RequestParam Map<String, String> params) {
-//        equipmentService.getAll(user, params);
-//        return ResponseEntity.ok(new ApiResponse())
-//    }
+    @GetMapping
+    public ResponseEntity<?> getAll(@CurrentUser User user,
+                                    @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                    @RequestParam EquipmentType type,
+                                    @RequestParam(value = "legalTin", required = false) Long legalTin,
+                                    @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                    @RequestParam(value = "regionId", required = false) Integer regionId,
+                                    @RequestParam(value = "districtId", required = false) Integer districtId,
+                                    @RequestParam(value = "startDate", required = false) LocalDate startDate,
+                                    @RequestParam(value = "endDate", required = false) LocalDate endDate
+    ) {
+        Page<EquipmentView> all = equipmentService.getAll(user, new EquipmentParams(type, page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
+        return ResponseEntity.ok(new ApiResponse(all));
+    }
 
 
 }
