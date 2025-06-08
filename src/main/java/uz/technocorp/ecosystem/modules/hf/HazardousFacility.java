@@ -70,8 +70,6 @@ public class HazardousFacility extends BaseEntity {
 
     private String phoneNumber;
 
-    private String email;
-
     private String upperOrganization;
 
     private String name;

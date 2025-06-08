@@ -23,11 +23,8 @@ public class HfCustom {
     private UUID id;
     private String name;
     private String registryNumber;
-    private String regionName;
-    private String districtName;
     private String address;
     private String typeName;
-    private String email;
     private String legalName;
     private Long legalTin;
     private LocalDate registrationDate;

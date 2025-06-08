@@ -1,6 +1,9 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.user.User;
+
+import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -10,4 +13,6 @@ import uz.technocorp.ecosystem.modules.appeal.Appeal;
  */
 public interface EquipmentService {
     void create(Appeal appeal);
+
+    void getAll(User user, Map<String, String> params);
 }
