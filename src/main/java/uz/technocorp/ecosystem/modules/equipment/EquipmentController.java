@@ -37,7 +37,7 @@ public class EquipmentController {
     public ResponseEntity<?> getAll(@CurrentUser User user,
                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-                                    @RequestParam EquipmentType type,
+                                    @RequestParam(value = "type", required = false) EquipmentType type,
                                     @RequestParam(value = "legalTin", required = false) Long legalTin,
                                     @RequestParam(value = "registryNumber", required = false) String registryNumber,
                                     @RequestParam(value = "regionId", required = false) Integer regionId,

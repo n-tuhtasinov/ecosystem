@@ -2,12 +2,20 @@ package uz.technocorp.ecosystem.modules.irs;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -34,4 +42,6 @@ public class IonizingRadiationSourceController {
         service.update(id, dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
+
+
 }
