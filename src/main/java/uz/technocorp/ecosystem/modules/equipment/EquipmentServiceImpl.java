@@ -117,7 +117,7 @@ public class EquipmentServiceImpl implements EquipmentService {
             }
             params.setRegionId(office.getRegionId());
         } else if (user.getRole() == Role.LEGAL) {
-            
+            //TODO: legal va individual uchun yozish kerak
         }
 
 
