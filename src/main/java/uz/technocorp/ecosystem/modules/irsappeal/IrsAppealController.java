@@ -1,9 +1,12 @@
 package uz.technocorp.ecosystem.modules.irsappeal;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
@@ -27,8 +30,8 @@ public class IrsAppealController {
     private final AppealService appealService;
 
     @PostMapping
-    public ResponseEntity<?> create(@CurrentUser User user, @Valid @RequestBody IrsAppealDto irsDto) {
-        appealService.create(irsDto,user);
+    public ResponseEntity<ApiResponse> create(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<IrsAppealDto> signedDto, HttpServletRequest request) {
+        appealService.saveAndSign(user, signedDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
@@ -42,6 +45,12 @@ public class IrsAppealController {
     public ResponseEntity<?> createAcceptance(@CurrentUser User user, @Valid @RequestBody IrsAcceptanceAppealDto irsAcceptanceDto) {
         appealService.create(irsAcceptanceDto,user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/generate-pdf")
+    public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody IrsAppealDto irsDto) {
+        String path = appealService.preparePdfWithParam(irsDto, user);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     // inpektor tomonidan arizadagi kamchilik fayllarni yuklab arizani davom ettirib ketishi uchun
