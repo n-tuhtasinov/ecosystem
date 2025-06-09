@@ -20,11 +20,15 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
+import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
 
@@ -45,6 +49,8 @@ public class EquipmentServiceImpl implements EquipmentService {
     private final TemplateService templateService;
     private final ChildEquipmentService childEquipmentService;
     private final ChildEquipmentSortService childEquipmentSortService;
+    private final ProfileService profileService;
+    private final OfficeService officeService;
 
     @Override
     public void create(Appeal appeal) {
@@ -99,6 +105,22 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public Page<EquipmentView> getAll(User user, EquipmentParams params) {
+
+        Profile profile = profileService.getProfile(user.getProfileId());
+
+        if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
+            Office office = officeService.findById(profile.getOfficeId());
+            if (params.getRegionId() != null){
+                if (!params.getRegionId().equals(office.getRegionId())){
+                    throw new RuntimeException("Sizga bu viloyat ma'lumotlarini ko'rish uchun ruxsat berilmagan");
+                }
+            }
+            params.setRegionId(office.getRegionId());
+        } else if (user.getRole() == Role.LEGAL) {
+            
+        }
+
+
         return equipmentRepository.getAllByParams(user,params);
     }
 
