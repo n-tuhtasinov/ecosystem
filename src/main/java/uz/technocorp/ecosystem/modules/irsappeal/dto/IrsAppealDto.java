@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.irsappeal.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,6 +12,8 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -26,8 +30,6 @@ public class IrsAppealDto implements AppealDto {
 
         @NotBlank(message = "Tashkilot bilan bog'lanish uchun telefon raqam kiritilmadi")
         private String phoneNumber;
-
-        private String email;
 
         private String parentOrganization;
 
@@ -108,6 +110,9 @@ public class IrsAppealDto implements AppealDto {
         @NotBlank(message = "INM joylashgan manzil kiritilmadi")
         private String address;
 
+        @Schema(hidden = true)
+        private Map<String, String> files = new HashMap<>();
+
         @Override
         public AppealType getAppealType() {
                 return AppealType.REGISTER_IRS;
@@ -117,5 +122,18 @@ public class IrsAppealDto implements AppealDto {
         public LocalDate getDeadline() {
                 return LocalDate.now().plusDays(15);
         }
+
+        public void buildFiles() {
+                files.put("passportPath", passportPath);
+                files.put("additionalFilePath", additionalFilePath);
+        }
+
+        @AssertTrue
+        public boolean isFilesBuilt() {
+                buildFiles();
+                return true;
+        }
+
+
 
 }
