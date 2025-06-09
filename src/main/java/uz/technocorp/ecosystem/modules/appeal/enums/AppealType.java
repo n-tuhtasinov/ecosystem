@@ -117,7 +117,7 @@ public enum AppealType {
     DEREGISTER_DECLARATION("", "", ""),
 
     //IRS (Ionizing Radiation Source ) - INM ro'yhatga olish, qabul qilib olish va berish
-    REGISTER_IRS("", "irs", ""),
+    REGISTER_IRS("", "registerIrs", ""),
     ACCEPT_IRS("", "irs", ""),
     TRANSFER_IRS("", "irs", "");
 
