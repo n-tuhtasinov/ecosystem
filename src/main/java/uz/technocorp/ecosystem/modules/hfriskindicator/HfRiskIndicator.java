@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -28,6 +29,14 @@ public class HfRiskIndicator extends BaseEntity {
 
     private Integer score;
 
+    private LocalDate cancelledDate;
+
+    private Integer scoreValue;
+
+    private String filePath;
+
+    private LocalDate fileDate;
+
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = HazardousFacility.class)
     @JoinColumn(name = "hazardous_facility_id", insertable = false, updatable = false)
     private HazardousFacility hazardousFacility;
@@ -42,5 +51,6 @@ public class HfRiskIndicator extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private RiskAnalysisInterval riskAnalysisInterval;
+
 
 }

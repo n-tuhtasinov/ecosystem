@@ -1,6 +1,8 @@
 package uz.technocorp.ecosystem.modules.elevatorriskindicator;
 
+import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.elevatorriskindicator.dto.EquipmentRiskIndicatorDto;
+import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 
 import java.util.List;
@@ -17,6 +19,9 @@ public interface ElevatorRiskIndicatorService {
     void create(EquipmentRiskIndicatorDto dto);
     void update(UUID id, EquipmentRiskIndicatorDto dto);
     void delete(UUID id);
-    List<RiskIndicatorView> findAllByEquipmentIdAndTin(UUID id, Long tin);
-    List<RiskIndicatorView> findAllByTin(Long tin);
+    void attachFile(UUID id, FilePathDto dto);
+    void cancelRiskIndicator(UUID id);
+    List<RiskIndicatorView> findAllByEquipmentIdAndTin(UUID id, Long tin, Integer intervalId);
+    List<RiskIndicatorView> findAllByTin(Long tin, Integer intervalId);
+    Page<RiskIndicatorView> findAllToFixByTin(Long tin, Integer intervalId, int page, int size);
 }

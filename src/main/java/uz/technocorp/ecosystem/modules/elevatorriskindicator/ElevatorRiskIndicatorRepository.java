@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.elevatorriskindicator;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
@@ -27,7 +29,11 @@ public interface ElevatorRiskIndicatorRepository extends JpaRepository<ElevatorR
             select cast(id as varchar) as id,
             indicator_type as indicatorType,
             score,
-            description
+            description,
+            file_path as filePath,
+            score_value as scoreValue,
+            file_date as fileDate,
+            cancelled_date as cancelledDate
             from elevator_risk_indicator
             where (equipment_id = :id or equipment_id is null)
             and risk_analysis_interval_id = :intervalId
@@ -39,7 +45,11 @@ public interface ElevatorRiskIndicatorRepository extends JpaRepository<ElevatorR
             select cast(id as varchar) as id,
             indicator_type as indicatorType,
             score,
-            description
+            description,
+            file_path as filePath,
+            score_value as scoreValue,
+            file_date as fileDate,
+            cancelled_date as cancelledDate
             from elevator_risk_indicator
             where tin = :tin
             and equipment_id is null
@@ -56,4 +66,23 @@ public interface ElevatorRiskIndicatorRepository extends JpaRepository<ElevatorR
             group by equipment_id, tin
             """, nativeQuery = true)
     List<RiskAssessmentDto> findAllGroupByEquipmentAndTin(Integer intervalId);
+
+    @Query(value = """
+            select cast(id as varchar) as id,
+            indicator_type as indicatorType,
+            score,
+            description,
+            file_path as filePath,
+            score_value as scoreValue,
+            file_date as fileDate,
+            cancelled_date as cancelledDate
+            from elevator_risk_indicator
+            where tin = :tin
+            and risk_analysis_interval_id = :intervalId
+            and file_path is not null
+            and score != 0
+            """, nativeQuery = true)
+    Page<RiskIndicatorView> findAllFileContainsByTinAndDate(Long tin, Integer intervalId, Pageable pageable);
+
+
 }

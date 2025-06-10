@@ -1,12 +1,18 @@
 package uz.technocorp.ecosystem.modules.hfriskindicator;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.attachment.Attachment;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityRepository;
+import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
@@ -20,6 +26,7 @@ import uz.technocorp.ecosystem.modules.hfriskindicator.dto.HFRIndicatorDto;
 import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -40,6 +47,7 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
     private final RiskAnalysisIntervalRepository intervalRepository;
     private final InspectionRepository inspectionRepository;
     private final ProfileRepository profileRepository;
+    private final AttachmentRepository attachmentRepository;
 
     @Override
     public void create(HFRIndicatorDto dto) {
@@ -109,7 +117,7 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
     public void update(UUID id, HFRIndicatorDto dto) {
         HfRiskIndicator riskIndicator = repository
                 .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasi", "Id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasini baholash ko'rsatkichi", "Id", id));
         riskIndicator.setDescription(dto.description());
         repository.save(riskIndicator);
     }
@@ -120,20 +128,43 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
     }
 
     @Override
-    public List<RiskIndicatorView> findAllByHFIdAndTin(UUID id, Long tin) {
-        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
-                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
-                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
-
-        return repository.findAllByHfIdAndTinAndDate(id, tin, riskAnalysisInterval.getId());
+    public void attachFile(UUID id, FilePathDto dto) {
+        Attachment attachment = attachmentRepository
+                .findByPath(dto.path())
+                .orElseThrow(() -> new ResourceNotFoundException("File", "url", dto.path()));
+        HfRiskIndicator hfRiskIndicator = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasini baholash ko'rsatkichi", "id", id));
+        hfRiskIndicator.setFilePath(attachment.getPath());
+        hfRiskIndicator.setFileDate(LocalDate.now());
+        repository.save(hfRiskIndicator);
+        attachmentRepository.deleteById(attachment.getId());
     }
 
     @Override
-    public List<RiskIndicatorView> findAllByTin(Long tin) {
-        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
-                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
-                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
-        return repository.findAllByTinAndDate(tin, riskAnalysisInterval.getId());
+    public void cancelRiskIndicator(UUID id) {
+        HfRiskIndicator hfRiskIndicator = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasini baholash ko'rsatkichi", "id", id));
+        hfRiskIndicator.setScore(0);
+        hfRiskIndicator.setCancelledDate(LocalDate.now());
+        repository.save(hfRiskIndicator);
+    }
+
+    @Override
+    public List<RiskIndicatorView> findAllByHFIdAndTin(UUID id, Long tin, Integer intervalId) {
+        return repository.findAllByHfIdAndTinAndDate(id, tin, intervalId);
+    }
+
+    @Override
+    public List<RiskIndicatorView> findAllByTin(Long tin, Integer intervalId) {
+        return repository.findAllByTinAndDate(tin, intervalId);
+    }
+
+    @Override
+    public Page<RiskIndicatorView> findAllToFixByTin(Long tin, Integer intervalId, int page, int size) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        return repository.findAllFileContainsByTinAndDate(tin, intervalId, pageable);
     }
 
     @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da

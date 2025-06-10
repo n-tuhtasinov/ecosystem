@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -27,6 +28,14 @@ public class AttractionRiskIndicator extends BaseEntity {
     private RiskAssessmentIndicator indicatorType;
 
     private Integer score;
+
+    private LocalDate cancelledDate;
+
+    private Integer scoreValue;
+
+    private String filePath;
+
+    private LocalDate fileDate;
 
     @Column(columnDefinition = "text")
     private String description;

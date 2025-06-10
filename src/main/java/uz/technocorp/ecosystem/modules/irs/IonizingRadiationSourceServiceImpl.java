@@ -7,10 +7,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDeregisterDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsParams;
@@ -19,12 +25,15 @@ import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
 import uz.technocorp.ecosystem.modules.irs.view.IrsView;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
+import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
+import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
@@ -44,6 +53,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
     private final IonizingRadiationSourceRepository repository;
     private final AppealRepository appealRepository;
     private final RegionRepository regionRepository;
+    private final ProfileRepository profileRepository;
     private final OfficeService officeService;
     private final ProfileService profileService;
 
@@ -62,6 +72,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                         .builder()
                         .profileId(appeal.getProfileId())
                         .legalTin(appeal.getLegalTin())
+                        .legalName(appeal.getLegalName())
                         .address(appeal.getAddress())
                         .parentOrganization(irsAppealDto.getParentOrganization())
                         .supervisorName(irsAppealDto.getSupervisorName())
@@ -160,6 +171,25 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
             return mapper.treeToValue(jsonNode, IrsAppealDto.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON deserialization error", e);
+        }
+    }
+
+    @Override
+    public Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        UUID profileId = user.getProfileId();
+        Profile profile = profileRepository
+                .findById(profileId)
+                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", profileId));
+        Integer regionId = profile.getRegionId();
+        if (isAssigned) {
+            if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
+            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
+        } else {
+            if (tin != null) return repository.getAllByLegalTin(pageable, tin);
+            if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber);
+            else return repository.getAllByRegion(pageable, regionId);
         }
     }
 }

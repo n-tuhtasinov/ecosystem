@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndica
 import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -27,6 +28,14 @@ public class IrsRiskIndicator extends BaseEntity {
     private RiskAssessmentIndicator indicatorType;
 
     private Integer score;
+
+    private LocalDate cancelledDate;
+
+    private Integer scoreValue;
+
+    private String filePath;
+
+    private LocalDate fileDate;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = IonizingRadiationSource.class)
     @JoinColumn(name = "ionizing_radiation_source_id", insertable = false, updatable = false)

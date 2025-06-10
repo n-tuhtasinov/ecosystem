@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.user.User;
 
@@ -29,4 +30,5 @@ public interface HazardousFacilityService {
     List<HfSelectView> findAllByProfile(User user);
     Page<HfCustom> getAll(User user, HfParams params);
     String getHfNameById(UUID hfId);
+    Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
 }

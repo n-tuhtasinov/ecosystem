@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.irsriskindicator;
 
+import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
 
@@ -17,6 +18,8 @@ public interface IrsRiskIndicatorService {
     void create(IrsRiskIndicatorDto dto);
     void update(UUID id, IrsRiskIndicatorDto dto);
     void delete(UUID id);
+    void attachFile(UUID id, FilePathDto dto);
+    void cancelRiskIndicator(UUID id);
     List<RiskIndicatorView> findAllByIrsIdAndTin(UUID id, Long tin);
     List<RiskIndicatorView> findAllByTin(Long tin);
 }
