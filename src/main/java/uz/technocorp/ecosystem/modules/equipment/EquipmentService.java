@@ -5,6 +5,7 @@ import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.Map;
@@ -17,6 +18,10 @@ import java.util.UUID;
  * @since v1.0
  */
 public interface EquipmentService {
+
+    Page<HfPageView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
+    Page<HfPageView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
+
 
     void create(Appeal appeal);
 

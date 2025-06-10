@@ -27,7 +27,11 @@ public interface IrsRiskIndicatorRepository extends JpaRepository<IrsRiskIndicat
             select cast(id as varchar) as id,
             indicator_type as indicatorType,
             score,
-            description
+            description,
+            file_path as filePath,
+            score_value as scoreValue,
+            file_date as fileDate,
+            cancelled_date as cancelledDate
             from irs_risk_indicator
             where risk_analysis_interval_id = :intervalId
             and tin = :tin
@@ -39,7 +43,11 @@ public interface IrsRiskIndicatorRepository extends JpaRepository<IrsRiskIndicat
             select cast(id as varchar) as id,
             indicator_type as indicatorType,
             score,
-            description
+            description,
+            file_path as filePath,
+            score_value as scoreValue,
+            file_date as fileDate,
+            cancelled_date as cancelledDate
             from irs_risk_indicator
             where tin = :tin
             and ionizing_radiation_source_id is null

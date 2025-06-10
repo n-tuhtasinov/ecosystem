@@ -1,12 +1,13 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
@@ -21,13 +22,13 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
-import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
@@ -125,6 +126,24 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         return equipmentRepository.getAllByParams(user,params);
     }
+    @Override
+    public Page<HfPageView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        UUID profileId = user.getProfileId();
+        Profile profile = profileRepository
+                .findById(profileId)
+                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", profileId));
+        Integer regionId = profile.getRegionId();
+        if (isAssigned) {
+            if (tin != null) return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION);
+            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION);
+            else return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION);
+        } else {
+            if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION);
+            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION);
+            else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION);
+        }
+    }
 
     @Override
     public EquipmentViewById getById(UUID equipmentId) {
@@ -171,6 +190,24 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
 
+    @Override
+    public Page<HfPageView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        UUID profileId = user.getProfileId();
+        Profile profile = profileRepository
+                .findById(profileId)
+                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", profileId));
+        Integer regionId = profile.getRegionId();
+        if (isAssigned) {
+            if (tin != null) return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR);
+            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR);
+            else return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR);
+        } else {
+            if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR);
+            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR);
+            else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR);
+        }
+    }
     private EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
         return switch (appealType) {
             case REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P");

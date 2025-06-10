@@ -1,16 +1,23 @@
 package uz.technocorp.ecosystem.modules.inspection;
 
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.inspection.dto.InspectionActDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionCustom;
+import uz.technocorp.ecosystem.modules.inspection.helper.InspectionFullDto;
+import uz.technocorp.ecosystem.modules.inspection.view.InspectionView;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,13 +31,13 @@ import java.util.UUID;
 public class InspectionServiceImpl implements InspectionService {
 
     private final InspectionRepository repository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void update(UUID id, InspectionDto dto) {
         Inspection inspection = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv", "Id", id));
-        inspection.setDecreePath(dto.decreePath());
         inspection.setTin(dto.tin());
         inspection.setEndDate(dto.endDate());
         inspection.setStartDate(dto.startDate());
@@ -57,16 +64,50 @@ public class InspectionServiceImpl implements InspectionService {
     }
 
     @Override
-    public void update(UUID id, InspectionActDto dto) {
+    public void conduct(UUID id) {
         Inspection inspection = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv", "Id", id));
-        inspection.setActPath(dto.actPath());
+        inspection.setStatus(InspectionStatus.CONDUCTED);
         repository.save(inspection);
     }
 
     @Override
     public Page<InspectionCustom> getAll(User user, int page, int size, Long tin, InspectionStatus status, Integer intervalId) {
         return repository.getInspectionCustoms(user, page, size, tin, status, intervalId);
+    }
+
+    @Override
+    public InspectionFullDto getById(UUID id) {
+        InspectionView view = repository
+                .getInspectionById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv", "Id", id));
+        List<InspectorDto> inspectors;
+        try {
+            inspectors = objectMapper.readValue(
+                    view.getInspectors(),
+                    new TypeReference<>() {
+                    }
+            );
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to parse inspectors JSON", e);
+        }
+
+
+        return new InspectionFullDto(
+                view.getId(),
+                view.getStartDate(),
+                view.getEndDate(),
+                view.getStatus(),
+                view.getProgramPath(),
+                view.getSpecialCode(),
+                view.getSchedulePath(),
+                view.getNotificationLetterDate(),
+                view.getNotificationLetterPath(),
+                view.getOrderPath(),
+                view.getMeasuresPath(),
+                view.getResultPath(),
+                inspectors
+        );
     }
 }

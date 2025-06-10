@@ -1,7 +1,10 @@
 package uz.technocorp.ecosystem.modules.irs;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,4 +30,97 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
 
     @Query("select irs from IonizingRadiationSource irs where irs.id = :irsId")
     Optional<IonizingRadiationSource> getIrsById(UUID irsId);
+
+    @Query(value = """
+            select irs.id as id,
+            registry_number as registryNumber,
+            
+            legal_tin as legalTin,
+            address,
+            irs.legal_name as legalName,
+            p.full_name as inspectorName
+            from ionizing_radiation_source irs
+            inner join assign_inspector_irs aii on irs.id = aii.irs_id
+            join users u on aii.inspector_id = u.id
+            join profile p on u.profile_id = p.id
+            where irs.region_id = :regionId
+            and aii.interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId);
+
+    @Query(value = """
+            select irs.id as id,
+            registry_number as registryNumber,
+            
+            legal_tin as legalTin,
+            address,
+            irs.legal_name as legalName,
+            p.full_name as inspectorName
+            from ionizing_radiation_source irs
+            inner join assign_inspector_irs aii on irs.id = aii.irs_id
+            join users u on aii.inspector_id = u.id
+            join profile p on u.profile_id = p.id
+            where irs.legal_tin = :legalTin
+            and aii.interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByLegalTinAndInterval(Pageable pageable, Long legalTin, Integer intervalId);
+
+    @Query(value = """
+            select irs.id as id,
+            registry_number as registryNumber,
+            
+            legal_tin as legalTin,
+            address,
+            irs.legal_name as legalName,
+            p.full_name as inspectorName
+            from ionizing_radiation_source irs
+            inner join assign_inspector_irs aii on irs.id = aii.irs_id
+            join users u on aii.inspector_id = u.id
+            join profile p on u.profile_id = p.id
+            where irs.registry_number = :registryNumber
+            and aii.interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId);
+
+    @Query(value = """
+            select irs.id as id,
+            registry_number as registryNumber,
+            
+            legal_tin as legalTin,
+            address,
+            irs.legal_name as legalName
+            from ionizing_radiation_source irs
+            left join assign_inspector_irs aii on irs.id = aii.irs_id
+            where irs.region_id = :regionId
+            and aii.id is null
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId);
+
+    @Query(value = """
+            select irs.id as id,
+            registry_number as registryNumber,
+            
+            legal_tin as legalTin,
+            address,
+            irs.legal_name as legalName
+            from ionizing_radiation_source irs
+            left join assign_inspector_irs aii on irs.id = aii.irs_id
+            where irs.legal_tin = :legalTin
+            and aii.id is null
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin);
+
+    @Query(value = """
+            select irs.id as id,
+            registry_number as registryNumber,
+            
+            legal_tin as legalTin,
+            address,
+            irs.legal_name as legalName
+            from ionizing_radiation_source irs
+            left join assign_inspector_irs aii on irs.id = aii.irs_id
+            where irs.registry_number = :registryNumber
+            and aii.id is null
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber);
 }
