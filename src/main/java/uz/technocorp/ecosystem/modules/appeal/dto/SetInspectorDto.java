@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -10,8 +12,15 @@ import java.util.UUID;
  * @since v1.0
  */
 public record SetInspectorDto(
+
+        @NotNull(message = "Ariza IDsi jo'natilmadi")
         UUID appealId,
+
+        @NotNull(message = "Inspektor userIDsi jo'natilmadi")
         UUID inspectorId,
+
+        @NotNull(message = "Ijro muddati belgilanmadi")
         LocalDate deadline,
-        String resolution) {
-}
+
+        String resolution
+) {}

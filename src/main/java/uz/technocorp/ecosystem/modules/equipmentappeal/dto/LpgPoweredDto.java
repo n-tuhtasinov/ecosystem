@@ -1,11 +1,13 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
 
@@ -21,18 +23,21 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class LpgPoweredDto extends EquipmentAppealDto {
 
+    @SkipDb
     @NotBlank(message = "Hajm jo'natilmadi")
     private String capacity;
 
+    @SkipDb
     @NotBlank(message = "Bosim jo'natilmadi")
     private String pressure;
 
+    @SkipDb
     @NotBlank(message = "Yoqilg'i jo'natilmadi")
     private String fuel;
 
+    @SkipDb
     @NotBlank(message = "Gaz ta'minoti loyihasi fayli uchun path jo'natilmadi")
     private String gasSupplyProjectPath;
-
 
     @Override
     public AppealType getAppealType() {
@@ -42,5 +47,18 @@ public class LpgPoweredDto extends EquipmentAppealDto {
     @Override
     public LocalDate getDeadline() {
         return null;
+    }
+
+    public void buildParameters() {
+        super.getParameters().put("capacity", capacity);
+        super.getParameters().put("pressure", pressure);
+        super.getParameters().put("fuel", fuel);
+    }
+
+    @AssertTrue
+    public boolean isParametersBuilt() {
+        buildParameters();
+        super.getFiles().put("gasSupplyProjectPath",gasSupplyProjectPath); // add file the map
+        return true;
     }
 }

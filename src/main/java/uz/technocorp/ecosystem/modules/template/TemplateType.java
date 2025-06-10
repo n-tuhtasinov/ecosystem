@@ -11,5 +11,9 @@ public enum TemplateType {
     XICHO_APPEAL,
     EQUIPMENT_APPEAL,
 
+    REGISTRY_HF, // Reestr HF
+    REGISTRY_EQUIPMENT, // Reestr Equipment
+    REGISTRY_ATTRACTION, // Reestr Attraction passport
+
     REPLY_APPEAL;
 }

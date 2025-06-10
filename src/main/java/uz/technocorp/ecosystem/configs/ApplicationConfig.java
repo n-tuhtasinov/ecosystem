@@ -1,6 +1,8 @@
 package uz.technocorp.ecosystem.configs;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -90,4 +93,13 @@ public class ApplicationConfig {
     public RestClient restClient(RestClient.Builder builder) {
         return builder.build();
     }
+
+//    @Bean
+//    public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+//        return builder.
+//                featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+//                .featuresToEnable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+//                .modules(new JavaTimeModule())
+//                .build();
+//    }
 }

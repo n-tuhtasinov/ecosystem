@@ -9,118 +9,119 @@ import lombok.Getter;
  * @created 19.02.2025
  * @since v1.0
  */
-@Getter
 @AllArgsConstructor
 public enum AppealType {
     // TODO
     // Xavfli Ishlab Chiqarish Obyektini ro‘yxatga olish, o'zgartirish va chiqarish
-    REGISTER_HF("REGISTER_HF"),
-    DEREGISTER_HF("DEREGISTER_HF"),
-    MODIFY_HF("MODIFY_HF"),
+    REGISTER_HF("", "registerHf", ""),
+    DEREGISTER_HF("", "deregisterHf", ""),
+    MODIFY_HF("", "hf", "modifyHf"),
 
     //Crane
-    REGISTER_CRANE(""),
-    DEREGISTER_CRANE(""),
-    RE_REGISTER_CRANE(""),
+    REGISTER_CRANE("", "registerEquipment", "P"),
+    DEREGISTER_CRANE("", "deregisterEquipment", "P"),
+    RE_REGISTER_CRANE("", "reRegisterEquipment", "P"),
 
     //Container - bosim ostida ishlovchi idish
-    REGISTER_CONTAINER(""),
-    DEREGISTER_CONTAINER(""),
-    RE_REGISTER_CONTAINER(""),
+    REGISTER_CONTAINER("", "registerEquipment", "A"),
+    DEREGISTER_CONTAINER("", "deregisterEquipment", "A"),
+    RE_REGISTER_CONTAINER("", "reRegisterEquipment", "A"),
 
     //Boiler - bug'qozon
-    REGISTER_BOILER("Boiler"),
-    DEREGISTER_BOILER(""),
-    RE_REGISTER_BOILER(""),
+    REGISTER_BOILER("", "registerEquipment", "K"),
+    DEREGISTER_BOILER("", "deregisterEquipment", "K"),
+    RE_REGISTER_BOILER("", "reRegisterEquipment", "K"),
 
     //Elevator - lift
-    REGISTER_ELEVATOR(""),
-    DEREGISTER_ELEVATOR(""),
-    RE_REGISTER_ELEVATOR(""),
+    REGISTER_ELEVATOR("", "registerEquipment", "L"),
+    DEREGISTER_ELEVATOR("", "deregisterEquipment", "L"),
+    RE_REGISTER_ELEVATOR("", "reRegisterEquipment", "L"),
 
     //Escalator
-    REGISTER_ESCALATOR(""),
-    DEREGISTER_ESCALATOR(""),
-    RE_REGISTER_ESCALATOR(""),
+    REGISTER_ESCALATOR("", "registerEquipment", "E"),
+    DEREGISTER_ESCALATOR("", "deregisterEquipment", "E"),
+    RE_REGISTER_ESCALATOR("", "reRegisterEquipment", "E"),
 
     //Cableway - osma qarqonli yuruvchi yo'l
-    REGISTER_CABLEWAY(""),
-    DEREGISTER_CABLEWAY(""),
-    RE_REGISTER_CABLEWAY(""),
+    REGISTER_CABLEWAY("", "registerEquipment", "KD"),
+    DEREGISTER_CABLEWAY("", "deregisterEquipment", "KD"),
+    RE_REGISTER_CABLEWAY("", "reRegisterEquipment", "KD"),
 
     //hoist - yuk ko'targich
-    REGISTER_HOIST(""),
-    DEREGISTER_HOIST(""),
-    RE_REGISTER_HOIST(""),
+    REGISTER_HOIST("", "registerEquipment", "V"),
+    DEREGISTER_HOIST("", "deregisterEquipment", "V"),
+    RE_REGISTER_HOIST("", "reRegisterEquipment", "V"),
 
     //pipeline - quvur
-    REGISTER_PIPELINE(""),
-    DEREGISTER_PIPELINE(""),
-    RE_REGISTER_PIPELINE(""),
+    REGISTER_PIPELINE("", "registerEquipment", "T"),
+    DEREGISTER_PIPELINE("", "deregisterEquipment", "T"),
+    RE_REGISTER_PIPELINE("", "reRegisterEquipment", "T"),
 
     //attraction_passport - Attraksion pasporti
-    REGISTER_ATTRACTION_PASSPORT(""),
-    DEREGISTER_ATTRACTION_PASSPORT(""),
-    RE_REGISTER_ATTRACTION_PASSPORT(""),
+    REGISTER_ATTRACTION_PASSPORT("", "registerEquipment", "AT"),
+    DEREGISTER_ATTRACTION_PASSPORT("", "deregisterEquipment", "AT"),
+    RE_REGISTER_ATTRACTION_PASSPORT("", "reRegisterEquipment", "AT"),
 
     //attraction - Attraksion
-    REGISTER_ATTRACTION(""),
-    DEREGISTER_ATTRACTION(""),
-    RE_REGISTER_ATTRACTION(""),
+    REGISTER_ATTRACTION("", "registerEquipment", "ADR"),
+    DEREGISTER_ATTRACTION("", "deregisterEquipment", "ADR"),
+    RE_REGISTER_ATTRACTION("", "reRegisterEquipment", "ADR"),
 
     //Chemical container - bosim ostida ishlovchi idish (kimyoviy)
-    REGISTER_CHEMICAL_CONTAINER(""),
-    DEREGISTER_CHEMICAL_CONTAINER(""),
-    RE_REGISTER_CHEMICAL_CONTAINER(""),
+    REGISTER_CHEMICAL_CONTAINER("", "registerEquipment", "XA"),
+    DEREGISTER_CHEMICAL_CONTAINER("", "deregisterEquipment", "XA"),
+    RE_REGISTER_CHEMICAL_CONTAINER("", "reRegisterEquipment", "XA"),
 
     //Heat pipe - bug' va issiqsuv quvuri
-    REGISTER_HEAT_PIPELINE(""),
-    DEREGISTER_HEAT_PIPELINE(""),
-    RE_REGISTER_HEAT_PIPELINE(""),
+    REGISTER_HEAT_PIPELINE("", "registerEquipment", "PAX"),
+    DEREGISTER_HEAT_PIPELINE("", "deregisterEquipment", "PAX"),
+    RE_REGISTER_HEAT_PIPELINE("", "reRegisterEquipment", "PAX"),
 
     //Boiler utilizer - qozon utilizator
-    REGISTER_BOILER_UTILIZER(""),
-    DEREGISTER_BOILER_UTILIZER(""),
-    RE_REGISTER_BOILER_UTILIZER(""),
+    REGISTER_BOILER_UTILIZER("", "registerEquipment", "KC"),
+    DEREGISTER_BOILER_UTILIZER("", "deregisterEquipment", "KC"),
+    RE_REGISTER_BOILER_UTILIZER("", "reRegisterEquipment", "KC"),
 
     //LPG container (Liquefied Petroleum Gas) - bosim ostida ishlovchi idish (SUG)
-    REGISTER_LPG_CONTAINER(""),
-    DEREGISTER_LPG_CONTAINER(""),
-    RE_REGISTER_LPG_CONTAINER(""),
+    REGISTER_LPG_CONTAINER("", "registerEquipment", "AG"),
+    DEREGISTER_LPG_CONTAINER("", "deregisterEquipment", "AG"),
+    RE_REGISTER_LPG_CONTAINER("", "reRegisterEquipment", "AG"),
 
     //LPG powered (Liquefied Petroleum Gas) - SUG bilan ishlovchi qurilmalar
-    REGISTER_LPG_POWERED(""),
-    DEREGISTER_LPG_POWERED(""),
-    RE_REGISTER_LPG_POWERED(""),
+    REGISTER_LPG_POWERED("", "registerEquipment", "TG"),
+    DEREGISTER_LPG_POWERED("", "deregisterEquipment", "TG"),
+    RE_REGISTER_LPG_POWERED("", "reRegisterEquipment", "TG"),
 
     // Xavfli ishlab chiqarish obyektlari xodimlarini attestatsiyadan o‘tkazish
-    CERTIFY_HF_EMPLOYEE(""),
+    CERTIFY_HF_EMPLOYEE("", "", ""),
 
     // Ekspert tashkilotini akkreditatsiya qilish
-    ACCREDIT_EXPERT_ORGANIZATION(""),
-    EXPEND_ACCREDITATION_SCOPE(""),
+    ACCREDIT_EXPERT_ORGANIZATION("", "", ""),
+    EXPEND_ACCREDITATION_SCOPE("", "", ""),
 
     // Sanoat xavfsizligi bo‘yicha ekspertiza xulosalari
-    REGISTER_EXPERTISE_CONCLUSION(""),
-    DEREGISTER_EXPERTISE_CONCLUSION(""),
+    REGISTER_EXPERTISE_CONCLUSION("", "", ""),
+    DEREGISTER_EXPERTISE_CONCLUSION("", "", ""),
 
     // Litsenziya va ruxsatnomalar
-    OBTAIN_LICENSE(""),
-    OBTAIN_PERMIT(""),
-    OBTAIN_CONCLUSION(""),
+    OBTAIN_LICENSE("", "", ""),
+    OBTAIN_PERMIT("", "", ""),
+    OBTAIN_CONCLUSION("", "", ""),
 
     // Xavfli ishlab chiqarish obyektlari kadastr pasporti
-    REGISTER_HF_CADASTRE_PASSPORT(""),
-    DEREGISTER_HF_CADASTRE_PASSPORT(""),
+    REGISTER_HF_CADASTRE_PASSPORT("", "", ""),
+    DEREGISTER_HF_CADASTRE_PASSPORT("", "", ""),
 
     // Sanoat xavfsizligi deklaratsiyasi
-    REGISTER_DECLARATION(""),
-    DEREGISTER_DECLARATION(""),
+    REGISTER_DECLARATION("", "", ""),
+    DEREGISTER_DECLARATION("", "", ""),
 
     //IRS (Ionizing Radiation Source ) - INM ro'yhatga olish, qabul qilib olish va berish
-    REGISTER_IRS(""),
-    ACCEPT_IRS(""),
-    TRANSFER_IRS("");
+    REGISTER_IRS("", "registerIrs", ""),
+    ACCEPT_IRS("", "irs", ""),
+    TRANSFER_IRS("", "irs", "");
 
-    private final String label;
+    public final String label;
+    public final String sort;
+    public final String symbol;
     }

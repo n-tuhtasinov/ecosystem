@@ -6,8 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
+import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
+import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
-import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
@@ -16,7 +17,6 @@ import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
-import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,17 +35,11 @@ public class HazardousFacilityController {
 
     private final HazardousFacilityService service;
 
-    @PostMapping
-    public ResponseEntity<?> createByAppeal(@Valid @RequestBody HfRegistryDto hfRegistryDto) {
-        service.create(hfRegistryDto);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
-    @PostMapping("/without-appeal")
-    public ResponseEntity<?> create(@Valid @RequestBody HfDto dto) {
-        service.create(dto);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
+//    @PostMapping("/without-appeal")
+//    public ResponseEntity<?> create(@Valid @RequestBody HfDto dto) {
+//        service.create(dto);
+//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+//    }
 
     @PutMapping("/{hfId}")
     public ResponseEntity<?> update(@PathVariable UUID hfId, @Valid @RequestBody HfDto dto) {
@@ -86,10 +80,11 @@ public class HazardousFacilityController {
                                     @RequestParam(value = "legalTin", required = false) Long legalTin,
                                     @RequestParam(value = "registryNumber", required = false) String registryNumber,
                                     @RequestParam(value = "regionId", required = false) Integer regionId,
+                                    @RequestParam(value = "districtId", required = false) Integer districtId,
                                     @RequestParam(value = "startDate", required = false) LocalDate startDate,
                                     @RequestParam(value = "endDate", required = false) LocalDate endDate
                                     ) {
-        Page<HfCustom> all = service.getAll(user, page, size, legalTin, registryNumber, regionId, startDate, endDate);
+        Page<HfCustom> all = service.getAll(user, new HfParams(page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 

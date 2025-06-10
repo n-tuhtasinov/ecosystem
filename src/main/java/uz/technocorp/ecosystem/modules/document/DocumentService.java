@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.document;
 
+import uz.technocorp.ecosystem.modules.appeal.dto.RejectDto;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByReply;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByRequest;
@@ -20,10 +21,11 @@ public interface DocumentService {
 
     void delete(UUID id);
 
-    DocumentViewByReply getById(UUID documentId);
-
     List<DocumentViewByRequest> getRequestDocumentsByAppealId(UUID appealId);
 
     List<DocumentViewByReply> getReplyDocumentsByAppealId(User user, UUID appealId);
 
+    void reject(User user, RejectDto dto);
+
+    void confirmationByAppeal(User user, UUID documentId);
 }

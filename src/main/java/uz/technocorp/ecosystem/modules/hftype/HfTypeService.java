@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.hftype;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.hftype.dto.HfTypeDto;
 
@@ -19,4 +20,6 @@ public interface HfTypeService {
     HfType getById(Integer id);
     List<HfType> getAll(String search);
     Page<HfType> getAllPage(int page, int size, String search);
+
+    String getHfTypeNameById(Integer hfTypeId);
 }

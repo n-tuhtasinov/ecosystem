@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.appealexecutionprocess.dto;
 
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+
 import java.util.UUID;
 
 /**
@@ -8,5 +10,8 @@ import java.util.UUID;
  * @created 18.02.2025
  * @since v1.0
  */
-public record AppealExecutionProcessDto(UUID appealId, String description) {
+public record AppealExecutionProcessDto(
+        UUID appealId,
+        AppealStatus appealStatus,
+        String description) {
 }

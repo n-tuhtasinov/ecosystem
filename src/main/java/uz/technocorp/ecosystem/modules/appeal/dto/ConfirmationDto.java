@@ -13,6 +13,9 @@ import java.util.UUID;
 public record ConfirmationDto(
 
         @NotNull(message = "Ariza IDsi jo'natilmadi")
-        UUID appealId
+        UUID appealId,
+
+        @NotNull(message = "Document IDsi jo'natilmadi")
+        UUID documentId
 ) {
 }

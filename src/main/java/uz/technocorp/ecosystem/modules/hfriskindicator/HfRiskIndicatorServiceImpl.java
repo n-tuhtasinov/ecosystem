@@ -60,10 +60,17 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                 HazardousFacility hazardousFacility = hazardousFacilityRepository
                         .findById(dto.hazardousFacilityId())
                         .orElseThrow(() -> new ResourceNotFoundException("XICHO", "Id", dto.hazardousFacilityId()));
-                String identificationCardPath = hazardousFacility.getIdentificationCardPath();
-                String expertOpinionPath = hazardousFacility.getExpertOpinionPath();
-                String industrialSafetyDeclarationPath = hazardousFacility.getIndustrialSafetyDeclarationPath();
-                String insurancePolicyPath = hazardousFacility.getInsurancePolicyPath();
+//                String identificationCardPath = hazardousFacility.getIdentificationCardPath();
+//                String expertOpinionPath = hazardousFacility.getExpertOpinionPath();
+//                String industrialSafetyDeclarationPath = hazardousFacility.getIndustrialSafetyDeclarationPath();
+//                String insurancePolicyPath = hazardousFacility.getInsurancePolicyPath();
+
+                String identificationCardPath = hazardousFacility.getFiles().get("identificationCardPath");
+                String expertOpinionPath = hazardousFacility.getFiles().get("expertOpinionPath");
+                String industrialSafetyDeclarationPath = hazardousFacility.getFiles().get("industrialSafetyDeclarationPath");
+                String insurancePolicyPath = hazardousFacility.getFiles().get("insurancePolicyPath");
+
+
                 StringBuilder descriptionBuilder = new StringBuilder();
                 if (identificationCardPath.isEmpty()) {
                     descriptionBuilder.append("Identifikatsiya xulosasi mavjud emas. ");

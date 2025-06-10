@@ -1,8 +1,6 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,20 +14,21 @@ import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.processor.AppealPdfProcessor;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
-import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcess;
-import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessRepository;
+import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
+import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerDto;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.BoilerUtilizerDto;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.CraneDto;
+import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
+import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
-import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
+import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
+import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -42,6 +41,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
+import uz.technocorp.ecosystem.utils.JsonMaker;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -59,7 +59,6 @@ public class AppealServiceImpl implements AppealService {
 
     private final AppealRepository repository;
     private final UserRepository userRepository;
-    private final AppealRepository appealRepository;
     private final ProfileService profileService;
     private final RegionService regionService;
     private final DistrictService districtService;
@@ -67,26 +66,22 @@ public class AppealServiceImpl implements AppealService {
     private final DocumentService documentService;
     private final TemplateService templateService;
     private final AttachmentService attachmentService;
-    private final AppealExecutionProcessRepository appealExecutionProcessRepository;
-
+    private final AppealExecutionProcessService appealExecutionProcessService;
+    private final HazardousFacilityService hazardousFacilityService;
     private final Map<Class<? extends AppealDto>, AppealPdfProcessor> processors;
+    private final IonizingRadiationSourceService ionizingRadiationSourceService;
+    private final EquipmentService equipmentService;
+    private final HfTypeService hfTypeService;
+    private final ChildEquipmentService childEquipmentService;
 
     @Override
     @Transactional
-    public void saveAndSign(User user, SignedAppealDto dto, HttpServletRequest request) {
-        UUID appealId;
-        switch (dto.getDto()) {
-            case HfAppealDto hfAppealDto -> appealId = create(hfAppealDto, user);
-            case BoilerDto boilerDto -> appealId = create(boilerDto, user);
-            case BoilerUtilizerDto boilerUtilizerDto -> appealId = create(boilerUtilizerDto, user);
-            case CraneDto craneDto -> appealId = create(craneDto, user);
-            case IrsAppealDto irsAppealDto -> appealId = create(irsAppealDto, user);
-            // TODO barcha qurilmalar uchun case yozish kerak
-            default -> throw new ResourceNotFoundException("Mavjud bo'lmagan obyekt turi keldi");
-        }
+    public void saveAndSign(User user, SignedAppealDto<? extends AppealDto> dto, HttpServletRequest request) {
+        // Create and save appeal
+        UUID appealId = create(dto.getDto(), user);
 
         // Create a document
-        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId()));
+        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
     }
 
     @Override
@@ -97,11 +92,21 @@ public class AppealServiceImpl implements AppealService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Bu ariza sizga biriktirilmagan yoki ariza holati o'zgargan")
                 );
+
+        //change appeal's isRejected, if it is true
+        if (appeal.getIsRejected()) {
+            appeal.setIsRejected(false);
+            repository.save(appeal);
+        }
+
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId()));
+        documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);
+
+        // Create an execution process by the appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.IN_AGREEMENT, null));
     }
 
     @Override
@@ -114,7 +119,7 @@ public class AppealServiceImpl implements AppealService {
         Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
-        JsonNode data = makeJsonData(dto);
+        JsonNode data = JsonMaker.makeJsonSkipFields(dto);
 
         Appeal appeal = Appeal
                 .builder()
@@ -124,6 +129,7 @@ public class AppealServiceImpl implements AppealService {
                 .legalTin(profile.getTin())
                 .legalName(profile.getLegalName())
                 .legalRegionId(profile.getRegionId())
+                .profileId(profile.getId())
                 .regionId(dto.getRegionId())
                 .legalDistrictId(profile.getDistrictId())
                 .districtId(dto.getDistrictId())
@@ -136,14 +142,20 @@ public class AppealServiceImpl implements AppealService {
                 .deadline(dto.getDeadline())
                 .executorName(executorName)
                 .data(data)
+                .isRejected(false)
                 .build();
-        return repository.save(appeal).getId();
+        repository.save(appeal);
+
+        //create appeal execution process
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.NEW, null));
+
+        return appeal.getId();
     }
 
     @Override
     public void update(UUID id, AppealDto dto) {
         Appeal appeal = getAppealById(id);
-        appeal.setData(makeJsonData(dto));
+        appeal.setData(JsonMaker.makeJsonSkipFields(dto));
         repository.save(appeal);
     }
 
@@ -161,33 +173,14 @@ public class AppealServiceImpl implements AppealService {
         appeal.setResolution(dto.resolution());
         appeal.setStatus(AppealStatus.IN_PROCESS);
         repository.save(appeal);
-        repository.flush();
-        appealExecutionProcessRepository.save(
-                new AppealExecutionProcess(
-                        dto.appealId(),
-                        "Ariza inspektorga biriktirildi!"
-                )
-        );
-    }
 
-    @Override
-    @Transactional
-    public void changeAppealStatus(AppealStatusDto dto) {
-        Appeal appeal = getAppealById(dto.appealId());
-
-        appeal.setStatus(dto.status());
-        repository.save(appeal);
-        appealExecutionProcessRepository.save(
-                new AppealExecutionProcess(
-                        dto.appealId(),
-                        dto.description()
-                )
-        );
+        // create an execution process by appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), AppealStatus.IN_PROCESS, null));
     }
 
     @Override
     public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
-        return appealRepository.getAppealCustoms(user, params);
+        return repository.getAppealCustoms(user, params);
     }
 
     @Override
@@ -197,7 +190,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public AppealViewById getById(UUID appealId) {
-        return appealRepository.getAppealById(appealId).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", appealId));
+        return repository.getAppealById(appealId).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", appealId));
     }
 
     @Override
@@ -233,52 +226,98 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("address", fullAddress[2]);
         parameters.put("name", appeal.getData().get("name").asText());
         parameters.put("upperOrganization", appeal.getData().get("upperOrganization").asText());
-        parameters.put("appealType", appeal.getAppealType().getLabel());
+        parameters.put("appealType", appeal.getAppealType().label);
         parameters.put("extraArea", appeal.getData().get("extraArea").asText());
         parameters.put("hazardousSubstance", appeal.getData().get("hazardousSubstance").asText());
         parameters.put("conclusion", replyDto.getConclusion());
 
         // Save to an attachment and folder & Return a file path
-        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters);
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters, true);
     }
 
     @Override
-    public void reject(RejectDto dto) {
-        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+    @Transactional
+    public void reject(User user, RejectDto dto) {
+        Appeal appeal = repository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
         appeal.setStatus(AppealStatus.IN_PROCESS);
-        appealRepository.save(appeal);
+        appeal.setIsRejected(true);
+        repository.save(appeal);
 
-        //TODO documentning descriptionga set qilish kerak, isConfirmaed ni false qilish kerak
+        //set rejection to the document
+        documentService.reject(user, dto);
+
+        // create an execution process by appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), AppealStatus.IN_PROCESS, dto.description()));
     }
 
     @Override
+    @Transactional
     public void confirm(User user, ConfirmationDto dto) {
-        Appeal appeal = appealRepository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+        Appeal appeal = repository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+
         Role role = user.getRole();
+        AppealStatus appealStatus;
         if (role == Role.REGIONAL) {
-            appeal.setStatus(AppealStatus.IN_APPROVAL);
+            if (!appeal.getStatus().equals(AppealStatus.IN_PROCESS)) {
+                throw new RuntimeException("Ariza holati 'IN_PROCESS' emas. Hozirgi holati: "+appeal.getStatus().name());
+            }
+            appealStatus = AppealStatus.IN_APPROVAL;
         } else if (role == Role.MANAGER) {
-            appeal.setStatus(AppealStatus.COMPLETED);
+            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) {
+                throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: "+appeal.getStatus().name());
+            }
+            appealStatus = AppealStatus.COMPLETED;
         } else {
-            throw new RuntimeException("Hali bu rol uchun logika yoailmagan. Backchenchilarga ayting ))) ...");
+            throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting ))) ...");
         }
-        appealRepository.save(appeal);
+
+        appeal.setStatus(appealStatus);
+        appeal.setIsRejected(false); //because it may be confirming the previously rejected appeal.
+        repository.save(appeal);
+
+        //set confirmation to the document
+        documentService.confirmationByAppeal(user, dto.documentId());
+
+        // create an execution process by appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), appealStatus, null));
+
+        //create registry for the appeal if the appeal's status is completed
+        if (appealStatus == AppealStatus.COMPLETED) {
+            switch (appeal.getAppealType().sort) {
+                case "registerHf" -> hazardousFacilityService.create(appeal);
+                case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
+                case "registerEquipment" -> equipmentService.create(appeal);
+                //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
+            }
+        }
     }
 
-    private JsonNode makeJsonData(AppealDto dto) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        return mapper.valueToTree(dto);
+    @Override
+    public void setHfNameAndChildEquipmentName(EquipmentAppealDto dto) {
+        if (dto.getHazardousFacilityId()!=null){
+            String hfName = hazardousFacilityService.getHfNameById(dto.getHazardousFacilityId());
+            dto.setHazardousFacilityName(hfName);
+        }
+        String name = childEquipmentService.getChildEquipmentNameById(dto.getChildEquipmentId());
+        dto.setChildEquipmentName(name);
+    }
+
+    @Override
+    public void setHfTypeName(HfAppealDto appealDto) {
+        String hfTypeName = hfTypeService.getHfTypeNameById(appealDto.getHfTypeId());
+        appealDto.setHfTypeName(hfTypeName);
     }
 
     private OrderNumberDto makeNumber(AppealType appealType) {
-        Long orderNumber = appealRepository.getMax().orElse(0L) + 1;
+        Long orderNumber = repository.getMax().orElse(0L) + 1;
 
         String number = null;
 
-        switch (appealType) {
-            case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
-            case REGISTER_HF, DEREGISTER_HF -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
+        switch (appealType.sort) {
+            case "registerIrs" -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
+            case "registerHf" -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
+            case "registerEquipment", "reRegisterEquipment" ->
+                    number = orderNumber + "-QUR-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
         return new OrderNumberDto(orderNumber, number);

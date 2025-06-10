@@ -7,6 +7,9 @@ import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
@@ -22,17 +25,15 @@ import java.util.UUID;
  */
 public interface AppealService {
 
-    void saveAndSign(User user, SignedAppealDto signedDto, HttpServletRequest request);
+    void saveAndSign(User user, SignedAppealDto<? extends AppealDto> dto, HttpServletRequest request);
 
     void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
 
-    UUID create(AppealDto dto, User user);
+    UUID create(AppealDto dto, User user); //TODO Barcha ariza yaratiladigan controllerlar saveAndSign ga o'tkazilgandan keyin Service dan o'chirib, ServiceImplda private method qilib qo'yish kerak
 
     void update(UUID id, AppealDto dto);
 
     void setInspector(SetInspectorDto dto);
-
-    void changeAppealStatus(AppealStatusDto dto);
 
     Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params);
 
@@ -44,7 +45,11 @@ public interface AppealService {
 
     String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
 
-    void reject(RejectDto dto);
+    void reject(User user, RejectDto dto);
 
     void confirm(User user, ConfirmationDto dto);
+
+    void setHfNameAndChildEquipmentName(EquipmentAppealDto dto);
+
+    void setHfTypeName(HfAppealDto appealDto);
 }

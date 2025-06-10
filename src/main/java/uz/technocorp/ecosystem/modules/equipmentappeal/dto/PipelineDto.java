@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
 
@@ -27,18 +29,23 @@ public class PipelineDto extends EquipmentAppealDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate nonDestructiveCheckDate;
 
+    @SkipDb
     @NotBlank(message = "Diametr jo'natilmadi")
     private String diameter;
 
+    @SkipDb
     @NotBlank(message = "Devor qalinligi jo'natilmadi")
     private String thickness;
 
+    @SkipDb
     @NotBlank(message = "Uzunligi jo'natilmadi")
     private String length;
 
+    @SkipDb
     @NotBlank(message = "Bosim jo'natilmadi")
     private String pressure;
 
+    @SkipDb
     @NotBlank(message = "Muhit jo'natilmadi")
     private String environment;
 
@@ -50,5 +57,19 @@ public class PipelineDto extends EquipmentAppealDto {
     @Override
     public LocalDate getDeadline() {
         return null;
+    }
+
+    public void buildParameters() {
+        super.getParameters().put("diameter", diameter);
+        super.getParameters().put("thickness", thickness);
+        super.getParameters().put("length", length);
+        super.getParameters().put("pressure", pressure);
+        super.getParameters().put("environment", environment);
+    }
+
+    @AssertTrue
+    public boolean isParametersBuilt() {
+        buildParameters();
+        return true;
     }
 }

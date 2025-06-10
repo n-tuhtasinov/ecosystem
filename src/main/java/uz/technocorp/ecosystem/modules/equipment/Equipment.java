@@ -2,6 +2,9 @@ package uz.technocorp.ecosystem.modules.equipment;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSort;
@@ -15,6 +18,7 @@ import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -103,7 +107,6 @@ public class Equipment extends BaseEntity {
 
     private LocalDate partialCheckDate; // qisman texnik ko'rik / tashqi va ichki ko'rik
 
-//    @Column(nullable = false)
     private LocalDate fullCheckDate;  // to'liq texnik ko'rik / gidrosinov/ keyimgi tekshirish (100ming)
 
     //previous registration number.
@@ -118,35 +121,40 @@ public class Equipment extends BaseEntity {
     @Column(name = "old_equipment_id")
     private UUID oldEquipmentId;
 
-    private String boomLength; //strelasining uzunligi (kran)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> parameters;
 
-    private String liftingCapacity; //yuk ko'tarishi (kran, lift, yuk ko'targich)
 
-    private String capacity; // hajmi (sosud, kimyoviy idish, qozon, sug, 100ming)
-
-    private String environment; // muhit (sosud, quvur, qozon, sug, )
-
-    private String pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug, 100ming)
+//    private String boomLength; //strelasining uzunligi (kran)
+//
+//    private String liftingCapacity; //yuk ko'tarishi (kran, lift, yuk ko'targich)
+//
+//    private String capacity; // hajmi (sosud, kimyoviy idish, qozon, sug, 100ming)
+//
+//    private String environment; // muhit (sosud, quvur, qozon, sug)
+//
+//    private String pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug, 100ming)
 
     @Enumerated(EnumType.STRING)
     private Sphere sphere;  // foydalanish sohasi (lift)
 
-    private String stopCount; // to'xtashlar soni (lift)
-
-    private String length; // uzunligi (eskalator, osma yo'l, quvur, bug' va issiq suv quvuri)
-
-    private String speed; // tezligi (eskalator, osma yo'l)
-
-    private String height; // ko'tarish balandligi (eskalator, yuk ko'targich)
-
-    private String passengersPerMinute; // o'tkazish qobilyati (eskalator)
-
-    private String passengerCount; // harakatlanuvchi sostav soni (osma yo'l)
-
-    private String diameter; // diametr (quvur, bug' va issiq suv quvuri)
-
-    private String thickness; // devor qalinligi (quvur, bug' va issiq suv quvuri)
-
+//    private String stopCount; // to'xtashlar soni (lift)
+//
+//    private String length; // uzunligi (eskalator, osma yo'l, quvur, bug' va issiq suv quvuri)
+//
+//    private String speed; // tezligi (eskalator, osma yo'l)
+//
+//    private String height; // ko'tarish balandligi (eskalator, yuk ko'targich)
+//
+//    private String passengersPerMinute; // o'tkazish qobilyati (eskalator)
+//
+//    private String passengerCount; // harakatlanuvchi sostav soni (osma yo'l)
+//
+//    private String diameter; // diametr (quvur, bug' va issiq suv quvuri)
+//
+//    private String thickness; // devor qalinligi (quvur, bug' va issiq suv quvuri)
+//
     private String attractionName; // attraksion nomi (attraksion)
 
     private LocalDate acceptedAt; // foydalanishga qabul qilingan sana (attraksion pasporti)
@@ -168,11 +176,11 @@ public class Equipment extends BaseEntity {
 
     private LocalDate nonDestructiveCheckDate; // putur yetkazmaydigan nazoratda ko'rikdan o'tkazish (sosud, bug'qozon, quvur, osma yo'l, kimyoviy idish, qozon, sug, )
 
-    private String temperature; //temperatura (bug' va issiq suv quvuri, qozon)
-
-    private String density; // zichligi (qozon)
-
-    private String fuel; // yoqilg'i (100 ming)
+//    private String temperature; //temperatura (bug' va issiq suv quvuri, qozon)
+//
+//    private String density; // zichligi (qozon)
+//
+//    private String fuel; // yoqilg'i (100 ming)
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
     @JoinColumn(name = "attraction_passport_id", insertable = false, updatable = false)
@@ -181,62 +189,73 @@ public class Equipment extends BaseEntity {
     @Column(name = "attraction_passport_id")
     private UUID attractionPassportId; // faqat atraksionni ro'yhatga olish uchun
 
-    @Column(nullable = false)
-    private String labelPath; // birka rasmi
+//    @Column(nullable = false)
+//    private String labelPath; // birka rasmi
 
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "inspector_id", insertable = false, updatable = false)
-    private Profile inspector;
+    private User inspector;
 
     @Column(name = "inspector_id")
     private UUID inspectorId;
 
-    @Column(nullable = false)
-    private String saleContractPath; // oldi-sotdi shartnomasi
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> files;
+
+    private String registryFilePath; // Reestr file path
 
     @Column(nullable = false)
-    private String equipmentCertPath; // qurilma sertifikati
+    private LocalDate registrationDate;
 
-    @Column(nullable = false)
-    private String assignmentDecreePath; // maxsus tayinlash buyrug'i
-
-    private String expertisePath; //ekspertiza fayli
-
-    private String installationCertPath; //montaj guvohnomasi
-
-    private String additionalFilePath; // qo'shimcha ma'lumotlar fayli
-
-    private String passportPath; // pasporti fayli (attraksion pasporti, atraksion)
-
-    private String techReadinessActPath; // texnik tayyorlilik dalolatnomasi (attraksion pasporti)
-
-    private String seasonalReadinessActPath; // mavsumiy tayyorlilik dalolatnomasi (attraksion pasporti)
-
-    private String safetyDecreePath; // havfsiz foydalanish bo'yicha masul shaxs buyrug'i (attraksion pasporti)
-
-    private String gasSupplyProjectPath; // gaz ta'minoti loyihasi (100ming)
-
-    private String technicalManualPath; //texnik foydalanish qo'llanmasi (attraksion)
-
-    private String serviceManualPath; //xizmat ko'rsatish va ta'mirlash qo'llanmasi (atraksion)
-
-    private String technicalJournalPath; //texnik jurnal nusxasi (atraksion)
-
-    private String acceptanceFilePath; //qabul qilinganligi xujjatlari (atraksion)
-
-    private String routeInfoPath; //marshrut ma'lumotlari (atraksion)
-
-    private String conformityCertPath; //muvofiqlik sertifikati(atraksion)
-
-    private String safetyUsageReportPath; //xavfsiz foydalanish xulosasi (atraksion)
-
-    private String insurancePolicyPath; //sug'urta polisi (atraksion)
-
-    private String biomechanicalRiskFilePath; //beomexanik xavf hujjati (atraksion)
-
-    private String technicalStatusActPath; //texnik holat dalolatnomasi (atraksion)
-
-    private String usageRightsPath; //foydalanish huquqi (atraksion)
+//    @Column(nullable = false)
+//    private String saleContractPath; // oldi-sotdi shartnomasi
+//
+//    @Column(nullable = false)
+//    private String equipmentCertPath; // qurilma sertifikati
+//
+//    @Column(nullable = false)
+//    private String assignmentDecreePath; // maxsus tayinlash buyrug'i
+//
+//    private String expertisePath; //ekspertiza fayli
+//
+//    private String installationCertPath; //montaj guvohnomasi
+//
+//    private String additionalFilePath; // qo'shimcha ma'lumotlar fayli
+//
+//    private String passportPath; // pasporti fayli (attraksion pasporti, atraksion)
+//
+//    private String techReadinessActPath; // texnik tayyorlilik dalolatnomasi (attraksion pasporti)
+//
+//    private String seasonalReadinessActPath; // mavsumiy tayyorlilik dalolatnomasi (attraksion pasporti)
+//
+//    private String safetyDecreePath; // havfsiz foydalanish bo'yicha masul shaxs buyrug'i (attraksion pasporti)
+//
+//    private String gasSupplyProjectPath; // gaz ta'minoti loyihasi (100ming)
+//
+//    private String technicalManualPath; //texnik foydalanish qo'llanmasi (attraksion)
+//
+//    private String serviceManualPath; //xizmat ko'rsatish va ta'mirlash qo'llanmasi (atraksion)
+//
+//    private String technicalJournalPath; //texnik jurnal nusxasi (atraksion)
+//
+//    private String acceptanceFilePath; //qabul qilinganligi xujjatlari (atraksion)
+//
+//    private String routeInfoPath; //marshrut ma'lumotlari (atraksion)
+//
+//    private String conformityCertPath; //muvofiqlik sertifikati(atraksion)
+//
+//    private String safetyUsageReportPath; //xavfsiz foydalanish xulosasi (atraksion)
+//
+//    private String insurancePolicyPath; //sug'urta polisi (atraksion)
+//
+//    private String biomechanicalRiskFilePath; //beomexanik xavf hujjati (atraksion)
+//
+//    private String technicalStatusActPath; //texnik holat dalolatnomasi (atraksion)
+//
+//    private String usageRightsPath; //foydalanish huquqi (atraksion)
+//
+//    private String acceptanceCertPath; //foydalanishga qabul qilish guvohnomasi (atraksion)
 }

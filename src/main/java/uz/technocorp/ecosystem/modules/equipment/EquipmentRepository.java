@@ -17,7 +17,7 @@ import java.util.UUID;
  * @created 28.04.2025
  * @since v1.0
  */
-public interface EquipmentRepository extends JpaRepository<Equipment, UUID> {
+public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, EquipmentRepo {
 
     @Query("select e.orderNumber from Equipment e where e.type = :equipmentType order by e.orderNumber desc limit 1")
     Optional<Long> getMax(EquipmentType equipmentType);

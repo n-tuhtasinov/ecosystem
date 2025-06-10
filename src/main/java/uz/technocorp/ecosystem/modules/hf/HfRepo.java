@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.hf;
 
 import org.springframework.data.domain.Page;
+import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.user.User;
 
@@ -15,6 +16,6 @@ import java.util.Map;
  */
 public interface HfRepo {
 
-    Page<HfCustom> getHfCustoms(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate);
+    Page<HfCustom> getHfCustoms(User user, HfParams params);
 
 }

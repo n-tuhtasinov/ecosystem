@@ -2,6 +2,8 @@ package uz.technocorp.ecosystem.modules.hf;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
@@ -12,6 +14,7 @@ import uz.technocorp.ecosystem.modules.region.Region;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -67,8 +70,6 @@ public class HazardousFacility extends BaseEntity {
 
     private String phoneNumber;
 
-    private String email;
-
     private String upperOrganization;
 
     private String name;
@@ -115,49 +116,49 @@ public class HazardousFacility extends BaseEntity {
 
     private boolean active;
 
-    //Identifikatsiya varag'i
-    private String identificationCardPath;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private Map<String, String> files;
 
-    //XICHOni ro'yxatga olish uchun to'lov kvitansiyasi
-    private String receiptPath;
+//    //Identifikatsiya varag'i
+//    private String identificationCardPath;
+//
+//    //XICHOni ro'yxatga olish uchun to'lov kvitansiyasi
+//    private String receiptPath;
+//
+//    //Ekspertiza xulosasi
+//    private String expertOpinionPath;
+//
+//    //Loyiha hujjatlari
+//    private String projectDocumentationPath;
+//
+//    //XICHO kadastr pasporti
+//    private String cadastralPassportPath;
+//
+//    //Sanoat xavfsizligi deklaratsiyasi
+//    private String industrialSafetyDeclarationPath;
+//
+//    //Sug'urta polisi
+//    private String insurancePolicyPath;
+//
+//    //Litsenziya
+//    private String licensePath;
+//
+//    //Ruxsatnoma
+//    private String permitPath;
+//
+//    //XICHO xodimlarining sanoat xavfsizligi bo'yicha attestatsiyadan o'tganligi
+//    private String certificationPath;
+//
+//    //Qurilmalarni sinovdan o'tganligi
+//    private String deviceTestingPath;
+//
+//    //Mas'ul xodim tayinlanganligi buyrug'i
+//    private String appointmentOrderPath;
+//
+//    //Ekologiya qo'mitasi xulosasi -> Qurilmalar ekspertizasi
+//    private String ecologicalConclusionPath;
 
-    //Ekspertiza xulosasi
-    private String expertOpinionPath;
-
-    //Loyiha hujjatlari
-    private String projectDocumentationPath;
-
-    //XICHO kadastr pasporti
-    private String cadastralPassportPath;
-
-    //Sanoat xavfsizligi deklaratsiyasi
-    private String industrialSafetyDeclarationPath;
-
-    //Sug'urta polisi
-    private String insurancePolicyPath;
-
-    //Litsenziya
-    private String licensePath;
-
-    //Ruxsatnoma
-    private String permitPath;
-
-    //XICHO xodimlarining sanoat xavfsizligi bo'yicha attestatsiyadan o'tganligi
-    private String certificationPath;
-
-    //    //Yong'in xavfsizligi xulosasi
-    //    private String fireSafetyReportPath;
-
-    //Qurilmalarni sinovdan o'tganligi
-    private String deviceTestingPath;
-
-    //Mas'ul xodim tayinlanganligi buyrug'i
-    private String appointmentOrderPath;
-
-    //Ekologiya qo'mitasi xulosasi -> Qurilmalar ekspertizasi
-    private String ecologicalConclusionPath;
-
-    //Arizaga javob xati
-    private String replyLetterPath;
-
+    // Reestr fayl path
+    private String registryFilePath;
 }

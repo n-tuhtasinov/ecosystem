@@ -25,85 +25,71 @@ public class IndividualUserDto implements UserDto{
     private String phoneNumber;
 
     @Override
-    @JsonIgnore
     public String getUsername() {
         return this.pin.toString();
     }
 
     @Override
-    @JsonIgnore
     public String getRole() {
         return Role.INDIVIDUAL.name();
     }
 
     @Override
-    @JsonIgnore
     public List<String> getDirections() {
         return List.of(Direction.APPEAL.name());
     }
 
     @Override
-    @JsonIgnore
     public String getName() {
         return this.fullName;
     }
 
     @Override
-    @JsonIgnore
     public Long getTin() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public String getLegalName() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public String getLegalAddress() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public Integer getDepartmentId() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public Integer getOfficeId() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public Integer getRegionId() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public Integer getDistrictId() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public String getPosition() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public String getLegalOwnershipType() {
         return null;
     }
 
     @Override
-    @JsonIgnore
     public String getLegalForm() {
         return null;
     }

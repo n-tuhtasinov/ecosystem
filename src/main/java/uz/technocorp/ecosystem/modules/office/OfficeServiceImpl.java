@@ -1,16 +1,16 @@
 package uz.technocorp.ecosystem.modules.office;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.office.dto.OfficeDto;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeView;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
-import uz.technocorp.ecosystem.modules.region.Region;
-import uz.technocorp.ecosystem.modules.region.RegionRepository;
+import uz.technocorp.ecosystem.shared.AppConstants;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OfficeServiceImpl implements OfficeService {
     private final OfficeRepository officeRepository;
-    private final RegionRepository regionRepository;
 
     @Override
     public void create(OfficeDto dto) {
@@ -34,7 +33,7 @@ public class OfficeServiceImpl implements OfficeService {
 
     @Override
     public void update(Integer officeId, OfficeDto dto) {
-        Office office = officeRepository.findById(officeId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "officeId", officeId));
+        Office office = findById(officeId);
         office.setName(dto.name());
         office.setRegionId(dto.regionId());
         officeRepository.save(office);
@@ -65,6 +64,11 @@ public class OfficeServiceImpl implements OfficeService {
     @Override
     public OfficeViewById getById(Integer officeId) {
         return officeRepository.getOfficeById(officeId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "officeId", officeId));
+    }
+
+    @Override
+    public Office findById(Integer officeId) {
+        return officeRepository.findById(officeId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "officeId", officeId));
     }
 
 }

@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -8,21 +9,35 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
+import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSortService;
+import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.UUID;
+import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.template.TemplateService;
+import uz.technocorp.ecosystem.modules.template.TemplateType;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
+
+import java.time.LocalDate;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -35,16 +50,26 @@ import java.util.UUID;
 public class EquipmentServiceImpl implements EquipmentService {
 
     private final EquipmentRepository equipmentRepository;
-    private final AppealRepository appealRepository;
     private final ProfileRepository profileRepository;
+    private final DistrictService districtService;
+    private final AttachmentService attachmentService;
+    private final TemplateService templateService;
+    private final ChildEquipmentService childEquipmentService;
+    private final ChildEquipmentSortService childEquipmentSortService;
+    private final ProfileService profileService;
+    private final OfficeService officeService;
 
     @Override
-    public void create(EquipmentRegistryDto equipmentRegistryDto) {
-        Appeal appeal = appealRepository.findById(equipmentRegistryDto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", equipmentRegistryDto.appealId()));
+    public void create(Appeal appeal) {
         Profile profile = profileRepository.findByTin(appeal.getLegalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "STIR", appeal.getLegalTin()));
 
         EquipmentDto dto = parseJsonToObject(appeal.getData());
         EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
+
+        /*// Create PDF with parameters
+        String registryFilepath = dto.type().equals(EquipmentType.ATTRACTION_PASSPORT)
+                ? createAttractionPassportPdf(dto, profile.getLegalAddress()) // Attraction Passport
+                : createEquipmentPdf(dto, profile.getLegalAddress()); // Other Equipments*/
 
         Equipment equipment = Equipment.builder()
                 .type(info.equipmentType())
@@ -65,20 +90,8 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .manufacturedAt(dto.manufacturedAt())
                 .partialCheckDate(dto.partialCheckDate())
                 .fullCheckDate(dto.fullCheckDate())
-                .boomLength(dto.boomLength())
-                .liftingCapacity(dto.liftingCapacity())
-                .capacity(dto.capacity())
-                .environment(dto.environment())
-                .pressure(dto.pressure())
+                .parameters(dto.parameters())
                 .sphere(dto.sphere())
-                .stopCount(dto.stopCount())
-                .length(dto.length())
-                .speed(dto.speed())
-                .height(dto.height())
-                .passengersPerMinute(dto.passengersPerMinute())
-                .passengerCount(dto.passengerCount())
-                .diameter(dto.diameter())
-                .thickness(dto.thickness())
                 .attractionName(dto.attractionName())
                 .acceptedAt(dto.acceptedAt())
                 .childEquipmentSortId(dto.childEquipmentSortId())
@@ -87,27 +100,50 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .riskLevel(dto.riskLevel())
                 .parentOrganization(dto.parentOrganization())
                 .nonDestructiveCheckDate(dto.nonDestructiveCheckDate())
-                .temperature(dto.temperature())
-                .density(dto.density())
-                .fuel(dto.fuel())
-                .labelPath(dto.labelPath())
+                .files(dto.files())
                 .description(dto.description())
                 .inspectorId(appeal.getExecutorId())
-                .saleContractPath(dto.saleContractPath())
-                .equipmentCertPath(dto.equipmentCertPath())
-                .assignmentDecreePath(dto.assignmentDecreePath())
-                .expertisePath(dto.expertisePath())
-                .installationCertPath(dto.installationCertPath())
-                .additionalFilePath(dto.additionalFilePath())
-                .passportPath(dto.passportPath())
-                .techReadinessActPath(dto.techReadinessActPath())
-                .seasonalReadinessActPath(dto.seasonalReadinessActPath())
-                .safetyDecreePath(dto.safetyDecreePath())
-                .gasSupplyProjectPath(dto.gasSupplyProjectPath())
+//                .registryFilePath(registryFilepath)
+                .registrationDate(LocalDate.now())
                 .build();
 
         equipmentRepository.save(equipment);
     }
+
+    @Override
+    public Page<EquipmentView> getAll(User user, EquipmentParams params) {
+
+        Profile profile = profileService.getProfile(user.getProfileId());
+
+        if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
+            Office office = officeService.findById(profile.getOfficeId());
+            if (params.getRegionId() != null){
+                if (!params.getRegionId().equals(office.getRegionId())){
+                    throw new RuntimeException("Sizga bu viloyat ma'lumotlarini ko'rish uchun ruxsat berilmagan");
+                }
+            }
+            params.setRegionId(office.getRegionId());
+        } else if (user.getRole() == Role.LEGAL) {
+            //TODO: legal va individual uchun yozish kerak
+        }
+
+
+        return equipmentRepository.getAllByParams(user,params);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public Page<HfPageView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
@@ -162,6 +198,8 @@ public class EquipmentServiceImpl implements EquipmentService {
     private EquipmentDto parseJsonToObject(JsonNode jsonNode) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
         try {
             return mapper.treeToValue(jsonNode, EquipmentDto.class);
         } catch (JsonProcessingException e) {
@@ -169,4 +207,50 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
     }
 
+//    private String createAttractionPassportPdf(EquipmentDto dto, String legalAddress) {
+//        Map<String, String> parameters = new HashMap<>();
+//
+//        parameters.put("attractionName", dto.attractionName());
+//        parameters.put("attractionType", childEquipmentService.getById(dto.childEquipmentId()).getName());
+//        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+//        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+//        parameters.put("legalName", dto.legalName());
+//        parameters.put("legalTin", dto.legalTin().toString());
+//        parameters.put("legalAddress", legalAddress);
+//        parameters.put("registryNumber", dto.number());
+//        parameters.put("factoryNumber", dto.factoryNumber());
+//        parameters.put("factory", dto.factory());
+//        parameters.put("regionName", dto.regionName());
+//        parameters.put("districtName", districtService.getDistrict(dto.districtId()).getName());
+//        parameters.put("address", dto.address());
+//        parameters.put("riskLevel", dto.riskLevel().value);
+//
+//        String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
+//
+//        return attachmentService.createPdfFromHtml(content, "reestr/attraction", parameters, false);
+//    }
+
+//    private String createEquipmentPdf(EquipmentDto dto, String legalAddress) {
+//        Map<String, String> parameters = new HashMap<>();
+//
+//        parameters.put("legalAddress", legalAddress);
+//        parameters.put("equipmentType", childEquipmentService.getById(dto.childEquipmentId()).getName());
+//        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+//        parameters.put("legalTin", dto.legalTin().toString());
+//        parameters.put("factoryNumber", dto.factoryNumber());
+//        parameters.put("factory", dto.factory());
+//        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+//        parameters.put("number", dto.number());
+//        parameters.put("registrationDate", LocalDate.now().toString());
+//        parameters.put("address", dto.address());
+//        parameters.put("parameters", "PARAMETERS"); // TODO
+//
+//        String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
+//
+//        return attachmentService.createPdfFromHtml(content, "reestr/equipment", parameters, false);
+//    }
+
+    private String getTemplateContent(TemplateType type) {
+        return templateService.getByType(type.name()).getContent();
+    }
 }

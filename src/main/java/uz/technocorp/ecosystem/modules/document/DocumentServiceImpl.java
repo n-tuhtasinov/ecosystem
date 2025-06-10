@@ -6,20 +6,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.appeal.dto.RejectDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.dto.Signer;
+import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByReply;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByRequest;
 import uz.technocorp.ecosystem.modules.eimzo.EImzoProxy;
 import uz.technocorp.ecosystem.modules.eimzo.json.pcks7.Pkcs7VerifyAttachedJson;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +37,7 @@ import java.util.UUID;
 public class DocumentServiceImpl implements DocumentService {
 
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
     @Value("${app.e-imzo.host}")
     private String host;
 
@@ -43,10 +47,24 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public void create(DocumentDto dto) {
-        Signer signer = new Signer(getSigner(dto.sign(), dto.ip()), dto.executedBy(), LocalDateTime.now());
 
-        List<Signer> signer1 = List.of(signer); // TODO Agar bir nechta user imzolasa signers listni to'g'irlash kerak. Update documentni qoshish kerak
-        Document document = new Document(dto.belongId(), dto.path(), dto.sign(), signer1, dto.documentType(), null, null );
+        List<Signer> signers = new ArrayList<>();
+
+        for (UUID id : dto.executorIds()) {
+
+            if (id == dto.singerId()) {
+                String signerName = getSigner(dto.sign(), dto.ip());
+                Signer signer = new Signer(signerName, id, LocalDateTime.now(), true);
+                signers.add(signer);
+                continue;
+            }
+
+            User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "ID", id));
+            Signer signer = new Signer(user.getName(), id, null, false);
+            signers.add(signer);
+        }
+
+        Document document = new Document(dto.belongId(), dto.path(), dto.sign(), signers, dto.documentType(), null, null, signers.size() == 1);
 
         repository.save(document);
 
@@ -60,10 +78,6 @@ public class DocumentServiceImpl implements DocumentService {
         repository.deleteById(id);
     }
 
-    @Override
-    public DocumentViewByReply getById(UUID documentId) {
-        return repository.getDocumentById(documentId).orElseThrow(() -> new ResourceNotFoundException("Document", "ID", documentId));
-    }
 
     @Override
     public List<DocumentViewByRequest> getRequestDocumentsByAppealId(UUID appealId) {
@@ -73,10 +87,49 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public List<DocumentViewByReply> getReplyDocumentsByAppealId(User user, UUID appealId) {
         if (user.getRole().equals(Role.LEGAL) || user.getRole().equals(Role.INDIVIDUAL)) {
-            return repository.getReplyDocumentsByAppealIdAndConfirmed(appealId, DocumentType.APPEAL.name(), true);
+            return repository.getReplyDocumentsByAppealIdAndAgreementStatus(appealId, DocumentType.APPEAL.name(), AgreementStatus.APPROVED.name());
         }
 
-        return repository.getReplyDocumentsByAppealIdAndConfirmed(appealId, DocumentType.APPEAL.name(), null);
+        return repository.getReplyDocumentsByAppealIdAndAgreementStatus(appealId, DocumentType.APPEAL.name(), null);
+    }
+
+    @Override
+    public void reject(User user, RejectDto dto) {
+        Document document = repository.findById(dto.documentId()).orElseThrow(() -> new ResourceNotFoundException("Document", "ID", dto.documentId()));
+        document.setDescription(dto.description());
+
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            if (document.getAgreementStatus()!=null){
+                throw new RuntimeException("Hujjat agreementStatusi avval o'zgartirilgan. Hozirgi holati: " + document.getAgreementStatus().name());
+            }
+            document.setAgreementStatus(AgreementStatus.NOT_AGREED);
+        } else if (role == Role.MANAGER) {
+            if (document.getAgreementStatus()!= AgreementStatus.AGREED){
+                throw new RuntimeException("Hujjat agreementStatusi 'AGREED' holatida emas. Hozirgi holati: " + document.getAgreementStatus().name());
+            }
+            document.setAgreementStatus(AgreementStatus.NOT_APPROVED);
+        } else {
+            throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting )))");
+        }
+
+        repository.save(document);
+    }
+
+    @Override
+    public void confirmationByAppeal(User user, UUID documentId) {
+        Document document = repository.findById(documentId).orElseThrow(() -> new ResourceNotFoundException("Document", "ID", documentId));
+
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            document.setAgreementStatus(AgreementStatus.AGREED);
+        } else if (role == Role.MANAGER) {
+            document.setAgreementStatus(AgreementStatus.APPROVED);
+        } else {
+            throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting )))");
+        }
+
+        repository.save(document);
     }
 
     public List<Signer> convertToList(String signers) {
