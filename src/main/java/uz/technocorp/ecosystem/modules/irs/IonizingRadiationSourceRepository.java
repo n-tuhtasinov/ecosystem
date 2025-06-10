@@ -28,6 +28,9 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
             """, nativeQuery = true)
     Set<Integer> getAllRegionIdByLegalTin(Long tin);
 
+    @Query("select irs from IonizingRadiationSource irs where irs.id = :irsId")
+    Optional<IonizingRadiationSource> getIrsById(UUID irsId);
+
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,

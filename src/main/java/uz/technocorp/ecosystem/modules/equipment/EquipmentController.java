@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.equipment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
@@ -13,10 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
+import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
+import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
+import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.AppConstants;
 
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -46,6 +55,14 @@ public class EquipmentController {
         Page<EquipmentView> all = equipmentService.getAll(user, new EquipmentParams(type, page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
         return ResponseEntity.ok(new ApiResponse(all));
     }
+
+
+    @GetMapping("/{equipmentId}")
+    public ResponseEntity<?> getById(@PathVariable UUID equipmentId) {
+        EquipmentViewById byId = equipmentService.getById(equipmentId);
+        return ResponseEntity.ok(new ApiResponse(byId));
+    }
+
 
     @GetMapping("/attractions/risk-assessment")
     public ResponseEntity<?> getAllAttractionsForRiskAssessment(@CurrentUser User user,

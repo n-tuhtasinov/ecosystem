@@ -29,6 +29,18 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             """, nativeQuery = true)
     Set<Integer> getAllRegionIdByLegalTin(Long tin);
 
+
+    @Query("""
+                        select e from Equipment e
+                         left join fetch e.hazardousFacility
+                         left join fetch e.childEquipment
+                         left join fetch e.oldEquipment
+                         left join fetch e.childEquipmentSort
+                         left join fetch e.inspector
+                         where e.id = :equipmentId
+            """)
+    Optional<Equipment> getEquipmentById(UUID equipmentId);
+
     @Query(value = """
             select e.id as id,
             registry_number as registryNumber,

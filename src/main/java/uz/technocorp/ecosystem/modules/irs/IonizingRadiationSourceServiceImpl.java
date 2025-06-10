@@ -24,6 +24,7 @@ import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
 import uz.technocorp.ecosystem.modules.irs.view.IrsView;
+import uz.technocorp.ecosystem.modules.irs.view.IrsViewById;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
@@ -38,6 +39,7 @@ import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -160,6 +162,44 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
         }
 
         return repository.getAll(params);
+    }
+
+    @Override
+    public IrsViewById getById(UUID irsId) {
+        IonizingRadiationSource irs = repository.getIrsById(irsId).orElseThrow(() -> new ResourceNotFoundException("INM", "ID", irsId));
+        return mapToView(irs);
+    }
+
+    private IrsViewById mapToView(IonizingRadiationSource irs) {
+        return new IrsViewById(
+                irs.getParentOrganization(),
+                irs.getAddress(),
+                irs.getSupervisorName(),
+                irs.getSupervisorPosition(),
+                irs.getSupervisorStatus(),
+                irs.getSupervisorEducation(),
+                irs.getSupervisorPhoneNumber(),
+                irs.getDivision(),
+                irs.getIdentifierType(),
+                irs.getSymbol(),
+                irs.getSphere(),
+                irs.getFactoryNumber(),
+                irs.getActivity(),
+                irs.getType(),
+                irs.getCategory(),
+                irs.getCountry(),
+                irs.getManufacturedAt(),
+                irs.getAcceptedFrom(),
+                irs.getAcceptedAt(),
+                irs.getIsValid(),
+                irs.getUsageType(),
+                irs.getStorageLocation(),
+                irs.getFiles(),
+                irs.getAppealId(),
+                irs.getRegistryNumber(),
+                irs.getProfileId(),
+                irs.getLegalTin(),
+                irs.getRegistrationDate());
     }
 
     private IrsAppealDto parseJsonData(JsonNode jsonNode) {

@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -21,6 +22,7 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
@@ -28,6 +30,7 @@ import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
+import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
@@ -145,6 +148,51 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
+    public EquipmentViewById getById(UUID equipmentId) {
+        Equipment equipment = equipmentRepository.getEquipmentById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
+        return mapToView(equipment);
+    }
+
+    private EquipmentViewById mapToView(Equipment equipment) {
+        return new EquipmentViewById(
+                equipment.getRegistrationDate(),
+                equipment.getType(),
+                equipment.getAppealId(),
+                equipment.getRegistryNumber(),
+                equipment.getLegalTin(),
+                equipment.getHazardousFacilityId(),
+                equipment.getHazardousFacility() == null? null : equipment.getHazardousFacility().getName(),
+                equipment.getChildEquipmentId(),
+                equipment.getChildEquipment() == null? null : equipment.getChildEquipment().getName(),
+                equipment.getFactoryNumber(),
+                equipment.getAddress(),
+                equipment.getModel(),
+                equipment.getFactory(),
+                equipment.getLocation(),
+                equipment.getManufacturedAt(),
+                equipment.getOldEquipmentId(),
+                equipment.getOldEquipment() == null? null : equipment.getOldEquipment().getRegistryNumber(),
+                equipment.getParameters(),
+                equipment.getSphere(),
+                equipment.getAttractionName(),
+                equipment.getAcceptedAt(),
+                equipment.getChildEquipmentSortId(),
+                equipment.getChildEquipmentSort() == null? null : equipment.getChildEquipmentSort().getName(),
+                equipment.getCountry(),
+                equipment.getServicePeriod(),
+                equipment.getRiskLevel(),
+                equipment.getParentOrganization(),
+                equipment.getNonDestructiveCheckDate(),
+                equipment.getAttractionPassportId(),
+                equipment.getDescription(),
+                equipment.getInspectorId(),
+                equipment.getInspector() == null? null : equipment.getInspector().getName(),
+                equipment.getFiles(),
+                equipment.getRegistryFilePath());
+    }
+
+
+    @Override
     public Page<HfPageView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         UUID profileId = user.getProfileId();
@@ -178,6 +226,8 @@ public class EquipmentServiceImpl implements EquipmentService {
     private EquipmentDto parseJsonToObject(JsonNode jsonNode) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
         try {
             return mapper.treeToValue(jsonNode, EquipmentDto.class);
         } catch (JsonProcessingException e) {
@@ -185,4 +235,50 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
     }
 
+//    private String createAttractionPassportPdf(EquipmentDto dto, String legalAddress) {
+//        Map<String, String> parameters = new HashMap<>();
+//
+//        parameters.put("attractionName", dto.attractionName());
+//        parameters.put("attractionType", childEquipmentService.getById(dto.childEquipmentId()).getName());
+//        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+//        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+//        parameters.put("legalName", dto.legalName());
+//        parameters.put("legalTin", dto.legalTin().toString());
+//        parameters.put("legalAddress", legalAddress);
+//        parameters.put("registryNumber", dto.number());
+//        parameters.put("factoryNumber", dto.factoryNumber());
+//        parameters.put("factory", dto.factory());
+//        parameters.put("regionName", dto.regionName());
+//        parameters.put("districtName", districtService.getDistrict(dto.districtId()).getName());
+//        parameters.put("address", dto.address());
+//        parameters.put("riskLevel", dto.riskLevel().value);
+//
+//        String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
+//
+//        return attachmentService.createPdfFromHtml(content, "reestr/attraction", parameters, false);
+//    }
+
+//    private String createEquipmentPdf(EquipmentDto dto, String legalAddress) {
+//        Map<String, String> parameters = new HashMap<>();
+//
+//        parameters.put("legalAddress", legalAddress);
+//        parameters.put("equipmentType", childEquipmentService.getById(dto.childEquipmentId()).getName());
+//        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+//        parameters.put("legalTin", dto.legalTin().toString());
+//        parameters.put("factoryNumber", dto.factoryNumber());
+//        parameters.put("factory", dto.factory());
+//        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+//        parameters.put("number", dto.number());
+//        parameters.put("registrationDate", LocalDate.now().toString());
+//        parameters.put("address", dto.address());
+//        parameters.put("parameters", "PARAMETERS"); // TODO
+//
+//        String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
+//
+//        return attachmentService.createPdfFromHtml(content, "reestr/equipment", parameters, false);
+//    }
+
+    private String getTemplateContent(TemplateType type) {
+        return templateService.getByType(type.name()).getContent();
+    }
 }

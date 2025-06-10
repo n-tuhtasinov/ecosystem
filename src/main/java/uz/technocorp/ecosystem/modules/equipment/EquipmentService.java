@@ -4,8 +4,12 @@ import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.user.User;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -22,4 +26,7 @@ public interface EquipmentService {
     void create(Appeal appeal);
 
     Page<EquipmentView> getAll(User user, EquipmentParams params);
+
+    EquipmentViewById getById(UUID equipmentId);
+
 }
