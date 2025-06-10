@@ -244,8 +244,8 @@ public class AppealServiceImpl implements AppealService {
         Role role = user.getRole();
         AppealStatus appealStatus;
         if (role == Role.REGIONAL) {
-            if (!appeal.getStatus().equals(AppealStatus.IN_PROCESS)) {
-                throw new RuntimeException("Ariza holati 'IN_PROCESS' emas. Hozirgi holati: "+appeal.getStatus().name());
+            if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) {
+                throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: "+appeal.getStatus().name());
             }
             appealStatus = AppealStatus.IN_APPROVAL;
         } else if (role == Role.MANAGER) {
