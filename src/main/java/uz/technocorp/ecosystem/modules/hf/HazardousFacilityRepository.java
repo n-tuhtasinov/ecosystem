@@ -31,6 +31,13 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             """, nativeQuery = true)
     List<HfSelectView> findAllByProfileId(UUID profileId);
 
+
+    @Query("select hf from HazardousFacility hf left join fetch hf.hfType where hf.id = :hfId")
+    Optional<HazardousFacility> getHfById(UUID hfId);
+
+
+
+
 //    @Query(value = """
 //            select hf.id as id,
 //            registry_number as registryNumber,

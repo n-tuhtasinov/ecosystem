@@ -19,6 +19,7 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
+import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
@@ -30,10 +31,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Rasulov Komil
@@ -243,6 +241,37 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     @Override
     public String getHfNameById(UUID hfId) {
         return findById(hfId).getName();
+    }
+
+    @Override
+    public HfViewById getById(UUID hfId) {
+        HazardousFacility hf = repository.getHfById(hfId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", hfId));
+        return mapToView(hf);
+    }
+
+    private HfViewById mapToView(HazardousFacility hf) {
+        return new HfViewById(
+                hf.getLegalTin(),
+                hf.getRegistrationDate(),
+                hf.getRegistryNumber(),
+                hf.getProfileId(),
+                hf.getUpperOrganization(),
+                hf.getName(),
+                hf.getAddress(),
+                hf.getLocation(),
+                hf.getHazardousSubstance(),
+                hf.getAppealId(),
+                hf.getHfTypeId(),
+                hf.getHfType() == null? null : hf.getHfType().getName(),
+                hf.getExtraArea(),
+                hf.getDescription(),
+                hf.getSpheres(),
+                hf.getDeregisterReason(),
+                hf.getDeregisterFilePath(),
+                hf.getPeriodicUpdateReason(),
+                hf.getPeriodicUpdateFilePath(),
+                hf.isActive(),
+                hf.getFiles());
     }
 
     private HfAppealDto parseJsonData(JsonNode jsonNode) {
