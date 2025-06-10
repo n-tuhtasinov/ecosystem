@@ -1,9 +1,11 @@
 package uz.technocorp.ecosystem.modules.elevatorriskindicator;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.elevatorriskindicator.dto.EquipmentRiskIndicatorDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
@@ -18,7 +20,7 @@ import java.util.UUID;
  * @since v1.0
  */
 @RestController
-@RequestMapping("/api/v1/elevator-risk-indicator")
+@RequestMapping("/api/v1/elevator-risk-indicators")
 @RequiredArgsConstructor
 public class ElevatorRiskIndicatorController {
 
@@ -42,15 +44,27 @@ public class ElevatorRiskIndicatorController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.DELETED));
     }
 
-    @GetMapping("/{tin}/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long tin, @PathVariable UUID id) {
-        List<RiskIndicatorView> allByIrsIdAndTin = service.findAllByEquipmentIdAndTin(id, tin);
+    @GetMapping("/for-one")
+    public ResponseEntity<?> getById(@RequestParam(value = "tin") Long tin,
+                                     @RequestParam(value = "id") UUID id,
+                                     @RequestParam(value = "intervalId") Integer intervalId) {
+        List<RiskIndicatorView> allByIrsIdAndTin = service.findAllByEquipmentIdAndTin(id, tin, intervalId);
         return ResponseEntity.ok(new ApiResponse(allByIrsIdAndTin));
     }
 
-    @GetMapping("/{tin}")
-    public ResponseEntity<?> getByTin(@PathVariable Long tin) {
-        List<RiskIndicatorView> allByTin = service.findAllByTin(tin);
+    @GetMapping
+    public ResponseEntity<?> getByTin(@RequestParam(value = "tin") Long tin,
+                                      @RequestParam(value = "intervalId") Integer intervalId) {
+        List<RiskIndicatorView> allByTin = service.findAllByTin(tin, intervalId);
+        return ResponseEntity.ok(new ApiResponse(allByTin));
+    }
+
+    @GetMapping("/to-fix")
+    public ResponseEntity<?> getAllToFixByTin(@RequestParam(value = "tin") Long tin,
+                                              @RequestParam(value = "intervalId") Integer intervalId,
+                                              @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                              @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
+        Page<RiskIndicatorView> allByTin = service.findAllToFixByTin(tin, intervalId, page, size);
         return ResponseEntity.ok(new ApiResponse(allByTin));
     }
 }

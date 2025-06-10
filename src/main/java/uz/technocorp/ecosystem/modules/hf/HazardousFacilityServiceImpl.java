@@ -2,6 +2,8 @@ package uz.technocorp.ecosystem.modules.hf;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
@@ -13,22 +15,21 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
+import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
-import uz.technocorp.ecosystem.modules.template.Template;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
-import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -48,6 +49,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private final AttachmentService attachmentService;
     private final TemplateService templateService;
     private final ProfileService profileService;
+    private final ProfileRepository profileRepository;
 
     @Override
     public void create(Appeal appeal) {
@@ -240,7 +242,57 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         return findById(hfId).getName();
     }
 
-    public HazardousFacility findById(UUID id) {
+    @Override
+    public Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        UUID profileId = user.getProfileId();
+        Profile profile = profileRepository
+                .findById(profileId)
+                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", profileId));
+        Integer regionId = profile.getRegionId();
+        if (isAssigned) {
+            if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
+            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
+        } else {
+            if (tin != null) return repository.getAllByLegalTin(pageable, tin);
+            if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber);
+            else return repository.getAllByRegion(pageable, regionId);
+        }
+    }
+
+    @Override
+    public HfViewById getById(UUID hfId) {
+        HazardousFacility hf = repository.getHfById(hfId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", hfId));
+        return mapToView(hf);
+    }
+
+    private HfViewById mapToView(HazardousFacility hf) {
+        return new HfViewById(
+                hf.getLegalTin(),
+                hf.getRegistrationDate(),
+                hf.getRegistryNumber(),
+                hf.getProfileId(),
+                hf.getUpperOrganization(),
+                hf.getName(),
+                hf.getAddress(),
+                hf.getLocation(),
+                hf.getHazardousSubstance(),
+                hf.getAppealId(),
+                hf.getHfTypeId(),
+                hf.getHfType() == null? null : hf.getHfType().getName(),
+                hf.getExtraArea(),
+                hf.getDescription(),
+                hf.getSpheres(),
+                hf.getDeregisterReason(),
+                hf.getDeregisterFilePath(),
+                hf.getPeriodicUpdateReason(),
+                hf.getPeriodicUpdateFilePath(),
+                hf.isActive(),
+                hf.getFiles());
+    }
+
+    public HazardousFacility findById(UUID id){
         return repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));

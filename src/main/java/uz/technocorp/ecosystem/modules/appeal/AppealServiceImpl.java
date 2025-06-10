@@ -244,11 +244,17 @@ public class AppealServiceImpl implements AppealService {
         Role role = user.getRole();
         AppealStatus appealStatus;
         if (role == Role.REGIONAL) {
+            if (!appeal.getStatus().equals(AppealStatus.IN_PROCESS)) {
+                throw new RuntimeException("Ariza holati 'IN_PROCESS' emas. Hozirgi holati: "+appeal.getStatus().name());
+            }
             appealStatus = AppealStatus.IN_APPROVAL;
         } else if (role == Role.MANAGER) {
+            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) {
+                throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: "+appeal.getStatus().name());
+            }
             appealStatus = AppealStatus.COMPLETED;
         } else {
-            throw new RuntimeException(role.name() + " roli uchun hali logika yoailmagan. Backchenchilarga ayting ))) ...");
+            throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting ))) ...");
         }
 
         appeal.setStatus(appealStatus);

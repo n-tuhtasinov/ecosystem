@@ -27,4 +27,6 @@ public interface OfficeService {
     List<Office> getAllBySelect();
 
     OfficeViewById getById(Integer officeId);
+
+    Office findById(Integer officeId);
 }

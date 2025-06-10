@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.hfriskindicator;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
@@ -24,7 +26,11 @@ public interface HfRiskIndicatorRepository extends JpaRepository<HfRiskIndicator
             select cast(id as varchar) as id,
             indicator_type as indicatorType,
             score,
-            description
+            description,
+            file_path as filePath,
+            score_value as scoreValue,
+            file_date as fileDate,
+            cancelled_date as cancelledDate
             from hf_risk_indicator
             where (hazardous_facility_id = :id or hazardous_facility_id is null)
             and risk_analysis_interval_id = :intervalId
@@ -36,13 +42,35 @@ public interface HfRiskIndicatorRepository extends JpaRepository<HfRiskIndicator
             select cast(id as varchar) as id,
             indicator_type as indicatorType,
             score,
-            description
+            description,
+            file_path as filePath,
+            score_value as scoreValue,
+            file_date as fileDate,
+            cancelled_date as cancelledDate
             from hf_risk_indicator
             where tin = :tin
             and hazardous_facility_id is null
             and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
     List<RiskIndicatorView> findAllByTinAndDate(Long tin, Integer intervalId);
+
+    @Query(value = """
+            select cast(id as varchar) as id,
+            indicator_type as indicatorType,
+            score,
+            description,
+            file_path as filePath,
+            score_value as scoreValue,
+            file_date as fileDate,
+            cancelled_date as cancelledDate
+            from hf_risk_indicator
+            where tin = :tin
+            and risk_analysis_interval_id = :intervalId
+            and file_path is not null
+            and score != 0
+            """, nativeQuery = true)
+    Page<RiskIndicatorView> findAllFileContainsByTinAndDate(Long tin, Integer intervalId, Pageable pageable);
+
 
     @Query(value = """
             select cast(hazardous_facility_id as varchar) as objectId,
@@ -53,5 +81,6 @@ public interface HfRiskIndicatorRepository extends JpaRepository<HfRiskIndicator
             group by hazardous_facility_id, tin
             """, nativeQuery = true)
     List<RiskAssessmentDto> findAllGroupByHfIdAndTin(Integer intervalId);
+
 
 }

@@ -6,6 +6,8 @@ import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionCustom;
+import uz.technocorp.ecosystem.modules.inspection.helper.InspectionFullDto;
+import uz.technocorp.ecosystem.modules.inspection.view.InspectionView;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.UUID;
@@ -21,6 +23,7 @@ public interface InspectionService {
 
     void update(UUID id, InspectionDto dto);
     void update(UUID id, InspectionUpdateDto dto);
-    void update(UUID id, InspectionActDto dto);
+    void conduct(UUID id);
     Page<InspectionCustom> getAll(User user, int page, int size, Long tin, InspectionStatus status, Integer intervalId);
+    InspectionFullDto getById(UUID id);
 }

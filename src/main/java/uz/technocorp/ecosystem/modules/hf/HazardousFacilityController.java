@@ -10,7 +10,9 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
+import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -84,6 +86,28 @@ public class HazardousFacilityController {
                                     @RequestParam(value = "endDate", required = false) LocalDate endDate
                                     ) {
         Page<HfCustom> all = service.getAll(user, new HfParams(page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
+        return ResponseEntity.ok(new ApiResponse(all));
+    }
+
+
+    @GetMapping("/{hfId}")
+    public ResponseEntity<?> getById(@PathVariable UUID hfId) {
+        HfViewById byId = service.getById(hfId);
+        return ResponseEntity.ok(new ApiResponse(byId));
+    }
+
+
+
+    @GetMapping("/risk-assessment")
+    public ResponseEntity<?> getAllForRiskAssessment(@CurrentUser User user,
+                                    @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                    @RequestParam(value = "legalTin", required = false) Long legalTin,
+                                    @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                    @RequestParam(value = "intervalId") Integer intervalId,
+                                    @RequestParam(value = "isAssigned") Boolean isAssigned
+    ) {
+        Page<HfPageView> all = service.getAllForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
     }
 }

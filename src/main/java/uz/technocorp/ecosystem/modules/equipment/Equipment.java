@@ -34,7 +34,9 @@ import java.util.UUID;
 @Builder
 @Entity
 public class Equipment extends BaseEntity {
+
     @Column(nullable = false)
+
     @Enumerated(EnumType.STRING)
     private EquipmentType type;
 
@@ -109,7 +111,7 @@ public class Equipment extends BaseEntity {
 
     //previous registration number.
     //it is used when the device is re-registered
-    private String oldNumber;
+//    private String oldNumber;
 
     //previous registration, it is used when the device is re-registered
     @OneToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)

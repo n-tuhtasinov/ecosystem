@@ -75,15 +75,15 @@ public class Inspection extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private InspectionStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Document decree;
-
-    private String decreePath;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Document act;
-
-    private String actPath;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private Document decree;
+//
+//    private String decreePath;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private Document act;
+//
+//    private String actPath;
 
     private String specialCode;
 

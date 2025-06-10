@@ -126,19 +126,19 @@ public class HfAppealDto implements AppealDto {
     }
 
     public void buildFiles() {
-//        files.put("identificationCardPath", identificationCardPath);
-//        files.put("receiptPath", receiptPath);
-//        files.put("expertOpinionPath", expertOpinionPath);
-//        files.put("projectDocumentationPath", projectDocumentationPath);
-//        files.put("cadastralPassportPath", cadastralPassportPath);
-//        files.put("industrialSafetyDeclarationPath", industrialSafetyDeclarationPath);
-//        files.put("insurancePolicyPath", insurancePolicyPath);
-//        files.put("licensePath", licensePath);
-//        files.put("permitPath", permitPath);
-//        files.put("certificationPath", certificationPath);
-//        files.put("deviceTestingPath", deviceTestingPath);
-//        files.put("appointmentOrderPath", appointmentOrderPath);
-//        files.put("ecologicalConclusionPath", ecologicalConclusionPath);
+        files.put("identificationCardPath", identificationCardPath);
+        files.put("receiptPath", receiptPath);
+        files.put("expertOpinionPath", expertOpinionPath);
+        files.put("projectDocumentationPath", projectDocumentationPath);
+        files.put("cadastralPassportPath", cadastralPassportPath);
+        files.put("industrialSafetyDeclarationPath", industrialSafetyDeclarationPath);
+        files.put("insurancePolicyPath", insurancePolicyPath);
+        files.put("licensePath", licensePath);
+        files.put("permitPath", permitPath);
+        files.put("certificationPath", certificationPath);
+        files.put("deviceTestingPath", deviceTestingPath);
+        files.put("appointmentOrderPath", appointmentOrderPath);
+        files.put("ecologicalConclusionPath", ecologicalConclusionPath);
     }
 
     @AssertTrue

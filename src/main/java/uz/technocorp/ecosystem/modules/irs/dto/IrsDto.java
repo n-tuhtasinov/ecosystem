@@ -1,7 +1,14 @@
 package uz.technocorp.ecosystem.modules.irs.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Map;
 
 /**
  * @author Rasulov Komil
@@ -9,76 +16,102 @@ import jakarta.validation.constraints.NotNull;
  * @created 30.04.2025
  * @since v1.0
  */
-public record IrsDto(
-        String phoneNumber,
-        String email,
-        String parentOrganization,
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class IrsDto {
+        private String phoneNumber;
+        private String email;
+        private String parentOrganization;
+
         @NotBlank(message = "Mas'ul shaxs FIOsi kiritilmadi")
-        String supervisorName,
+        private String supervisorName;
+
         @NotBlank(message = "Mas'ul shaxsning lovozimi kiritilmadi")
-        String supervisorPosition,
+        private String supervisorPosition;
+
         @NotBlank(message = "Mas'ul shaxsning statusi kiritilmadi")
-        String supervisorStatus,
+        private String supervisorStatus;
+
         @NotBlank(message = "Mas'ul shaxs ma'lumoti kiritilmadi")
-        String supervisorEducation,
+        private String supervisorEducation;
+
         @NotBlank(message = "Mas'ul shaxsning telfon raqami kiritilmadi")
-        String supervisorPhoneNumber,
+        private String supervisorPhoneNumber;
+
         @NotBlank(message = "Tashkilot bo'linmasi nomi kiritilmadi")
-        String division,
+        private String division;
+
         @NotBlank(message = "Identifikatsiya raqami kiritilmadi")
-        String identifierType,
+        private String identifierType;
+
         @NotBlank(message = "Radionuklit belgisi kiritilmadi")
-        String symbol,
+        private String symbol;
+
         @NotBlank(message = "Foydalaniladigan soha kiritilmadi")
-        String sphere,
+        private String sphere;
+
         @NotBlank(message = "Zavod raqami kiritilmadi")
-        String factoryNumber,
+        private String factoryNumber;
 
         @NotBlank(message = "Seriya raqami kiritilmadi")
-        String serialNumber,
+        private String serialNumber;
 
         @NotNull(message = "Ativligi kiritilmadi")
-        Integer activity,
+        private Integer activity;
 
         @NotBlank(message = "Tipi kiritilmadi")
-        String type,
+        private String type;
 
         @NotBlank(message = "kategoriyasi kiritilmadi")
-        String category,
+        private String category;
 
         @NotBlank(message = "Ishlab chiqarilgan davlat nomi kiritilmadi")
-        String country,
+        private String country;
 
         @NotBlank(message = "Ishlab chiqarilgan sana kiritilmadi")
-        String manufacturedAt,
+        private String manufacturedAt;
 
         @NotBlank(message = "Qabul qilib olingan tashkilot nomi kiritilmadi")
-        String acceptedFrom,
+        private String acceptedFrom;
 
         @NotBlank(message = "Qabul qilib olingan sana kiritilmadi")
-        String acceptedAt,
+        private String acceptedAt;
 
         @NotNull(message = "Holati tanlanmadi")
-        Boolean isValid,
+        private Boolean isValid;
 
         @NotBlank(message = "Foydalanish maqsadi tanlanmadi")
-        String usageType,
+        private String usageType;
 
         @NotBlank(message = "Jaqlanayotgan joy kiritilmadi")
-        String storageLocation,
+        private String storageLocation;
 
         @NotBlank(message = "INM passporti yuklangan path kiritilmadi")
-        String passportPath,
+        private String passportPath;
 
-        String additionalFilePath,
+        private String additionalFilePath;
 
         @NotNull(message = "INM joylashgan viloyat tanlanmadi")
-        Integer regionId,
+        private Integer regionId;
 
         @NotNull(message = "INM joylashgan tuman tanlanmadi")
-        Integer districtId,
+        private Integer districtId;
 
         @NotBlank(message = "INM joylashgan manzil kiritilmadi")
-        String address
-) {
+        private String address;
+
+        private Map<String, String> files;
+
+        public void buildFiles() {
+                files.put("passportPath", passportPath);
+                files.put("additionalFilePath", additionalFilePath);
+        }
+
+        @AssertTrue
+        public boolean isFilesBuilt() {
+                buildFiles();
+                return true;
+        }
 }
