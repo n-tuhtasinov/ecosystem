@@ -1,15 +1,22 @@
 package uz.technocorp.ecosystem.modules.elevatorriskindicator;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.attachment.Attachment;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
 import uz.technocorp.ecosystem.modules.elevatorriskindicator.dto.EquipmentRiskIndicatorDto;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentRepository;
+import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
+import uz.technocorp.ecosystem.modules.irsriskindicator.IrsRiskIndicator;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
@@ -18,6 +25,7 @@ import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -38,6 +46,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
     private final RiskAnalysisIntervalRepository intervalRepository;
     private final InspectionRepository inspectionRepository;
     private final ProfileRepository profileRepository;
+    private final AttachmentRepository attachmentRepository;
 
     @Override
     public void create(EquipmentRiskIndicatorDto dto) {
@@ -85,20 +94,46 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
     }
 
     @Override
-    public List<RiskIndicatorView> findAllByEquipmentIdAndTin(UUID id, Long tin) {
-        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
-                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
-                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
-
-        return repository.findAllByEquipmentIdAndTinAndDate(id, tin, riskAnalysisInterval.getId());
+    public void attachFile(UUID id, FilePathDto dto) {
+        Attachment attachment = attachmentRepository
+                .findByPath(dto.path())
+                .orElseThrow(() -> new ResourceNotFoundException("File", "url", dto.path()));
+        ElevatorRiskIndicator riskIndicator = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasini baholash ko'rsatkichi", "id", id));
+        riskIndicator.setFilePath(attachment.getPath());
+        riskIndicator.setFileDate(LocalDate.now());
+        repository.save(riskIndicator);
+        attachmentRepository.deleteById(attachment.getId());
     }
 
     @Override
-    public List<RiskIndicatorView> findAllByTin(Long tin) {
+    public void cancelRiskIndicator(UUID id) {
+        ElevatorRiskIndicator riskIndicator = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasini baholash ko'rsatkichi", "id", id));
+        riskIndicator.setScore(0);
+        riskIndicator.setCancelledDate(LocalDate.now());
+        repository.save(riskIndicator);
+    }
+
+    @Override
+    public List<RiskIndicatorView> findAllByEquipmentIdAndTin(UUID id, Long tin, Integer intervalId) {
+        return repository.findAllByEquipmentIdAndTinAndDate(id, tin, intervalId);
+    }
+
+    @Override
+    public List<RiskIndicatorView> findAllByTin(Long tin, Integer intervalId) {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
                 .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
         return repository.findAllByTinAndDate(tin, riskAnalysisInterval.getId());
+    }
+
+    @Override
+    public Page<RiskIndicatorView> findAllToFixByTin(Long tin, Integer intervalId, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return repository.findAllFileContainsByTinAndDate(tin, intervalId, pageable);
     }
 
     @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da

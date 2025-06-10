@@ -1,13 +1,7 @@
 package uz.technocorp.ecosystem.modules.inspection;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.inspection.helper.InspectionCustom;
-import uz.technocorp.ecosystem.modules.inspection.view.InspectionPageView;
-
-import java.util.List;
+import uz.technocorp.ecosystem.modules.inspection.view.InspectionView;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,4 +22,28 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
             """, nativeQuery=true)
     Optional<Inspection> findAllByTinAndIntervalId(Long tin, Integer intervalId);
 
+    @Query(value = """
+            select i.id as id,
+                start_date as startDate,
+                end_date as endDate,
+                status,
+                program_path as programPath,
+                special_code as specialCode,
+                schedule_path as schedulePath,
+                notification_letter_date as notificationLetterDate,
+                notification_letter_path as notificationLetterPath,
+                order_path as orderPath,
+                measures_path as measuresPath,
+                result_path as resultPath,
+                array_agg(json_build_object('id', u.id, 'name', p.full_name)) as inspectors
+                from inspection i
+                join inspection_inspector ii on i.id = ii.inspection_id
+                join users u on ii.inspector_id = u.id
+                join profile p on u.profile_id = p.id
+                where i.id = :id
+                group by i.id, start_date, end_date, program_path, special_code, status,
+                        schedule_path, notification_letter_date, notification_letter_path,
+                        order_path, measures_path, result_path
+            """, nativeQuery=true)
+    Optional<InspectionView> getInspectionById(UUID id);
 }

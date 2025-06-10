@@ -8,4 +8,5 @@ package uz.technocorp.ecosystem.modules.hf.projection;
  */
 public interface HazardousFacilityView {
 
+
 }

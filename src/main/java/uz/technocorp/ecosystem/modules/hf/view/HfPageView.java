@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.hf.view;
 
+import java.util.UUID;
+
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -8,11 +10,11 @@ package uz.technocorp.ecosystem.modules.hf.view;
  */
 public interface HfPageView extends HfSelectView{
 
-    String getRegionName();
-    String getDistrictName();
+    String getInspectorName();
+    String getRegistryNumber();
     String getAddress();
-    String getTypeName();
-    String getEmail();
+    String getName();
     String getLegalName();
     Long getLegalTin();
+    UUID getId();
 }

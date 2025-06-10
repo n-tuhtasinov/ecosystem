@@ -135,4 +135,6 @@ public class IonizingRadiationSource extends BaseEntity {
 
     @Column(nullable = false)
     private Long legalTin;
+
+    private String legalName;
 }

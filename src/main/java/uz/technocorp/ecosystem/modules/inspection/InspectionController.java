@@ -9,6 +9,7 @@ import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionCustom;
+import uz.technocorp.ecosystem.modules.inspection.helper.InspectionFullDto;
 import uz.technocorp.ecosystem.modules.inspectionreport.dto.InspectionReportDto;
 import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportView;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -46,8 +47,8 @@ public class InspectionController {
     }
 
     @PatchMapping("/set-act/{inspectionId}")
-    public ResponseEntity<?> update(@PathVariable UUID inspectionId, @RequestBody InspectionActDto dto) {
-        service.update(inspectionId, dto);
+    public ResponseEntity<?> update(@PathVariable UUID inspectionId) {
+        service.conduct(inspectionId);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
@@ -60,6 +61,12 @@ public class InspectionController {
                                     @RequestParam(value = "intervalId") Integer intervalId) {
         Page<InspectionCustom> all = service.getAll(user, page, size, tin, status, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable UUID id) {
+        InspectionFullDto byId = service.getById(id);
+        return ResponseEntity.ok(new ApiResponse(byId));
     }
 }
 

@@ -9,6 +9,7 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
@@ -89,6 +90,19 @@ public class HazardousFacilityController {
                                     @RequestParam(value = "endDate", required = false) LocalDate endDate
                                     ) {
         Page<HfCustom> all = service.getAll(user, page, size, legalTin, registryNumber, regionId, startDate, endDate);
+        return ResponseEntity.ok(new ApiResponse(all));
+    }
+
+    @GetMapping("/risk-assessment")
+    public ResponseEntity<?> getAllForRiskAssessment(@CurrentUser User user,
+                                    @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                    @RequestParam(value = "legalTin", required = false) Long legalTin,
+                                    @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                    @RequestParam(value = "intervalId") Integer intervalId,
+                                    @RequestParam(value = "isAssigned") Boolean isAssigned
+    ) {
+        Page<HfPageView> all = service.getAllForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
     }
 }

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
@@ -15,6 +17,7 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfRegistryDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.district.District;
@@ -240,6 +243,25 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     @Override
     public Page<HfCustom> getAll(User user, int page, int size, Long tin, String registryNumber, Integer regionId, LocalDate startDate, LocalDate endDate) {
         return repository.getHfCustoms(user, page, size, tin, registryNumber, regionId, startDate, endDate);
+    }
+
+    @Override
+    public Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        UUID profileId = user.getProfileId();
+        Profile profile = profileRepository
+                .findById(profileId)
+                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", profileId));
+        Integer regionId = profile.getRegionId();
+        if (isAssigned) {
+            if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
+            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
+        } else {
+            if (tin != null) return repository.getAllByLegalTin(pageable, tin);
+            if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber);
+            else return repository.getAllByRegion(pageable, regionId);
+        }
     }
 
     private HfAppealDto parseJsonData(JsonNode jsonNode) {

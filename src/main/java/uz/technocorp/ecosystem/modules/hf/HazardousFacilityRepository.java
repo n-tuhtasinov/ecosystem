@@ -38,55 +38,92 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             hf.name as name,
             legal_tin as legalTin,
             address,
-            legal_name as legalName,
-            email,
-            ht.name as typeName,
-            r.name as regionName,
-            d.name as districtName
+            hf.legal_name as legalName,
+            p.full_name as inspectorName
             from hazardous_facility hf
-            join region r on hf.region_id = r.id
-            join district d on hf.district_id = d.id
-            join hf_type ht on hf.hf_type_id = ht.id
-            where profile_id = :profileId
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByProfileId(UUID profileId, Pageable pageable);
-
-    @Query(value = """
-            select hf.id as id,
-            registry_number as registryNumber,
-            hf.name as name,
-            legal_tin as legalTin,
-            address,
-            legal_name as legalName,
-            email,
-            ht.name as typeName,
-            r.name as regionName,
-            d.name as districtName
-            from hazardous_facility hf
-            join region r on hf.region_id = r.id
-            join district d on hf.district_id = d.id
-            join hf_type ht on hf.hf_type_id = ht.id
-            """, nativeQuery = true)
-    Page<HfPageView> getAll(Pageable pageable);
-
-    @Query(value = """
-            select hf.id as id,
-            registry_number as registryNumber,
-            hf.name as name,
-            legal_tin as legalTin,
-            address,
-            legal_name as legalName,
-            email,
-            ht.name as typeName,
-            r.name as regionName,
-            d.name as districtName
-            from hazardous_facility hf
-            join region r on hf.region_id = r.id
-            join district d on hf.district_id = d.id
-            join hf_type ht on hf.hf_type_id = ht.id
+            inner join assign_inspector_hf aih on hf.id = aih.hf_id
+            join users u on aih.inspector_id = u.id
+            join profile p on u.profile_id = p.id
             where hf.region_id = :regionId
+            and aih.interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId);
+
+    @Query(value = """
+            select hf.id as id,
+            registry_number as registryNumber,
+            hf.name as name,
+            legal_tin as legalTin,
+            address,
+            hf.legal_name as legalName,
+            p.full_name as inspectorName
+            from hazardous_facility hf
+            inner join assign_inspector_hf aih on hf.id = aih.hf_id
+            join users u on aih.inspector_id = u.id
+            join profile p on u.profile_id = p.id
+            where hf.legal_tin = :legalTin
+            and aih.interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByLegalTinAndInterval(Pageable pageable, Long legalTin, Integer intervalId);
+
+    @Query(value = """
+            select hf.id as id,
+            registry_number as registryNumber,
+            hf.name as name,
+            legal_tin as legalTin,
+            address,
+            hf.legal_name as legalName,
+            p.full_name as inspectorName
+            from hazardous_facility hf
+            inner join assign_inspector_hf aih on hf.id = aih.hf_id
+            join users u on aih.inspector_id = u.id
+            join profile p on u.profile_id = p.id
+            where hf.registry_number = :registryNumber
+            and aih.interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId);
+
+    @Query(value = """
+            select hf.id as id,
+            registry_number as registryNumber,
+            hf.name as name,
+            legal_tin as legalTin,
+            address,
+            hf.legal_name as legalName
+            from hazardous_facility hf
+            left join assign_inspector_hf aih on hf.id = aih.hf_id
+            where hf.region_id = :regionId
+            and aih.id is null
             """, nativeQuery = true)
     Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId);
+
+    @Query(value = """
+            select hf.id as id,
+            registry_number as registryNumber,
+            hf.name as name,
+            legal_tin as legalTin,
+            address,
+            hf.legal_name as legalName
+            from hazardous_facility hf
+            left join assign_inspector_hf aih on hf.id = aih.hf_id
+            where hf.legal_tin = :legalTin
+            and aih.id is null
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin);
+
+    @Query(value = """
+            select hf.id as id,
+            registry_number as registryNumber,
+            hf.name as name,
+            legal_tin as legalTin,
+            address,
+            hf.legal_name as legalName
+            from hazardous_facility hf
+            left join assign_inspector_hf aih on hf.id = aih.hf_id
+            where hf.registry_number = :registryNumber
+            and aih.id is null
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber);
 
     @Query(value = """
             select distinct(region_id)

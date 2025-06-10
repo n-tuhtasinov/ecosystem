@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.hfriskindicator.view;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -14,4 +15,8 @@ public interface RiskIndicatorView {
     String getIndicatorType();
     Integer getScore();
     String getDescription();
+    String getFilePath();
+    LocalDate getFileDate();
+    Integer getScoreValue();
+    LocalDate getCancelledDate();
 }

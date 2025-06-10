@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.attachment.Attachment;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
+import uz.technocorp.ecosystem.modules.hfriskindicator.HfRiskIndicator;
+import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
@@ -18,6 +22,7 @@ import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -39,6 +44,7 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
     private final RiskAnalysisIntervalRepository intervalRepository;
     private final InspectionRepository inspectionRepository;
     private final ProfileRepository profileRepository;
+    private final AttachmentRepository attachmentRepository;
 
     @Override
     public void create(IrsRiskIndicatorDto dto) {
@@ -75,6 +81,30 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
     }
 
     @Override
+    public void attachFile(UUID id, FilePathDto dto) {
+        Attachment attachment = attachmentRepository
+                .findByPath(dto.path())
+                .orElseThrow(() -> new ResourceNotFoundException("File", "url", dto.path()));
+        IrsRiskIndicator riskIndicator = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasini baholash ko'rsatkichi", "id", id));
+        riskIndicator.setFilePath(attachment.getPath());
+        riskIndicator.setFileDate(LocalDate.now());
+        repository.save(riskIndicator);
+        attachmentRepository.deleteById(attachment.getId());
+    }
+
+    @Override
+    public void cancelRiskIndicator(UUID id) {
+        IrsRiskIndicator riskIndicator = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Xavf darajasini baholash ko'rsatkichi", "id", id));
+        riskIndicator.setScore(0);
+        riskIndicator.setCancelledDate(LocalDate.now());
+        repository.save(riskIndicator);
+    }
+
+    @Override
     public List<RiskIndicatorView> findAllByIrsIdAndTin(UUID id, Long tin) {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
@@ -92,10 +122,10 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
         return repository.findAllByTinAndDate(tin, riskAnalysisInterval.getId());
     }
 
-    @Scheduled(cron = "0 0 9 31 3 *")  // 31-mart 10:00 da
-    @Scheduled(cron = "0 0 9 30 6 *")  // 30-iyun 10:00 da
-    @Scheduled(cron = "0 0 9 30 9 *")  // 30-sentyabr 10:00 da
-    @Scheduled(cron = "0 0 9 31 12 *") // 31-dekabr 10:00 da
+    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
+    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
+    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
+    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
     public void sumScore() {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
@@ -146,16 +176,14 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                             if (inspectionOptional.isEmpty()) {
                                 profileRepository
                                         .findByTin(tin)
-                                        .ifPresent(profile -> {
-                                            inspectionRepository.save(
-                                                    Inspection
-                                                            .builder()
-                                                            .tin(dto.tin())
-                                                            .regionId(profile.getRegionId())
-                                                            .districtId(profile.getDistrictId())
-                                                            .build()
-                                            );
-                                        });
+                                        .ifPresent(profile -> inspectionRepository.save(
+                                                Inspection
+                                                        .builder()
+                                                        .tin(dto.tin())
+                                                        .regionId(profile.getRegionId())
+                                                        .districtId(profile.getDistrictId())
+                                                        .build()
+                                        ));
 
                             } else {
                                 Inspection inspection = inspectionOptional.get();

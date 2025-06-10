@@ -2,10 +2,15 @@ package uz.technocorp.ecosystem.modules.irs;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsRegistryDto;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 
@@ -40,5 +45,18 @@ public class IonizingRadiationSourceController {
     public ResponseEntity<?> update(@PathVariable UUID id, @Valid @RequestBody IrsDto dto) {
         service.update(id, dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+    }
+
+    @GetMapping("/risk-assessment")
+    public ResponseEntity<?> getAllForRiskAssessment(@CurrentUser User user,
+                                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                                     @RequestParam(value = "legalTin", required = false) Long legalTin,
+                                                     @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                                     @RequestParam(value = "intervalId") Integer intervalId,
+                                                     @RequestParam(value = "isAssigned") Boolean isAssigned
+    ) {
+        Page<HfPageView> all = service.getAllForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
+        return ResponseEntity.ok(new ApiResponse(all));
     }
 }
