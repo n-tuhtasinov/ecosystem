@@ -52,7 +52,7 @@ public class RegionController {
 
     @GetMapping("/{regionId}")
     public ResponseEntity<?> getById (@PathVariable Integer regionId) {
-        Region region = regionService.getById(regionId);
+        Region region = regionService.findById(regionId);
         return ResponseEntity.ok(new ApiResponse(region));
     }
 
