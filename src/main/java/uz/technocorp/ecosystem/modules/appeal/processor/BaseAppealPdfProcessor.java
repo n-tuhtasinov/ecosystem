@@ -57,7 +57,7 @@ public abstract class BaseAppealPdfProcessor implements AppealPdfProcessor {
 
     // General methods
     protected Region getRegion(Integer regionId) {
-        return regionService.getById(regionId);
+        return regionService.findById(regionId);
     }
 
     protected District getDistrict(Integer districtId) {

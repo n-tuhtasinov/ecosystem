@@ -1,21 +1,12 @@
 package uz.technocorp.ecosystem.modules.irs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
-import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDeregisterDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
@@ -26,20 +17,18 @@ import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
 import uz.technocorp.ecosystem.modules.irs.view.IrsView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsViewById;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
-import uz.technocorp.ecosystem.modules.profile.Profile;
-import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
-import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
+import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -53,21 +42,17 @@ import java.util.UUID;
 public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSourceService {
 
     private final IonizingRadiationSourceRepository repository;
-    private final AppealRepository appealRepository;
-    private final RegionRepository regionRepository;
-    private final ProfileRepository profileRepository;
     private final OfficeService officeService;
     private final ProfileService profileService;
+    private final RegionService regionService;
 
     @Override
     public void create(Appeal appeal) {
 
         Long maxOrderNumber = repository.findMaxOrderNumber().orElse(0L) + 1;
-        Region region = regionRepository
-                .findById(appeal.getRegionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", appeal.getRegionId()));
+        Region region = regionService.findById(appeal.getRegionId());
         String registryNumber = String.format("%02d", region.getNumber()) + "-S-" + String.format("%04d", maxOrderNumber);
-        IrsAppealDto irsAppealDto = parseJsonData(appeal.getData());
+        IrsAppealDto irsAppealDto = JsonParser.parseJsonData(appeal.getData(), IrsAppealDto.class);
 
         repository.save(
                 IonizingRadiationSource
@@ -151,8 +136,8 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
 
         if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
             Office office = officeService.findById(profile.getOfficeId());
-            if (params.getRegionId() != null){
-                if (!params.getRegionId().equals(office.getRegionId())){
+            if (params.getRegionId() != null) {
+                if (!params.getRegionId().equals(office.getRegionId())) {
                     throw new RuntimeException("Sizga bu viloyat ma'lumotlarini ko'rish uchun ruxsat berilmagan");
                 }
             }
@@ -202,29 +187,16 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                 irs.getRegistrationDate());
     }
 
-    private IrsAppealDto parseJsonData(JsonNode jsonNode) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        try {
-            return mapper.treeToValue(jsonNode, IrsAppealDto.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("JSON deserialization error", e);
-        }
-    }
-
     @Override
     public Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        UUID profileId = user.getProfileId();
-        Profile profile = profileRepository
-                .findById(profileId)
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", profileId));
+        Profile profile = profileService.getProfile(user.getProfileId());
+
         Integer regionId = profile.getRegionId();
         if (isAssigned) {
             if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
-            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            if (registryNumber != null)
+                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
             else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
         } else {
             if (tin != null) return repository.getAllByLegalTin(pageable, tin);

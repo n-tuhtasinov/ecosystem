@@ -67,7 +67,7 @@ public class RegionServiceImpl implements RegionService {
     }
 
     @Override
-    public Region getById(Integer regionId) {
+    public Region findById(Integer regionId) {
         return regionRepository.findById(regionId).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", regionId));
     }
 }

@@ -26,6 +26,6 @@ public interface RegionService {
 
     List<RegionViewBySelect> getAllBySelect();
 
-    Region getById(Integer regionId);
+    Region findById(Integer regionId);
 
 }
