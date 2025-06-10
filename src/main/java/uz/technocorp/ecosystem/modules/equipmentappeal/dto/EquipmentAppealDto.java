@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
@@ -29,6 +30,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public abstract class EquipmentAppealDto implements AppealDto {
 
+    @SkipDb
     @NotBlank(message = "Telefon nomer jo'natilmadi")
     private String phoneNumber;
 
@@ -46,12 +48,15 @@ public abstract class EquipmentAppealDto implements AppealDto {
     @NotBlank(message = "Zavod raqami jo'natilmadi")
     private String factoryNumber;
 
+    @SkipDb
     @NotNull(message = "Qurilma joylashgan viloyat tanlanmadi")
     private Integer regionId;
 
+    @SkipDb
     @NotNull(message = "Qurilma joylashgan tuman tanlanmadi")
     private Integer districtId;
 
+    @SkipDb
     @NotBlank(message = "Qurilma joylashgan manzil jo'natilmadi")
     private String address;
 
@@ -108,6 +113,9 @@ public abstract class EquipmentAppealDto implements AppealDto {
 
     @Schema(hidden = true)
     private Map<String, String> parameters = new HashMap<>();
+
+    @Schema(hidden = true)
+    protected abstract EquipmentType getType();
 
     public void buildFiles() {
         files.put("labelPath", labelPath);

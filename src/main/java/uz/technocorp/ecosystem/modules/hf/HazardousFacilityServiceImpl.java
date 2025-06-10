@@ -1,10 +1,5 @@
 package uz.technocorp.ecosystem.modules.hf;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -28,6 +23,7 @@ import uz.technocorp.ecosystem.modules.template.Template;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -52,7 +48,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private final AttachmentService attachmentService;
     private final TemplateService templateService;
     private final ProfileService profileService;
-    private final ObjectMapper objectMapper;
 
     @Override
     public void create(Appeal appeal) {
@@ -62,20 +57,20 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         District district = districtService.getDistrict(appeal.getDistrictId());
 
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
-        HfAppealDto hfAppealDto = parseJsonData(appeal.getData());
+        HfAppealDto hfAppealDto = JsonParser.parseJsonData(appeal.getData(), HfAppealDto.class);
 
-        /*// Make parameters
+        // Make parameters
         Map<String, String> parameters = new HashMap<>();
         parameters.put("upperOrganization", hfAppealDto.getUpperOrganization());
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("legalTin", appeal.getLegalTin().toString());
-        parameters.put("email", hfAppealDto.getEmail());
         parameters.put("name", hfAppealDto.getName());
         parameters.put("region", region.getName());
         parameters.put("district", district.getName());
         parameters.put("address", hfAppealDto.getAddress());
         parameters.put("hfTypeName", hfAppealDto.getHfTypeName());
         parameters.put("registrationDate", LocalDate.now().toString());
+        parameters.put("number", appeal.getNumber());
         parameters.put("extraArea", hfAppealDto.getExtraArea());
         parameters.put("hazardousSubstance", hfAppealDto.getHazardousSubstance());
 
@@ -83,7 +78,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         Template template = templateService.getByType(TemplateType.REGISTRY_HF.name());
 
         // Create file
-        String registryFilePath = attachmentService.createPdfFromHtml(template.getContent(), "reestr/hf", parameters, false);*/
+        String registryFilePath = attachmentService.createPdfFromHtml(template.getContent(), "reestr/hf", parameters, false);
 
         repository.save(
                 HazardousFacility.builder()
@@ -108,7 +103,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .active(true)
                         .spheres(hfAppealDto.getSpheres())
                         .files(hfAppealDto.getFiles())
-//                        .registryFilePath(registryFilePath)
+                        .registryFilePath(registryFilePath)
                         .build());
     }
 
@@ -245,19 +240,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         return findById(hfId).getName();
     }
 
-    private HfAppealDto parseJsonData(JsonNode jsonNode) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        try {
-            return objectMapper.treeToValue(jsonNode, HfAppealDto.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("JSON deserialization error", e);
-        }
-    }
-
-    public HazardousFacility findById(UUID id){
+    public HazardousFacility findById(UUID id) {
         return repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));

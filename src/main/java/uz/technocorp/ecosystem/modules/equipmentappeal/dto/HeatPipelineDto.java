@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
@@ -42,6 +44,9 @@ public class HeatPipelineDto extends EquipmentAppealDto {
     @SkipDb
     @NotBlank(message = "Temperatura jo'natilmadi")
     private String temperature;
+
+    @Schema(hidden = true)
+    private EquipmentType type = EquipmentType.HEAT_PIPELINE;
 
     @Override
     public AppealType getAppealType() {

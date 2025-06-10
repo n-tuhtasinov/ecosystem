@@ -7,13 +7,18 @@ package uz.technocorp.ecosystem.modules.template;
  * @since v1.0
  */
 public enum TemplateType {
-    IRS,
+    // Appeal
+    IRS_APPEAL,
     XICHO_APPEAL,
     EQUIPMENT_APPEAL,
 
-    REGISTRY_HF, // Reestr HF
-    REGISTRY_EQUIPMENT, // Reestr Equipment
-    REGISTRY_ATTRACTION, // Reestr Attraction passport
+    // Reestr
+    REGISTRY_HF,
+    REGISTRY_EQUIPMENT,
+    REGISTRY_ATTRACTION,
 
-    REPLY_APPEAL;
+    // Inspektor javob xati ( Ma'lumotnoma )
+    REPLY_HF_APPEAL,
+    REPLY_IRS_APPEAL,
+    REPLY_EQUIPMENT_APPEAL;
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
@@ -24,11 +25,13 @@ import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
+import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -42,6 +45,7 @@ import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.utils.JsonMaker;
+import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -67,7 +71,7 @@ public class AppealServiceImpl implements AppealService {
     private final TemplateService templateService;
     private final AttachmentService attachmentService;
     private final AppealExecutionProcessService appealExecutionProcessService;
-    private final HazardousFacilityService hazardousFacilityService;
+    private final HazardousFacilityService hfService;
     private final Map<Class<? extends AppealDto>, AppealPdfProcessor> processors;
     private final IonizingRadiationSourceService ionizingRadiationSourceService;
     private final EquipmentService equipmentService;
@@ -204,35 +208,17 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public String prepareReplyPdfWithParam(User user, ReplyDto replyDto) {
-        Template template = templateService.getByType(TemplateType.REPLY_APPEAL.name());
-
         Appeal appeal = getAppealById(replyDto.getAppealId());
 
-        // Current date
-        String[] formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.of("uz"))).split(" ");
-        String[] fullAddress = appeal.getAddress().split(","); // Region , District , Address
-
-        // Collect params to Map
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("day", formattedDate[0]);
-        parameters.put("month", formattedDate[1]);
-        parameters.put("year", formattedDate[2]);
-        parameters.put("officeName", appeal.getOfficeName());
-        parameters.put("inspectorName", user.getName());
-        parameters.put("legalName", appeal.getLegalName());
-        parameters.put("legalTin", appeal.getLegalTin().toString());
-        parameters.put("regionName", fullAddress[0]);
-        parameters.put("districtName", fullAddress[1]);
-        parameters.put("address", fullAddress[2]);
-        parameters.put("name", appeal.getData().get("name").asText());
-        parameters.put("upperOrganization", appeal.getData().get("upperOrganization").asText());
-        parameters.put("appealType", appeal.getAppealType().label);
-        parameters.put("extraArea", appeal.getData().get("extraArea").asText());
-        parameters.put("hazardousSubstance", appeal.getData().get("hazardousSubstance").asText());
-        parameters.put("conclusion", replyDto.getConclusion());
-
-        // Save to an attachment and folder & Return a file path
-        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply", parameters, true);
+        String path;
+        switch (appeal.getAppealType().sort) {
+            case "registerHf" -> path = makeHfReplyPdf(user, replyDto, appeal);
+            case "registerEquipment" -> path = makeEquipmentReplyPdf(user, replyDto, appeal);
+            case "registerIrs" -> path = makeIrsReplyPdf(user, replyDto, appeal);
+            default ->
+                    throw new CustomException(appeal.getAppealType().name() + " uchun javob xati shakllantirish qilinmagan");
+        }
+        return path;
     }
 
     @Override
@@ -278,7 +264,7 @@ public class AppealServiceImpl implements AppealService {
         //create registry for the appeal if the appeal's status is completed
         if (appealStatus == AppealStatus.COMPLETED) {
             switch (appeal.getAppealType().sort) {
-                case "registerHf" -> hazardousFacilityService.create(appeal);
+                case "registerHf" -> hfService.create(appeal);
                 case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
                 case "registerEquipment" -> equipmentService.create(appeal);
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
@@ -288,8 +274,8 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public void setHfNameAndChildEquipmentName(EquipmentAppealDto dto) {
-        if (dto.getHazardousFacilityId()!=null){
-            String hfName = hazardousFacilityService.getHfNameById(dto.getHazardousFacilityId());
+        if (dto.getHazardousFacilityId() != null) {
+            String hfName = hfService.getHfNameById(dto.getHazardousFacilityId());
             dto.setHazardousFacilityName(hfName);
         }
         String name = childEquipmentService.getChildEquipmentNameById(dto.getChildEquipmentId());
@@ -346,4 +332,85 @@ public class AppealServiceImpl implements AppealService {
         }
         return null;
     }
+
+    private Map<String, String> buildBaseParameters(String userName, ReplyDto replyDto, Appeal appeal) {
+        // Current date
+        String[] formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.of("uz"))).split(" ");
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("day", formattedDate[0]);
+        parameters.put("month", formattedDate[1]);
+        parameters.put("year", formattedDate[2]);
+        parameters.put("officeName", appeal.getOfficeName());
+        parameters.put("inspectorName", userName);
+        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalTin", appeal.getLegalTin().toString());
+        parameters.put("conclusion", replyDto.getConclusion());
+
+        return parameters;
+    }
+
+    private String makeHfReplyPdf(User user, ReplyDto replyDto, Appeal appeal) {
+        Template template = templateService.getByType(TemplateType.REPLY_HF_APPEAL.name());
+
+        String[] fullAddress = appeal.getAddress().split(","); // Region , District , Address
+
+        Map<String, String> parameters = buildBaseParameters(user.getName(), replyDto, appeal);
+
+        parameters.put("regionName", fullAddress[0]);
+        parameters.put("districtName", fullAddress[1]);
+        parameters.put("address", fullAddress[2]);
+        parameters.put("name", appeal.getData().get("name").asText());
+        parameters.put("upperOrganization", appeal.getData().get("upperOrganization").asText());
+        parameters.put("appealType", appeal.getAppealType().label);
+        parameters.put("extraArea", appeal.getData().get("extraArea").asText());
+        parameters.put("hazardousSubstance", appeal.getData().get("hazardousSubstance").asText());
+
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/hf", parameters, true);
+    }
+
+    private String makeIrsReplyPdf(User user, ReplyDto replyDto, Appeal appeal) {
+        Template template = templateService.getByType(TemplateType.REPLY_IRS_APPEAL.name());
+
+        IrsAppealDto dto = JsonParser.parseJsonData(appeal.getData(), IrsAppealDto.class);
+
+        Map<String, String> parameters = buildBaseParameters(user.getName(), replyDto, appeal);
+
+        parameters.put("identifierType", dto.getIdentifierType());
+        parameters.put("factoryNumber", dto.getFactoryNumber());
+        parameters.put("serialNumber", dto.getSerialNumber());
+        parameters.put("type", dto.getType());
+        parameters.put("category", dto.getCategory());
+        parameters.put("address", appeal.getAddress());
+        parameters.put("manufacturedAt", dto.getManufacturedAt());
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/irs", parameters, true);
+    }
+
+    private String makeEquipmentReplyPdf(User user, ReplyDto replyDto, Appeal appeal) {
+        Template template = templateService.getByType(TemplateType.REPLY_EQUIPMENT_APPEAL.name());
+
+        Map<String, String> parameters = buildBaseParameters(user.getName(), replyDto, appeal);
+
+        parameters.put("model", appeal.getData().get("model").asText());
+        parameters.put("manufacturedAt", appeal.getData().get("manufacturedAt").asText());
+        parameters.put("factoryNumber", appeal.getData().get("factoryNumber").asText());
+        parameters.put("type", EquipmentType.valueOf(appeal.getData().get("type").asText()).value);
+        parameters.put("subType", appeal.getData().get("childEquipmentName").asText());
+        parameters.put("factory", appeal.getData().get("factory").asText());
+        parameters.put("address", appeal.getAddress());
+
+        String hazardousFacilityId = appeal.getData().get("hazardousFacilityId").asText();
+        parameters.put("hazardousFacilityName",
+                hazardousFacilityId != null && !hazardousFacilityId.isBlank() && !"null".equals(hazardousFacilityId)
+                        ? hfService.getHfNameById(UUID.fromString(hazardousFacilityId))
+                        : "Mavjud emas");
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/equipment", parameters, true);
+    }
+
 }

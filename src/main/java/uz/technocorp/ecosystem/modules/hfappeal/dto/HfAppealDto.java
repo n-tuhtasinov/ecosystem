@@ -34,6 +34,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class HfAppealDto implements AppealDto {
 
+    @SkipDb
     @NotBlank(message = "Telefon raqami kiritilmadi!")
     private String phoneNumber;
 
@@ -42,6 +43,7 @@ public class HfAppealDto implements AppealDto {
     @NotBlank(message = "Xicho nomi kiritilmadi")
     private String name;
 
+    @SkipDb
     @NotBlank(message = "Manzil kiritilmadi!")
     private String address;
 
@@ -52,9 +54,11 @@ public class HfAppealDto implements AppealDto {
 
     private String extraArea;
 
+    @SkipDb
     @NotNull(message = "Viloyat tanlanmadi!")
     private Integer regionId;
 
+    @SkipDb
     @NotNull(message = "Tuman tanlanmadi!")
     private Integer districtId;
 

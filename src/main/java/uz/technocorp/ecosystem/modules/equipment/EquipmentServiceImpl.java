@@ -8,7 +8,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
@@ -21,12 +20,15 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.profile.Profile;
-import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
+import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -38,25 +40,26 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class EquipmentServiceImpl implements EquipmentService {
 
-    private final EquipmentRepository equipmentRepository;
-    private final ProfileRepository profileRepository;
+    private final RegionService regionService;
+    private final ProfileService profileService;
+    private final TemplateService templateService;
     private final DistrictService districtService;
     private final AttachmentService attachmentService;
-    private final TemplateService templateService;
     private final ChildEquipmentService childEquipmentService;
     private final ChildEquipmentSortService childEquipmentSortService;
+    private final EquipmentRepository equipmentRepository;
 
     @Override
     public void create(Appeal appeal) {
-        Profile profile = profileRepository.findByTin(appeal.getLegalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "STIR", appeal.getLegalTin()));
+        Profile profile = profileService.findByTin(appeal.getLegalTin());
 
         EquipmentDto dto = parseJsonToObject(appeal.getData());
         EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
 
-        /*// Create PDF with parameters
-        String registryFilepath = dto.type().equals(EquipmentType.ATTRACTION_PASSPORT)
-                ? createAttractionPassportPdf(dto, profile.getLegalAddress()) // Attraction Passport
-                : createEquipmentPdf(dto, profile.getLegalAddress()); // Other Equipments*/
+        // Create registry (reestr) PDF with parameters
+        String registryFilepath = EquipmentType.ATTRACTION_PASSPORT.equals(info.equipmentType())
+                ? createAttractionPassportPdf(appeal, dto, info) // Attraction Passport
+                : createEquipmentPdf(appeal, dto, info); // All Equipments
 
         Equipment equipment = Equipment.builder()
                 .type(info.equipmentType())
@@ -90,7 +93,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .files(dto.files())
                 .description(dto.description())
                 .inspectorId(appeal.getExecutorId())
-//                .registryFilePath(registryFilepath)
+                .registryFilePath(registryFilepath)
                 .registrationDate(LocalDate.now())
                 .build();
 
@@ -99,7 +102,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public Page<EquipmentView> getAll(User user, EquipmentParams params) {
-        return equipmentRepository.getAllByParams(user,params);
+        return equipmentRepository.getAllByParams(user, params);
     }
 
 
@@ -128,48 +131,48 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
     }
 
-//    private String createAttractionPassportPdf(EquipmentDto dto, String legalAddress) {
-//        Map<String, String> parameters = new HashMap<>();
-//
-//        parameters.put("attractionName", dto.attractionName());
-//        parameters.put("attractionType", childEquipmentService.getById(dto.childEquipmentId()).getName());
-//        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
-//        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
-//        parameters.put("legalName", dto.legalName());
-//        parameters.put("legalTin", dto.legalTin().toString());
-//        parameters.put("legalAddress", legalAddress);
-//        parameters.put("registryNumber", dto.number());
-//        parameters.put("factoryNumber", dto.factoryNumber());
-//        parameters.put("factory", dto.factory());
-//        parameters.put("regionName", dto.regionName());
-//        parameters.put("districtName", districtService.getDistrict(dto.districtId()).getName());
-//        parameters.put("address", dto.address());
-//        parameters.put("riskLevel", dto.riskLevel().value);
-//
-//        String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
-//
-//        return attachmentService.createPdfFromHtml(content, "reestr/attraction", parameters, false);
-//    }
+    private String createAttractionPassportPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info) {
+        Map<String, String> parameters = new HashMap<>();
 
-//    private String createEquipmentPdf(EquipmentDto dto, String legalAddress) {
-//        Map<String, String> parameters = new HashMap<>();
-//
-//        parameters.put("legalAddress", legalAddress);
-//        parameters.put("equipmentType", childEquipmentService.getById(dto.childEquipmentId()).getName());
-//        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
-//        parameters.put("legalTin", dto.legalTin().toString());
-//        parameters.put("factoryNumber", dto.factoryNumber());
-//        parameters.put("factory", dto.factory());
-//        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
-//        parameters.put("number", dto.number());
-//        parameters.put("registrationDate", LocalDate.now().toString());
-//        parameters.put("address", dto.address());
-//        parameters.put("parameters", "PARAMETERS"); // TODO
-//
-//        String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
-//
-//        return attachmentService.createPdfFromHtml(content, "reestr/equipment", parameters, false);
-//    }
+        parameters.put("attractionName", dto.attractionName());
+        parameters.put("attractionType", childEquipmentService.getById(dto.childEquipmentId()).getName());
+        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalTin", appeal.getLegalTin().toString());
+        parameters.put("legalAddress", appeal.getLegalAddress());
+        parameters.put("registryNumber", info.registryNumber());
+        parameters.put("factoryNumber", dto.factoryNumber());
+        parameters.put("factory", dto.factory());
+        parameters.put("regionName", regionService.getById(appeal.getRegionId()).getName());
+        parameters.put("districtName", districtService.getDistrict(appeal.getDistrictId()).getName());
+        parameters.put("address", appeal.getAddress());
+        parameters.put("riskLevel", dto.riskLevel().value);
+
+        String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
+
+        return attachmentService.createPdfFromHtml(content, "reestr/attraction", parameters, false);
+    }
+
+    private String createEquipmentPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info) {
+        Map<String, String> parameters = new HashMap<>();
+
+        parameters.put("legalAddress", appeal.getLegalAddress());
+        parameters.put("equipmentType", childEquipmentService.getById(dto.childEquipmentId()).getName());
+        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+        parameters.put("legalTin", appeal.getLegalTin().toString());
+        parameters.put("factoryNumber", dto.factoryNumber());
+        parameters.put("factory", dto.factory());
+        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+        parameters.put("number", info.registryNumber());
+        parameters.put("registrationDate", LocalDate.now().toString());
+        parameters.put("address", appeal.getAddress());
+        parameters.put("parameters", dto.parameters().toString()); // TODO parameter lar bilan muammo bo'lishi mumkin
+
+        String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
+
+        return attachmentService.createPdfFromHtml(content, "reestr/equipment", parameters, false);
+    }
 
     private String getTemplateContent(TemplateType type) {
         return templateService.getByType(type.name()).getContent();
