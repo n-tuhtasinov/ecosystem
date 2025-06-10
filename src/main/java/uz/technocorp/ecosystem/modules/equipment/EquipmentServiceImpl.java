@@ -1,15 +1,11 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
@@ -32,6 +28,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
+import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -62,7 +59,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     public void create(Appeal appeal) {
         Profile profile = profileService.findByTin(appeal.getLegalTin());
 
-        EquipmentDto dto = parseJsonToObject(appeal.getData());
+        EquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), EquipmentDto.class);
         EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
 
         // Create registry (reestr) PDF with parameters
@@ -116,8 +113,8 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
             Office office = officeService.findById(profile.getOfficeId());
-            if (params.getRegionId() != null){
-                if (!params.getRegionId().equals(office.getRegionId())){
+            if (params.getRegionId() != null) {
+                if (!params.getRegionId().equals(office.getRegionId())) {
                     throw new RuntimeException("Sizga bu viloyat ma'lumotlarini ko'rish uchun ruxsat berilmagan");
                 }
             }
@@ -127,23 +124,26 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
 
 
-        return equipmentRepository.getAllByParams(user,params);
+        return equipmentRepository.getAllByParams(user, params);
     }
+
     @Override
     public Page<HfPageView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        UUID profileId = user.getProfileId();
-        Profile profile = profileRepository
-                .findById(profileId)
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", profileId));
+        Profile profile = profileService.getProfile(user.getProfileId());
+
         Integer regionId = profile.getRegionId();
         if (isAssigned) {
-            if (tin != null) return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION);
-            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION);
-            else return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION);
+            if (tin != null)
+                return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION);
+            if (registryNumber != null)
+                return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION);
+            else
+                return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION);
         } else {
             if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION);
-            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION);
+            if (registryNumber != null)
+                return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION);
             else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION);
         }
     }
@@ -162,9 +162,9 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getRegistryNumber(),
                 equipment.getLegalTin(),
                 equipment.getHazardousFacilityId(),
-                equipment.getHazardousFacility() == null? null : equipment.getHazardousFacility().getName(),
+                equipment.getHazardousFacility() == null ? null : equipment.getHazardousFacility().getName(),
                 equipment.getChildEquipmentId(),
-                equipment.getChildEquipment() == null? null : equipment.getChildEquipment().getName(),
+                equipment.getChildEquipment() == null ? null : equipment.getChildEquipment().getName(),
                 equipment.getFactoryNumber(),
                 equipment.getAddress(),
                 equipment.getModel(),
@@ -172,13 +172,13 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getLocation(),
                 equipment.getManufacturedAt(),
                 equipment.getOldEquipmentId(),
-                equipment.getOldEquipment() == null? null : equipment.getOldEquipment().getRegistryNumber(),
+                equipment.getOldEquipment() == null ? null : equipment.getOldEquipment().getRegistryNumber(),
                 equipment.getParameters(),
                 equipment.getSphere(),
                 equipment.getAttractionName(),
                 equipment.getAcceptedAt(),
                 equipment.getChildEquipmentSortId(),
-                equipment.getChildEquipmentSort() == null? null : equipment.getChildEquipmentSort().getName(),
+                equipment.getChildEquipmentSort() == null ? null : equipment.getChildEquipmentSort().getName(),
                 equipment.getCountry(),
                 equipment.getServicePeriod(),
                 equipment.getRiskLevel(),
@@ -187,30 +187,32 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getAttractionPassportId(),
                 equipment.getDescription(),
                 equipment.getInspectorId(),
-                equipment.getInspector() == null? null : equipment.getInspector().getName(),
+                equipment.getInspector() == null ? null : equipment.getInspector().getName(),
                 equipment.getFiles(),
                 equipment.getRegistryFilePath());
     }
 
-
     @Override
     public Page<HfPageView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        UUID profileId = user.getProfileId();
-        Profile profile = profileRepository
-                .findById(profileId)
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", profileId));
+        Profile profile = profileService.getProfile(user.getProfileId());
+
         Integer regionId = profile.getRegionId();
         if (isAssigned) {
-            if (tin != null) return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR);
-            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR);
-            else return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR);
+            if (tin != null)
+                return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR);
+            if (registryNumber != null)
+                return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR);
+            else
+                return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR);
         } else {
             if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR);
-            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR);
+            if (registryNumber != null)
+                return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR);
             else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR);
         }
     }
+
     private EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
         return switch (appealType) {
             case REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P");
@@ -222,18 +224,6 @@ public class EquipmentServiceImpl implements EquipmentService {
     private EquipmentInfoDto getInfo(EquipmentType equipmentType, String label) {
         long orderNumber = equipmentRepository.getMax(equipmentType).orElse(0L) + 1;
         return new EquipmentInfoDto(equipmentType, label + orderNumber, orderNumber);
-    }
-
-    private EquipmentDto parseJsonToObject(JsonNode jsonNode) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        try {
-            return mapper.treeToValue(jsonNode, EquipmentDto.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("JSON deserialization error", e);
-        }
     }
 
     private String createAttractionPassportPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info) {

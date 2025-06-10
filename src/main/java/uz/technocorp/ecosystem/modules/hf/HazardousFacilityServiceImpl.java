@@ -24,12 +24,16 @@ import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
+import uz.technocorp.ecosystem.modules.template.Template;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
+import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -244,7 +248,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     @Override
     public Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
-        Pageable pageable = PageRequest.of(page-1, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         UUID profileId = user.getProfileId();
         Profile profile = profileRepository
                 .findById(profileId)
@@ -252,7 +256,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         Integer regionId = profile.getRegionId();
         if (isAssigned) {
             if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
-            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            if (registryNumber != null)
+                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
             else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
         } else {
             if (tin != null) return repository.getAllByLegalTin(pageable, tin);
@@ -280,7 +285,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 hf.getHazardousSubstance(),
                 hf.getAppealId(),
                 hf.getHfTypeId(),
-                hf.getHfType() == null? null : hf.getHfType().getName(),
+                hf.getHfType() == null ? null : hf.getHfType().getName(),
                 hf.getExtraArea(),
                 hf.getDescription(),
                 hf.getSpheres(),
@@ -292,7 +297,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 hf.getFiles());
     }
 
-    public HazardousFacility findById(UUID id){
+    public HazardousFacility findById(UUID id) {
         return repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
