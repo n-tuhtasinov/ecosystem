@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
@@ -40,6 +42,9 @@ public class CablewayDto extends EquipmentAppealDto {
     @SkipDb
     @NotBlank(message = "Uzunligi jo'natilmadi")
     private String length;
+
+    @Schema(hidden = true)
+    private EquipmentType type = EquipmentType.CABLEWAY;
 
     @Override
     public AppealType getAppealType() {
