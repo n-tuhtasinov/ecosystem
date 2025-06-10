@@ -100,12 +100,12 @@ public class DocumentServiceImpl implements DocumentService {
 
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
-            if (document.getAgreementStatus()!=null){
+            if (document.getAgreementStatus() != null) {
                 throw new RuntimeException("Hujjat agreementStatusi avval o'zgartirilgan. Hozirgi holati: " + document.getAgreementStatus().name());
             }
             document.setAgreementStatus(AgreementStatus.NOT_AGREED);
         } else if (role == Role.MANAGER) {
-            if (document.getAgreementStatus()!= AgreementStatus.AGREED){
+            if (document.getAgreementStatus() != AgreementStatus.AGREED) {
                 throw new RuntimeException("Hujjat agreementStatusi 'AGREED' holatida emas. Hozirgi holati: " + document.getAgreementStatus().name());
             }
             document.setAgreementStatus(AgreementStatus.NOT_APPROVED);
@@ -142,12 +142,11 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private String getSigner(String sign, String ip) {
-       /* Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, ip, sign);
+        Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, ip, sign);
         if (!"1".equals(pkcs7VerifyAttached.getStatus())) {
             throw new ResourceNotFoundException("Document verification failed");
         }
         String subjectName = pkcs7VerifyAttached.getPkcs7Info().getSigners().getLast().getCertificate().getFirst().getSubjectName();
-        return subjectName.split(",")[0].replace("CN=", "").trim();*/
-        return "Hello world"; // todo
+        return subjectName.split(",")[0].replace("CN=", "").trim();
     }
 }

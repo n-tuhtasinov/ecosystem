@@ -59,7 +59,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     public void create(Appeal appeal) {
         Long maxOrderNumber = repository.findMaxOrderNumber().orElse(0L) + 1;
 
-        Region region = regionService.getById(appeal.getRegionId());
+        Region region = regionService.findById(appeal.getRegionId());
         District district = districtService.getDistrict(appeal.getDistrictId());
 
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
@@ -67,17 +67,15 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
         // Make parameters
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("upperOrganization", hfAppealDto.getUpperOrganization());
+        parameters.put("upperOrganization", hfAppealDto.getUpperOrganization() != null ? hfAppealDto.getUpperOrganization() : "-");
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("legalTin", appeal.getLegalTin().toString());
         parameters.put("name", hfAppealDto.getName());
-        parameters.put("region", region.getName());
-        parameters.put("district", district.getName());
-        parameters.put("address", hfAppealDto.getAddress());
+        parameters.put("address", appeal.getAddress());
         parameters.put("hfTypeName", hfAppealDto.getHfTypeName());
         parameters.put("registrationDate", LocalDate.now().toString());
-        parameters.put("number", appeal.getNumber());
-        parameters.put("extraArea", hfAppealDto.getExtraArea());
+        parameters.put("number", registryNumber);
+        parameters.put("extraArea", hfAppealDto.getExtraArea() != null ? hfAppealDto.getExtraArea() : "-");
         parameters.put("hazardousSubstance", hfAppealDto.getHazardousSubstance());
 
         // Find template

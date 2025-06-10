@@ -239,7 +239,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("registryNumber", info.registryNumber());
         parameters.put("factoryNumber", dto.factoryNumber());
         parameters.put("factory", dto.factory());
-        parameters.put("regionName", regionService.getById(appeal.getRegionId()).getName());
+        parameters.put("regionName", regionService.findById(appeal.getRegionId()).getName());
         parameters.put("districtName", districtService.getDistrict(appeal.getDistrictId()).getName());
         parameters.put("address", appeal.getAddress());
         parameters.put("riskLevel", dto.riskLevel().value);
@@ -253,8 +253,8 @@ public class EquipmentServiceImpl implements EquipmentService {
         Map<String, String> parameters = new HashMap<>();
 
         parameters.put("legalAddress", appeal.getLegalAddress());
-        parameters.put("equipmentType", childEquipmentService.getById(dto.childEquipmentId()).getName());
-        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+        parameters.put("equipmentType", EquipmentType.valueOf(appeal.getData().get("type").asText()).value);
+        parameters.put("childEquipmentName", childEquipmentService.getById(dto.childEquipmentId()).getName());
         parameters.put("legalTin", appeal.getLegalTin().toString());
         parameters.put("factoryNumber", dto.factoryNumber());
         parameters.put("factory", dto.factory());
