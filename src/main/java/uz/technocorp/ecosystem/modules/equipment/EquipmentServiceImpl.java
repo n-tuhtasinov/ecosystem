@@ -1,7 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -9,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
@@ -22,22 +20,19 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
-import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
-import uz.technocorp.ecosystem.modules.user.User;
-
-import java.util.UUID;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
-import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -130,21 +125,6 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         return equipmentRepository.getAllByParams(user,params);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public Page<HfPageView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -198,8 +178,6 @@ public class EquipmentServiceImpl implements EquipmentService {
     private EquipmentDto parseJsonToObject(JsonNode jsonNode) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
         try {
             return mapper.treeToValue(jsonNode, EquipmentDto.class);
         } catch (JsonProcessingException e) {
@@ -207,50 +185,4 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
     }
 
-//    private String createAttractionPassportPdf(EquipmentDto dto, String legalAddress) {
-//        Map<String, String> parameters = new HashMap<>();
-//
-//        parameters.put("attractionName", dto.attractionName());
-//        parameters.put("attractionType", childEquipmentService.getById(dto.childEquipmentId()).getName());
-//        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
-//        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
-//        parameters.put("legalName", dto.legalName());
-//        parameters.put("legalTin", dto.legalTin().toString());
-//        parameters.put("legalAddress", legalAddress);
-//        parameters.put("registryNumber", dto.number());
-//        parameters.put("factoryNumber", dto.factoryNumber());
-//        parameters.put("factory", dto.factory());
-//        parameters.put("regionName", dto.regionName());
-//        parameters.put("districtName", districtService.getDistrict(dto.districtId()).getName());
-//        parameters.put("address", dto.address());
-//        parameters.put("riskLevel", dto.riskLevel().value);
-//
-//        String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
-//
-//        return attachmentService.createPdfFromHtml(content, "reestr/attraction", parameters, false);
-//    }
-
-//    private String createEquipmentPdf(EquipmentDto dto, String legalAddress) {
-//        Map<String, String> parameters = new HashMap<>();
-//
-//        parameters.put("legalAddress", legalAddress);
-//        parameters.put("equipmentType", childEquipmentService.getById(dto.childEquipmentId()).getName());
-//        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
-//        parameters.put("legalTin", dto.legalTin().toString());
-//        parameters.put("factoryNumber", dto.factoryNumber());
-//        parameters.put("factory", dto.factory());
-//        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
-//        parameters.put("number", dto.number());
-//        parameters.put("registrationDate", LocalDate.now().toString());
-//        parameters.put("address", dto.address());
-//        parameters.put("parameters", "PARAMETERS"); // TODO
-//
-//        String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
-//
-//        return attachmentService.createPdfFromHtml(content, "reestr/equipment", parameters, false);
-//    }
-
-    private String getTemplateContent(TemplateType type) {
-        return templateService.getByType(type.name()).getContent();
-    }
 }

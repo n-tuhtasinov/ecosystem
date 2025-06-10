@@ -1,17 +1,11 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
-import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
-import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
-import uz.technocorp.ecosystem.modules.user.User;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
+import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.user.User;
-
-import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov
