@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AIDto;
+import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
 import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 
 import java.util.UUID;
@@ -44,9 +45,9 @@ public class AIEServiceImpl implements AIEService {
     }
 
     @Override
-    public InspectorDto getInspector(UUID assignId) {
+    public AssignInfoDto getInspectorInfo(UUID assignId) {
         return repository
-                .findInspector(assignId)
+                .findInfo(assignId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tayinlov", "Id", assignId));
     }
 }
