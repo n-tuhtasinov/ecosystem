@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AIDto;
+import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
 import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
@@ -17,7 +18,7 @@ import java.util.UUID;
  * @since v1.0
  */
 @RestController
-@RequestMapping("/api/v1/assign-inspector-elevators")
+@RequestMapping("/api/v1/assign-inspector-equipments")
 @RequiredArgsConstructor
 public class AIEController {
 
@@ -37,7 +38,7 @@ public class AIEController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getInspector(@PathVariable UUID id) {
-        InspectorDto inspector = service.getInspector(id);
-        return ResponseEntity.ok(new ApiResponse(inspector));
+        AssignInfoDto assignInfoDto = service.getInspectorInfo(id);
+        return ResponseEntity.ok(new ApiResponse(assignInfoDto));
     }
 }
