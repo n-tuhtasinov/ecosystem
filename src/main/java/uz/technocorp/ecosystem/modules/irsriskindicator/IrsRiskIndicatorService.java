@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.irsriskindicator;
 
+import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
@@ -15,11 +16,12 @@ import java.util.UUID;
  */
 public interface IrsRiskIndicatorService {
 
-    void create(IrsRiskIndicatorDto dto);
+    void create(List<IrsRiskIndicatorDto> dtos);
     void update(UUID id, IrsRiskIndicatorDto dto);
     void delete(UUID id);
     void attachFile(UUID id, FilePathDto dto);
     void cancelRiskIndicator(UUID id);
-    List<RiskIndicatorView> findAllByIrsIdAndTin(UUID id, Long tin);
-    List<RiskIndicatorView> findAllByTin(Long tin);
+    List<RiskIndicatorView> findAllByIrsIdAndTin(UUID id, Long tin, Integer intervalId);
+    List<RiskIndicatorView> findAllByTin(Long tin, Integer intervalId);
+    Page<RiskIndicatorView> findAllToFixByTin(Long tin, Integer intervalId, int page, int size);
 }

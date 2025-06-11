@@ -50,56 +50,54 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
     private final AttachmentRepository attachmentRepository;
 
     @Override
-    public void create(HFRIndicatorDto dto) {
+    public void create(List<HFRIndicatorDto> dtoList) {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
                 .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
-        List<HfRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.hazardousFacilityId());
-        if (allByQuarter.isEmpty()) {
-            if (!dto.indicatorType().equals(RiskAssessmentIndicator.PARAGRAPH_HF_1)) {
-                HazardousFacility hazardousFacility = hazardousFacilityRepository
-                        .findById(dto.hazardousFacilityId())
-                        .orElseThrow(() -> new ResourceNotFoundException("XICHO", "Id", dto.hazardousFacilityId()));
-//                String identificationCardPath = hazardousFacility.getIdentificationCardPath();
-//                String expertOpinionPath = hazardousFacility.getExpertOpinionPath();
-//                String industrialSafetyDeclarationPath = hazardousFacility.getIndustrialSafetyDeclarationPath();
-//                String insurancePolicyPath = hazardousFacility.getInsurancePolicyPath();
-
-                String identificationCardPath = hazardousFacility.getFiles().get("identificationCardPath");
-                String expertOpinionPath = hazardousFacility.getFiles().get("expertOpinionPath");
-                String industrialSafetyDeclarationPath = hazardousFacility.getFiles().get("industrialSafetyDeclarationPath");
-                String insurancePolicyPath = hazardousFacility.getFiles().get("insurancePolicyPath");
-
-
-                StringBuilder descriptionBuilder = new StringBuilder();
-                if (identificationCardPath.isEmpty()) {
-                    descriptionBuilder.append("Identifikatsiya xulosasi mavjud emas. ");
-                }
-                if (expertOpinionPath.isEmpty()) {
-                    descriptionBuilder.append("Ekspertiza xulosasi mavjud emas. ");
-                }
-                if (industrialSafetyDeclarationPath.isEmpty()) {
-                    descriptionBuilder.append("Sanoat xavfsizligi deklaratsiyasi mavjud emas. ");
-                }
-                if (insurancePolicyPath.isEmpty()) {
-                    descriptionBuilder.append("Majburiy sug'urta polisi mavjud emas. ");
-                }
-                repository.save(
-                        HfRiskIndicator
-                                .builder()
-                                .hazardousFacilityId(dto.hazardousFacilityId())
-                                .indicatorType(RiskAssessmentIndicator.PARAGRAPH_HF_1)
-                                .score(RiskAssessmentIndicator.PARAGRAPH_HF_1.getScore())
-                                .description(descriptionBuilder.toString())
-                                .tin(dto.tin())
-                                .riskAnalysisInterval(riskAnalysisInterval)
-                                .build()
-                );
-            }
-            HfRiskIndicator existRiskIndicator = allByQuarter.stream().filter(riskIndicator -> riskIndicator.getIndicatorType().equals(dto.indicatorType())).toList().getFirst();
-            if (existRiskIndicator != null) {
-                throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
-            }
+//        List<HfRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.hazardousFacilityId());
+//        if (allByQuarter.isEmpty()) {
+//            if (!dto.indicatorType().equals(RiskAssessmentIndicator.PARAGRAPH_HF_1)) {
+//                HazardousFacility hazardousFacility = hazardousFacilityRepository
+//                        .findById(dto.hazardousFacilityId())
+//                        .orElseThrow(() -> new ResourceNotFoundException("XICHO", "Id", dto.hazardousFacilityId()));
+////                String identificationCardPath = hazardousFacility.getIdentificationCardPath();
+////                String expertOpinionPath = hazardousFacility.getExpertOpinionPath();
+////                String industrialSafetyDeclarationPath = hazardousFacility.getIndustrialSafetyDeclarationPath();
+////                String insurancePolicyPath = hazardousFacility.getInsurancePolicyPath();
+//
+//                String identificationCardPath = hazardousFacility.getFiles().get("identificationCardPath");
+//                String expertOpinionPath = hazardousFacility.getFiles().get("expertOpinionPath");
+//                String industrialSafetyDeclarationPath = hazardousFacility.getFiles().get("industrialSafetyDeclarationPath");
+//                String insurancePolicyPath = hazardousFacility.getFiles().get("insurancePolicyPath");
+//
+//
+//                StringBuilder descriptionBuilder = new StringBuilder();
+//                if (identificationCardPath.isEmpty()) {
+//                    descriptionBuilder.append("Identifikatsiya xulosasi mavjud emas. ");
+//                }
+//                if (expertOpinionPath.isEmpty()) {
+//                    descriptionBuilder.append("Ekspertiza xulosasi mavjud emas. ");
+//                }
+//                if (industrialSafetyDeclarationPath.isEmpty()) {
+//                    descriptionBuilder.append("Sanoat xavfsizligi deklaratsiyasi mavjud emas. ");
+//                }
+//                if (insurancePolicyPath.isEmpty()) {
+//                    descriptionBuilder.append("Majburiy sug'urta polisi mavjud emas. ");
+//                }
+//                repository.save(
+//                        HfRiskIndicator
+//                                .builder()
+//                                .hazardousFacilityId(dto.hazardousFacilityId())
+//                                .indicatorType(RiskAssessmentIndicator.PARAGRAPH_HF_1)
+//                                .score(RiskAssessmentIndicator.PARAGRAPH_HF_1.getScore())
+//                                .description(descriptionBuilder.toString())
+//                                .tin(dto.tin())
+//                                .riskAnalysisInterval(riskAnalysisInterval)
+//                                .build()
+//                );
+//            }
+//        }
+        for (HFRIndicatorDto dto : dtoList) {
             repository.save(
                     HfRiskIndicator
                             .builder()
@@ -108,9 +106,16 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                             .score(dto.indicatorType().getScore())
                             .description(dto.description())
                             .tin(dto.tin())
+                            .riskAnalysisInterval(riskAnalysisInterval)
                             .build()
             );
         }
+//            HfRiskIndicator existRiskIndicator = allByQuarter.stream().filter(riskIndicator -> riskIndicator.getIndicatorType().equals(dto.indicatorType())).toList().getFirst();
+//            if (existRiskIndicator != null) {
+//                throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
+//            }
+
+//        }
     }
 
     @Override

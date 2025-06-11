@@ -49,34 +49,38 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
     private final AttachmentRepository attachmentRepository;
 
     @Override
-    public void create(EquipmentRiskIndicatorDto dto) {
+    public void create(List<EquipmentRiskIndicatorDto> dtoList) {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
                 .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
-        List<ElevatorRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.equipmentId());
-        if (!allByQuarter.isEmpty()) {
-            ElevatorRiskIndicator existRiskIndicator = allByQuarter
-                    .stream()
-                    .filter(riskIndicator -> riskIndicator
-                            .getIndicatorType()
-                            .equals(dto.indicatorType()))
-                    .toList()
-                    .getFirst();
-            if (existRiskIndicator != null) {
-                throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
-            }
-
+//        List<ElevatorRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.equipmentId());
+//        if (!allByQuarter.isEmpty()) {
+//            ElevatorRiskIndicator existRiskIndicator = allByQuarter
+//                    .stream()
+//                    .filter(riskIndicator -> riskIndicator
+//                            .getIndicatorType()
+//                            .equals(dto.indicatorType()))
+//                    .toList()
+//                    .getFirst();
+//            if (existRiskIndicator != null) {
+//                throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
+//            }
+//
+//        }
+        for (EquipmentRiskIndicatorDto dto : dtoList) {
+            repository.save(
+                    ElevatorRiskIndicator
+                            .builder()
+                            .equipmentId(dto.equipmentId())
+                            .indicatorType(dto.indicatorType())
+                            .score(dto.indicatorType().getScore())
+                            .description(dto.description())
+                            .tin(dto.tin())
+                            .riskAnalysisInterval(riskAnalysisInterval)
+                            .build()
+            );
         }
-        repository.save(
-                ElevatorRiskIndicator
-                        .builder()
-                        .equipmentId(dto.equipmentId())
-                        .indicatorType(dto.indicatorType())
-                        .score(dto.indicatorType().getScore())
-                        .description(dto.description())
-                        .tin(dto.tin())
-                        .build()
-        );
+
     }
 
     @Override

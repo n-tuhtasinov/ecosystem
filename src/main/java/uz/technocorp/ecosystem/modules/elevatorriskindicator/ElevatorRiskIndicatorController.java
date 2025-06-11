@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
@@ -27,14 +28,26 @@ public class ElevatorRiskIndicatorController {
     private final ElevatorRiskIndicatorService service;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody EquipmentRiskIndicatorDto dto) {
-        service.create(dto);
+    public ResponseEntity<?> create(@RequestBody List<EquipmentRiskIndicatorDto> dtoList) {
+        service.create(dtoList);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody EquipmentRiskIndicatorDto dto) {
         service.update(id, dto);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> attachFile(@PathVariable UUID id, @RequestBody FilePathDto dto) {
+        service.attachFile(id, dto);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+    }
+
+    @PatchMapping("/cancel/{id}")
+    public ResponseEntity<?> cancel(@PathVariable UUID id) {
+        service.cancelRiskIndicator(id);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
@@ -67,4 +80,6 @@ public class ElevatorRiskIndicatorController {
         Page<RiskIndicatorView> allByTin = service.findAllToFixByTin(tin, intervalId, page, size);
         return ResponseEntity.ok(new ApiResponse(allByTin));
     }
+
+
 }
