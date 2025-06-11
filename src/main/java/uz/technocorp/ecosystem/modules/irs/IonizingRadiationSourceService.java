@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.irs.dto.IrsDeregisterDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsParams;
 import uz.technocorp.ecosystem.modules.irs.view.IrsView;
+import uz.technocorp.ecosystem.modules.irs.view.IrsViewById;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.UUID;
@@ -25,4 +26,5 @@ public interface IonizingRadiationSourceService {
     Page<IrsView> getAll(User user, IrsParams irsParams);
     Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
 
+    IrsViewById getById(UUID irsId);
 }

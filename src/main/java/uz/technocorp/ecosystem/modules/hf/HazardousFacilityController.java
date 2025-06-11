@@ -12,6 +12,7 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
+import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -87,6 +88,15 @@ public class HazardousFacilityController {
         Page<HfCustom> all = service.getAll(user, new HfParams(page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
         return ResponseEntity.ok(new ApiResponse(all));
     }
+
+
+    @GetMapping("/{hfId}")
+    public ResponseEntity<?> getById(@PathVariable UUID hfId) {
+        HfViewById byId = service.getById(hfId);
+        return ResponseEntity.ok(new ApiResponse(byId));
+    }
+
+
 
     @GetMapping("/risk-assessment")
     public ResponseEntity<?> getAllForRiskAssessment(@CurrentUser User user,

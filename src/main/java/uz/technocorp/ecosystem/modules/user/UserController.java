@@ -126,7 +126,7 @@ public class UserController {
     }
 
     @GetMapping("/legal/{tin}")
-    ResponseEntity<?> getLegalUsers(@PathVariable Long tin) {
+    ResponseEntity<?> getLegalUser(@PathVariable Long tin) {
         UserViewByLegal user = userService.getLegalUserByTin(tin);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(user));
     }

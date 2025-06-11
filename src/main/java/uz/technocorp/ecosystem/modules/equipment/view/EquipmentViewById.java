@@ -1,5 +1,6 @@
-package uz.technocorp.ecosystem.modules.equipment.dto;
+package uz.technocorp.ecosystem.modules.equipment.view;
 
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
 
@@ -10,31 +11,51 @@ import java.util.UUID;
 /**
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
- * @created 05.05.2025
+ * @created 10.06.2025
  * @since v1.0
  */
-public record EquipmentDto(
-        UUID hazardousFacilityId,
+public record EquipmentViewById(
+        LocalDate registrationDate,
+        EquipmentType type,
+        UUID appealId,
+        String registryNumber,
+        Long legalTin,
+
+        UUID hfId,
+        String hfName,
+
         Integer childEquipmentId,
+        String childEquipmentName,
+
         String factoryNumber,
+        String address,
         String model,
         String factory,
         String location,
         LocalDate manufacturedAt,
-        LocalDate partialCheckDate,
-        LocalDate fullCheckDate,
-        Sphere sphere,
+
+        UUID oldEquipmentId,
+        String oldEquipmentRegistryNumber,
+
         Map<String, String> parameters,
+        Sphere sphere,
         String attractionName,
         LocalDate acceptedAt,
+
         Integer childEquipmentSortId,
+        String childEquipmentSortName,
+
         String country,
         Integer servicePeriod,
         RiskLevel riskLevel,
         String parentOrganization,
         LocalDate nonDestructiveCheckDate,
+        UUID attractionPassportId,
         String description,
-        UUID inspectorId,
-        Map<String, String> files
-) {
-}
+
+        UUID inspectorUserId,
+        String inspectorName,
+
+        Map<String, String> files,
+        String registryFilePath
+) {}

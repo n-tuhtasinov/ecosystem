@@ -9,6 +9,7 @@ import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsParams;
 import uz.technocorp.ecosystem.modules.irs.view.IrsView;
+import uz.technocorp.ecosystem.modules.irs.view.IrsViewById;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -70,6 +71,12 @@ public class IonizingRadiationSourceController {
     ) {
         Page<IrsView> all = service.getAll(user, new IrsParams(page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
         return ResponseEntity.ok(new ApiResponse(all));
+    }
+
+    @GetMapping("/{irsId}")
+    public ResponseEntity<?> getById(@PathVariable UUID irsId) {
+        IrsViewById byId = service.getById(irsId);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
 

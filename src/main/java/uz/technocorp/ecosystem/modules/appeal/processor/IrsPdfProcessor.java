@@ -20,7 +20,7 @@ public class IrsPdfProcessor extends BaseAppealPdfProcessor {
 
     @Override
     protected TemplateType getTemplateType() {
-        return TemplateType.IRS;
+        return TemplateType.IRS_APPEAL;
     }
 
     @Override

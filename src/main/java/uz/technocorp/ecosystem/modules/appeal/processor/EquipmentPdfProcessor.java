@@ -34,7 +34,7 @@ public class EquipmentPdfProcessor extends BaseAppealPdfProcessor {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("legalName", profile.getLegalName());
         parameters.put("legalTin", profile.getTin().toString());
-        parameters.put("facilityName", "UNKNOWN-XICHO");
+        parameters.put("facilityName", dto.getHazardousFacilityName() != null ? dto.getHazardousFacilityName() : "-");
         parameters.put("regionName", getRegion(dto.getRegionId()).getName());
         parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
         parameters.put("address", dto.getAddress());

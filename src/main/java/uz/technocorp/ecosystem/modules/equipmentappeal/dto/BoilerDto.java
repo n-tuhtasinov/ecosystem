@@ -1,19 +1,18 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -41,6 +40,9 @@ public class BoilerDto extends EquipmentAppealDto {
     @SkipDb
     @NotBlank(message = "Ruxsat etilgan bosim jo'natilmadi")
     private String pressure;
+
+    @Schema(hidden = true)
+    private EquipmentType type = EquipmentType.BOILER;
 
     @Override
     public AppealType getAppealType() {

@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
@@ -35,6 +37,9 @@ public class ElevatorDto extends EquipmentAppealDto {
     @SkipDb
     @NotBlank(message = "To'xtashlar soni jo'natilmadi")
     private String stopCount;
+
+    @Schema(hidden = true)
+    private EquipmentType type = EquipmentType.ELEVATOR;
 
     @Override
     public AppealType getAppealType() {

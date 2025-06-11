@@ -100,12 +100,12 @@ public class DocumentServiceImpl implements DocumentService {
 
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
-            if (document.getAgreementStatus()!=null){
+            if (document.getAgreementStatus() != null) {
                 throw new RuntimeException("Hujjat agreementStatusi avval o'zgartirilgan. Hozirgi holati: " + document.getAgreementStatus().name());
             }
             document.setAgreementStatus(AgreementStatus.NOT_AGREED);
         } else if (role == Role.MANAGER) {
-            if (document.getAgreementStatus()!= AgreementStatus.AGREED){
+            if (document.getAgreementStatus() != AgreementStatus.AGREED) {
                 throw new RuntimeException("Hujjat agreementStatusi 'AGREED' holatida emas. Hozirgi holati: " + document.getAgreementStatus().name());
             }
             document.setAgreementStatus(AgreementStatus.NOT_APPROVED);

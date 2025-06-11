@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
@@ -39,6 +41,9 @@ public class LpgPoweredDto extends EquipmentAppealDto {
     @NotBlank(message = "Gaz ta'minoti loyihasi fayli uchun path jo'natilmadi")
     private String gasSupplyProjectPath;
 
+    @Schema(hidden = true)
+    private EquipmentType type = EquipmentType.LPG_POWERED;
+
     @Override
     public AppealType getAppealType() {
         return AppealType.REGISTER_LPG_POWERED;
@@ -58,7 +63,7 @@ public class LpgPoweredDto extends EquipmentAppealDto {
     @AssertTrue
     public boolean isParametersBuilt() {
         buildParameters();
-        super.getFiles().put("gasSupplyProjectPath",gasSupplyProjectPath); // add file the map
+        super.getFiles().put("gasSupplyProjectPath", gasSupplyProjectPath); // add file the map
         return true;
     }
 }
