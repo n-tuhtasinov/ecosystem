@@ -31,5 +31,5 @@ public class SignedReplyDto {
     private @Valid ReplyDto dto;
 
     @Schema(hidden = true)
-    private DocumentType type = DocumentType.REPLY_LETTER;
+    private DocumentType type = DocumentType.REPORT;
 }
