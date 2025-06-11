@@ -73,7 +73,7 @@ public class ApplicationConfig {
     @Bean
     public CorsConfigurationSource corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("https://b552-195-158-15-110.ngrok-free.app","http://localhost:5173", "https://ekotizim.technocorp.uz", "https://ekotizim.cirns.uz"));
+        configuration.setAllowedOriginPatterns(List.of("https://b552-195-158-15-110.ngrok-free.app","http://localhost:5173", "https://ekotizim.technocorp.uz", "https://ekotizim.cirns.uz", "http://192.168.1.118:5173"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
