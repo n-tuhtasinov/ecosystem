@@ -76,7 +76,7 @@ public class IonizingRadiationSourceController {
     @GetMapping("/{irsId}")
     public ResponseEntity<?> getById(@PathVariable UUID irsId) {
         IrsViewById byId = service.getById(irsId);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+        return ResponseEntity.ok(new ApiResponse(byId));
     }
 
 

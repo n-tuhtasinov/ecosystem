@@ -62,10 +62,8 @@ public class EquipmentServiceImpl implements EquipmentService {
         EquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), EquipmentDto.class);
         EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
 
-        // Create registry (reestr) PDF with parameters
-        String registryFilepath = EquipmentType.ATTRACTION_PASSPORT.equals(info.equipmentType())
-                ? createAttractionPassportPdf(appeal, dto, info) // Attraction Passport
-                : createEquipmentPdf(appeal, dto, info); // All Equipments
+        // Create registry PDF
+        String registryFilepath = createEquipmentRegistryPdf(appeal, dto, info);
 
         Equipment equipment = Equipment.builder()
                 .type(info.equipmentType())
@@ -123,7 +121,6 @@ public class EquipmentServiceImpl implements EquipmentService {
             //TODO: legal va individual uchun yozish kerak
         }
 
-
         return equipmentRepository.getAllByParams(user, params);
     }
 
@@ -154,44 +151,6 @@ public class EquipmentServiceImpl implements EquipmentService {
         return mapToView(equipment);
     }
 
-    private EquipmentViewById mapToView(Equipment equipment) {
-        return new EquipmentViewById(
-                equipment.getRegistrationDate(),
-                equipment.getType(),
-                equipment.getAppealId(),
-                equipment.getRegistryNumber(),
-                equipment.getLegalTin(),
-                equipment.getHazardousFacilityId(),
-                equipment.getHazardousFacility() == null ? null : equipment.getHazardousFacility().getName(),
-                equipment.getChildEquipmentId(),
-                equipment.getChildEquipment() == null ? null : equipment.getChildEquipment().getName(),
-                equipment.getFactoryNumber(),
-                equipment.getAddress(),
-                equipment.getModel(),
-                equipment.getFactory(),
-                equipment.getLocation(),
-                equipment.getManufacturedAt(),
-                equipment.getOldEquipmentId(),
-                equipment.getOldEquipment() == null ? null : equipment.getOldEquipment().getRegistryNumber(),
-                equipment.getParameters(),
-                equipment.getSphere(),
-                equipment.getAttractionName(),
-                equipment.getAcceptedAt(),
-                equipment.getChildEquipmentSortId(),
-                equipment.getChildEquipmentSort() == null ? null : equipment.getChildEquipmentSort().getName(),
-                equipment.getCountry(),
-                equipment.getServicePeriod(),
-                equipment.getRiskLevel(),
-                equipment.getParentOrganization(),
-                equipment.getNonDestructiveCheckDate(),
-                equipment.getAttractionPassportId(),
-                equipment.getDescription(),
-                equipment.getInspectorId(),
-                equipment.getInspector() == null ? null : equipment.getInspector().getName(),
-                equipment.getFiles(),
-                equipment.getRegistryFilePath());
-    }
-
     @Override
     public Page<HfPageView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -213,7 +172,14 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
     }
 
-    private EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
+    protected String createEquipmentRegistryPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info) {
+        // Create registry PDF with parameters
+        return EquipmentType.ATTRACTION_PASSPORT.equals(info.equipmentType())
+                ? createAttractionPassportPdf(appeal, dto, info) // Attraction Passport
+                : createEquipmentPdf(appeal, dto, info); // All Equipments
+    }
+
+    protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
         return switch (appealType) {
             case REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P");
             case REGISTER_CONTAINER -> getInfo(EquipmentType.CONTAINER, "C");
@@ -256,20 +222,71 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("equipmentType", EquipmentType.valueOf(appeal.getData().get("type").asText()).value);
         parameters.put("childEquipmentName", childEquipmentService.getById(dto.childEquipmentId()).getName());
         parameters.put("legalTin", appeal.getLegalTin().toString());
+        parameters.put("legalName", appeal.getLegalName());
         parameters.put("factoryNumber", dto.factoryNumber());
         parameters.put("factory", dto.factory());
+        parameters.put("model", dto.model());
         parameters.put("manufacturedAt", dto.manufacturedAt().toString());
         parameters.put("number", info.registryNumber());
         parameters.put("registrationDate", LocalDate.now().toString());
         parameters.put("address", appeal.getAddress());
-        parameters.put("parameters", dto.parameters().toString()); // TODO parameter lar bilan muammo bo'lishi mumkin
+        parameters.put("dynamicParameters", makeDynamicRows(dto.parameters()));
 
         String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
 
         return attachmentService.createPdfFromHtml(content, "reestr/equipment", parameters, false);
     }
 
+    private String makeDynamicRows(Map<String, String> parameters) {
+        StringBuilder dynamicRows = new StringBuilder();
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            dynamicRows.append("<div class=\"list-item\">")
+                    .append("<div>").append(EquipmentParameter.nameWithUnit(entry.getKey())).append("</div>")
+                    .append("<div>").append(entry.getValue()).append("</div>")
+                    .append("</div>");
+        }
+        return dynamicRows.toString();
+    }
+
     private String getTemplateContent(TemplateType type) {
         return templateService.getByType(type.name()).getContent();
+    }
+
+    private EquipmentViewById mapToView(Equipment equipment) {
+        return new EquipmentViewById(
+                equipment.getRegistrationDate(),
+                equipment.getType(),
+                equipment.getAppealId(),
+                equipment.getRegistryNumber(),
+                equipment.getLegalTin(),
+                equipment.getHazardousFacilityId(),
+                equipment.getHazardousFacility() == null ? null : equipment.getHazardousFacility().getName(),
+                equipment.getChildEquipmentId(),
+                equipment.getChildEquipment() == null ? null : equipment.getChildEquipment().getName(),
+                equipment.getFactoryNumber(),
+                equipment.getAddress(),
+                equipment.getModel(),
+                equipment.getFactory(),
+                equipment.getLocation(),
+                equipment.getManufacturedAt(),
+                equipment.getOldEquipmentId(),
+                equipment.getOldEquipment() == null ? null : equipment.getOldEquipment().getRegistryNumber(),
+                equipment.getParameters(),
+                equipment.getSphere(),
+                equipment.getAttractionName(),
+                equipment.getAcceptedAt(),
+                equipment.getChildEquipmentSortId(),
+                equipment.getChildEquipmentSort() == null ? null : equipment.getChildEquipmentSort().getName(),
+                equipment.getCountry(),
+                equipment.getServicePeriod(),
+                equipment.getRiskLevel(),
+                equipment.getParentOrganization(),
+                equipment.getNonDestructiveCheckDate(),
+                equipment.getAttractionPassportId(),
+                equipment.getDescription(),
+                equipment.getInspectorId(),
+                equipment.getInspector() == null ? null : equipment.getInspector().getName(),
+                equipment.getFiles(),
+                equipment.getRegistryFilePath());
     }
 }
