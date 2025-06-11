@@ -19,6 +19,7 @@ import java.util.UUID;
  * @author Suxrob
  * @version 1.0
  * @created 11.06.2025
+ * @description PDF generatsiya qilishni test qilib ko'rish uchun
  * @since v1.0
  */
 @RestController
