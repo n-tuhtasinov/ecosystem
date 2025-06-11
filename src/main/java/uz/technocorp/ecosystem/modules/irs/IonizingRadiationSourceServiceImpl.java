@@ -79,6 +79,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                         .country(irsAppealDto.getCountry())
                         .manufacturedAt(LocalDate.parse(irsAppealDto.getManufacturedAt()))
                         .acceptedFrom(irsAppealDto.getAcceptedFrom())
+                        .acceptedAt(LocalDate.now())
                         .isValid(irsAppealDto.getIsValid())
                         .usageType(IrsUsageType.valueOf(irsAppealDto.getUsageType()))
                         .storageLocation(irsAppealDto.getStorageLocation())
