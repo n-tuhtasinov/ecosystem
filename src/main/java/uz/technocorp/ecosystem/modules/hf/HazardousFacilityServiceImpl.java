@@ -65,24 +65,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
         HfAppealDto hfAppealDto = JsonParser.parseJsonData(appeal.getData(), HfAppealDto.class);
 
-        // Make parameters
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("upperOrganization", hfAppealDto.getUpperOrganization() != null ? hfAppealDto.getUpperOrganization() : "-");
-        parameters.put("legalName", appeal.getLegalName());
-        parameters.put("legalTin", appeal.getLegalTin().toString());
-        parameters.put("name", hfAppealDto.getName());
-        parameters.put("address", appeal.getAddress());
-        parameters.put("hfTypeName", hfAppealDto.getHfTypeName());
-        parameters.put("registrationDate", LocalDate.now().toString());
-        parameters.put("number", registryNumber);
-        parameters.put("extraArea", hfAppealDto.getExtraArea() != null ? hfAppealDto.getExtraArea() : "-");
-        parameters.put("hazardousSubstance", hfAppealDto.getHazardousSubstance());
-
-        // Find template
-        Template template = templateService.getByType(TemplateType.REGISTRY_HF.name());
-
-        // Create file
-        String registryFilePath = attachmentService.createPdfFromHtml(template.getContent(), "reestr/hf", parameters, false);
+        String registryFilePath = createHfRegistryPdf(appeal, registryNumber, hfAppealDto);
 
         repository.save(
                 HazardousFacility.builder()
@@ -270,6 +253,27 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         return mapToView(hf);
     }
 
+    protected String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto) {
+        // Make parameters
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("upperOrganization", hfAppealDto.getUpperOrganization() != null ? hfAppealDto.getUpperOrganization() : "-");
+        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalTin", appeal.getLegalTin().toString());
+        parameters.put("name", hfAppealDto.getName());
+        parameters.put("address", appeal.getAddress());
+        parameters.put("hfTypeName", hfAppealDto.getHfTypeName());
+        parameters.put("registrationDate", LocalDate.now().toString());
+        parameters.put("number", registryNumber);
+        parameters.put("extraArea", hfAppealDto.getExtraArea() != null ? hfAppealDto.getExtraArea() : "-");
+        parameters.put("hazardousSubstance", hfAppealDto.getHazardousSubstance());
+
+        // Find template
+        Template template = templateService.getByType(TemplateType.REGISTRY_HF.name());
+
+        // Create file
+        return attachmentService.createPdfFromHtml(template.getContent(), "reestr/hf", parameters, false);
+    }
+
     private HfViewById mapToView(HazardousFacility hf) {
         return new HfViewById(
                 hf.getLegalTin(),
@@ -295,7 +299,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 hf.getFiles());
     }
 
-    public HazardousFacility findById(UUID id) {
+    protected HazardousFacility findById(UUID id) {
         return repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
