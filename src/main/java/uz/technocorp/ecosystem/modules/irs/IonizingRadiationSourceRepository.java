@@ -60,6 +60,23 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
             inner join assign_inspector_irs aii on irs.id = aii.irs_id
             join users u on aii.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            where aii.inspector_id = :regionId
+            and aii.interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByInspectorIdAndInterval(Pageable pageable, UUID inspectorId, Integer intervalId);
+
+    @Query(value = """
+            select irs.id as id,
+            registry_number as registryNumber,
+            
+            legal_tin as legalTin,
+            address,
+            irs.legal_name as legalName,
+            p.full_name as inspectorName
+            from ionizing_radiation_source irs
+            inner join assign_inspector_irs aii on irs.id = aii.irs_id
+            join users u on aii.inspector_id = u.id
+            join profile p on u.profile_id = p.id
             where irs.legal_tin = :legalTin
             and aii.interval_id = :intervalId
             """, nativeQuery = true)
@@ -77,10 +94,46 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
             inner join assign_inspector_irs aii on irs.id = aii.irs_id
             join users u on aii.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            where irs.legal_tin = :legalTin
+            and aii.interval_id = :intervalId
+            and aii.inspector_id = :inspectorId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByLegalTinAndIntervalAndInspectorId(Pageable pageable, Long legalTin, Integer intervalId, UUID inspectorId);
+
+    @Query(value = """
+            select irs.id as id,
+            registry_number as registryNumber,
+            
+            legal_tin as legalTin,
+            address,
+            irs.legal_name as legalName,
+            p.full_name as inspectorName
+            from ionizing_radiation_source irs
+            inner join assign_inspector_irs aii on irs.id = aii.irs_id
+            join users u on aii.inspector_id = u.id
+            join profile p on u.profile_id = p.id
             where irs.registry_number = :registryNumber
             and aii.interval_id = :intervalId
             """, nativeQuery = true)
     Page<HfPageView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId);
+
+    @Query(value = """
+            select irs.id as id,
+            registry_number as registryNumber,
+            
+            legal_tin as legalTin,
+            address,
+            irs.legal_name as legalName,
+            p.full_name as inspectorName
+            from ionizing_radiation_source irs
+            inner join assign_inspector_irs aii on irs.id = aii.irs_id
+            join users u on aii.inspector_id = u.id
+            join profile p on u.profile_id = p.id
+            where irs.registry_number = :registryNumber
+            and aii.interval_id = :intervalId
+            and aii.inspector_id = :inspectorId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByRegistryNumberAndIntervalAndInspectorId(Pageable pageable, String registryNumber, Integer intervalId, UUID inspectorId);
 
     @Query(value = """
             select irs.id as id,
