@@ -19,4 +19,5 @@ public interface RiskIndicatorView {
     LocalDate getFileDate();
     Integer getScoreValue();
     LocalDate getCancelledDate();
+    Integer getIntervalId();
 }

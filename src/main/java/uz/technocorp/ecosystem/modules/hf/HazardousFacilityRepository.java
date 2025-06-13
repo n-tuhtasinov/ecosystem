@@ -86,6 +86,23 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            where aih.inspector_id = :inspectorId
+            and aih.interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByInspectorIdAndInterval(Pageable pageable, UUID inspectorId, Integer intervalId);
+
+    @Query(value = """
+            select hf.id as id,
+            registry_number as registryNumber,
+            hf.name as name,
+            legal_tin as legalTin,
+            address,
+            hf.legal_name as legalName,
+            p.full_name as inspectorName
+            from hazardous_facility hf
+            inner join assign_inspector_hf aih on hf.id = aih.hf_id
+            join users u on aih.inspector_id = u.id
+            join profile p on u.profile_id = p.id
             where hf.legal_tin = :legalTin
             and aih.interval_id = :intervalId
             """, nativeQuery = true)
@@ -103,10 +120,46 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            where hf.legal_tin = :legalTin
+            and aih.interval_id = :intervalId
+            and aih.inspector_id = :inspectorId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByLegalTinAndIntervalAndInspectorId(Pageable pageable, Long legalTin, Integer intervalId, UUID inspectorId);
+
+    @Query(value = """
+            select hf.id as id,
+            registry_number as registryNumber,
+            hf.name as name,
+            legal_tin as legalTin,
+            address,
+            hf.legal_name as legalName,
+            p.full_name as inspectorName
+            from hazardous_facility hf
+            inner join assign_inspector_hf aih on hf.id = aih.hf_id
+            join users u on aih.inspector_id = u.id
+            join profile p on u.profile_id = p.id
             where hf.registry_number = :registryNumber
             and aih.interval_id = :intervalId
             """, nativeQuery = true)
     Page<HfPageView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId);
+
+    @Query(value = """
+            select hf.id as id,
+            registry_number as registryNumber,
+            hf.name as name,
+            legal_tin as legalTin,
+            address,
+            hf.legal_name as legalName,
+            p.full_name as inspectorName
+            from hazardous_facility hf
+            inner join assign_inspector_hf aih on hf.id = aih.hf_id
+            join users u on aih.inspector_id = u.id
+            join profile p on u.profile_id = p.id
+            where hf.registry_number = :registryNumber
+            and aih.interval_id = :intervalId
+            and aih.inspector_id = :inspectorId
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByRegistryNumberAndIntervalAndInspectorId(Pageable pageable, String registryNumber, Integer intervalId, UUID inspectorId);
 
     @Query(value = """
             select hf.id as id,

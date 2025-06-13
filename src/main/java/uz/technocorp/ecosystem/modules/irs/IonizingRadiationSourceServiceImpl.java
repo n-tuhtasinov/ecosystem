@@ -191,18 +191,33 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
     @Override
     public Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Profile profile = profileService.getProfile(user.getProfileId());
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            Profile profile = profileService.getProfile(user.getProfileId());
 
-        Integer regionId = profile.getRegionId();
-        if (isAssigned) {
-            if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
+            Integer regionId = profile.getRegionId();
+            if (isAssigned) {
+                if (registryNumber != null)
+                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+                if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
+                else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
+            } else {
+                if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber);
+                if (tin != null) return repository.getAllByLegalTin(pageable, tin);
+                else return repository.getAllByRegion(pageable, regionId);
+            }
+        } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
-            else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
+                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
+            if (tin != null) return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
+            else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
         } else {
-            if (tin != null) return repository.getAllByLegalTin(pageable, tin);
-            if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber);
-            else return repository.getAllByRegion(pageable, regionId);
+            Profile profile = profileService.getProfile(user.getProfileId());
+            Long profileTin = profile.getTin();
+            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            return repository.getAllByLegalTinAndInterval(pageable, profileTin, intervalId);
         }
+
+
     }
 }

@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.TokenResponse;
 import uz.technocorp.ecosystem.modules.auth.dto.AccessDataDto;
@@ -58,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final IIPService iipService;
     private final ProfileService profileService;
+    private final RiskAnalysisIntervalRepository intervalRepository;
 
     @Value("${app.one-id.client_id}")
     private String oneIdClientId;
@@ -73,7 +77,9 @@ public class AuthServiceImpl implements AuthService {
         TokenResponse tokenResponse = generateToken(dto.username(), dto.password());
         setTokenToCookie(tokenResponse, response);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new UserMeDto(user.getId(), user.getName(), user.getRole().name(), user.getDirections());
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository.findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Interval ma'lomoti topilmadi"));
+        return new UserMeDto(user.getId(), user.getName(), user.getRole().name(), user.getDirections(), riskAnalysisInterval);
     }
 
     @Override
@@ -132,8 +138,11 @@ public class AuthServiceImpl implements AuthService {
         // set generated token to cookie
         setTokenToCookie(tokenResponse, response);
 
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository.findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Interval ma'lomoti topilmadi"));
+
         // return userMeDto
-        return new UserMeDto(user.getId(), user.getName(), user.getRole().name(), user.getDirections());
+        return new UserMeDto(user.getId(), user.getName(), user.getRole().name(), user.getDirections(), riskAnalysisInterval);
     }
 
     public void setTokenToCookie(TokenResponse tokenResponse, HttpServletResponse response) {

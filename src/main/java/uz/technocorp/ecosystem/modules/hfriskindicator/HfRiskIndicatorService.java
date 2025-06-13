@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public interface HfRiskIndicatorService {
 
-    void create(HFRIndicatorDto dto);
+    void create(List<HFRIndicatorDto> dtoList);
     void update(UUID id, HFRIndicatorDto dto);
     void delete(UUID id);
     void attachFile(UUID id, FilePathDto dto);

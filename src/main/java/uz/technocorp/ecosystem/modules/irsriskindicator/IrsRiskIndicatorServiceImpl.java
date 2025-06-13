@@ -1,12 +1,14 @@
 package uz.technocorp.ecosystem.modules.irsriskindicator;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.Attachment;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
-import uz.technocorp.ecosystem.modules.hfriskindicator.HfRiskIndicator;
 import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
@@ -24,8 +26,6 @@ import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -47,23 +47,31 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
     private final AttachmentRepository attachmentRepository;
 
     @Override
-    public void create(IrsRiskIndicatorDto dto) {
-        List<IrsRiskIndicator> allByQuarter = repository.findAllByQuarter(dto.intervalId(), dto.irsId());
+    public void create(List<IrsRiskIndicatorDto> dtos) {
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
+                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
 
-        IrsRiskIndicator existRiskIndicator = allByQuarter.stream().filter(riskIndicator -> riskIndicator.getIndicatorType().equals(dto.indicatorType())).toList().getFirst();
-        if (existRiskIndicator != null) {
-            throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
+//        List<IrsRiskIndicator> allByQuarter = repository.findAllByQuarter(dto.intervalId(), dto.irsId());
+//
+//        IrsRiskIndicator existRiskIndicator = allByQuarter.stream().filter(riskIndicator -> riskIndicator.getIndicatorType().equals(dto.indicatorType())).toList().getFirst();
+//        if (existRiskIndicator != null) {
+//            throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
+//        }
+        for (IrsRiskIndicatorDto dto : dtos) {
+            repository.save(
+                    IrsRiskIndicator
+                            .builder()
+                            .ionizingRadiationSourceId(dto.irsId())
+                            .indicatorType(dto.indicatorType())
+                            .score(dto.indicatorType().getScore())
+                            .description(dto.description())
+                            .tin(dto.tin())
+                            .riskAnalysisInterval(riskAnalysisInterval)
+                            .build()
+            );
         }
-        repository.save(
-                IrsRiskIndicator
-                        .builder()
-                        .ionizingRadiationSourceId(dto.irsId())
-                        .indicatorType(dto.indicatorType())
-                        .score(dto.indicatorType().getScore())
-                        .description(dto.description())
-                        .tin(dto.tin())
-                        .build()
-        );
+
     }
 
     @Override
@@ -105,21 +113,19 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
     }
 
     @Override
-    public List<RiskIndicatorView> findAllByIrsIdAndTin(UUID id, Long tin) {
-        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
-                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
-                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
-
-        return repository.findAllByIrsIdAndTinAndDate(id, tin, riskAnalysisInterval.getId());
+    public List<RiskIndicatorView> findAllByIrsIdAndTin(UUID id, Long tin, Integer intervalId) {
+        return repository.findAllByIrsIdAndTinAndDate(id, tin, intervalId);
     }
 
     @Override
-    public List<RiskIndicatorView> findAllByTin(Long tin) {
-        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
-                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
-                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
+    public List<RiskIndicatorView> findAllByTin(Long tin, Integer intervalId) {
+        return repository.findAllByTinAndDate(tin, intervalId);
+    }
 
-        return repository.findAllByTinAndDate(tin, riskAnalysisInterval.getId());
+    @Override
+    public Page<RiskIndicatorView> findAllToFixByTin(Long tin, Integer intervalId, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return repository.findAllFileContainsByTinAndDate(tin, intervalId, pageable);
     }
 
     @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da

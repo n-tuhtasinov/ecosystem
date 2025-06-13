@@ -28,6 +28,7 @@ import uz.technocorp.ecosystem.modules.template.Template;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
@@ -231,20 +232,33 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     public Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         UUID profileId = user.getProfileId();
-        Profile profile = profileRepository
-                .findById(profileId)
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "Id", profileId));
-        Integer regionId = profile.getRegionId();
-        if (isAssigned) {
-            if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
-            else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            Profile profile = profileRepository
+                    .findById(profileId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));
+            Integer regionId = profile.getRegionId();
+            if (isAssigned) {
+                if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
+                if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+                else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
+            } else {
+                if (tin != null) return repository.getAllByLegalTin(pageable, tin);
+                if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber);
+                else return repository.getAllByRegion(pageable, regionId);
+            }
+        } else if (role == Role.INSPECTOR) {
+            if (registryNumber != null) return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
+            if (tin != null) return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
+            else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
         } else {
-            if (tin != null) return repository.getAllByLegalTin(pageable, tin);
-            if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber);
-            else return repository.getAllByRegion(pageable, regionId);
+            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            Profile profile = profileRepository
+                    .findById(profileId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));
+            return repository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId);
         }
+
     }
 
     @Override

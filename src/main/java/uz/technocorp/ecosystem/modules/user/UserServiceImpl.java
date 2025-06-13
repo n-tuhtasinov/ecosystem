@@ -14,6 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
 import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
 import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
 import uz.technocorp.ecosystem.shared.AppConstants;
@@ -54,10 +57,13 @@ public class UserServiceImpl implements UserService {
     private final ProfileRepository profileRepository;
     private final DepartmentRepository departmentRepository;
     private final OfficeRepository officeRepository;
+    private final RiskAnalysisIntervalRepository intervalRepository;
 
     @Override
     public UserMeDto getMe(User user) {
-        return new UserMeDto(user.getId(), user.getName(), user.getRole().name(), user.getDirections());
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository.findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Interval ma'lomoti topilmadi"));
+        return new UserMeDto(user.getId(), user.getName(), user.getRole().name(), user.getDirections(), riskAnalysisInterval);
     }
 
     @Override
