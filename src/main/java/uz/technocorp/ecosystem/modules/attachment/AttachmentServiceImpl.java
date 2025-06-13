@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.utils.Generator;
 
@@ -15,8 +16,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Rasulov Komil
@@ -101,6 +105,23 @@ public class AttachmentServiceImpl implements AttachmentService {
         repository.deleteByPath(path);
     }
 
+    @Override
+    public void deleteByPaths(Collection<String> pathList) {
+        if (pathList == null || pathList.isEmpty()) {
+            throw new RuntimeException("Files map bo'sh bo'lishi mumkin emas!");
+        }
+        List<String> validPaths = pathList.stream()
+                .filter(Objects::nonNull)
+                .filter(path -> !path.trim().isEmpty())
+                .collect(Collectors.toList());
+
+        if (validPaths.isEmpty()) {
+            throw new RuntimeException("Files mapning elementi bo'sh bo'lishi mumkin emas!");
+        }
+
+        repository.deleteByPaths(validPaths);
+    }
+
     private Path createDirectory(String folder) {
         LocalDate now = LocalDate.now();
         int year = now.getYear();
@@ -123,7 +144,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private String saveToDatabase(Path filePath, String htmlContent) {
         String standardizedPath = getStandardizedPath(filePath);
         Attachment savedAttachment = repository.save(new Attachment(standardizedPath, htmlContent));
-        return "/" + savedAttachment.getPath();
+        return savedAttachment.getPath();
     }
 
     private String replaceVariables(String htmlContent, Map<String, String> variables) {
@@ -135,7 +156,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     private String getStandardizedPath(Path path) {
-        return path.toString().replace("\\", "/");
+        return "/" + path.toString().replace("\\", "/");
     }
 
     private String getQrCodeBase64(Path filePath) {

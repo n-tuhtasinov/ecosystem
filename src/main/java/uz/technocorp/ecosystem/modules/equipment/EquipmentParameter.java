@@ -44,7 +44,7 @@ public enum EquipmentParameter {
     public static String nameWithUnit(String id) {
         return Stream.of(EquipmentParameter.values())
                 .filter(e -> id != null && id.equals(e.id))
-                .map(e -> e.nameUz + ": " + e.unit)
+                .map(e -> e.nameUz + (e.unit.isBlank() ? "" : " (" + e.unit + ")"))
                 .findFirst()
                 .orElse(null);
     }
