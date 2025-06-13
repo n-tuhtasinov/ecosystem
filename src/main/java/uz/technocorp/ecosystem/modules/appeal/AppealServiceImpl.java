@@ -86,6 +86,9 @@ public class AppealServiceImpl implements AppealService {
 
         // Create a document
         documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
+
+        // Delete files from Attachment
+        attachmentService.deleteByPaths(dto.getDto().getFiles().values());
     }
 
     @Override
@@ -245,12 +248,12 @@ public class AppealServiceImpl implements AppealService {
         AppealStatus appealStatus;
         if (role == Role.REGIONAL) {
             if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) {
-                throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: "+appeal.getStatus().name());
+                throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
             }
             appealStatus = AppealStatus.IN_APPROVAL;
         } else if (role == Role.MANAGER) {
             if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) {
-                throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: "+appeal.getStatus().name());
+                throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: " + appeal.getStatus().name());
             }
             appealStatus = AppealStatus.COMPLETED;
         } else {

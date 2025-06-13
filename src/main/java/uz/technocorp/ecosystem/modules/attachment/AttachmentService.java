@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.attachment;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -18,4 +19,6 @@ public interface AttachmentService {
     String getHtmlByPath(String path);
 
     void deleteByPath(String path);
+
+    void deleteByPaths(Collection<String> pathList);
 }

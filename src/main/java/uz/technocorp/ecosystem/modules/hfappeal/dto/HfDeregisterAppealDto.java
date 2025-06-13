@@ -10,6 +10,8 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -50,6 +52,8 @@ public class HfDeregisterAppealDto implements AppealDto {
 
         @NotBlank(message = "Asos hujjati jo'natilmadi")
         private String actPath;
+
+        private Map<String, String> files = new HashMap<>(); // TODO
 
         @Override
         public AppealType getAppealType() {
