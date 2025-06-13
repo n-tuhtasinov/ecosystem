@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.user.dto;
 
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -13,5 +15,6 @@ public record UserMeDto(
         UUID id,
         String name,
         String role,
-        List<String> directions
+        List<String> directions,
+        RiskAnalysisInterval interval
 ) {}
