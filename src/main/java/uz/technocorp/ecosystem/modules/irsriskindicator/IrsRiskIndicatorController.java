@@ -56,7 +56,7 @@ public class IrsRiskIndicatorController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.DELETED));
     }
 
-    @GetMapping("/for-one}")
+    @GetMapping("/for-one")
     public ResponseEntity<?> getById(@RequestParam(value = "tin") Long tin,
                                      @RequestParam(value = "id") UUID id,
                                      @RequestParam(value = "intervalId") Integer intervalId) {
