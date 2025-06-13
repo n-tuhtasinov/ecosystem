@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public interface AttractionRiskIndicatorService {
 
-    void create(EquipmentRiskIndicatorDto dto);
+    void create(List<EquipmentRiskIndicatorDto> dtos);
     void update(UUID id, EquipmentRiskIndicatorDto dto);
     void delete(UUID id);
     void attachFile(UUID id, FilePathDto dto);

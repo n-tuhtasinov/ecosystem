@@ -49,34 +49,39 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
     private final AttachmentRepository attachmentRepository;
 
     @Override
-    public void create(EquipmentRiskIndicatorDto dto) {
+    public void create(List<EquipmentRiskIndicatorDto> dtos) {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
                 .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
-        List<AttractionRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.equipmentId());
-        if (!allByQuarter.isEmpty()) {
-            AttractionRiskIndicator existRiskIndicator = allByQuarter
-                    .stream()
-                    .filter(riskIndicator -> riskIndicator
-                            .getIndicatorType()
-                            .equals(dto.indicatorType()))
-                    .toList()
-                    .getFirst();
-            if (existRiskIndicator != null) {
-                throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
-            }
-
+        for (EquipmentRiskIndicatorDto dto : dtos) {
+//            List<AttractionRiskIndicator> allByQuarter = repository.findAllByQuarter(riskAnalysisInterval.getId(), dto.equipmentId());
+//            if (!allByQuarter.isEmpty()) {
+//                AttractionRiskIndicator existRiskIndicator = allByQuarter
+//                        .stream()
+//                        .filter(riskIndicator -> riskIndicator
+//                                .getIndicatorType()
+//                                .equals(dto.indicatorType()))
+//                        .toList()
+//                        .getFirst();
+//                if (existRiskIndicator != null) {
+//                    throw new RuntimeException("Ushbu ko'rsatkich bo'yicha ma'lumot kiritilgan!");
+//                }
+//
+//            }
+            repository.save(
+                    AttractionRiskIndicator
+                            .builder()
+                            .equipmentId(dto.equipmentId())
+                            .indicatorType(dto.indicatorType())
+                            .score(dto.indicatorType().getScore())
+                            .description(dto.description())
+                            .tin(dto.tin())
+                            .riskAnalysisInterval(riskAnalysisInterval)
+                            .build()
+            );
         }
-        repository.save(
-                AttractionRiskIndicator
-                        .builder()
-                        .equipmentId(dto.equipmentId())
-                        .indicatorType(dto.indicatorType())
-                        .score(dto.indicatorType().getScore())
-                        .description(dto.description())
-                        .tin(dto.tin())
-                        .build()
-        );
+
+
 
     }
 

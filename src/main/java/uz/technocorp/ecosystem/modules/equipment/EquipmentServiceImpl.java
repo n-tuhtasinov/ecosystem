@@ -127,22 +127,38 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public Page<HfPageView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Profile profile = profileService.getProfile(user.getProfileId());
-
-        Integer regionId = profile.getRegionId();
-        if (isAssigned) {
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            Profile profile = profileService.getProfile(user.getProfileId());
+            Integer regionId = profile.getRegionId();
+            if (isAssigned) {
+                if (registryNumber != null)
+                    return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION);
+                if (tin != null)
+                    return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION);
+                else
+                    return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION);
+            } else {
+                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION);
+                if (registryNumber != null)
+                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION);
+                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION);
+            }
+        } else if (role == Role.INSPECTOR) {
+            if (registryNumber != null)
+                return equipmentRepository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION, user.getId());
             if (tin != null)
-                return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION);
-            if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION);
+                return equipmentRepository
+                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ATTRACTION, user.getId());
             else
-                return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION);
+                return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ATTRACTION);
+
         } else {
-            if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION);
-            if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION);
-            else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION);
+            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION);
+            Profile profile = profileService.getProfile(user.getProfileId());
+            return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ATTRACTION);
         }
+
     }
 
     @Override
@@ -154,21 +170,36 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public Page<HfPageView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Profile profile = profileService.getProfile(user.getProfileId());
-
-        Integer regionId = profile.getRegionId();
-        if (isAssigned) {
+        Role role = user.getRole();
+        if (role == Role.REGIONAL) {
+            Profile profile = profileService.getProfile(user.getProfileId());
+            Integer regionId = profile.getRegionId();
+            if (isAssigned) {
+                if (registryNumber != null)
+                    return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR);
+                if (tin != null)
+                    return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR);
+                else
+                    return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR);
+            } else {
+                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR);
+                if (registryNumber != null)
+                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR);
+                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR);
+            }
+        } else if (role == Role.INSPECTOR) {
+            if (registryNumber != null)
+                return equipmentRepository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR, user.getId());
             if (tin != null)
-                return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR);
-            if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR);
+                return equipmentRepository
+                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ELEVATOR, user.getId());
             else
-                return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR);
+                return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ELEVATOR);
+
         } else {
-            if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR);
-            if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR);
-            else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR);
+            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR);
+            Profile profile = profileService.getProfile(user.getProfileId());
+            return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ELEVATOR);
         }
     }
 
