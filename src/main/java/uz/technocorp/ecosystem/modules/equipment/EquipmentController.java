@@ -71,7 +71,7 @@ public class EquipmentController {
                                                      @RequestParam(value = "legalTin", required = false) Long legalTin,
                                                      @RequestParam(value = "registryNumber", required = false) String registryNumber,
                                                      @RequestParam(value = "intervalId") Integer intervalId,
-                                                     @RequestParam(value = "isAssigned") Boolean isAssigned
+                                                     @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
         Page<HfPageView> all = equipmentService.getAllAttractionForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
@@ -84,7 +84,7 @@ public class EquipmentController {
                                                      @RequestParam(value = "legalTin", required = false) Long legalTin,
                                                      @RequestParam(value = "registryNumber", required = false) String registryNumber,
                                                      @RequestParam(value = "intervalId") Integer intervalId,
-                                                     @RequestParam(value = "isAssigned") Boolean isAssigned
+                                                     @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
         Page<HfPageView> all = equipmentService.getAllElevatorForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
