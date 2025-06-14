@@ -10,6 +10,8 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -55,6 +57,8 @@ public class IrsAcceptanceAppealDto implements AppealDto {
     private String sesConclusionPath;
 
     private String additionalFilePath;
+
+    private Map<String, String> files = new HashMap<>(); // TODO
 
     @Override
     public AppealType getAppealType() {

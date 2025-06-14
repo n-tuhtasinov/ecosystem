@@ -4,9 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -26,6 +24,8 @@ public interface AppealDto {
     String getAddress();
 
     String getPhoneNumber();
+
+    Map<String, String> getFiles();
 
     @Schema(hidden = true)
     LocalDate getDeadline();
