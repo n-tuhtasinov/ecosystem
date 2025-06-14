@@ -1,6 +1,5 @@
 package uz.technocorp.ecosystem.modules.childequipment;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.childequipment.dto.ChildEquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
@@ -24,8 +23,8 @@ public interface ChildEquipmentService {
 
     void update(Integer childEquipmentId, ChildEquipmentDto childEquipmentDto);
 
-    ChildEquipment getById(Integer equipmentId);
+    ChildEquipment findById(Integer equipmentId);
 
-    String getChildEquipmentNameById(Integer childEquipmentId);
+    String getNameById(Integer childEquipmentId);
 
 }

@@ -33,7 +33,6 @@ public class ChildEquipmentSortServiceImpl implements ChildEquipmentSortService 
 
     @Override
     public void create(ChildEquipmentSortDto dto) {
-        ChildEquipment byId = childEquipmentService.getById(dto.childEquipmentId());
         childEquipmentSortRepository.save(ChildEquipmentSort.builder()
                 .name(dto.name())
                 .childEquipmentId(dto.childEquipmentId())
@@ -60,14 +59,24 @@ public class ChildEquipmentSortServiceImpl implements ChildEquipmentSortService 
 
     @Override
     public void update(Integer childEquipmentSortId, ChildEquipmentSortDto dto) {
-        ChildEquipmentSort sort = childEquipmentSortRepository.findById(childEquipmentSortId).orElseThrow(() -> new ResourceNotFoundException("Child equipment", "IDsi", childEquipmentSortId));
+        ChildEquipmentSort sort = findById(childEquipmentSortId);
         sort.setName(dto.name());
         sort.setChildEquipmentId(dto.childEquipmentId());
         childEquipmentSortRepository.save(sort);
     }
 
+    private ChildEquipmentSort findById(Integer childEquipmentSortId) {
+        return childEquipmentSortRepository.findById(childEquipmentSortId).orElseThrow(() -> new ResourceNotFoundException("Child equipment", "IDsi", childEquipmentSortId));
+    }
+
     @Override
     public ChildEquipmentSortViewById getById(Integer childEquipmentSortId) {
         return childEquipmentSortRepository.getSortById(childEquipmentSortId).orElseThrow(() -> new ResourceNotFoundException("ChildEquipmentSort", "IDsi", childEquipmentSortId));
+    }
+
+
+    @Override
+    public String getNameById(Integer childEquipmentSortId) {
+        return findById(childEquipmentSortId).getName();
     }
 }

@@ -35,6 +35,7 @@ public record EquipmentDto(
         LocalDate nonDestructiveCheckDate,
         String description,
         UUID inspectorId,
-        Map<String, String> files
+        Map<String, String> files,
+        UUID attractionPassportId   // for only attraction
 ) {
 }
