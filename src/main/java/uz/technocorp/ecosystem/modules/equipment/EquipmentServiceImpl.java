@@ -133,30 +133,30 @@ public class EquipmentServiceImpl implements EquipmentService {
             Integer regionId = profile.getRegionId();
             if (isAssigned) {
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION);
+                    return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
                 if (tin != null)
-                    return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION);
+                    return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION.name());
                 else
-                    return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION);
+                    return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION.name());
             } else {
-                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION);
+                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION.name());
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION);
-                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION);
+                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION.name());
+                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION.name());
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION, user.getId());
+                return equipmentRepository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name(), user.getId());
             if (tin != null)
                 return equipmentRepository
-                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ATTRACTION, user.getId());
+                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ATTRACTION.name(), user.getId());
             else
-                return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ATTRACTION);
+                return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ATTRACTION.name());
 
         } else {
-            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION);
+            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
             Profile profile = profileService.getProfile(user.getProfileId());
-            return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ATTRACTION);
+            return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ATTRACTION.name());
         }
 
     }
@@ -176,30 +176,30 @@ public class EquipmentServiceImpl implements EquipmentService {
             Integer regionId = profile.getRegionId();
             if (isAssigned) {
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR);
+                    return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
                 if (tin != null)
-                    return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR);
+                    return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR.name());
                 else
-                    return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR);
+                    return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR.name());
             } else {
-                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR);
+                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR.name());
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR);
-                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR);
+                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR.name());
+                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR.name());
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR, user.getId());
+                return equipmentRepository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name(), user.getId());
             if (tin != null)
                 return equipmentRepository
-                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ELEVATOR, user.getId());
+                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ELEVATOR.name(), user.getId());
             else
-                return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ELEVATOR);
+                return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ELEVATOR.name());
 
         } else {
-            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR);
+            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
             Profile profile = profileService.getProfile(user.getProfileId());
-            return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ELEVATOR);
+            return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ELEVATOR.name());
         }
     }
 

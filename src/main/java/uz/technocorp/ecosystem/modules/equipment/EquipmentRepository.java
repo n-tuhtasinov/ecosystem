@@ -57,7 +57,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and aia.interval_id = :intervalId
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId, EquipmentType equipmentType);
+    Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId, String equipmentType);
 
     @Query(value = """
             select e.id as id,
@@ -75,7 +75,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and aia.interval_id = :intervalId
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByInspectorIdAndInterval(Pageable pageable, UUID inspectorId, Integer intervalId, EquipmentType equipmentType);
+    Page<HfPageView> getAllByInspectorIdAndInterval(Pageable pageable, UUID inspectorId, Integer intervalId, String equipmentType);
+
     @Query(value = """
             select e.id as id,
             registry_number as registryNumber,
@@ -92,7 +93,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and aia.interval_id = :intervalId
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTinAndInterval(Pageable pageable, Long legalTin, Integer intervalId, EquipmentType equipmentType);
+    Page<HfPageView> getAllByLegalTinAndInterval(Pageable pageable, Long legalTin, Integer intervalId, String equipmentType);
 
     @Query(value = """
             select e.id as id,
@@ -111,7 +112,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and e.type = :equipmentType
             and aia.inspector_id = :inspectorId
             """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTinAndIntervalAndInspectorId(Pageable pageable, Long legalTin, Integer intervalId, EquipmentType equipmentType, UUID inspectorId);
+    Page<HfPageView> getAllByLegalTinAndIntervalAndInspectorId(Pageable pageable, Long legalTin, Integer intervalId, String equipmentType, UUID inspectorId);
 
     @Query(value = """
             select e.id as id,
@@ -129,7 +130,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and aia.interval_id = :intervalId
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId, EquipmentType equipmentType);
+    Page<HfPageView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId, String equipmentType);
 
     @Query(value = """
             select e.id as id,
@@ -148,7 +149,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and e.type = :equipmentType
             and aia.inspector_id = :inspectorId
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumberAndIntervalAndInspectorId(Pageable pageable, String registryNumber, Integer intervalId, EquipmentType equipmentType, UUID inspectorId);
+    Page<HfPageView> getAllByRegistryNumberAndIntervalAndInspectorId(Pageable pageable, String registryNumber, Integer intervalId, String equipmentType, UUID inspectorId);
 
     @Query(value = """
             select e.id as id,
@@ -163,7 +164,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and aia.id is null
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId, EquipmentType equipmentType);
+    Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId, String equipmentType);
 
     @Query(value = """
             select e.id as id,
@@ -178,7 +179,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and aia.id is null
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin, EquipmentType equipmentType);
+    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin, String equipmentType);
 
     @Query(value = """
             select e.id as id,
@@ -193,5 +194,5 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and aia.id is null
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, EquipmentType equipmentType);
+    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, String equipmentType);
 }
