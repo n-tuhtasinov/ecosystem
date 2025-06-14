@@ -18,7 +18,6 @@ import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
-import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
@@ -76,7 +75,6 @@ public class AppealServiceImpl implements AppealService {
     private final IonizingRadiationSourceService ionizingRadiationSourceService;
     private final EquipmentService equipmentService;
     private final HfTypeService hfTypeService;
-    private final ChildEquipmentService childEquipmentService;
 
     @Override
     @Transactional
@@ -244,22 +242,10 @@ public class AppealServiceImpl implements AppealService {
     public void confirm(User user, ConfirmationDto dto) {
         Appeal appeal = repository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
 
-        Role role = user.getRole();
-        AppealStatus appealStatus;
-        if (role == Role.REGIONAL) {
-            if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) {
-                throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
-            }
-            appealStatus = AppealStatus.IN_APPROVAL;
-        } else if (role == Role.MANAGER) {
-            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) {
-                throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: " + appeal.getStatus().name());
-            }
-            appealStatus = AppealStatus.COMPLETED;
-        } else {
-            throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting ))) ...");
-        }
+        // get status by role
+        AppealStatus appealStatus = getAppealStatusByRole(user.getRole(), appeal);
 
+        //update the appeal
         appeal.setStatus(appealStatus);
         appeal.setIsRejected(false); //because it may be confirming the previously rejected appeal.
         repository.save(appeal);
@@ -281,14 +267,22 @@ public class AppealServiceImpl implements AppealService {
         }
     }
 
-    @Override
-    public void setHfNameAndChildEquipmentName(EquipmentAppealDto dto) {
-        if (dto.getHazardousFacilityId() != null) {
-            String hfName = hfService.getHfNameById(dto.getHazardousFacilityId());
-            dto.setHazardousFacilityName(hfName);
+    private AppealStatus getAppealStatusByRole(Role role, Appeal appeal) {
+        AppealStatus appealStatus;
+        if (role == Role.REGIONAL) {
+            if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) {
+                throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
+            }
+            appealStatus = AppealStatus.IN_APPROVAL;
+        } else if (role == Role.MANAGER) {
+            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) {
+                throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: " + appeal.getStatus().name());
+            }
+            appealStatus = AppealStatus.COMPLETED;
+        } else {
+            throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting ))) ...");
         }
-        String name = childEquipmentService.getChildEquipmentNameById(dto.getChildEquipmentId());
-        dto.setChildEquipmentName(name);
+        return appealStatus;
     }
 
     @Override

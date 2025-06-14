@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.childequipmentsort;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.childequipmentsort.dto.ChildEquipmentSortDto;
 import uz.technocorp.ecosystem.modules.childequipmentsort.view.ChildEquipmentSortView;
@@ -27,5 +28,7 @@ public interface ChildEquipmentSortService {
     void update(Integer childEquipmentSortId, ChildEquipmentSortDto dto);
 
     ChildEquipmentSortViewById getById(Integer childEquipmentSortId);
+
+    String getNameById(Integer childEquipmentSortId);
 }
 

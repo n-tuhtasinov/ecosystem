@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
@@ -28,4 +29,5 @@ public interface EquipmentService {
 
     EquipmentViewById getById(UUID equipmentId);
 
+    Equipment findById(UUID equipmentId);
 }
