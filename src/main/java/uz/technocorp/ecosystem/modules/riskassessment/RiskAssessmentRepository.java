@@ -54,9 +54,10 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
 
     @Query(value = """
             select ra.id as id,
-                object_name as name,
+                hf.name as name,
                 sum_score as score,
-                hf.registry_number as registryNumber
+                hf.registry_number as registryNumber,
+                hf.address as address
                 from risk_assessment ra
                 join hazardous_facility hf on ra.hazardous_facility_id = hf.id
                 where ra.tin = :tin and hf.region_id = :regionId
@@ -66,9 +67,10 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
 
     @Query(value = """
             select ra.id as id,
-                object_name as name,
+                irs.registry_number as name,
                 sum_score as score,
-                irs.registry_number as registryNumber
+                irs.registry_number as registryNumber,
+                irs.address as address
                 from risk_assessment ra
                 join ionizing_radiation_source irs on ra.ionizing_radiation_source_id = irs.id
                 where ra.tin = :tin and irs.region_id = :regionId
@@ -78,9 +80,10 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
 
     @Query(value = """
             select ra.id as id,
-                object_name as name,
+
                 sum_score as score,
-                e.registry_number as registryNumber
+                e.registry_number as registryNumber,
+                e.address as address
                 from risk_assessment ra
                 join equipment e on ra.equipment_id = e.id
                 where ra.tin = :tin and e.region_id = :regionId

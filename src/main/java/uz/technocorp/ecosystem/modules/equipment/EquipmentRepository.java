@@ -80,7 +80,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     @Query(value = """
             select e.id as id,
             registry_number as registryNumber,
-            e.name as name,
+            e.type as name,
             legal_tin as legalTin,
             address,
             e.legal_name as legalName,
@@ -98,7 +98,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     @Query(value = """
             select e.id as id,
             registry_number as registryNumber,
-            e.name as name,
+            e.type as name,
             legal_tin as legalTin,
             address,
             e.legal_name as legalName,

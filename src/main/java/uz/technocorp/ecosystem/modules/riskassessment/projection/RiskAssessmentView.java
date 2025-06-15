@@ -10,11 +10,9 @@ import java.util.UUID;
  */
 public interface RiskAssessmentView {
 
-    Short getTin();
-    Integer getSumScore();
+    Integer getScore();
     String getAddress();
-    String getLegalName();
-    String getHazardousFacilityName();
+    String getName();
     String getRegionName();
     String getDistrictName();
     UUID getId();
