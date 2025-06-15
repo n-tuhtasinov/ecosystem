@@ -41,7 +41,7 @@ public class EquipmentPdfProcessor extends BaseAppealPdfProcessor {
         parameters.put("factoryNumber", dto.getFactoryNumber());
         parameters.put("model", dto.getModel());
         parameters.put("factory", dto.getFactory());
-        parameters.put("equipmentType", dto.getAppealType().name());
+        parameters.put("equipmentType", dto.getType().value);
         parameters.put("fullName", profile.getFullName());
 
         return parameters;
