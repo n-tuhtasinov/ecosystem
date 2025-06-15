@@ -162,12 +162,12 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
                                         .sumScore(dto.sumScore() + organizationScore)
-                                        .objectName(
-                                                irsRepository.findById(dto.objectId())
-                                                        .map(IonizingRadiationSource::getSymbol)
-                                                        .orElse("Nomi ma'lum emas.")
-
-                                        )
+//                                        .objectName(
+//                                                irsRepository.findById(dto.objectId())
+//                                                        .map(IonizingRadiationSource::getSymbol)
+//                                                        .orElse("Nomi ma'lum emas.")
+//
+//                                        )
                                         .tin(tin)
                                         .ionizingRadiationSourceId(dto.objectId())
                                         .riskAnalysisInterval(riskAnalysisInterval)
@@ -188,6 +188,7 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                                                         .tin(dto.tin())
                                                         .regionId(profile.getRegionId())
                                                         .districtId(profile.getDistrictId())
+                                                        .regionIds(regionIds)
                                                         .build()
                                         ));
 
