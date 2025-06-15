@@ -243,7 +243,7 @@ public class AppealServiceImpl implements AppealService {
         Appeal appeal = repository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
 
         // get status by role
-        AppealStatus appealStatus = getAppealStatusByRole(user.getRole(), appeal);
+        AppealStatus appealStatus = setApproverNameAndGetAppealStatusByRole(user, appeal);
 
         //update the appeal
         appeal.setStatus(appealStatus);
@@ -267,12 +267,14 @@ public class AppealServiceImpl implements AppealService {
         }
     }
 
-    private AppealStatus getAppealStatusByRole(Role role, Appeal appeal) {
+    private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal) {
+        Role role = user.getRole();
         AppealStatus appealStatus;
         if (role == Role.REGIONAL) {
             if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) {
                 throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
             }
+            appeal.setApproverName(user.getName());
             appealStatus = AppealStatus.IN_APPROVAL;
         } else if (role == Role.MANAGER) {
             if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) {

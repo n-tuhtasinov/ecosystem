@@ -135,6 +135,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
     public Page<IrsView> getAll(User user, IrsParams params) {
         Profile profile = profileService.getProfile(user.getProfileId());
 
+        //check by role
         if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
             Office office = officeService.findById(profile.getOfficeId());
             if (params.getRegionId() != null) {
@@ -144,7 +145,9 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
             }
             params.setRegionId(office.getRegionId());
         } else if (user.getRole() == Role.LEGAL) {
-            //TODO: legal va individual uchun yozish kerak
+            params.setLegalTin(profile.getTin());
+        } else {
+            //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
 
         return repository.getAll(params);

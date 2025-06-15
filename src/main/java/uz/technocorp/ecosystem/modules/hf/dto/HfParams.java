@@ -1,5 +1,10 @@
 package uz.technocorp.ecosystem.modules.hf.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
 /**
@@ -8,14 +13,17 @@ import java.time.LocalDate;
  * @created 08.06.2025
  * @since v1.0
  */
-public record HfParams(
-        Integer page,
-        Integer size,
-        Long legalTin,
-        String registryNumber,
-        Integer regionId,
-        Integer districtId,
-        LocalDate startDate,
-        LocalDate endDate
-) {
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class HfParams {
+    private Integer page;
+    private Integer size;
+    private Long legalTin;
+    private String registryNumber;
+    private Integer regionId;
+    private Integer districtId;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

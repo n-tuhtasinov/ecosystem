@@ -101,6 +101,8 @@ public class Appeal extends BaseEntity {
 
     private String executorName; //ijrosini ta'minlovchi shaxs (inspektor yoki qo'mita hodimi)
 
+    private String approverName; // hujjatni kelishib beruvchi shaxs (hududiy bo'lim boshlig'i)
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AppealStatus status;
