@@ -29,8 +29,8 @@ public class RiskAssessment extends BaseEntity {
 
     private int sumScore;
 
-    @Column(nullable = false)
-    private String objectName;
+//    @Column(nullable = false)
+//    private String objectName;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = HazardousFacility.class)
     @JoinColumn(name = "hazardous_facility_id", insertable = false, updatable = false)
