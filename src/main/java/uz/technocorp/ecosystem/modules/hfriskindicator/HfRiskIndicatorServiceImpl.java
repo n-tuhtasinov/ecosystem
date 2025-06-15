@@ -206,12 +206,12 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
                                         .sumScore(dto.sumScore() + organizationScore)
-                                        .objectName(
-                                                hazardousFacilityRepository.findById(dto.objectId())
-                                                        .map(HazardousFacility::getName)
-                                                        .orElse("Nomi ma'lum emas.")
-
-                                        )
+//                                        .objectName(
+//                                                hazardousFacilityRepository.findById(dto.objectId())
+//                                                        .map(HazardousFacility::getName)
+//                                                        .orElse("Nomi ma'lum emas.")
+//
+//                                        )
                                         .tin(tin)
                                         .hazardousFacilityId(dto.objectId())
                                         .riskAnalysisInterval(riskAnalysisInterval)

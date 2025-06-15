@@ -172,12 +172,12 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
                                         .sumScore(dto.sumScore() + organizationScore)
-                                        .objectName(
-                                                equipmentRepository.findById(dto.objectId())
-                                                        .map(Equipment::getRegistryNumber)
-                                                        .orElse("Nomi ma'lum emas.")
-
-                                        )
+//                                        .objectName(
+//                                                equipmentRepository.findById(dto.objectId())
+//                                                        .map(Equipment::getRegistryNumber)
+//                                                        .orElse("Nomi ma'lum emas.")
+//
+//                                        )
                                         .tin(tin)
                                         .equipmentId(dto.objectId())
                                         .riskAnalysisInterval(riskAnalysisInterval)
