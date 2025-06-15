@@ -19,6 +19,8 @@ import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
@@ -55,6 +57,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private final TemplateService templateService;
     private final ProfileService profileService;
     private final ProfileRepository profileRepository;
+    private final OfficeService officeService;
 
     @Override
     public void create(Appeal appeal) {
@@ -220,7 +223,27 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     @Override
     public Page<HfCustom> getAll(User user, HfParams params) {
-        return repository.getHfCustoms(user, params);
+
+        Profile profile = profileService.getProfile(user.getProfileId());
+
+        // check by role
+        if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
+
+            Office office = officeService.findById(profile.getOfficeId());
+            if (params.getRegionId() != null) {
+                if (!params.getRegionId().equals(office.getRegionId())) {
+                    throw new RuntimeException("Sizga bu viloyat ma'lumotlarini ko'rish uchun ruxsat berilmagan");
+                }
+            }
+            params.setRegionId(office.getRegionId());
+        } else if (user.getRole() == Role.LEGAL) {
+            params.setLegalTin(profile.getTin());
+        }else {
+            //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
+        }
+
+
+        return repository.getHfCustoms(params);
     }
 
     @Override
