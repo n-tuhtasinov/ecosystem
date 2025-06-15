@@ -16,6 +16,6 @@ import java.util.Map;
  */
 public interface HfRepo {
 
-    Page<HfCustom> getHfCustoms(User user, HfParams params);
+    Page<HfCustom> getHfCustoms(HfParams params);
 
 }

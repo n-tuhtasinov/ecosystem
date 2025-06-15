@@ -18,6 +18,7 @@ public interface AppealViewById {
     String getNumber();
     String getAddress();
     String getExecutorName();
+    String getApproverName();
     LocalDate getDeadline();
     String getOfficeName();
     String getStatus();

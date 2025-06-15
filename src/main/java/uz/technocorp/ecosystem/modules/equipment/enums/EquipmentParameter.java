@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.equipment;
+package uz.technocorp.ecosystem.modules.equipment.enums;
 
 
 import lombok.AllArgsConstructor;

@@ -15,6 +15,7 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentParameter;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
@@ -99,6 +100,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .inspectorId(appeal.getExecutorId())
                 .registryFilePath(registryFilepath)
                 .registrationDate(LocalDate.now())
+                .attractionPassportId(dto.attractionPassportId())
                 .build();
 
         equipmentRepository.save(equipment);
@@ -109,6 +111,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         Profile profile = profileService.getProfile(user.getProfileId());
 
+        // check by role
         if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
             Office office = officeService.findById(profile.getOfficeId());
             if (params.getRegionId() != null) {
@@ -118,7 +121,9 @@ public class EquipmentServiceImpl implements EquipmentService {
             }
             params.setRegionId(office.getRegionId());
         } else if (user.getRole() == Role.LEGAL) {
-            //TODO: legal va individual uchun yozish kerak
+            params.setLegalTin(profile.getTin());
+        }else {
+            //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
 
         return equipmentRepository.getAllByParams(user, params);
@@ -168,6 +173,11 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
+    public Equipment findById(UUID equipmentId) {
+        return equipmentRepository.findById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
+    }
+
+    @Override
     public Page<HfPageView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Role role = user.getRole();
@@ -213,7 +223,20 @@ public class EquipmentServiceImpl implements EquipmentService {
     protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
         return switch (appealType) {
             case REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P");
-            case REGISTER_CONTAINER -> getInfo(EquipmentType.CONTAINER, "C");
+            case REGISTER_CONTAINER -> getInfo(EquipmentType.CONTAINER, "AG");
+            case REGISTER_BOILER -> getInfo(EquipmentType.BOILER, "K");
+            case REGISTER_ELEVATOR -> getInfo(EquipmentType.ELEVATOR, "L");
+            case REGISTER_ESCALATOR -> getInfo(EquipmentType.ESCALATOR, "E");
+            case REGISTER_CABLEWAY -> getInfo(EquipmentType.CABLEWAY, "KD");
+            case REGISTER_HOIST -> getInfo(EquipmentType.HOIST, "V");
+            case REGISTER_PIPELINE -> getInfo(EquipmentType.PIPELINE, "T");
+            case REGISTER_ATTRACTION_PASSPORT -> getInfo(EquipmentType.ATTRACTION_PASSPORT, "AT");
+            case REGISTER_ATTRACTION -> getInfo(EquipmentType.ATTRACTION, "ADR");
+            case REGISTER_CHEMICAL_CONTAINER -> getInfo(EquipmentType.CHEMICAL_CONTAINER, "XA");
+            case REGISTER_HEAT_PIPELINE -> getInfo(EquipmentType.HEAT_PIPELINE, "PAX");
+            case REGISTER_BOILER_UTILIZER -> getInfo(EquipmentType.BOILER_UTILIZER, "KC");
+            case REGISTER_LPG_CONTAINER -> getInfo(EquipmentType.LPG_CONTAINER, "AG");
+            case REGISTER_LPG_POWERED -> getInfo(EquipmentType.LPG_POWERED, "TG");
             default -> throw new RuntimeException("Ariza turi hech bir qurilma turiga mos kelmadi");
         };
     }
@@ -227,7 +250,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         Map<String, String> parameters = new HashMap<>();
 
         parameters.put("attractionName", dto.attractionName());
-        parameters.put("attractionType", childEquipmentService.getById(dto.childEquipmentId()).getName());
+        parameters.put("attractionType", childEquipmentService.findById(dto.childEquipmentId()).getName());
         parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
         parameters.put("manufacturedAt", dto.manufacturedAt().toString());
         parameters.put("legalName", appeal.getLegalName());
@@ -251,7 +274,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         parameters.put("legalAddress", appeal.getLegalAddress());
         parameters.put("equipmentType", EquipmentType.valueOf(appeal.getData().get("type").asText()).value);
-        parameters.put("childEquipmentName", childEquipmentService.getById(dto.childEquipmentId()).getName());
+        parameters.put("childEquipmentName", childEquipmentService.findById(dto.childEquipmentId()).getName());
         parameters.put("legalTin", appeal.getLegalTin().toString());
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("factoryNumber", dto.factoryNumber());
@@ -314,6 +337,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getParentOrganization(),
                 equipment.getNonDestructiveCheckDate(),
                 equipment.getAttractionPassportId(),
+                equipment.getAttractionPassport() == null? null : equipment.getAttractionPassport().getRegistryNumber(),
                 equipment.getDescription(),
                 equipment.getInspectorId(),
                 equipment.getInspector() == null ? null : equipment.getInspector().getName(),

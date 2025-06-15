@@ -51,6 +51,7 @@ public record EquipmentViewById(
         String parentOrganization,
         LocalDate nonDestructiveCheckDate,
         UUID attractionPassportId,
+        String attractionPassportRegistryNumber,
         String description,
 
         UUID inspectorUserId,

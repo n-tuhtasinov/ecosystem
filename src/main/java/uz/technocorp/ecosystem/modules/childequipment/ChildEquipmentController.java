@@ -52,7 +52,7 @@ public class ChildEquipmentController {
 
     @GetMapping("/{childEquipmentId}")
     public ResponseEntity<?> getById (@PathVariable Integer childEquipmentId) {
-        ChildEquipment child = childEquipmentService.getById(childEquipmentId);
+        ChildEquipment child = childEquipmentService.findById(childEquipmentId);
         return ResponseEntity.ok(new ApiResponse(child));
     }
 
