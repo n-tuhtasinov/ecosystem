@@ -92,6 +92,16 @@ public class EquipmentGeneratePdfController {
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(pipelineDto, user)));
     }
 
+    @PostMapping("/attraction-passport")
+    public ResponseEntity<?> createAttractionPassport(@CurrentUser User user, @Valid @RequestBody AttractionPassportDto attractionPassportDto) {
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(attractionPassportDto, user)));
+    }
+
+    @PostMapping("/attraction")
+    public ResponseEntity<?> createAttraction(@CurrentUser User user, @Valid @RequestBody AttractionDto attractionDto) {
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(attractionDto, user)));
+    }
+
     private String preparePdfWithParam(AppealDto dto, User user) {
         return appealService.preparePdfWithParam(dto, user);
     }
