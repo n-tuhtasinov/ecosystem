@@ -43,6 +43,10 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
 
     Optional<Appeal> findByIdAndStatusAndExecutorId(UUID appealId, AppealStatus appealStatus, UUID inspectorId);
 
+    Optional<Appeal> findByIdAndStatus(UUID appealId, AppealStatus appealStatus);
+
+    Optional<Appeal> findByIdAndStatusAndOfficeId(UUID appealId, AppealStatus appealStatus, Integer officeId);
+
     @Modifying
     @Transactional
     @Query("update Appeal set conclusion = :conclusion, status = :status  where id = :id")

@@ -121,7 +121,7 @@ public class Appeal extends BaseEntity {
     private String resolution; // Hududiy boshqarma boshlig'i rezolyutsiyasi
 
     @Column
-    private String conclusion; // Inspector xulosasi
+    private String conclusion; // Inspector va reject qilish xulosasi
 
     @Column(columnDefinition = "jsonb", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
