@@ -16,6 +16,7 @@ import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
+import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.irsriskindicator.IrsRiskIndicator;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
@@ -196,6 +197,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
                                                     .regionId(profile.getRegionId())
                                                     .districtId(profile.getDistrictId())
                                                     .regionIds(regionIds)
+                                                    .status(InspectionStatus.NEW)
                                                     .build()
                                     );
                                 });

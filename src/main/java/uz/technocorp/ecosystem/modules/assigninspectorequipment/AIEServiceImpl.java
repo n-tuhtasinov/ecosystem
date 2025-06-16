@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AIDto;
 import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
-import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -23,6 +23,10 @@ public class AIEServiceImpl implements AIEService {
 
     @Override
     public void create(AIDto dto) {
+        Optional<AssignInspectorEquipment> optionalAssignInspectorEquipment = repository.findByInspectorIdAndIntervalId(dto.inspectorId(), dto.intervalId());
+        if (optionalAssignInspectorEquipment.isPresent()) {
+            throw new RuntimeException("Ushbu XICHO uchun inspektor tayinlangan!");
+        }
         repository.save(
                 AssignInspectorEquipment
                         .builder()

@@ -15,6 +15,7 @@ import uz.technocorp.ecosystem.modules.hf.HazardousFacilityRepository;
 import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
+import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
@@ -232,6 +233,7 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                                                             .regionId(profile.getRegionId())
                                                             .regionIds(regionIds)
                                                             .districtId(profile.getDistrictId())
+                                                            .status(InspectionStatus.NEW)
                                                             .build()
                                             );
                                         });

@@ -34,11 +34,12 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,
-            
+            'INM' as name,
             legal_tin as legalTin,
             address,
             irs.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aii.id as assignId
             from ionizing_radiation_source irs
             inner join assign_inspector_irs aii on irs.id = aii.irs_id
             join users u on aii.inspector_id = u.id
@@ -51,16 +52,17 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,
-            
+            'INM' as name,
             legal_tin as legalTin,
             address,
             irs.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aii.id as assignId
             from ionizing_radiation_source irs
             inner join assign_inspector_irs aii on irs.id = aii.irs_id
             join users u on aii.inspector_id = u.id
             join profile p on u.profile_id = p.id
-            where aii.inspector_id = :regionId
+            where aii.inspector_id = :inspectorId
             and aii.interval_id = :intervalId
             """, nativeQuery = true)
     Page<HfPageView> getAllByInspectorIdAndInterval(Pageable pageable, UUID inspectorId, Integer intervalId);
@@ -68,11 +70,12 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,
-            
+            'INM' as name,
             legal_tin as legalTin,
             address,
             irs.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aii.id as assignId
             from ionizing_radiation_source irs
             inner join assign_inspector_irs aii on irs.id = aii.irs_id
             join users u on aii.inspector_id = u.id
@@ -85,11 +88,12 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,
-            
+            'INM' as name,
             legal_tin as legalTin,
             address,
             irs.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aii.id as assignId
             from ionizing_radiation_source irs
             inner join assign_inspector_irs aii on irs.id = aii.irs_id
             join users u on aii.inspector_id = u.id
@@ -103,11 +107,12 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,
-            
+            'INM' as name,
             legal_tin as legalTin,
             address,
             irs.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aii.id as assignId
             from ionizing_radiation_source irs
             inner join assign_inspector_irs aii on irs.id = aii.irs_id
             join users u on aii.inspector_id = u.id
@@ -120,11 +125,12 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,
-            
+            'INM' as name,
             legal_tin as legalTin,
             address,
             irs.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aii.id as assignId
             from ionizing_radiation_source irs
             inner join assign_inspector_irs aii on irs.id = aii.irs_id
             join users u on aii.inspector_id = u.id
@@ -138,7 +144,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,
-            
+            'INM' as name,
             legal_tin as legalTin,
             address,
             irs.legal_name as legalName
@@ -152,7 +158,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,
-            
+            'INM' as name,
             legal_tin as legalTin,
             address,
             irs.legal_name as legalName
@@ -166,7 +172,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
     @Query(value = """
             select irs.id as id,
             registry_number as registryNumber,
-            
+            'INM' as name,
             legal_tin as legalTin,
             address,
             irs.legal_name as legalName

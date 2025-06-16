@@ -17,4 +17,5 @@ public interface HfPageView extends HfSelectView{
     String getLegalName();
     Long getLegalTin();
     UUID getId();
+    UUID getAssignId();
 }
