@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AIDto;
 import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
 import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -23,6 +24,10 @@ public class AIIRSServiceImpl implements AIIRSService {
 
     @Override
     public void create(AIDto dto) {
+        Optional<AssignInspectorIrs> optionalAssignInspectorIrs = repository.findByInspectorIdAndIntervalId(dto.inspectorId(), dto.intervalId());
+        if (optionalAssignInspectorIrs.isPresent()) {
+            throw  new RuntimeException("Bu INM uchun Inspektor tayinlangan!");
+        }
         repository.save(
                 AssignInspectorIrs
                         .builder()

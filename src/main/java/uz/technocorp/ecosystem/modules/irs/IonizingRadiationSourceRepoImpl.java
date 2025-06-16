@@ -89,7 +89,11 @@ public class IonizingRadiationSourceRepoImpl implements IonizingRadiationSourceR
                         iRoot.get("activity"),
                         iRoot.get("category"),
                         iRoot.get("isValid"),
-                        iRoot.get("usageType")
+                        iRoot.get("usageType"),
+                        iRoot.get("legalName"),
+                        iRoot.get("legalTin"),
+                        iRoot.get("legalAddress")
+
                 ));
         irsQuery.where(iPredicates.toArray(new Predicate[0]));
         irsQuery.orderBy(cb.desc(iRoot.get("createdAt")));

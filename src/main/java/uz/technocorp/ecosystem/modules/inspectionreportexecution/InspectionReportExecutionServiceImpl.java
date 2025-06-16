@@ -54,8 +54,7 @@ public class InspectionReportExecutionServiceImpl implements InspectionReportExe
 
     @Override
     public void accept(User user, UUID id) {
-        InspectionReportExecution inspectionReportExecution = repository
-                .findById(id)
+        InspectionReportExecution inspectionReportExecution = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
         UUID inspectorId = inspectionReportExecution.getCreatedBy();
         if (user.getId().equals(inspectorId)) {

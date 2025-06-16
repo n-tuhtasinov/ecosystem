@@ -60,6 +60,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                         .profileId(appeal.getProfileId())
                         .legalTin(appeal.getLegalTin())
                         .legalName(appeal.getLegalName())
+                        .legalAddress(appeal.getLegalAddress())
                         .address(appeal.getAddress())
                         .parentOrganization(irsAppealDto.getParentOrganization())
                         .supervisorName(irsAppealDto.getSupervisorName())
@@ -197,8 +198,8 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
             Profile profile = profileService.getProfile(user.getProfileId());
-
-            Integer regionId = profile.getRegionId();
+            Office office = officeService.findById(profile.getOfficeId());
+            Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (registryNumber != null)
                     return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);

@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AIDto;
 import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
 import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -23,6 +24,10 @@ public class AIHFServiceImpl implements AIHFService {
 
     @Override
     public void create(AIDto dto) {
+        Optional<AssignInspectorHf> optionalAssignInspectorHf = repository.findByInspectorIdAndIntervalId(dto.inspectorId(), dto.intervalId());
+        if (optionalAssignInspectorHf.isPresent()) {
+            throw new RuntimeException("Ushbu XICHO uchun inspektor tayinlangan!");
+        }
         repository.save(
                 AssignInspectorHf
                         .builder()

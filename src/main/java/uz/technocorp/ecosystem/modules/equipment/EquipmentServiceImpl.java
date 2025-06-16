@@ -101,6 +101,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .registryFilePath(registryFilepath)
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(dto.attractionPassportId())
+                .legalAddress(appeal.getLegalAddress())
                 .build();
 
         equipmentRepository.save(equipment);
@@ -135,7 +136,8 @@ public class EquipmentServiceImpl implements EquipmentService {
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
             Profile profile = profileService.getProfile(user.getProfileId());
-            Integer regionId = profile.getRegionId();
+            Office office = officeService.findById(profile.getOfficeId());
+            Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (registryNumber != null)
                     return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
@@ -183,7 +185,8 @@ public class EquipmentServiceImpl implements EquipmentService {
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
             Profile profile = profileService.getProfile(user.getProfileId());
-            Integer regionId = profile.getRegionId();
+            Office office = officeService.findById(profile.getOfficeId());
+            Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (registryNumber != null)
                     return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());

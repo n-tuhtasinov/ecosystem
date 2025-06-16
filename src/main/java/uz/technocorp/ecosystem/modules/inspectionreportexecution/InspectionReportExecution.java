@@ -26,7 +26,7 @@ public class InspectionReportExecution extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = InspectionReport.class)
     @JoinColumn(name = "report_id", insertable = false, updatable = false)
-    private InspectionReportDto report;
+    private InspectionReport report;
 
     @Column(name = "report_id")
     private UUID reportId;

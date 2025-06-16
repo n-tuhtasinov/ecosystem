@@ -17,5 +17,6 @@ public interface InspectionReportService {
 
     void create(UUID inspectionId, InspectionReportDto dto);
     void update(User user, UUID id, InspectionReportDto dto);
+    void confirm(User user, UUID id);
     List<InspectionReportView> getAllByInspectionId(UUID inspectionId);
 }

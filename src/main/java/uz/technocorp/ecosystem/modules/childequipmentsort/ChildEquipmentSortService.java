@@ -30,5 +30,7 @@ public interface ChildEquipmentSortService {
     ChildEquipmentSortViewById getById(Integer childEquipmentSortId);
 
     String getNameById(Integer childEquipmentSortId);
+
+    void deleteById(Integer childEquipmentSortId);
 }
 

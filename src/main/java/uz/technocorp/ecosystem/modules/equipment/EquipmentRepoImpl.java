@@ -88,6 +88,7 @@ public class EquipmentRepoImpl implements EquipmentRepo{
                         eRoot.get("type"),
                         eRoot.get("legalName"),
                         eRoot.get("legalTin"),
+                        eRoot.get("legalAddress"),
                         hfJoin.get("name"),
                         eRoot.get("address"),
                         eRoot.get("factoryNumber")

@@ -49,7 +49,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             legal_tin as legalTin,
             address,
             e.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aia.id as assignId
             from equipment e
             inner join assign_inspector_equipment aia on e.id = aia.equipment_id
             join users u on aia.inspector_id = u.id
@@ -67,7 +68,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             legal_tin as legalTin,
             address,
             e.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aia.id as assignId
             from equipment e
             inner join assign_inspector_equipment aia on e.id = aia.equipment_id
             join users u on aia.inspector_id = u.id
@@ -85,7 +87,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             legal_tin as legalTin,
             address,
             e.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aia.id as assignId
             from equipment e
             inner join assign_inspector_equipment aia on e.id = aia.equipment_id
             join users u on aia.inspector_id = u.id
@@ -103,7 +106,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             legal_tin as legalTin,
             address,
             e.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aia.id as assignId
             from equipment e
             inner join assign_inspector_equipment aia on e.id = aia.equipment_id
             join users u on aia.inspector_id = u.id
@@ -122,7 +126,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             legal_tin as legalTin,
             address,
             e.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aia.id as assignId
             from equipment e
             inner join assign_inspector_equipment aia on e.id = aia.equipment_id
             join users u on aia.inspector_id = u.id
@@ -140,7 +145,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             legal_tin as legalTin,
             address,
             e.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aia.id as assignId
             from equipment e
             inner join assign_inspector_equipment aia on e.id = aia.equipment_id
             join users u on aia.inspector_id = u.id

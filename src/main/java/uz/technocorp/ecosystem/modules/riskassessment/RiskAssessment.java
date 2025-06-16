@@ -56,10 +56,10 @@ public class RiskAssessment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private RiskAnalysisInterval riskAnalysisInterval;
 
-    @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY )
-    @JoinColumn(name = "region_id", insertable = false, updatable = false)
-    private Region region;
-
-    @Column(name = "region_id")
-    private Integer regionId;
+//    @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY )
+//    @JoinColumn(name = "region_id", insertable = false, updatable = false)
+//    private Region region;
+//
+//    @Column(name = "region_id")
+//    private Integer regionId;
 }

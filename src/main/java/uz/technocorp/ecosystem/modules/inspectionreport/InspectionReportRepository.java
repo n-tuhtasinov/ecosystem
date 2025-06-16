@@ -18,9 +18,9 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
     @Query(value = """
             select ir.id as id,
                 assigned_tasks as assignedTasks,
-                file_upload_date as fileUploadDate,
-                fixed_bugs_file_path as fixedBugsFilePath,
-                rejected_cause as rejectedCause,
+                ire.file_upload_date as fileUploadDate,
+                ire.execution_file_path as executionFilePath,
+                ire.rejected_cause as rejectedCause,
                 status,
                 ire.id as reportExecutionId
                 from inspection_report ir
