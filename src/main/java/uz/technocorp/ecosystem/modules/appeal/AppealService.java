@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.appeal;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
@@ -26,6 +27,8 @@ public interface AppealService {
 
     void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
 
+    void replyReject(User user, SignedReplyDto replyDto, HttpServletRequest request);
+
     UUID create(AppealDto dto, User user); //TODO Barcha ariza yaratiladigan controllerlar saveAndSign ga o'tkazilgandan keyin Service dan o'chirib, ServiceImplda private method qilib qo'yish kerak
 
     void update(UUID id, AppealDto dto);
@@ -42,9 +45,15 @@ public interface AppealService {
 
     String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
 
+    String prepareRejectPdfWithParam(User user, ReplyDto replyDto);
+
     void reject(User user, RejectDto dto);
 
     void confirm(User user, ConfirmationDto dto);
 
     void setHfTypeName(HfAppealDto appealDto);
+
+    Appeal findByIdAndStatus(UUID appealId, AppealStatus appealStatus);
+
+    Appeal findByIdStatusAndOffice(UUID appealId, AppealStatus appealStatus, Integer officeId);
 }

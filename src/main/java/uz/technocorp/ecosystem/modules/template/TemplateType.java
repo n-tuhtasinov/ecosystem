@@ -20,5 +20,8 @@ public enum TemplateType {
     // Inspektor javob xati ( Ma'lumotnoma )
     REPLY_HF_APPEAL,
     REPLY_IRS_APPEAL,
-    REPLY_EQUIPMENT_APPEAL;
+    REPLY_EQUIPMENT_APPEAL,
+
+    // Arizani rad etish
+    REJECT_APPEAL;
 }
