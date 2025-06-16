@@ -115,7 +115,7 @@ public abstract class EquipmentAppealDto implements AppealDto {
     private Map<String, String> parameters = new HashMap<>();
 
     @Schema(hidden = true)
-    protected abstract EquipmentType getType();
+    public abstract EquipmentType getType();
 
     public void buildFiles() {
         files.put("labelPath", labelPath);
