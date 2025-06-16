@@ -101,6 +101,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .registryFilePath(registryFilepath)
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(dto.attractionPassportId())
+                .legalAddress(appeal.getLegalAddress())
                 .build();
 
         equipmentRepository.save(equipment);

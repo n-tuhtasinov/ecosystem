@@ -210,6 +210,9 @@ public class Equipment extends BaseEntity {
     @Column(nullable = false)
     private LocalDate registrationDate;
 
+    @Column(nullable = false)
+    private String legalAddress;
+
 //    @Column(nullable = false)
 //    private String saleContractPath; // oldi-sotdi shartnomasi
 //

@@ -98,6 +98,7 @@ public class HfRepoImpl implements HfRepo {
                         hfTypeJoin.get("name"),
                         hfRoot.get("legalName"),
                         hfRoot.get("legalTin"),
+                        hfRoot.get("legalAddress"),
                         hfRoot.get("registrationDate")
                         ));
 
