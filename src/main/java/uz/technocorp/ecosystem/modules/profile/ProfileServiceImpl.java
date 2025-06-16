@@ -53,7 +53,7 @@ public class ProfileServiceImpl implements ProfileService {
 
                 .tin(dto.getTin())
                 .legalName(dto.getLegalName())
-                .legalAddress(dto.getLegalAddress())
+                .legalAddress((region != null ? region.getName()+", " : "") + (district !=null ? district.getName()+", " : "") + dto.getLegalAddress())
                 .fullName(dto.getFullName())
                 .pin(dto.getPin())
                 .departmentId(dto.getDepartmentId())
@@ -199,23 +199,21 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     private Region getRegion(Integer regionId) {
-        Region region = null;
         if (regionId != null) {
-            region = regionRepository
+            return regionRepository
                     .findById(regionId)
                     .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", regionId));
         }
-        return region;
+        return null;
     }
 
     private District getDistrict(Integer districtId) {
-        District district = null;
         if (districtId != null) {
-            district = districtRepository
+            return districtRepository
                     .findById(districtId)
                     .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", districtId));
         }
-        return district;
+        return null;
     }
 
     private Long parseTin(String query) {
