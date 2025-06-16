@@ -11,6 +11,7 @@ public enum TemplateType {
     IRS_APPEAL,
     XICHO_APPEAL,
     EQUIPMENT_APPEAL,
+    ATTRACTION_PASSPORT_APPEAL,
 
     // Reestr
     REGISTRY_HF,
