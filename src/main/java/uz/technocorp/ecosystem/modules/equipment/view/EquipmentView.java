@@ -18,6 +18,7 @@ public record EquipmentView (
         EquipmentType type,
         String legalName,
         Long legalTin,
+        String legalAddress,
         String hfName,
         String address,
         String factoryNumber

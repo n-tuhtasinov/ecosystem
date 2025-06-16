@@ -60,6 +60,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                         .profileId(appeal.getProfileId())
                         .legalTin(appeal.getLegalTin())
                         .legalName(appeal.getLegalName())
+                        .legalAddress(appeal.getLegalAddress())
                         .address(appeal.getAddress())
                         .parentOrganization(irsAppealDto.getParentOrganization())
                         .supervisorName(irsAppealDto.getSupervisorName())

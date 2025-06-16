@@ -66,6 +66,7 @@ public class HazardousFacility extends BaseEntity {
     @Column(name = "profile_id")
     private UUID profileId;
 
+    @Column(nullable = false)
     private String legalAddress;
 
     private String phoneNumber;

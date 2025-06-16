@@ -334,7 +334,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 hf.getPeriodicUpdateReason(),
                 hf.getPeriodicUpdateFilePath(),
                 hf.isActive(),
-                hf.getFiles());
+                hf.getFiles(),
+                hf.getRegistryFilePath());
     }
 
     protected HazardousFacility findById(UUID id) {

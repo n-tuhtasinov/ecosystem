@@ -27,5 +27,6 @@ public class HfCustom {
     private String typeName;
     private String legalName;
     private Long legalTin;
+    private String legalAddress;
     private LocalDate registrationDate;
 }
