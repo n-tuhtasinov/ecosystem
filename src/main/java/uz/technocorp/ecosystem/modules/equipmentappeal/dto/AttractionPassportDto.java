@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
@@ -115,6 +116,9 @@ public class AttractionPassportDto implements AppealDto {
 
     @Schema(hidden = true)
     private Map<String, String> files = new HashMap<>();
+
+    @Schema(hidden = true)
+    private EquipmentType type = EquipmentType.ATTRACTION_PASSPORT;
 
     public void buildFiles() {
         files.put("labelPath", labelPath);
