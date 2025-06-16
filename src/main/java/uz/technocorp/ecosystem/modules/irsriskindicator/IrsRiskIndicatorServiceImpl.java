@@ -13,6 +13,7 @@ import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
+import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceRepository;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
@@ -189,6 +190,7 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                                                         .regionId(profile.getRegionId())
                                                         .districtId(profile.getDistrictId())
                                                         .regionIds(regionIds)
+                                                        .status(InspectionStatus.NEW)
                                                         .build()
                                         ));
 

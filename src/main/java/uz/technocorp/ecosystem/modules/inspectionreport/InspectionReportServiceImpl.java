@@ -48,6 +48,17 @@ public class InspectionReportServiceImpl implements InspectionReportService {
     }
 
     @Override
+    public void confirm(User user, UUID id) {
+        InspectionReport inspectionReport = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
+        UUID inspectorId = inspectionReport.getCreatedBy();
+        if (user.getId().equals(inspectorId)) {
+            UUID inspectionId = inspectionReport.getInspectionId();
+        }
+    }
+
+    @Override
     public List<InspectionReportView> getAllByInspectionId(UUID inspectionId) {
         return repository.findAlByInspectionId(inspectionId);
     }
