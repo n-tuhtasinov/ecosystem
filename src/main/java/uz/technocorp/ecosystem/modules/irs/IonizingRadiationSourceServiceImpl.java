@@ -197,8 +197,8 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
             Profile profile = profileService.getProfile(user.getProfileId());
-
-            Integer regionId = profile.getRegionId();
+            Office office = officeService.findById(profile.getOfficeId());
+            Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (registryNumber != null)
                     return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);

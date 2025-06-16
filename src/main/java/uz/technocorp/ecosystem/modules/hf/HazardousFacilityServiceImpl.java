@@ -260,7 +260,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
             Profile profile = profileRepository
                     .findById(profileId)
                     .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));
-            Integer regionId = profile.getRegionId();
+            Office office = officeService.findById(profile.getOfficeId());
+            Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
                 if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
