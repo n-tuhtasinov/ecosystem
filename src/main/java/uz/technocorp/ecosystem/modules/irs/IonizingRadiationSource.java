@@ -138,7 +138,11 @@ public class IonizingRadiationSource extends BaseEntity {
     @Column(nullable = false)
     private Long legalTin;
 
+    @Column(nullable = false)
     private String legalName;
+
+    @Column(nullable = false)
+    private String legalAddress;
 
     @Column(nullable = false)
     private LocalDate registrationDate;

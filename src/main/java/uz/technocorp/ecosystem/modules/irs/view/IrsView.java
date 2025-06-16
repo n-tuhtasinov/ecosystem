@@ -32,5 +32,8 @@ public class IrsView {
     private IrsCategory category;
     private Boolean isValid;
     private IrsUsageType usageType;
+    private String legalName;
+    private Long legalTin;
+    private String legalAddress;
 
 }
