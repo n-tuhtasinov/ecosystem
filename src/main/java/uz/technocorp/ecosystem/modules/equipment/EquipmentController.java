@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
@@ -88,5 +89,11 @@ public class EquipmentController {
     ) {
         Page<HfPageView> all = equipmentService.getAllElevatorForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
+    }
+
+    @GetMapping("/attraction-passport")
+    public ResponseEntity<?> getAttractionPassportByRegistryNumber(@RequestParam String registryNumber) {
+        AttractionPassportView view = equipmentService.getAttractionPassportByRegistryNumber(registryNumber);
+        return ResponseEntity.ok(new ApiResponse(view));
     }
 }
