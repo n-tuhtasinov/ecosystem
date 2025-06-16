@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
+import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
@@ -30,4 +31,6 @@ public interface EquipmentService {
     EquipmentViewById getById(UUID equipmentId);
 
     Equipment findById(UUID equipmentId);
+
+    AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber);
 }

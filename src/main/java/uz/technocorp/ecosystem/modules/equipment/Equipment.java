@@ -36,7 +36,6 @@ import java.util.UUID;
 public class Equipment extends BaseEntity {
 
     @Column(nullable = false)
-
     @Enumerated(EnumType.STRING)
     private EquipmentType type;
 
