@@ -3,7 +3,6 @@ package uz.technocorp.ecosystem.modules.assigninspectorequipment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
-import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -27,4 +26,6 @@ public interface AIERepository extends JpaRepository<AssignInspectorEquipment, U
                 where a.id = :assignId
             """, nativeQuery = true)
     Optional<AssignInfoDto> findInfo(UUID assignId);
+
+    Optional<AssignInspectorEquipment> findByInspectorIdAndIntervalId(UUID uuid, Integer integer);
 }

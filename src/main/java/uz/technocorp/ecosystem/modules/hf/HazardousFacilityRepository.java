@@ -64,7 +64,8 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             legal_tin as legalTin,
             address,
             hf.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aih.id as assignId
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -81,7 +82,8 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             legal_tin as legalTin,
             address,
             hf.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aih.id as assignId
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -98,7 +100,8 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             legal_tin as legalTin,
             address,
             hf.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aih.id as assignId
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -115,7 +118,8 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             legal_tin as legalTin,
             address,
             hf.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aih.id as assignId
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -133,7 +137,8 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             legal_tin as legalTin,
             address,
             hf.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aih.id as assignId
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -150,7 +155,8 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             legal_tin as legalTin,
             address,
             hf.legal_name as legalName,
-            p.full_name as inspectorName
+            p.full_name as inspectorName,
+            aih.id as assignId
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id

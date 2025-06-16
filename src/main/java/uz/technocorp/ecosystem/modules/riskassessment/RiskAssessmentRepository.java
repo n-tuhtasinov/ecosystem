@@ -16,50 +16,18 @@ import java.util.UUID;
  */
 public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, UUID> {
 
-//    @Query(value = """
-//            select ra.sum_score as sumScore,
-//            ra.tin as tin,
-//            pr.legal_address as address,
-//            pr.legal_name as legalName,
-//            pr.region_name as regionName,
-//            pr.district_name as districtName,
-//            hf.name as hazardousFacilityName
-//            from hf_risk_assessment ra
-//            join profile pr on ra.tin = pr.tin
-//            join hazardous_facility hf on ra.hazardous_facility_id = hf.id
-//            """, nativeQuery = true)
-//    Page<RiskAssessmentView> getAll(Pageable pageable);
-
-//    @Query(value = """
-//            select ra.sum_score as sumScore,
-//                   ra.tin as tin,
-//                   pr.legal_address as address,
-//                   pr.legal_name as legalName,
-//                   pr.region_name as regionName,
-//                   pr.district_name as districtName,
-//                   hf.name as hazardousFacilityName
-//            from risk_assessment ra
-//                    join (
-//                        select tin, MAX(sum_score) as max_score
-//                        from risk_assessment
-//                        group by tin
-//                        ) as max_scores
-//                        on ra.tin = max_scores.tin and ra.sum_score = max_scores.max_score
-//                    join profile pr on ra.tin = pr.tin
-//                    join hazardous_facility hf on ra.hazardous_facility_id = hf.id
-//            where pr.region_id = :regionId
-//            """, nativeQuery = true)
-//    Page<RiskAssessmentView> getAllByMaxSumScore(Pageable pageable, Integer regionId);
-
 
     @Query(value = """
             select ra.id as id,
                 hf.name as name,
                 sum_score as score,
-                hf.registry_number as registryNumber,
-                hf.address as address
+                hf.address as address,
+                r.name as regionName,
+                d.name as districtName
                 from risk_assessment ra
                 join hazardous_facility hf on ra.hazardous_facility_id = hf.id
+                join region r on hf.region_id = r.id
+                join district d on hf.district_id = d.id
                 where ra.tin = :tin and hf.region_id = :regionId
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
@@ -67,12 +35,15 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
 
     @Query(value = """
             select ra.id as id,
-                irs.registry_number as name,
+                'INM' as name,
                 sum_score as score,
-                irs.registry_number as registryNumber,
-                irs.address as address
+                irs.address as address,
+                r.name as regionName,
+                d.name as districtName
                 from risk_assessment ra
                 join ionizing_radiation_source irs on ra.ionizing_radiation_source_id = irs.id
+                join region r on irs.region_id = r.id
+                join district d on irs.district_id = d.id
                 where ra.tin = :tin and irs.region_id = :regionId
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
@@ -80,10 +51,11 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
 
     @Query(value = """
             select ra.id as id,
-
+                e.type as name,
                 sum_score as score,
-                e.registry_number as registryNumber,
-                e.address as address
+                e.address as address,
+                e.region_name as regionName,
+                e.district_name as districtName
                 from risk_assessment ra
                 join equipment e on ra.equipment_id = e.id
                 where ra.tin = :tin and e.region_id = :regionId
