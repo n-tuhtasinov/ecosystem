@@ -26,6 +26,7 @@ import uz.technocorp.ecosystem.shared.ApiResponse;
 public class EquipmentGeneratePdfController {
 
     private final AppealService appealService;
+    private final EquipmentAppealService equipmentAppealService;
 
     @PostMapping("/boiler")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @RequestBody BoilerDto boilerDto) {
@@ -94,11 +95,13 @@ public class EquipmentGeneratePdfController {
 
     @PostMapping("/attraction-passport")
     public ResponseEntity<?> createAttractionPassport(@CurrentUser User user, @Valid @RequestBody AttractionPassportDto attractionPassportDto) {
+        equipmentAppealService.setChildEquipmentNameAndChildEquipmentSortName(attractionPassportDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(attractionPassportDto, user)));
     }
 
     @PostMapping("/attraction")
     public ResponseEntity<?> createAttraction(@CurrentUser User user, @Valid @RequestBody AttractionDto attractionDto) {
+        equipmentAppealService.setRequiredFields(attractionDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(attractionDto, user)));
     }
 
