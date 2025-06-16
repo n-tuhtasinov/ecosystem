@@ -42,6 +42,8 @@ public class AttractionPassportPdfProcessor extends BaseAppealPdfProcessor {
         parameters.put("manufacturedAt", dto.getManufacturedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         parameters.put("address", dto.getAddress());
         parameters.put("attractionName", dto.getAttractionName());
+        parameters.put("childEquipmentName", dto.getChildEquipmentName());
+        parameters.put("childEquipmentSortName", dto.getChildEquipmentSortName());
         parameters.put("fullName", profile.getFullName());
 
         return parameters;
