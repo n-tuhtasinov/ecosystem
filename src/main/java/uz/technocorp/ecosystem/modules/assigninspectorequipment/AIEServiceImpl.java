@@ -23,7 +23,7 @@ public class AIEServiceImpl implements AIEService {
 
     @Override
     public void create(AIDto dto) {
-        Optional<AssignInspectorEquipment> optionalAssignInspectorEquipment = repository.findByInspectorIdAndIntervalId(dto.inspectorId(), dto.intervalId());
+        Optional<AssignInspectorEquipment> optionalAssignInspectorEquipment = repository.findByEquipmentIdAndIntervalId(dto.objectId(), dto.intervalId());
         if (optionalAssignInspectorEquipment.isPresent()) {
             throw new RuntimeException("Ushbu XICHO uchun inspektor tayinlangan!");
         }

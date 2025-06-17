@@ -14,7 +14,7 @@ import java.util.Optional;
  */
 public interface RiskAnalysisIntervalRepository extends JpaRepository<RiskAnalysisInterval, Integer> {
 
-    List<RiskAnalysisInterval> findAllByYear(int year);
+    List<RiskAnalysisInterval> findAllByYear(Integer year);
 
     Optional<RiskAnalysisInterval> findByStatus(RiskAnalysisIntervalStatus riskAnalysisIntervalStatus);
 }
