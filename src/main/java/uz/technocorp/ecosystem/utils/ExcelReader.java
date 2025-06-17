@@ -10,7 +10,7 @@ import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
-import uz.technocorp.ecosystem.modules.uploadexcel.dto.HfUploadDto;
+import uz.technocorp.ecosystem.modules.uploadexcel.dto.HfExcelRowDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.UserService;
@@ -42,9 +42,9 @@ public class ExcelReader {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
 
-    public List<HfUploadDto> read (MultipartFile file) {
+    public List<HfExcelRowDto> read (MultipartFile file) {
 
-        List<HfUploadDto> results = new ArrayList<>();
+        List<HfExcelRowDto> results = new ArrayList<>();
         try(InputStream in = file.getInputStream();
             Workbook workbook = new XSSFWorkbook(in)) {
 

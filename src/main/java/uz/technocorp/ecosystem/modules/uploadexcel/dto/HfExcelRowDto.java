@@ -9,7 +9,7 @@ import java.time.LocalDate;
  * @since v1.0
  */
 
-public record HfUploadDto(
+public record HfExcelRowDto(
 
         LocalDate registrationDate,
 
