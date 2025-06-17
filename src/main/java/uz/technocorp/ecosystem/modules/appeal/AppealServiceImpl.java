@@ -135,10 +135,10 @@ public class AppealServiceImpl implements AppealService {
         documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
 
         // Change appealStatus and set conclusion
-        repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.REJECTED);
+        repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.CANCELED);
 
         // Create an execution process by the appeal
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.REJECTED, replyDto.getDto().getConclusion()));
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.CANCELED, replyDto.getDto().getConclusion()));
     }
 
     @Override
@@ -293,7 +293,7 @@ public class AppealServiceImpl implements AppealService {
         Appeal appeal = repository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
 
         // get status by role
-        AppealStatus appealStatus = setApproverNameAndGetAppealStatusByRole(user, appeal);
+        AppealStatus appealStatus = setApproverNameAndGetAppealStatusByRole(user, appeal, dto.shouldRegister());
 
         //update the appeal
         appeal.setStatus(appealStatus);
@@ -308,35 +308,29 @@ public class AppealServiceImpl implements AppealService {
 
         //create registry for the appeal if the appeal's status is completed
         if (appealStatus == AppealStatus.COMPLETED) {
-            if (dto.shouldRegister() == null){
-                throw new RuntimeException("Reestrga qo'shish yoki qo'shmaslik belgilanmadi");
-            }
-            //if shouldRegister is true, it is needed to add to registry
-            if (dto.shouldRegister()) {
-                switch (appeal.getAppealType().sort) {
-                    case "registerHf" -> hfService.create(appeal);
-                    case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
-                    case "registerEquipment" -> equipmentService.create(appeal);
-                    //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
-                }
+            switch (appeal.getAppealType().sort) {
+                case "registerHf" -> hfService.create(appeal);
+                case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
+                case "registerEquipment" -> equipmentService.create(appeal);
+                //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }
         }
     }
 
-    private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal) {
+    private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal, Boolean shouldRegister) {
         Role role = user.getRole();
         AppealStatus appealStatus;
+
         if (role == Role.REGIONAL) {
-            if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) {
-                throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
-            }
+            if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
             appeal.setApproverName(user.getName());
             appealStatus = AppealStatus.IN_APPROVAL;
+
         } else if (role == Role.MANAGER) {
-            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) {
-                throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: " + appeal.getStatus().name());
-            }
-            appealStatus = AppealStatus.COMPLETED;
+            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: " + appeal.getStatus().name());
+            if (shouldRegister == null) throw new RuntimeException("Reestrga qo'shish yoki qo'shmaslik belgilanmadi");
+            appealStatus = shouldRegister? AppealStatus.COMPLETED : AppealStatus.REJECTED;
+
         } else {
             throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting ))) ...");
         }
