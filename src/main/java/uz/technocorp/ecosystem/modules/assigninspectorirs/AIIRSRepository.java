@@ -26,5 +26,5 @@ public interface AIIRSRepository extends JpaRepository<AssignInspectorIrs, UUID>
             """, nativeQuery = true)
     Optional<AssignInfoDto> findInfo(UUID assignId);
 
-    Optional<AssignInspectorIrs> findByInspectorIdAndIntervalId(UUID inspectorId, Integer intervalId);
+    Optional<AssignInspectorIrs> findByIrsIdAndIntervalId(UUID inspectorId, Integer intervalId);
 }
