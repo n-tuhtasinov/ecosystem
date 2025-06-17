@@ -64,7 +64,7 @@ public class DocumentServiceImpl implements DocumentService {
             signers.add(signer);
         }
 
-        Document document = new Document(dto.belongId(), dto.path(), dto.sign(), signers, dto.documentType(), null, null, signers.size() == 1);
+        Document document = new Document(dto.belongId(), dto.path(), dto.sign(), signers, dto.documentType(), dto.status(), null, signers.size() == 1);
 
         repository.save(document);
 

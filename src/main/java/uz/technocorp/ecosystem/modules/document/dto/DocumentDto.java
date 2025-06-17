@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.document.dto;
 
+import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 
 import java.util.List;
@@ -19,5 +20,6 @@ public record DocumentDto(
         String sign,
         String ip,
         UUID singerId,
-        List<UUID> executorIds) {
+        List<UUID> executorIds,
+        AgreementStatus status) {
 }

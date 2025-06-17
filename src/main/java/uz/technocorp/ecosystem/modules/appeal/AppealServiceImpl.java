@@ -23,6 +23,7 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
+import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
@@ -88,7 +89,7 @@ public class AppealServiceImpl implements AppealService {
         UUID appealId = create(dto.getDto(), user);
 
         // Create a document
-        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
+        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
 
         // Delete files from Attachment
         attachmentService.deleteByPaths(dto.getDto().getFiles().values());
@@ -110,7 +111,7 @@ public class AppealServiceImpl implements AppealService {
         }
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPORT, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
+        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPORT, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);
@@ -131,7 +132,7 @@ public class AppealServiceImpl implements AppealService {
         };
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
+        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.REJECTED);
@@ -185,7 +186,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public void update(UUID id, AppealDto dto) {
-        Appeal appeal = getAppealById(id);
+        Appeal appeal = findById(id);
         appeal.setData(JsonMaker.makeJsonSkipFields(dto));
         repository.save(appeal);
     }
@@ -196,7 +197,7 @@ public class AppealServiceImpl implements AppealService {
         User user = userRepository
                 .findById(dto.inspectorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Inspektor", "Id", dto.inspectorId()));
-        Appeal appeal = getAppealById(dto.appealId());
+        Appeal appeal = findById(dto.appealId());
 
         appeal.setExecutorId(dto.inspectorId());
         appeal.setExecutorName(user.getName());
@@ -235,7 +236,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public String prepareReplyPdfWithParam(User user, ReplyDto dto) {
-        Appeal appeal = getAppealById(dto.getAppealId());
+        Appeal appeal = findById(dto.getAppealId());
 
         // Generate PDF and return path
         return switch (appeal.getAppealType().sort) {
@@ -249,7 +250,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public String prepareRejectPdfWithParam(User user, ReplyDto dto) {
-        Appeal appeal = getAppealById(dto.getAppealId());
+        Appeal appeal = findById(dto.getAppealId());
 
         Template template = templateService.getByType(TemplateType.REJECT_APPEAL.name());
 
@@ -307,11 +308,17 @@ public class AppealServiceImpl implements AppealService {
 
         //create registry for the appeal if the appeal's status is completed
         if (appealStatus == AppealStatus.COMPLETED) {
-            switch (appeal.getAppealType().sort) {
-                case "registerHf" -> hfService.create(appeal);
-                case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
-                case "registerEquipment" -> equipmentService.create(appeal);
-                //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
+            if (dto.shouldRegister() == null){
+                throw new RuntimeException("Reestrga qo'shish yoki qo'shmaslik belgilanmadi");
+            }
+            //if shouldRegister is true, it is needed to add to registry
+            if (dto.shouldRegister()) {
+                switch (appeal.getAppealType().sort) {
+                    case "registerHf" -> hfService.create(appeal);
+                    case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
+                    case "registerEquipment" -> equipmentService.create(appeal);
+                    //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
+                }
             }
         }
     }
@@ -381,7 +388,7 @@ public class AppealServiceImpl implements AppealService {
         return executorName;
     }
 
-    private Appeal getAppealById(UUID id) {
+    private Appeal findById(UUID id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", id));
     }
 
