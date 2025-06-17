@@ -74,6 +74,18 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
+    @PostMapping("/reply/reject/generate-pdf")
+    public ResponseEntity<ApiResponse> generateRejectPdf(@CurrentUser User user, @Valid @RequestBody ReplyDto replyDto) {
+        String path = service.prepareRejectPdfWithParam(user, replyDto);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @PostMapping("/reply/reject")
+    public ResponseEntity<ApiResponse> replyReject(@CurrentUser User user, @Valid @RequestBody SignedReplyDto replyDto, HttpServletRequest request) {
+        service.replyReject(user, replyDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
     @GetMapping("/{appealId}/request-docs")
     public ResponseEntity<?> getRequestDocsById(@PathVariable UUID appealId) {
         List<DocumentViewByRequest> list = documentService.getRequestDocumentsByAppealId(appealId);

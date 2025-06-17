@@ -57,4 +57,11 @@ public class ChildEquipmentSortController {
         ChildEquipmentSortViewById byId = childEquipmentSortService.getById(childEquipmentSortId);
         return ResponseEntity.ok(new ApiResponse(byId));
     }
+
+    @DeleteMapping("/{childEquipmentSortId}")
+    public ResponseEntity<?> deleteById (@PathVariable Integer childEquipmentSortId) {
+        childEquipmentSortService.deleteById(childEquipmentSortId);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.DELETED));
+    }
+
 }

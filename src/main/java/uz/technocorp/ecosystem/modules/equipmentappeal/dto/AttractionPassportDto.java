@@ -140,7 +140,7 @@ public class AttractionPassportDto implements AppealDto {
 
     @Override
     public AppealType getAppealType() {
-        return AppealType.RE_REGISTER_ATTRACTION_PASSPORT;
+        return AppealType.REGISTER_ATTRACTION_PASSPORT;
     }
 
     @Override

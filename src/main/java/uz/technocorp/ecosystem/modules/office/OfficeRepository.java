@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 public interface OfficeRepository extends JpaRepository<Office, Integer> {
 
-    @Query("select o, r.name as region from Office o join fetch o.region r")
+    @Query("select o.id as id, o.name as name, r.name as region from Office o join o.region r")
     Page<OfficeView> getAll(Pageable pageable);
 
     Optional<OfficeViewById> getOfficeById(Integer officeId);

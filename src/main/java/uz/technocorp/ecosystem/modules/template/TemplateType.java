@@ -11,6 +11,7 @@ public enum TemplateType {
     IRS_APPEAL,
     XICHO_APPEAL,
     EQUIPMENT_APPEAL,
+    ATTRACTION_PASSPORT_APPEAL,
 
     // Reestr
     REGISTRY_HF,
@@ -20,5 +21,8 @@ public enum TemplateType {
     // Inspektor javob xati ( Ma'lumotnoma )
     REPLY_HF_APPEAL,
     REPLY_IRS_APPEAL,
-    REPLY_EQUIPMENT_APPEAL;
+    REPLY_EQUIPMENT_APPEAL,
+
+    // Arizani rad etish
+    REJECT_APPEAL;
 }

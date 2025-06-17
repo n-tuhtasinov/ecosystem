@@ -30,6 +30,4 @@ public class SignedReplyDto {
     @NotNull(message = "Inspektor javobi malumotlari jo'natilmadi")
     private @Valid ReplyDto dto;
 
-    @Schema(hidden = true)
-    private DocumentType type = DocumentType.REPORT;
 }

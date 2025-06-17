@@ -79,4 +79,9 @@ public class ChildEquipmentSortServiceImpl implements ChildEquipmentSortService 
     public String getNameById(Integer childEquipmentSortId) {
         return findById(childEquipmentSortId).getName();
     }
+
+    @Override
+    public void deleteById(Integer childEquipmentSortId) {
+        childEquipmentSortRepository.deleteById(childEquipmentSortId);
+    }
 }

@@ -17,6 +17,7 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentParameter;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
+import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
@@ -177,6 +178,26 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public Equipment findById(UUID equipmentId) {
         return equipmentRepository.findById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
+    }
+
+    @Override
+    public AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber) {
+        Equipment equipment = equipmentRepository.findByRegistryNumber(registryNumber).orElse(null);
+        if (equipment == null) return null;
+        return mapToAttractionPassportView(equipment);
+    }
+
+    private AttractionPassportView mapToAttractionPassportView(Equipment equipment) {
+        return new AttractionPassportView(
+                equipment.getId(),
+                equipment.getAttractionName(),
+                equipment.getChildEquipment() != null? equipment.getChildEquipment().getName() : null,
+                equipment.getChildEquipmentSort() != null? equipment.getChildEquipmentSort().getName() : null,
+                equipment.getManufacturedAt(),
+                equipment.getAcceptedAt(),
+                equipment.getFactoryNumber(),
+                equipment.getCountry(),
+                equipment.getRiskLevel());
     }
 
     @Override

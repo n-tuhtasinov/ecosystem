@@ -18,10 +18,12 @@ import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.department.DepartmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
+import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
@@ -33,6 +35,7 @@ import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -75,6 +78,8 @@ public class AppealServiceImpl implements AppealService {
     private final IonizingRadiationSourceService ionizingRadiationSourceService;
     private final EquipmentService equipmentService;
     private final HfTypeService hfTypeService;
+    private final OfficeService officeService;
+    private final DepartmentService departmentService;
 
     @Override
     @Transactional
@@ -105,13 +110,34 @@ public class AppealServiceImpl implements AppealService {
         }
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), replyDto.getType(), replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
+        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPORT, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);
 
         // Create an execution process by the appeal
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.IN_AGREEMENT, null));
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.IN_AGREEMENT, replyDto.getDto().getConclusion()));
+    }
+
+    @Override
+    @Transactional
+    public void replyReject(User user, SignedReplyDto replyDto, HttpServletRequest request) {
+        Integer officeId = profileService.getProfile(user.getProfileId()).getOfficeId();
+
+        Appeal appeal = switch (user.getRole()) {
+            case Role.MANAGER -> findByIdAndStatus(replyDto.getDto().getAppealId(), AppealStatus.NEW);
+            case Role.REGIONAL -> findByIdStatusAndOffice(replyDto.getDto().getAppealId(), AppealStatus.NEW, officeId);
+            default -> throw new CustomException("Sizda arizalarni rad qilish imkoniyati mavjud emas");
+        };
+
+        // Create a reply document
+        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
+
+        // Change appealStatus and set conclusion
+        repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.REJECTED);
+
+        // Create an execution process by the appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.REJECTED, replyDto.getDto().getConclusion()));
     }
 
     @Override
@@ -208,18 +234,41 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public String prepareReplyPdfWithParam(User user, ReplyDto replyDto) {
-        Appeal appeal = getAppealById(replyDto.getAppealId());
+    public String prepareReplyPdfWithParam(User user, ReplyDto dto) {
+        Appeal appeal = getAppealById(dto.getAppealId());
 
-        String path;
-        switch (appeal.getAppealType().sort) {
-            case "registerHf" -> path = makeHfReplyPdf(user, replyDto, appeal);
-            case "registerEquipment" -> path = makeEquipmentReplyPdf(user, replyDto, appeal);
-            case "registerIrs" -> path = makeIrsReplyPdf(user, replyDto, appeal);
+        // Generate PDF and return path
+        return switch (appeal.getAppealType().sort) {
+            case "registerHf" -> makeHfReplyPdf(user, dto, appeal);
+            case "registerEquipment" -> makeEquipmentReplyPdf(user, dto, appeal);
+            case "registerIrs" -> makeIrsReplyPdf(user, dto, appeal);
             default ->
                     throw new CustomException(appeal.getAppealType().name() + " uchun javob xati shakllantirish qilinmagan");
-        }
-        return path;
+        };
+    }
+
+    @Override
+    public String prepareRejectPdfWithParam(User user, ReplyDto dto) {
+        Appeal appeal = getAppealById(dto.getAppealId());
+
+        Template template = templateService.getByType(TemplateType.REJECT_APPEAL.name());
+
+        String[] formattedDate = appeal.getCreatedAt().format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.of("uz"))).split(" ");
+        String appealDate = formattedDate[2] + " yil " + formattedDate[0] + " " + formattedDate[1];
+
+        String[] workSpace = getExecutorWorkspace(user);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("date", appealDate);
+        parameters.put("appealNumber", appeal.getNumber());
+        parameters.put("executorWorkspace", workSpace[0]);
+        parameters.put("conclusion", dto.getConclusion());
+        parameters.put("executorFullWorkspace", workSpace[0] + " " + workSpace[1]);
+        parameters.put("executorName", user.getName());
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reject", parameters, true);
     }
 
     @Override
@@ -291,6 +340,18 @@ public class AppealServiceImpl implements AppealService {
     public void setHfTypeName(HfAppealDto appealDto) {
         String hfTypeName = hfTypeService.getHfTypeNameById(appealDto.getHfTypeId());
         appealDto.setHfTypeName(hfTypeName);
+    }
+
+    @Override
+    public Appeal findByIdAndStatus(UUID appealId, AppealStatus appealStatus) {
+        return repository.findByIdAndStatus(appealId, appealStatus).orElseThrow(
+                () -> new ResourceNotFoundException("Ariza topilmadi yoki ariza holati o'zgargan"));
+    }
+
+    @Override
+    public Appeal findByIdStatusAndOffice(UUID appealId, AppealStatus appealStatus, Integer officeId) {
+        return repository.findByIdAndStatusAndOfficeId(appealId, appealStatus, officeId).orElseThrow(
+                () -> new ResourceNotFoundException("Ariza topilmadi yoki ariza holati o'zgargan"));
     }
 
     private OrderNumberDto makeNumber(AppealType appealType) {
@@ -418,4 +479,15 @@ public class AppealServiceImpl implements AppealService {
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/equipment", parameters, true);
     }
 
+    private String[] getExecutorWorkspace(User user) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+
+        return switch (user.getRole()) {
+            case Role.REGIONAL -> new String[]{officeService.findById(profile.getOfficeId()).getName(), "boshlig'i"};
+            case Role.MANAGER ->
+                    new String[]{departmentService.getById(profile.getDepartmentId()).getName(), "mas'ul xodimi"};
+            default ->
+                    throw new CustomException("Sizda arizani rad etish huquqi yo'q. Tizimda sizning rolingiz : " + user.getRole().name());
+        };
+    }
 }

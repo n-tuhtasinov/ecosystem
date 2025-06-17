@@ -202,4 +202,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             and e.type = :equipmentType
             """, nativeQuery = true)
     Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, String equipmentType);
+
+    @Query("select e from Equipment e join fetch e.childEquipment join fetch e.childEquipmentSort where e.registryNumber = :registryNumber")
+    Optional<Equipment> findByRegistryNumber(String registryNumber);
 }
