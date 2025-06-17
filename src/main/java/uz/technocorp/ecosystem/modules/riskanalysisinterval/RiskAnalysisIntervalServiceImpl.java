@@ -22,7 +22,8 @@ public class RiskAnalysisIntervalServiceImpl implements RiskAnalysisIntervalServ
     private final RiskAnalysisIntervalRepository repository;
 
     @Override
-    public List<RiskAnalysisInterval> findAll(int year) {
+    public List<RiskAnalysisInterval> findAll(Integer year) {
+        if (year == null) return repository.findAll();
         return repository.findAllByYear(year);
     }
 

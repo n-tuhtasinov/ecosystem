@@ -64,11 +64,11 @@ public class InspectionServiceImpl implements InspectionService {
     }
 
     @Override
-    public void conduct(UUID id) {
+    public void updateStatus(UUID id, InspectionStatus status) {
         Inspection inspection = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv", "Id", id));
-        inspection.setStatus(InspectionStatus.CONDUCTED);
+        inspection.setStatus(status);
         repository.save(inspection);
     }
 

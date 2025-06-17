@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface RiskAnalysisIntervalService {
 
-    List<RiskAnalysisInterval> findAll(int year);
+    List<RiskAnalysisInterval> findAll(Integer year);
     RiskAnalysisInterval findByStatus();
 }

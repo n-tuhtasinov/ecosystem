@@ -24,7 +24,7 @@ public class RiskAnalysisIntervalController {
     private final RiskAnalysisIntervalService service;
 
     @GetMapping("/select")
-    public ResponseEntity<?> findAll(@RequestParam Integer year) {
+    public ResponseEntity<?> findAll(@RequestParam(value = "year", required = false) Integer year) {
         List<RiskAnalysisInterval> all = service.findAll(year);
         return ResponseEntity.ok(new ApiResponse(all));
     }

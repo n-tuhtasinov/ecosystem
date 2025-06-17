@@ -24,7 +24,7 @@ public class AIIRSServiceImpl implements AIIRSService {
 
     @Override
     public void create(AIDto dto) {
-        Optional<AssignInspectorIrs> optionalAssignInspectorIrs = repository.findByInspectorIdAndIntervalId(dto.inspectorId(), dto.intervalId());
+        Optional<AssignInspectorIrs> optionalAssignInspectorIrs = repository.findByIrsIdAndIntervalId(dto.objectId(), dto.intervalId());
         if (optionalAssignInspectorIrs.isPresent()) {
             throw  new RuntimeException("Bu INM uchun Inspektor tayinlangan!");
         }

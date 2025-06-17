@@ -24,7 +24,7 @@ public class AIHFServiceImpl implements AIHFService {
 
     @Override
     public void create(AIDto dto) {
-        Optional<AssignInspectorHf> optionalAssignInspectorHf = repository.findByInspectorIdAndIntervalId(dto.inspectorId(), dto.intervalId());
+        Optional<AssignInspectorHf> optionalAssignInspectorHf = repository.findByHfIdAndIntervalId(dto.objectId(), dto.intervalId());
         if (optionalAssignInspectorHf.isPresent()) {
             throw new RuntimeException("Ushbu XICHO uchun inspektor tayinlangan!");
         }

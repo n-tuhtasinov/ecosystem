@@ -27,5 +27,5 @@ public interface AIERepository extends JpaRepository<AssignInspectorEquipment, U
             """, nativeQuery = true)
     Optional<AssignInfoDto> findInfo(UUID assignId);
 
-    Optional<AssignInspectorEquipment> findByInspectorIdAndIntervalId(UUID uuid, Integer integer);
+    Optional<AssignInspectorEquipment> findByEquipmentIdAndIntervalId(UUID equipmentId, Integer integer);
 }
