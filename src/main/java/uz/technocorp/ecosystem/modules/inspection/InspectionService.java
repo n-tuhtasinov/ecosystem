@@ -23,7 +23,7 @@ public interface InspectionService {
 
     void update(UUID id, InspectionDto dto);
     void update(UUID id, InspectionUpdateDto dto);
-    void conduct(UUID id);
+    void updateStatus(UUID id, InspectionStatus status);
     Page<InspectionCustom> getAll(User user, int page, int size, Long tin, InspectionStatus status, Integer intervalId);
     InspectionFullDto getById(UUID id);
 }

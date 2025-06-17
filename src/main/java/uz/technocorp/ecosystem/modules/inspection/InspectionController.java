@@ -48,7 +48,7 @@ public class InspectionController {
 
     @PatchMapping("/set-act/{inspectionId}")
     public ResponseEntity<?> update(@PathVariable UUID inspectionId) {
-        service.conduct(inspectionId);
+        service.updateStatus(inspectionId, InspectionStatus.CONDUCTED);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
