@@ -166,9 +166,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             address,
             e.legal_name as legalName
             from equipment e
-            left join assign_inspector_equipment aia on e.id = aia.equipment_id
+            left join assign_inspector_equipment aia on e.id = aia.equipment_id and aia.interval_id = :intervalId
             where e.region_id = :regionId
-            and aia.interval_id = :intervalId
             and aia.id is null
             and e.type = :equipmentType
             """, nativeQuery = true)
@@ -182,9 +181,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             address,
             e.legal_name as legalName
             from equipment e
-            left join assign_inspector_equipment aia on e.id = aia.equipment_id
+            left join assign_inspector_equipment aia on e.id = aia.equipment_id and aia.interval_id = :intervalId
             where e.legal_tin = :legalTin
-            and aia.interval_id = :intervalId
             and aia.id is null
             and e.type = :equipmentType
             """, nativeQuery = true)
@@ -198,9 +196,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             address,
             e.legal_name as legalName
             from equipment e
-            left join assign_inspector_equipment aia on e.id = aia.equipment_id
+            left join assign_inspector_equipment aia on e.id = aia.equipment_id and aia.interval_id = :intervalId
             where e.registry_number = :registryNumber
-            and aia.interval_id = :intervalId
             and aia.id is null
             and e.type = :equipmentType
             """, nativeQuery = true)

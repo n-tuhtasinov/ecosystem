@@ -149,9 +149,8 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
             address,
             irs.legal_name as legalName
             from ionizing_radiation_source irs
-            left join assign_inspector_irs aii on irs.id = aii.irs_id
+            left join assign_inspector_irs aii on irs.id = aii.irs_id and aii.interval_id = :intervalId
             where irs.region_id = :regionId
-            and aii.interval_id = :intervalId
             and aii.id is null
             """, nativeQuery = true)
     Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId, Integer intervalId);
@@ -164,9 +163,8 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
             address,
             irs.legal_name as legalName
             from ionizing_radiation_source irs
-            left join assign_inspector_irs aii on irs.id = aii.irs_id
+            left join assign_inspector_irs aii on irs.id = aii.irs_id and aii.interval_id = :intervalId
             where irs.legal_tin = :legalTin
-            and aii.interval_id = :intervalId
             and aii.id is null
             """, nativeQuery = true)
     Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin, Integer intervalId);
@@ -179,9 +177,8 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
             address,
             irs.legal_name as legalName
             from ionizing_radiation_source irs
-            left join assign_inspector_irs aii on irs.id = aii.irs_id
+            left join assign_inspector_irs aii on irs.id = aii.irs_id and aii.interval_id = :intervalId
             where irs.registry_number = :registryNumber
-            and aii.interval_id = :intervalId
             and aii.id is null
             """, nativeQuery = true)
     Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, Integer intervalId);
