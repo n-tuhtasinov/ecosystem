@@ -206,9 +206,9 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                 if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
                 else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
             } else {
-                if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber);
-                if (tin != null) return repository.getAllByLegalTin(pageable, tin);
-                else return repository.getAllByRegion(pageable, regionId);
+                if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber, intervalId);
+                if (tin != null) return repository.getAllByLegalTin(pageable, tin, intervalId);
+                else return repository.getAllByRegion(pageable, regionId, intervalId);
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)

@@ -147,10 +147,10 @@ public class EquipmentServiceImpl implements EquipmentService {
                 else
                     return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION.name());
             } else {
-                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION.name());
+                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION.name(), intervalId);
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION.name());
-                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION.name());
+                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION.name(), intervalId);
+                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION.name(), intervalId);
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
@@ -216,10 +216,11 @@ public class EquipmentServiceImpl implements EquipmentService {
                 else
                     return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR.name());
             } else {
-                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR.name());
+                if (tin != null) return equipmentRepository
+                        .getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR.name(), intervalId);
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR.name());
-                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR.name());
+                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR.name(), intervalId);
+                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR.name(), intervalId);
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)

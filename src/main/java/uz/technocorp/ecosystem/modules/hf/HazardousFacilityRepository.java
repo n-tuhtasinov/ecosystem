@@ -177,9 +177,10 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             from hazardous_facility hf
             left join assign_inspector_hf aih on hf.id = aih.hf_id
             where hf.region_id = :regionId
+            and aih.interval_id = :intervalId
             and aih.id is null
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId);
+    Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId, Integer intervalId);
 
     @Query(value = """
             select hf.id as id,
@@ -191,9 +192,10 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             from hazardous_facility hf
             left join assign_inspector_hf aih on hf.id = aih.hf_id
             where hf.legal_tin = :legalTin
+            and aih.interval_id = :intervalId
             and aih.id is null
             """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin);
+    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin, Integer intervalId);
 
     @Query(value = """
             select hf.id as id,
@@ -205,9 +207,10 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             from hazardous_facility hf
             left join assign_inspector_hf aih on hf.id = aih.hf_id
             where hf.registry_number = :registryNumber
+            and aih.interval_id = :intervalId
             and aih.id is null
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber);
+    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, Integer intervalId);
 
     @Query(value = """
             select distinct(region_id)
