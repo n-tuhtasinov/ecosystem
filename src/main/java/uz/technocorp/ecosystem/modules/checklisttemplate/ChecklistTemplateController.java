@@ -54,6 +54,12 @@ public class ChecklistTemplateController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.DELETED));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getByid(@PathVariable Integer id) {
+        ChecklistTemplateView checklistTemplate = service.getChecklistTemplate(id);
+        return ResponseEntity.ok(new ApiResponse(checklistTemplate));
+    }
+
     @GetMapping("/select")
     public ResponseEntity<?> findAll(@RequestParam(value = "name", defaultValue = "") String name) {
         List<ChecklistTemplateView> all = service.findAll(name);

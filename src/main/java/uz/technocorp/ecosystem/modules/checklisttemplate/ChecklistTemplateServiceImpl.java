@@ -43,6 +43,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
                         .builder()
                         .name(dto.name())
                         .path(dto.path())
+                        .active(true)
                         .build()
         );
         attachmentRepository.deleteById(attachment.getId());
@@ -87,6 +88,13 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
         if (delete) {
             repository.deleteById(id);
         }
+    }
+
+    @Override
+    public ChecklistTemplateView getChecklistTemplate(Integer id) {
+        return repository
+                .getChecklistTemplatesById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checklist shabloni", "id", id));
     }
 
     @Override
