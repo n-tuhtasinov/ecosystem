@@ -8,5 +8,6 @@ import java.util.UUID;
  * @created 11.06.2025
  * @since v1.0
  */
-public record AssignInfoDto(UUID id, Integer intervalId, String inspectorName, String date) {
+public record AssignInfoDto(UUID id, Integer intervalId,
+                            String inspectorName, String date) {
 }

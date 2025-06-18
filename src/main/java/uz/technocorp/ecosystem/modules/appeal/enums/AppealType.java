@@ -97,11 +97,12 @@ public enum AppealType {
 
     // Ekspert tashkilotini akkreditatsiya qilish
     ACCREDIT_EXPERT_ORGANIZATION("", "", ""),
+    RE_ACCREDIT_EXPERT_ORGANIZATION("", "", ""),
     EXPEND_ACCREDITATION_SCOPE("", "", ""),
 
     // Sanoat xavfsizligi bo‘yicha ekspertiza xulosalari
     REGISTER_EXPERTISE_CONCLUSION("", "", ""),
-    DEREGISTER_EXPERTISE_CONCLUSION("", "", ""),
+//    DEREGISTER_EXPERTISE_CONCLUSION("", "", ""),
 
     // Litsenziya va ruxsatnomalar
     OBTAIN_LICENSE("", "", ""),
