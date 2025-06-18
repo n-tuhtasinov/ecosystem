@@ -84,10 +84,20 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
         if (!checklists.isEmpty()) {
             throw new RuntimeException("Checklist shabloni asosida checklist yaratilganligi bois ushbu shablonni o'chirib bo'lmaydi!");
         }
-        boolean delete = new File(checklistTemplate.getPath()).delete();
-        if (delete) {
+        File file = new File(checklistTemplate.getPath());
+        if (file.exists()) {
+            if (!file.canWrite()) {
+                throw new RuntimeException("Faylni o‘chirishga ruxsat yo‘q: " + file.getAbsolutePath());
+            }
+            boolean deleted = file.delete();
+            if (!deleted) {
+                throw new RuntimeException("Faylni o‘chirishda muammo yuz berdi: " + file.getAbsolutePath());
+            }
+        } else {
             repository.deleteById(id);
         }
+
+        repository.deleteById(id);
     }
 
     @Override
