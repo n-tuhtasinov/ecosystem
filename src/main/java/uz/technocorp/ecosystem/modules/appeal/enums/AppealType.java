@@ -1,7 +1,6 @@
 package uz.technocorp.ecosystem.modules.appeal.enums;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * @author Rasulov Komil
@@ -58,9 +57,9 @@ public enum AppealType {
     RE_REGISTER_PIPELINE("", "reRegisterEquipment", "T"),
 
     //attraction_passport - Attraksion pasporti
-    REGISTER_ATTRACTION_PASSPORT("", "registerEquipment", "AT"),
-    DEREGISTER_ATTRACTION_PASSPORT("", "deregisterEquipment", "AT"),
-    RE_REGISTER_ATTRACTION_PASSPORT("", "reRegisterEquipment", "AT"),
+    REGISTER_ATTRACTION_PASSPORT("", "registerAttractionPassport", "AT"),
+    DEREGISTER_ATTRACTION_PASSPORT("", "deregisterAttractionPassport", "AT"),
+    RE_REGISTER_ATTRACTION_PASSPORT("", "reRegisterAttractionPassport", "AT"),
 
     //attraction - Attraksion
     REGISTER_ATTRACTION("", "registerEquipment", "ADR"),
@@ -125,4 +124,4 @@ public enum AppealType {
     public final String label;
     public final String sort;
     public final String symbol;
-    }
+}

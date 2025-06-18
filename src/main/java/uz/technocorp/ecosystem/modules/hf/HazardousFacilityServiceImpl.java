@@ -238,7 +238,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
             params.setRegionId(office.getRegionId());
         } else if (user.getRole() == Role.LEGAL) {
             params.setLegalTin(profile.getTin());
-        }else {
+        } else {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
 
@@ -290,6 +290,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     public HfViewById getById(UUID hfId) {
         HazardousFacility hf = repository.getHfById(hfId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", hfId));
         return mapToView(hf);
+    }
+
+    @Override
+    public HazardousFacility findByIdAndProfileId(UUID id, UUID profileId) {
+        return repository.findByIdAndProfileId(id, profileId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
     }
 
     protected String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto) {

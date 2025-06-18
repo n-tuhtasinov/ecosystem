@@ -92,10 +92,10 @@ public class Equipment extends BaseEntity {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    @Column
     private String model;
 
-    @Column(nullable = false)
+    @Column
     private String factory;
 
     @Column(nullable = false)
@@ -121,7 +121,7 @@ public class Equipment extends BaseEntity {
     private UUID oldEquipmentId;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb", nullable = false)
+    @Column(columnDefinition = "jsonb")
     private Map<String, String> parameters;
 
 

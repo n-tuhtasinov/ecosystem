@@ -22,6 +22,7 @@ public enum TemplateType {
     REPLY_HF_APPEAL,
     REPLY_IRS_APPEAL,
     REPLY_EQUIPMENT_APPEAL,
+    REPLY_ATTRACTION_PASSPORT_APPEAL,
 
     // Arizani rad etish
     REJECT_APPEAL;
