@@ -166,12 +166,12 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             address,
             e.legal_name as legalName
             from equipment e
-            left join assign_inspector_equipment aia on e.id = aia.equipment_id
+            left join assign_inspector_equipment aia on e.id = aia.equipment_id and aia.interval_id = :intervalId
             where e.region_id = :regionId
             and aia.id is null
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId, String equipmentType);
+    Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId, String equipmentType, Integer intervalId);
 
     @Query(value = """
             select e.id as id,
@@ -181,12 +181,12 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             address,
             e.legal_name as legalName
             from equipment e
-            left join assign_inspector_equipment aia on e.id = aia.equipment_id
+            left join assign_inspector_equipment aia on e.id = aia.equipment_id and aia.interval_id = :intervalId
             where e.legal_tin = :legalTin
             and aia.id is null
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin, String equipmentType);
+    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin, String equipmentType, Integer intervalId);
 
     @Query(value = """
             select e.id as id,
@@ -196,12 +196,12 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             address,
             e.legal_name as legalName
             from equipment e
-            left join assign_inspector_equipment aia on e.id = aia.equipment_id
+            left join assign_inspector_equipment aia on e.id = aia.equipment_id and aia.interval_id = :intervalId
             where e.registry_number = :registryNumber
             and aia.id is null
             and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, String equipmentType);
+    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, String equipmentType, Integer intervalId);
 
     @Query("select e from Equipment e join fetch e.childEquipment join fetch e.childEquipmentSort where e.registryNumber = :registryNumber")
     Optional<Equipment> findByRegistryNumber(String registryNumber);

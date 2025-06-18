@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.assigninspectorequipment.dto;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -8,5 +9,6 @@ import java.util.UUID;
  * @created 11.06.2025
  * @since v1.0
  */
-public record AssignInfoDto(UUID id, Integer intervalId, String inspectorName, String date) {
+public record AssignInfoDto(UUID id, Integer intervalId,
+                            String inspectorName, LocalDateTime date) {
 }

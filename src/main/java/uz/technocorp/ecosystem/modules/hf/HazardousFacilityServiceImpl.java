@@ -264,23 +264,20 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
             Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
-                if (registryNumber != null)
-                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+                if (registryNumber != null) return repository
+                        .getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
                 else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
             } else {
-                if (tin != null) return repository.getAllByLegalTin(pageable, tin);
-                if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber);
-                else return repository.getAllByRegion(pageable, regionId);
+                if (tin != null) return repository.getAllByLegalTin(pageable, tin, intervalId);
+                if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber, intervalId);
+                else return repository.getAllByRegion(pageable, regionId, intervalId);
             }
         } else if (role == Role.INSPECTOR) {
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
-            if (tin != null)
-                return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
+            if (registryNumber != null) return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
+            if (tin != null) return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
             else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
         } else {
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
             Profile profile = profileRepository
                     .findById(profileId)
                     .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));

@@ -136,9 +136,8 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
     }
 
     @Override
-    public Page<RiskIndicatorView> findAllToFixByTin(Long tin, Integer intervalId, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        return repository.findAllFileContainsByTinAndDate(tin, intervalId, pageable);
+    public List<RiskIndicatorView> findAllToFixByTin(Long tin, UUID id, Integer intervalId) {
+        return repository.findAllFileContainsByTinAndDate(tin, intervalId, id);
     }
 
     @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
