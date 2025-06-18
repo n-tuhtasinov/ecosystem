@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
+import uz.technocorp.ecosystem.modules.prevention.enums.PreventionType;
 import uz.technocorp.ecosystem.modules.prevention.projection.PreventionTypeView;
 import uz.technocorp.ecosystem.modules.prevention.projection.PreventionView;
 import uz.technocorp.ecosystem.modules.profile.Profile;

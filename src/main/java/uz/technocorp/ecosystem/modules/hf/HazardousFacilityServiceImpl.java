@@ -238,7 +238,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
             params.setRegionId(office.getRegionId());
         } else if (user.getRole() == Role.LEGAL) {
             params.setLegalTin(profile.getTin());
-        }else {
+        } else {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
 
@@ -264,7 +264,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
             Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
-                if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+                if (registryNumber != null)
+                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
                 else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
             } else {
                 if (tin != null) return repository.getAllByLegalTin(pageable, tin);
@@ -272,11 +273,14 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 else return repository.getAllByRegion(pageable, regionId);
             }
         } else if (role == Role.INSPECTOR) {
-            if (registryNumber != null) return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
-            if (tin != null) return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
+            if (registryNumber != null)
+                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
+            if (tin != null)
+                return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
             else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
         } else {
-            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            if (registryNumber != null)
+                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
             Profile profile = profileRepository
                     .findById(profileId)
                     .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));
@@ -289,6 +293,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     public HfViewById getById(UUID hfId) {
         HazardousFacility hf = repository.getHfById(hfId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", hfId));
         return mapToView(hf);
+    }
+
+    @Override
+    public HazardousFacility findByIdAndProfileId(UUID id, UUID profileId) {
+        return repository.findByIdAndProfileId(id, profileId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
     }
 
     protected String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto) {

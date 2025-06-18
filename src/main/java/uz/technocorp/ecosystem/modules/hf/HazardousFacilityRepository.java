@@ -215,4 +215,6 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
                 where legal_tin = :tin
             """, nativeQuery = true)
     Set<Integer> getAllRegionIdByLegalTin(Long tin);
+
+    Optional<HazardousFacility> findByIdAndProfileId(UUID id, UUID profileId);
 }

@@ -27,6 +27,7 @@ import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
+import uz.technocorp.ecosystem.modules.equipmentappeal.dto.AttractionPassportDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
@@ -242,6 +243,7 @@ public class AppealServiceImpl implements AppealService {
             case "registerHf" -> makeHfReplyPdf(user, dto, appeal);
             case "registerEquipment" -> makeEquipmentReplyPdf(user, dto, appeal);
             case "registerIrs" -> makeIrsReplyPdf(user, dto, appeal);
+            case "registerAttractionPassport" -> makeAttractionPassportReplyPdf(user, dto, appeal);
             default ->
                     throw new CustomException(appeal.getAppealType().name() + " uchun javob xati shakllantirish qilinmagan");
         };
@@ -310,7 +312,7 @@ public class AppealServiceImpl implements AppealService {
             switch (appeal.getAppealType().sort) {
                 case "registerHf" -> hfService.create(appeal);
                 case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
-                case "registerEquipment" -> equipmentService.create(appeal);
+                case "registerEquipment", "registerAttractionPassport" -> equipmentService.create(appeal);
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }
         }
@@ -474,6 +476,27 @@ public class AppealServiceImpl implements AppealService {
                 hazardousFacilityId != null && !hazardousFacilityId.isBlank() && !"null".equals(hazardousFacilityId)
                         ? hfService.getHfNameById(UUID.fromString(hazardousFacilityId))
                         : "Mavjud emas");
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/equipment", parameters, true);
+    }
+
+    private String makeAttractionPassportReplyPdf(User user, ReplyDto replyDto, Appeal appeal) {
+        Template template = templateService.getByType(TemplateType.REPLY_ATTRACTION_PASSPORT_APPEAL.name());
+
+        AttractionPassportDto dto = JsonParser.parseJsonData(appeal.getData(), AttractionPassportDto.class);
+
+        Map<String, String> parameters = buildBaseParameters(user.getName(), replyDto, appeal);
+
+        parameters.put("attractionName", dto.getAttractionName());
+        parameters.put("manufacturedAt", dto.getManufacturedAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        parameters.put("factoryNumber", dto.getFactoryNumber());
+        parameters.put("type", EquipmentType.valueOf(appeal.getData().get("type").asText()).value);
+        parameters.put("subType", dto.getChildEquipmentName());
+        parameters.put("subSort", dto.getChildEquipmentSortName());
+        parameters.put("address", appeal.getAddress());
+        parameters.put("riskLevel", dto.getRiskLevel().value);
+        parameters.put("acceptedAt", dto.getAcceptedAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
         // Save to an attachment and folder & Return a file path
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/equipment", parameters, true);

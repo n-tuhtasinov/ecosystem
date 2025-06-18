@@ -16,6 +16,7 @@ import java.util.UUID;
 public record EquipmentDto(
         UUID hazardousFacilityId,
         Integer childEquipmentId,
+        String childEquipmentName,
         String factoryNumber,
         String model,
         String factory,
@@ -28,6 +29,7 @@ public record EquipmentDto(
         String attractionName,
         LocalDate acceptedAt,
         Integer childEquipmentSortId,
+        String childEquipmentSortName,
         String country,
         Integer servicePeriod,
         RiskLevel riskLevel,

@@ -274,8 +274,8 @@ public class EquipmentServiceImpl implements EquipmentService {
         Map<String, String> parameters = new HashMap<>();
 
         parameters.put("attractionName", dto.attractionName());
-        parameters.put("attractionType", childEquipmentService.findById(dto.childEquipmentId()).getName());
-        parameters.put("childEquipmentSortName", childEquipmentSortService.getById(dto.childEquipmentSortId()).getName());
+        parameters.put("attractionType", appeal.getData().get("childEquipmentName").asText());
+        parameters.put("childEquipmentSortName", appeal.getData().get("childEquipmentSortName").asText());
         parameters.put("manufacturedAt", dto.manufacturedAt().toString());
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("legalTin", appeal.getLegalTin().toString());
@@ -290,7 +290,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
 
-        return attachmentService.createPdfFromHtml(content, "reestr/attraction", parameters, false);
+        return attachmentService.createPdfFromHtml(content, "reestr/attraction-passport", parameters, false);
     }
 
     private String createEquipmentPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info) {
@@ -298,7 +298,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         parameters.put("legalAddress", appeal.getLegalAddress());
         parameters.put("equipmentType", EquipmentType.valueOf(appeal.getData().get("type").asText()).value);
-        parameters.put("childEquipmentName", childEquipmentService.findById(dto.childEquipmentId()).getName());
+        parameters.put("childEquipmentName", appeal.getData().get("childEquipmentName").asText());
         parameters.put("legalTin", appeal.getLegalTin().toString());
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("factoryNumber", dto.factoryNumber());

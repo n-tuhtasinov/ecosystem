@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.attestation;
+package uz.technocorp.ecosystem.modules.attestation.employee;
 
 import lombok.AllArgsConstructor;
 
@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
  * @since v1.0
  */
 @AllArgsConstructor
-public enum AttestationType {
+public enum EmployeePosition {
 
     LEADER("Raxbar"),
     TECHNICIAN("Injener, Texnik xodim"),
