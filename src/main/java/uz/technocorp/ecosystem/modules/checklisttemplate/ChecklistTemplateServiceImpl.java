@@ -43,6 +43,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
                         .builder()
                         .name(dto.name())
                         .path(dto.path())
+                        .active(true)
                         .build()
         );
         attachmentRepository.deleteById(attachment.getId());
@@ -65,6 +66,15 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
     }
 
     @Override
+    public void updateActivate(Integer id) {
+        ChecklistTemplate checklistTemplate = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checklist shabloni", "id", id));
+        checklistTemplate.setActive(!checklistTemplate.isActive());
+        repository.save(checklistTemplate);
+    }
+
+    @Override
     @Transactional
     public void delete(Integer id) {
         ChecklistTemplate checklistTemplate = repository
@@ -74,16 +84,33 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
         if (!checklists.isEmpty()) {
             throw new RuntimeException("Checklist shabloni asosida checklist yaratilganligi bois ushbu shablonni o'chirib bo'lmaydi!");
         }
-        boolean delete = new File(checklistTemplate.getPath()).delete();
-        if (delete) {
+        File file = new File(checklistTemplate.getPath());
+        if (file.exists()) {
+            if (!file.canWrite()) {
+                throw new RuntimeException("Faylni o‘chirishga ruxsat yo‘q: " + file.getAbsolutePath());
+            }
+            boolean deleted = file.delete();
+            if (!deleted) {
+                throw new RuntimeException("Faylni o‘chirishda muammo yuz berdi: " + file.getAbsolutePath());
+            }
+        } else {
             repository.deleteById(id);
         }
+
+        repository.deleteById(id);
     }
 
     @Override
-    public Page<ChecklistTemplateView> getAll(int page, int size, String name) {
+    public ChecklistTemplateView getChecklistTemplate(Integer id) {
+        return repository
+                .getChecklistTemplatesById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checklist shabloni", "id", id));
+    }
+
+    @Override
+    public Page<ChecklistTemplateView> getAll(int page, int size, String name, Boolean active) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.ASC, "name");
-        return repository.getAllByName(pageable, name);
+        return repository.getAllByName(pageable, name, active);
     }
 
     @Override

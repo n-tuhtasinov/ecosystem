@@ -3,9 +3,8 @@ package uz.technocorp.ecosystem.modules.assigninspectorirs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.assigninspectorequipment.AssignInspectorInfo;
 import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AIDto;
-import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
-import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 
@@ -38,7 +37,7 @@ public class AIIRSController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getInspector(@PathVariable UUID id) {
-        AssignInfoDto assignInfoDto = service.getInspectorInfo(id);
-        return ResponseEntity.ok(new ApiResponse(assignInfoDto));
+        AssignInspectorInfo assignInfo = service.getInspectorInfo(id);
+        return ResponseEntity.ok(new ApiResponse(assignInfo));
     }
 }

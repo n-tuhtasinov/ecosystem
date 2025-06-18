@@ -2,7 +2,6 @@ package uz.technocorp.ecosystem.modules.assigninspectorequipment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -25,7 +24,7 @@ public interface AIERepository extends JpaRepository<AssignInspectorEquipment, U
                 join profile p on p.id = u.profile_id
                 where a.id = :assignId
             """, nativeQuery = true)
-    Optional<AssignInfoDto> findInfo(UUID assignId);
+    Optional<AssignInspectorInfo> findInfo(UUID assignId);
 
     Optional<AssignInspectorEquipment> findByEquipmentIdAndIntervalId(UUID equipmentId, Integer integer);
 }
