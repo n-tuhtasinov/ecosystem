@@ -2,8 +2,7 @@ package uz.technocorp.ecosystem.modules.assigninspectorhf;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
-import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
+import uz.technocorp.ecosystem.modules.assigninspectorequipment.AssignInspectorInfo;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -20,13 +19,13 @@ public interface AIHFRepository extends JpaRepository<AssignInspectorHf, UUID> {
             select u.id as id,
                 p.full_name as inspectorName,
                 a.interval_id as intervalId,
-                to_char(a.created_at, 'YYYY-MM-DD"T"HH24:MI:SS') as date
+                a.created_at as date
                 from  assign_inspector_hf a
                 join users u on a.inspector_id = u.id
                 join profile p on p.id = u.profile_id
                 where a.id = :assignId
             """, nativeQuery = true)
-    Optional<AssignInfoDto> findInfo(UUID assignId);
+    Optional<AssignInspectorInfo> findInfo(UUID assignId);
 
     Optional<AssignInspectorHf> findByHfIdAndIntervalId(UUID hfId, Integer intervalId);
 }
