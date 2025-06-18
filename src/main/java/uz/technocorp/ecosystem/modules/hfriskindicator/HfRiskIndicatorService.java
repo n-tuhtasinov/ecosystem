@@ -23,5 +23,5 @@ public interface HfRiskIndicatorService {
     void cancelRiskIndicator(UUID id);
     List<RiskIndicatorView> findAllByHFIdAndTin(UUID id, Long tin, Integer intervalId);
     List<RiskIndicatorView> findAllByTin(Long tin, Integer intervalId);
-    Page<RiskIndicatorView> findAllToFixByTin(Long tin, Integer intervalId, int page, int size);
+    List<RiskIndicatorView> findAllToFixByTin(Long tin, UUID hfId, Integer intervalId);
 }

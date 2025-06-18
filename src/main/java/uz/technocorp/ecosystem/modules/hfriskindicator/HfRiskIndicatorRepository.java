@@ -64,12 +64,12 @@ public interface HfRiskIndicatorRepository extends JpaRepository<HfRiskIndicator
             file_date as fileDate,
             cancelled_date as cancelledDate
             from hf_risk_indicator
-            where tin = :tin
+            where ((tin = :tin and hazardous_facility_id is null) or hazardous_facility_id = :id)
             and risk_analysis_interval_id = :intervalId
             and file_path is not null
             and score != 0
             """, nativeQuery = true)
-    Page<RiskIndicatorView> findAllFileContainsByTinAndDate(Long tin, Integer intervalId, Pageable pageable);
+    List<RiskIndicatorView> findAllFileContainsByTinAndDate(Long tin, UUID id, Integer intervalId);
 
 
     @Query(value = """

@@ -73,11 +73,10 @@ public class AttractionRiskIndicatorController {
     }
 
     @GetMapping("/to-fix")
-    public ResponseEntity<?> getAllToFixByTin(@RequestParam(value = "tin") Long tin,
-                                              @RequestParam(value = "intervalId") Integer intervalId,
-                                              @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-                                              @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
-        Page<RiskIndicatorView> allByTin = service.findAllToFixByTin(tin, intervalId, page, size);
+    public ResponseEntity<?> getAllToFixByTin(@RequestParam(value = "id") UUID id,
+                                              @RequestParam(value = "tin") Long tin,
+                                              @RequestParam(value = "intervalId") Integer intervalId) {
+        List<RiskIndicatorView> allByTin = service.findAllToFixByTin(tin, id, intervalId);
         return ResponseEntity.ok(new ApiResponse(allByTin));
     }
 }
