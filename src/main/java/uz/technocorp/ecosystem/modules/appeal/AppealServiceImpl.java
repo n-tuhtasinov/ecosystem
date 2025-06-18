@@ -23,6 +23,7 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
+import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
@@ -89,7 +90,7 @@ public class AppealServiceImpl implements AppealService {
         UUID appealId = create(dto.getDto(), user);
 
         // Create a document
-        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
+        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
 
         // Delete files from Attachment
         attachmentService.deleteByPaths(dto.getDto().getFiles().values());
@@ -111,7 +112,7 @@ public class AppealServiceImpl implements AppealService {
         }
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPORT, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
+        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPORT, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);
@@ -132,13 +133,13 @@ public class AppealServiceImpl implements AppealService {
         };
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId())));
+        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
 
         // Change appealStatus and set conclusion
-        repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.REJECTED);
+        repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.CANCELED);
 
         // Create an execution process by the appeal
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.REJECTED, replyDto.getDto().getConclusion()));
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.CANCELED, replyDto.getDto().getConclusion()));
     }
 
     @Override
@@ -186,7 +187,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public void update(UUID id, AppealDto dto) {
-        Appeal appeal = getAppealById(id);
+        Appeal appeal = findById(id);
         appeal.setData(JsonMaker.makeJsonSkipFields(dto));
         repository.save(appeal);
     }
@@ -197,7 +198,7 @@ public class AppealServiceImpl implements AppealService {
         User user = userRepository
                 .findById(dto.inspectorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Inspektor", "Id", dto.inspectorId()));
-        Appeal appeal = getAppealById(dto.appealId());
+        Appeal appeal = findById(dto.appealId());
 
         appeal.setExecutorId(dto.inspectorId());
         appeal.setExecutorName(user.getName());
@@ -236,7 +237,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public String prepareReplyPdfWithParam(User user, ReplyDto dto) {
-        Appeal appeal = getAppealById(dto.getAppealId());
+        Appeal appeal = findById(dto.getAppealId());
 
         // Generate PDF and return path
         return switch (appeal.getAppealType().sort) {
@@ -251,7 +252,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public String prepareRejectPdfWithParam(User user, ReplyDto dto) {
-        Appeal appeal = getAppealById(dto.getAppealId());
+        Appeal appeal = findById(dto.getAppealId());
 
         Template template = templateService.getByType(TemplateType.REJECT_APPEAL.name());
 
@@ -294,7 +295,7 @@ public class AppealServiceImpl implements AppealService {
         Appeal appeal = repository.findById(dto.appealId()).orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
 
         // get status by role
-        AppealStatus appealStatus = setApproverNameAndGetAppealStatusByRole(user, appeal);
+        AppealStatus appealStatus = setApproverNameAndGetAppealStatusByRole(user, appeal, dto.shouldRegister());
 
         //update the appeal
         appeal.setStatus(appealStatus);
@@ -318,20 +319,20 @@ public class AppealServiceImpl implements AppealService {
         }
     }
 
-    private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal) {
+    private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal, Boolean shouldRegister) {
         Role role = user.getRole();
         AppealStatus appealStatus;
+
         if (role == Role.REGIONAL) {
-            if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) {
-                throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
-            }
+            if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
             appeal.setApproverName(user.getName());
             appealStatus = AppealStatus.IN_APPROVAL;
+
         } else if (role == Role.MANAGER) {
-            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) {
-                throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: " + appeal.getStatus().name());
-            }
-            appealStatus = AppealStatus.COMPLETED;
+            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: " + appeal.getStatus().name());
+            if (shouldRegister == null) throw new RuntimeException("Reestrga qo'shish yoki qo'shmaslik belgilanmadi");
+            appealStatus = shouldRegister? AppealStatus.COMPLETED : AppealStatus.REJECTED;
+
         } else {
             throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting ))) ...");
         }
@@ -383,7 +384,7 @@ public class AppealServiceImpl implements AppealService {
         return executorName;
     }
 
-    private Appeal getAppealById(UUID id) {
+    private Appeal findById(UUID id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", id));
     }
 

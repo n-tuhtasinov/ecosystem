@@ -28,5 +28,5 @@ public interface AIHFRepository extends JpaRepository<AssignInspectorHf, UUID> {
             """, nativeQuery = true)
     Optional<AssignInfoDto> findInfo(UUID assignId);
 
-    Optional<AssignInspectorHf> findByInspectorIdAndIntervalId(UUID inspectorId, Integer intervalId);
+    Optional<AssignInspectorHf> findByHfIdAndIntervalId(UUID hfId, Integer intervalId);
 }

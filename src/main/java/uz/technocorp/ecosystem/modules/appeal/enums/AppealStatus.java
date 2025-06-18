@@ -12,5 +12,6 @@ public enum AppealStatus {
     IN_AGREEMENT, // hududiy bo'lim boshlig'iga o'tganda (kelishishda)
     IN_APPROVAL, // qo'mita mas'ul hodimiga o'tganda (tasdiqlashda)
     COMPLETED, // qo'mita mas'ul hodimi tasdiqlaganda (yakunlangan)
-    REJECTED // ariza tushishi bilan kamchilik yoki xatolik sababli qaytarilsa (qaytarilgan)
+    CANCELED, // ariza tushishi bilan kamchilik yoki xatolik sababli qaytarilsa (qaytarilgan)
+    REJECTED //arizani o'rganish davomida inspektor tomonidan salbiy xulosa berilganda(rad etilgan)
 }
