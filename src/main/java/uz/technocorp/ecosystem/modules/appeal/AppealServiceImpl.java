@@ -324,14 +324,16 @@ public class AppealServiceImpl implements AppealService {
         AppealStatus appealStatus;
 
         if (role == Role.REGIONAL) {
-            if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT)) throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
+            if (!appeal.getStatus().equals(AppealStatus.IN_AGREEMENT))
+                throw new RuntimeException("Ariza holati 'IN_AGREEMENT' emas. Hozirgi holati: " + appeal.getStatus().name());
             appeal.setApproverName(user.getName());
             appealStatus = AppealStatus.IN_APPROVAL;
 
         } else if (role == Role.MANAGER) {
-            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL)) throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: " + appeal.getStatus().name());
+            if (!appeal.getStatus().equals(AppealStatus.IN_APPROVAL))
+                throw new RuntimeException("Ariza holati 'IN_APPROVAL' emas. Hozirgi holati: " + appeal.getStatus().name());
             if (shouldRegister == null) throw new RuntimeException("Reestrga qo'shish yoki qo'shmaslik belgilanmadi");
-            appealStatus = shouldRegister? AppealStatus.COMPLETED : AppealStatus.REJECTED;
+            appealStatus = shouldRegister ? AppealStatus.COMPLETED : AppealStatus.REJECTED;
 
         } else {
             throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting ))) ...");
@@ -367,6 +369,8 @@ public class AppealServiceImpl implements AppealService {
             case "registerHf" -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
             case "registerEquipment", "reRegisterEquipment" ->
                     number = orderNumber + "-QUR-" + LocalDate.now().getYear();
+            case "registerAttractionPassport", "reRegisterAttractionPassport" ->
+                    number = orderNumber + "-ATP-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
         return new OrderNumberDto(orderNumber, number);
