@@ -77,12 +77,12 @@ public interface ElevatorRiskIndicatorRepository extends JpaRepository<ElevatorR
             file_date as fileDate,
             cancelled_date as cancelledDate
             from elevator_risk_indicator
-            where tin = :tin
+            where ((tin = :tin and equipment_id is null) or equipment_id = :equipmentId)
             and risk_analysis_interval_id = :intervalId
             and file_path is not null
             and score != 0
             """, nativeQuery = true)
-    Page<RiskIndicatorView> findAllFileContainsByTinAndDate(Long tin, Integer intervalId, Pageable pageable);
+    List<RiskIndicatorView> findAllFileContainsByTinAndDate(Long tin, Integer intervalId, UUID id);
 
 
 }

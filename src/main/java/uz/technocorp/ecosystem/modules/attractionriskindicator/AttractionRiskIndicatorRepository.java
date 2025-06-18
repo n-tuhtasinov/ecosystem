@@ -67,12 +67,12 @@ public interface AttractionRiskIndicatorRepository extends JpaRepository<Attract
             file_date as fileDate,
             cancelled_date as cancelledDate
             from attraction_risk_indicator
-            where tin = :tin
+            where ((tin = :tin and equipment_id is null) or equipment_id = :id)
             and risk_analysis_interval_id = :intervalId
             and file_path is not null
             and score != 0
             """, nativeQuery = true)
-    Page<RiskIndicatorView> findAllFileContainsByTinAndDate(Long tin, Integer intervalId, Pageable pageable);
+    List<RiskIndicatorView> findAllFileContainsByTinAndDate(Long tin, Integer intervalId, UUID id);
 
     @Query(value = """
             select cast(equipment_id as varchar) as objectId,

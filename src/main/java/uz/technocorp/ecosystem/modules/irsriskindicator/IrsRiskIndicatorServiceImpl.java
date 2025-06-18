@@ -1,9 +1,6 @@
 package uz.technocorp.ecosystem.modules.irsriskindicator;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
@@ -14,7 +11,6 @@ import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
-import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceRepository;
 import uz.technocorp.ecosystem.modules.irsriskindicator.dto.IrsRiskIndicatorDto;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
@@ -124,9 +120,8 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
     }
 
     @Override
-    public Page<RiskIndicatorView> findAllToFixByTin(Long tin, Integer intervalId, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        return repository.findAllFileContainsByTinAndDate(tin, intervalId, pageable);
+    public List<RiskIndicatorView> findAllToFixByTin(Long tin, UUID id, Integer intervalId) {
+        return repository.findAllFileContainsByTinAndDate(tin, intervalId, id);
     }
 
     @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
