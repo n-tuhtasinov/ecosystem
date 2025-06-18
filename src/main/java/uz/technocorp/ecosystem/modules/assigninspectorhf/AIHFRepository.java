@@ -20,7 +20,7 @@ public interface AIHFRepository extends JpaRepository<AssignInspectorHf, UUID> {
             select u.id as id,
                 p.full_name as inspectorName,
                 a.interval_id as intervalId,
-                a.created_at as date
+                to_char(a.created_at, 'YYYY-MM-DD"T"HH24:MI:SS') as date
                 from  assign_inspector_hf a
                 join users u on a.inspector_id = u.id
                 join profile p on p.id = u.profile_id

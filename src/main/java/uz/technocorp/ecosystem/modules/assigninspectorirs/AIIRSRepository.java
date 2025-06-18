@@ -19,8 +19,7 @@ public interface AIIRSRepository extends JpaRepository<AssignInspectorIrs, UUID>
     @Query(value = """
             select u.id as id,
                 p.full_name as inspectorName,
-                a.interval_id as intervalId,
-                a.created_at as date
+                a.interval_id as intervalId
                 from  assign_inspector_irs a
                 join users u on a.inspector_id = u.id
                 join profile p on p.id = u.profile_id

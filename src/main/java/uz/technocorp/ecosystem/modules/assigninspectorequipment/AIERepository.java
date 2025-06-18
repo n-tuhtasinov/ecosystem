@@ -18,7 +18,7 @@ public interface AIERepository extends JpaRepository<AssignInspectorEquipment, U
     @Query(value = """
             select u.id as id,
                 p.full_name as inspectorName,
-                a.created_at as date,
+                to_char(a.created_at, 'YYYY-MM-DD"T"HH24:MI:SS') as date,
                 a.interval_id as intervalId
                 from  assign_inspector_equipment a
                 join users u on a.inspector_id = u.id
