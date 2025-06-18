@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.prevention;
+package uz.technocorp.ecosystem.modules.prevention.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -34,4 +34,5 @@ public interface HazardousFacilityService {
     Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
 
     HfViewById getById(UUID hfId);
+    HazardousFacility findByIdAndProfileId(UUID id, UUID profileId);
 }

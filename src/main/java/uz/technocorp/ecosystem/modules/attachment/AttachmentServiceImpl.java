@@ -150,6 +150,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     private String replaceVariables(String htmlContent, Map<String, String> variables) {
         String result = htmlContent;
         for (Map.Entry<String, String> entry : variables.entrySet()) {
+            if (entry.getValue() == null){
+                throw new CustomException(entry.getKey() + " is null");
+            }
             result = result.replace("{" + entry.getKey() + "}", entry.getValue());
         }
         return result;
