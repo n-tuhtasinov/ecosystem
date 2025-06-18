@@ -282,7 +282,6 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("legalAddress", appeal.getLegalAddress());
         parameters.put("registryNumber", info.registryNumber());
         parameters.put("factoryNumber", dto.factoryNumber());
-        parameters.put("factory", dto.factory());
         parameters.put("regionName", regionService.findById(appeal.getRegionId()).getName());
         parameters.put("districtName", districtService.getDistrict(appeal.getDistrictId()).getName());
         parameters.put("address", appeal.getAddress());

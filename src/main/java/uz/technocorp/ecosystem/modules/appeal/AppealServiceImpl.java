@@ -496,6 +496,7 @@ public class AppealServiceImpl implements AppealService {
         parameters.put("attractionName", dto.getAttractionName());
         parameters.put("manufacturedAt", dto.getManufacturedAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         parameters.put("factoryNumber", dto.getFactoryNumber());
+        parameters.put("country", dto.getCountry());
         parameters.put("type", EquipmentType.valueOf(appeal.getData().get("type").asText()).value);
         parameters.put("subType", dto.getChildEquipmentName());
         parameters.put("subSort", dto.getChildEquipmentSortName());
