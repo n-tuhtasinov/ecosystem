@@ -23,6 +23,11 @@ public class EmployeeController {
 
     private final EmployeeService service;
 
+    @GetMapping("/positions")
+    public ResponseEntity<ApiResponse> positions() {
+        return ResponseEntity.ok(new ApiResponse(service.getPositions()));
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse> add(@CurrentUser User user, @RequestBody @Valid EmployeeListDto dto) {
         Integer addCount = service.add(user, dto);

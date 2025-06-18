@@ -7,7 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
 import uz.technocorp.ecosystem.modules.prevention.enums.PreventionType;
@@ -37,6 +39,7 @@ import java.util.UUID;
 public class PreventionServiceImpl implements PreventionService {
 
     private final ProfileService profileService;
+    private final AttachmentService attachmentService;
     private final PreventionSpecification specification;
     private final PreventionRepository repository;
 
@@ -151,6 +154,7 @@ public class PreventionServiceImpl implements PreventionService {
     }
 
     @Override
+    @Transactional
     public void create(User user, PreventionDto dto) {
         // Check and get a profile by tin
         Profile profile = getProfileByTin(dto.getTin());
@@ -180,6 +184,9 @@ public class PreventionServiceImpl implements PreventionService {
         prevention.setDistrictId(profile.getDistrictId());
 
         repository.save(prevention);
+
+        // Delete files from attachment
+        attachmentService.deleteByPaths(dto.getFilePaths());
     }
 
     @Override

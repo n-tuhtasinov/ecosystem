@@ -7,14 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeDeleteDto;
 import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeDto;
 import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeListDto;
+import uz.technocorp.ecosystem.modules.attestation.employee.dto.PositionDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.user.User;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,6 +28,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final HazardousFacilityService hfService;
     private final EmployeeRepository repository;
+
+
+    @Override
+    public List<PositionDto> getPositions() {
+        return Arrays.stream(EmployeePosition.values()).map(e -> new PositionDto(e.name(), e.value)).toList();
+    }
 
     @Override
     public Integer add(User user, EmployeeListDto employeeDto) {

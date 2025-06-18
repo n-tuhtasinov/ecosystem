@@ -15,5 +15,5 @@ public enum EmployeePosition {
     TECHNICIAN("Injener, Texnik xodim"),
     EMPLOYEE("Oddiy xodim");
 
-    public final String nameUz;
+    public final String value;
 }
