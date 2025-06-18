@@ -16,8 +16,9 @@ public interface ChecklistTemplateService {
 
     void create(ChecklistTemplateDto dto);
     void update(Integer id, ChecklistTemplateDto dto);
+    void updateActivate(Integer id);
     void delete(Integer id);
-    Page<ChecklistTemplateView> getAll(int page, int size, String name);
+    Page<ChecklistTemplateView> getAll(int page, int size, String name, Boolean active);
     List<ChecklistTemplateView> findAll(String name);
 
 }

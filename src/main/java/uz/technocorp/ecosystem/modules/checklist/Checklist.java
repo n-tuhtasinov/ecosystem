@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.checklist;
 
 import jakarta.persistence.*;
 import lombok.*;
+import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.checklisttemplate.ChecklistTemplate;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -20,8 +21,8 @@ import uz.technocorp.ecosystem.modules.profile.Profile;
 @Builder
 public class Checklist extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Profile profile;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private Profile profile;
 
     private Long tin;
 
@@ -33,5 +34,12 @@ public class Checklist extends BaseEntity {
     private Integer templateId;
 
     private String path;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = RiskAnalysisInterval.class)
+    @JoinColumn(name = "interval_id", updatable = false, insertable = false)
+    private RiskAnalysisInterval interval;
+
+    @Column(name = "interval_id")
+    private Integer intervalId;
 
 }

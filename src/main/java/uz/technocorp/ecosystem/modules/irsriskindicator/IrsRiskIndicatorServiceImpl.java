@@ -64,6 +64,7 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                             .score(dto.indicatorType().getScore())
                             .description(dto.description())
                             .tin(dto.tin())
+                            .scoreValue(dto.indicatorType().getScore())
                             .riskAnalysisInterval(riskAnalysisInterval)
                             .build()
             );

@@ -42,6 +42,12 @@ public class ChecklistTemplateController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateActivate(@PathVariable Integer id) {
+        service.updateActivate(id);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         service.delete(id);
@@ -57,8 +63,9 @@ public class ChecklistTemplateController {
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(value = "name", defaultValue = "") String name,
                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
-        Page<ChecklistTemplateView> all = service.getAll(page, size, name);
+                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                    @RequestParam(value = "active") Boolean active) {
+        Page<ChecklistTemplateView> all = service.getAll(page, size, name, active);
         return ResponseEntity.ok(new ApiResponse(all));
     }
 }

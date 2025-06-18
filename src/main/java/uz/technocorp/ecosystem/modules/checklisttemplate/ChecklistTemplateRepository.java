@@ -25,8 +25,9 @@ public interface ChecklistTemplateRepository extends JpaRepository<ChecklistTemp
             path
             from checklist_template
             where name ilike concat('%', name, '%')
+            and active = :active
             """, nativeQuery = true)
-    Page<ChecklistTemplateView> getAllByName(Pageable pageable, String name);
+    Page<ChecklistTemplateView> getAllByName(Pageable pageable, String name, Boolean active);
 
     @Query(value = """
             select id,
@@ -34,6 +35,7 @@ public interface ChecklistTemplateRepository extends JpaRepository<ChecklistTemp
             path
             from checklist_template
             where name ilike concat('%', name, '%')
+            and active is true
             """, nativeQuery = true)
     List<ChecklistTemplateView> findAllByName(String name);
 }

@@ -8,6 +8,7 @@ package uz.technocorp.ecosystem.modules.checklist.dto;
  */
 public record ChecklistDto(
         Integer templateId,
-        String path
+        String path,
+        Integer intervalId
 ) {
 }

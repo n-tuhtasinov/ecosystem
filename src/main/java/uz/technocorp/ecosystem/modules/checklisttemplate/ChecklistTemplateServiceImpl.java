@@ -65,6 +65,15 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
     }
 
     @Override
+    public void updateActivate(Integer id) {
+        ChecklistTemplate checklistTemplate = repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Checklist shabloni", "id", id));
+        checklistTemplate.setActive(!checklistTemplate.isActive());
+        repository.save(checklistTemplate);
+    }
+
+    @Override
     @Transactional
     public void delete(Integer id) {
         ChecklistTemplate checklistTemplate = repository
@@ -81,9 +90,9 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
     }
 
     @Override
-    public Page<ChecklistTemplateView> getAll(int page, int size, String name) {
+    public Page<ChecklistTemplateView> getAll(int page, int size, String name, Boolean active) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.ASC, "name");
-        return repository.getAllByName(pageable, name);
+        return repository.getAllByName(pageable, name, active);
     }
 
     @Override
