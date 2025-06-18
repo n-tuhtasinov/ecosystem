@@ -16,6 +16,8 @@ public record ConfirmationDto(
         UUID appealId,
 
         @NotNull(message = "Document IDsi jo'natilmadi")
-        UUID documentId
+        UUID documentId,
+
+        Boolean shouldRegister
 ) {
 }
