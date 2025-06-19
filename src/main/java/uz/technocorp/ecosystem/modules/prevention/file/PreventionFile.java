@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.prevention;
+package uz.technocorp.ecosystem.modules.prevention.file;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

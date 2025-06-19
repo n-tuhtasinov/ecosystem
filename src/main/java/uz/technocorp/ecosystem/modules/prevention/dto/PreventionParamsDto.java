@@ -32,6 +32,7 @@ public class PreventionParamsDto {
     private Integer regionId;
     private Integer districtId;
     private UUID inspectorId;
+    private Integer year = LocalDate.now().getYear();
 
     @Min(value = 1, message = "Page 0 dan katta bo'lishi kerak")
     private Integer page = 1;
@@ -41,14 +42,14 @@ public class PreventionParamsDto {
     private Integer size = 12;
 
     // District validation
-    @Schema(hidden = true)
+   /* @Schema(hidden = true)
     @AssertTrue(message = "Tuman tanlanganda, viloyat ham tanlanishi kerak")
     public boolean isDistrictRegionValid() {
         if (districtId != null) {
             return regionId != null;
         }
         return true;
-    }
+    }*/
 
     // Date validation
     @Schema(hidden = true)

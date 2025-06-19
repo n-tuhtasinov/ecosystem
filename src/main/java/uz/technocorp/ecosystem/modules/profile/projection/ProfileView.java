@@ -21,4 +21,5 @@ public class ProfileView {
     private Long tin;
     private String legalName;
     private String legalAddress;
+    private String regionName;
 }

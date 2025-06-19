@@ -8,7 +8,6 @@ import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author Sukhrob
@@ -34,8 +33,14 @@ public class Prevention extends BaseEntity {
     @Column(nullable = false)
     private Integer year;
 
+    @Column(nullable = false)
+    private String preventionFile;
+
     @Column
-    private List<String> files;
+    private String eventFile;
+
+    @Column
+    private String organizationFile;
 
     @Column(nullable = false)
     private Boolean viewed;

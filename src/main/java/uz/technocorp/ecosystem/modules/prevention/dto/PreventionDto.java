@@ -1,9 +1,6 @@
 package uz.technocorp.ecosystem.modules.prevention.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
@@ -12,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * @author Sukhrob
@@ -38,9 +34,6 @@ public class PreventionDto {
 
     private String content;
 
-    @Valid
-    @NotEmpty(message = "Fayllar roʻyxati bo'sh bo'lmasligi kerak")
-    private List<@NotBlank(message = "Fayl url bo'sh bo'lmasligi kerak") String> filePaths;
-
-
+    private String eventFile;
+    private String organizationFile;
 }

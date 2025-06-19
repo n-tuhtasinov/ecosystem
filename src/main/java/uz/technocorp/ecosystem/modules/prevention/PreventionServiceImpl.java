@@ -8,25 +8,28 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionDto;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
 import uz.technocorp.ecosystem.modules.prevention.enums.PreventionType;
+import uz.technocorp.ecosystem.modules.prevention.file.PreventionFile;
+import uz.technocorp.ecosystem.modules.prevention.file.PreventionFileService;
 import uz.technocorp.ecosystem.modules.prevention.projection.PreventionTypeView;
 import uz.technocorp.ecosystem.modules.prevention.projection.PreventionView;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
+import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author Sukhrob
@@ -38,9 +41,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PreventionServiceImpl implements PreventionService {
 
+    private final RegionService regionService;
+    private final DistrictService districtService;
     private final ProfileService profileService;
     private final AttachmentService attachmentService;
     private final PreventionSpecification specification;
+    private final PreventionFileService preventionFileService;
     private final PreventionRepository repository;
 
     @Override
@@ -160,6 +166,7 @@ public class PreventionServiceImpl implements PreventionService {
         Profile profile = getProfileByTin(dto.getTin());
 
         Integer currentYear = LocalDate.now().getYear();
+        String preventionFile = checkPreventionFile(currentYear, profile.getRegionId());
 
         // Check prevention
         Prevention oldPrevention = getPreventionByProfileTinAndYear(profile.getTin(), currentYear);
@@ -173,7 +180,9 @@ public class PreventionServiceImpl implements PreventionService {
         prevention.setTypeId(dto.getTypeId());
         prevention.setContent(dto.getContent());
         prevention.setYear(currentYear);
-        prevention.setFiles(dto.getFilePaths());
+        prevention.setPreventionFile(preventionFile);
+        prevention.setEventFile(dto.getEventFile());
+        prevention.setOrganizationFile(dto.getOrganizationFile());
         prevention.setViewed(false);
         prevention.setViewDate(null);
         prevention.setInspectorName(user.getName());
@@ -186,7 +195,10 @@ public class PreventionServiceImpl implements PreventionService {
         repository.save(prevention);
 
         // Delete files from attachment
-        attachmentService.deleteByPaths(dto.getFilePaths());
+        List<String> filePaths = Stream.of(dto.getEventFile(), dto.getOrganizationFile()).filter(Objects::nonNull).toList();
+        if (!filePaths.isEmpty()) {
+            attachmentService.deleteByPaths(List.of(dto.getEventFile(), dto.getOrganizationFile()));
+        }
     }
 
     @Override
@@ -271,6 +283,14 @@ public class PreventionServiceImpl implements PreventionService {
         return PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
+    private String checkPreventionFile(Integer year, Integer regionId) {
+        PreventionFile file = preventionFileService.findByYearAndRegion(year, regionId);
+        if (file == null) {
+            throw new CustomException("Profilaktika yaratish uchun Hududiy bo'lim tomonidan Tadbir rejasi fayli kiritilmagan");
+        }
+        return file.getPath();
+    }
+
     // MAPPER
     private PreventionView map(Prevention prevention) {
         PreventionView dto = new PreventionView();
@@ -284,12 +304,14 @@ public class PreventionServiceImpl implements PreventionService {
         dto.setCreatedAt(prevention.getCreatedAt());
         dto.setCreatedBy(prevention.getCreatedBy().toString());
         dto.setInspectorName(prevention.getInspectorName());
-        dto.setProfileTin(prevention.getProfileTin());
+        dto.setTin(prevention.getProfileTin());
         dto.setLegalName(prevention.getLegalName());
         dto.setLegalAddress(prevention.getLegalAddress());
-        dto.setRegionId(prevention.getRegionId());
-        dto.setDistrictId(prevention.getDistrictId());
-        dto.setFiles(prevention.getFiles());
+        dto.setRegionName(regionService.findById(prevention.getRegionId()).getName());
+        dto.setDistrictName(districtService.getDistrict(prevention.getDistrictId()).getName());
+        dto.setPreventionFile(prevention.getPreventionFile());
+        dto.setEventFile(prevention.getEventFile());
+        dto.setOrganizationFile(prevention.getOrganizationFile());
 
         return dto;
     }
