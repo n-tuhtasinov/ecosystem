@@ -337,6 +337,13 @@ public class AppealServiceImpl implements AppealService {
                 () -> new ResourceNotFoundException("Ariza topilmadi yoki ariza holati o'zgargan"));
     }
 
+    @Override
+    public void setFilePath(User user, UploadFileDto dto) {
+        Appeal appeal = findById(dto.appealId());
+        JsonNode node = appeal.getData();
+
+    }
+
     private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal, Boolean shouldRegister) {
         Role role = user.getRole();
         AppealStatus appealStatus;
