@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.checklist.dto;
 
+import java.util.UUID;
+
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -9,6 +11,7 @@ package uz.technocorp.ecosystem.modules.checklist.dto;
 public record ChecklistDto(
         Integer templateId,
         String path,
-        Integer intervalId
+        Integer intervalId,
+        UUID objectId
 ) {
 }

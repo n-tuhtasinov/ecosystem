@@ -48,7 +48,7 @@ public class ChecklistServiceImpl implements ChecklistService {
                         .templateId(checklistDto.templateId())
                         .tin(profile.getTin())
                         .intervalId(checklistDto.intervalId())
-//                        .profile(profile)
+                        .objectId(checklistDto.objectId())
                         .build()
         );
         attachmentRepository.deleteByPath(checklistDto.path());
@@ -82,14 +82,9 @@ public class ChecklistServiceImpl implements ChecklistService {
     }
 
     @Override
-    public Page<ChecklistView> getChecklists(int page, int size, Long tin) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "created_at");
-        return repository.findAllChecklist(pageable, tin);
+    public List<ChecklistView> getChecklists(Long tin, UUID objectId, Integer intervalId) {
+
+        return repository.findAllChecklist(tin, objectId);
     }
 
-    @Override
-    public Page<ChecklistView> getChecklists(User user, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "created_at");
-        return repository.findAllChecklist(pageable, user.getProfileId());
-    }
 }
