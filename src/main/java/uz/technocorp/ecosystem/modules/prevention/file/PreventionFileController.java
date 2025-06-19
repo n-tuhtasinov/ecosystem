@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.prevention.file;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.prevention.file.dto.PathDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -27,15 +28,15 @@ public class PreventionFileController {
 
     // TODO Role check ( Regional )
     @PostMapping
-    public ResponseEntity<ApiResponse> add(@CurrentUser User user, @RequestBody String filePath) {
-        service.create(user, filePath);
+    public ResponseEntity<ApiResponse> add(@CurrentUser User user, @RequestBody PathDto pathDto) {
+        service.create(user, pathDto.getPath());
         return ResponseEntity.ok(new ApiResponse("Profilaktika fayli saqlandi"));
     }
 
     // TODO Role check ( Regional )
-    @DeleteMapping("/{filePath}")
-    public ResponseEntity<ApiResponse> delete(@CurrentUser User user, @PathVariable String filePath) {
-        service.delete(user, filePath);
+    @DeleteMapping()
+    public ResponseEntity<ApiResponse> delete(@CurrentUser User user, @RequestBody PathDto pathDto) {
+        service.delete(user, pathDto.getPath());
         return ResponseEntity.ok(new ApiResponse("Profilaktika fayli o'chirildi"));
     }
 }
