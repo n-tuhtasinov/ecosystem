@@ -122,6 +122,32 @@ public class AttachmentServiceImpl implements AttachmentService {
         repository.deleteByPaths(validPaths);
     }
 
+    @Override
+    public void deleteFileFromStorage(String filePath) {
+
+        if (filePath==null || filePath.isBlank() || !filePath.startsWith("/files")) {
+            throw new RuntimeException("Tizimda faqat /files deb boshlangan fayllarnigina o'chirish mumkin");
+        }
+
+        if (filePath.startsWith("/")){
+            filePath = filePath.substring(1);
+        }
+
+        try {
+            Path fileToDelete = Paths.get(filePath);
+            boolean deleted = Files.deleteIfExists(fileToDelete);
+            if (deleted) {
+                log.info("Fayl muvaffaqiyatli o'chirildi: {}", fileToDelete.toAbsolutePath());
+            }else {
+                log.warn("O'chirilishi kerak bo'lgan fayl topilmadi: {}", fileToDelete.toAbsolutePath());
+                throw new RuntimeException("O'chirilishi kerak bo'lgan fayl topilmadi: "+ filePath);
+            }
+        } catch (Exception e) {
+            log.error("Faylni o'chirib bo'lmadi: {}. Xatolik: {}", filePath, e.getMessage());
+            throw new RuntimeException(String.format("Faylni o'chirib bo'lmadi: '%s', Xatolik: '%s'", filePath, e.getMessage()));
+        }
+    }
+
     private Path createDirectory(String folder) {
         LocalDate now = LocalDate.now();
         int year = now.getYear();
