@@ -38,7 +38,7 @@ public class ChecklistServiceImpl implements ChecklistService {
         Profile profile = profileRepository
                 .findById(user.getProfileId())
                 .orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
-        attachmentRepository
+        Attachment attachment = attachmentRepository
                 .findByPath(checklistDto.path())
                 .orElseThrow(() -> new ResourceNotFoundException("Attachment", "path", checklistDto.path()));
         repository.save(
@@ -51,7 +51,8 @@ public class ChecklistServiceImpl implements ChecklistService {
                         .objectId(checklistDto.objectId())
                         .build()
         );
-        attachmentRepository.deleteByPath(checklistDto.path());
+//        attachmentRepository.deleteByPath(checklistDto.path());
+        attachmentRepository.deleteById(attachment.getId());
     }
 
     @Override
