@@ -31,7 +31,7 @@ public class PreventionView {
     private String legalAddress;
     private String regionName;
     private String districtName;
-    private String preventionFile;
-    private String eventFile;
-    private String organizationFile;
+    private String preventionFilePath;
+    private String eventFilePath;
+    private String organizationFilePath;
 }
