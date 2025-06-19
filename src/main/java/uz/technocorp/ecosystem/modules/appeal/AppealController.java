@@ -110,7 +110,7 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CONFIRMED));
     }
 
-    @PostMapping("/uploading")
+    @PostMapping("/upload-file")
     public ResponseEntity<?> setFilePath(@CurrentUser User user, @Valid @RequestBody UploadFileDto uploadFileDto) {
         service.setFilePath(user, uploadFileDto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
