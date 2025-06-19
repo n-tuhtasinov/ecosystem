@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
-import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -26,6 +27,7 @@ public class PreventionFileServiceImpl implements PreventionFileService {
     private final ProfileService profileService;
     private final PreventionFileRepository repository;
     private final OfficeService officeService;
+    private final AttachmentService attachmentService;
 
     @Override
     public PreventionFile get(User user, Integer year) {
@@ -52,6 +54,9 @@ public class PreventionFileServiceImpl implements PreventionFileService {
         file.setRegionId(profile.getRegionId());
 
         repository.save(file);
+
+        // Delete file from attachment
+        attachmentService.deleteByPaths(List.of(filePath));
     }
 
     @Override

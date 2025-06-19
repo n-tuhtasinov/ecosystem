@@ -31,7 +31,7 @@ public interface PreventionRepository extends JpaRepository<Prevention, UUID>, J
 
     Optional<Prevention> findByProfileTinAndYear(Long tin, Integer year);
 
-    @Query("select p from Prevention p where p.id = :preventionId and p.createdBy = :inspectorId and p.viewed is true and p.createdAt > :limitDate")
+    @Query("select p from Prevention p where p.id = :preventionId and p.createdBy = :inspectorId and p.viewed is false and p.createdAt > :limitDate")
     Optional<Prevention> getForDelete(UUID preventionId, UUID inspectorId, LocalDateTime limitDate);
 
     @Modifying
