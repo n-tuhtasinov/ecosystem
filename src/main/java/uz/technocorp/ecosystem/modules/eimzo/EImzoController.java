@@ -128,7 +128,7 @@ public class EImzoController {
     }
 
     // Frontend
-    @PostMapping("/frontend/mobile/auth")
+    @PostMapping("/mobile/auth")
     public ResponseEntity<?> mobileAuth() {
         try {
             return ResponseEntity.ok(eImzoProxy.getAuthChallenge());
@@ -137,7 +137,7 @@ public class EImzoController {
         }
     }
 
-    @PostMapping("/frontend/mobile/status")
+    @PostMapping("/mobile/status")
     public ResponseEntity<?> getDocumentStatus(@RequestParam String documentId) {
         try {
             return ResponseEntity.ok(eImzoProxy.getDocumentStatus(documentId));
@@ -146,7 +146,7 @@ public class EImzoController {
         }
     }
 
-    @GetMapping("/backend/mobile/authenticate/{docId}")
+    @GetMapping("/mobile/authenticate/{docId}")
     public ResponseEntity<?> authenticateWithHeaders(@PathVariable String docId, HttpServletRequest request) {
         try {
             return ResponseEntity.ok(eImzoProxy.authenticateWithHeaders(docId, Helper.getIp(request), host));
@@ -155,7 +155,7 @@ public class EImzoController {
         }
     }
 
-    @PostMapping("/frontend/mobile/sign")
+    @PostMapping("/mobile/sign")
     public ResponseEntity<?> sign() {
         try {
             return ResponseEntity.ok(eImzoProxy.signDocument());
@@ -164,7 +164,7 @@ public class EImzoController {
         }
     }
 
-    @PostMapping("/backend/mobile/verify")
+    @PostMapping("/mobile/verify")
     public ResponseEntity<?> verifyDocument(@RequestParam("documentId") String documentId, @RequestParam("document") String document, HttpServletRequest request) {
         try {
             return ResponseEntity.ok(eImzoProxy.verifyDocument(documentId, document, Helper.getIp(request), host));
