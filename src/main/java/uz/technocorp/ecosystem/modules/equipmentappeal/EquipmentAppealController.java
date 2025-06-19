@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
-import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.*;
-import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -30,8 +28,6 @@ import uz.technocorp.ecosystem.shared.ResponseMessage;
 public class EquipmentAppealController {
 
     private final AppealService appealService;
-    private final HazardousFacilityService hazardousFacilityService;
-    private final ChildEquipmentService childEquipmentService;
     private final EquipmentAppealService equipmentAppealService;
 
     @PostMapping("/crane")

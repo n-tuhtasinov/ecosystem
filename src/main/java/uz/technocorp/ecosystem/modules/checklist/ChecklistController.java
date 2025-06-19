@@ -20,7 +20,7 @@ import java.util.UUID;
  * @since v1.0
  */
 @RestController
-@RequestMapping("/api/checklists")
+@RequestMapping("/api/v1/checklists")
 @RequiredArgsConstructor
 public class ChecklistController {
 

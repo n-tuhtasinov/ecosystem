@@ -168,7 +168,7 @@ public class AppealServiceImpl implements AppealService {
                 .districtId(dto.getDistrictId())
                 .officeId(office.getId())
                 .officeName(office.getName())
-                .status(AppealStatus.NEW)
+                .status(AppealStatus.NEW) // shu joyida akkreditatsiya arizasida In_approval qilish kerak.
                 .address(region.getName() + ", " + district.getName() + ", " + dto.getAddress())
                 .legalAddress(profile.getLegalAddress())
                 .phoneNumber(dto.getPhoneNumber())
