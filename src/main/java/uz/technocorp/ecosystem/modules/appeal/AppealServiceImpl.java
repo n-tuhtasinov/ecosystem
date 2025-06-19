@@ -230,7 +230,7 @@ public class AppealServiceImpl implements AppealService {
     public String preparePdfWithParam(AppealDto dto, User user) {
         AppealPdfProcessor processor = findProcessor(dto);
         if (processor == null) {
-            throw new ResourceNotFoundException("Form obyekt turi xato: " + dto.getClass().getSimpleName());
+            throw new CustomException("Form obyekt turi xato: " + dto.getClass().getSimpleName());
         }
         return processor.preparePdfWithParam(dto, user);
     }
@@ -319,6 +319,24 @@ public class AppealServiceImpl implements AppealService {
         }
     }
 
+    @Override
+    public void setHfTypeName(HfAppealDto appealDto) {
+        String hfTypeName = hfTypeService.getHfTypeNameById(appealDto.getHfTypeId());
+        appealDto.setHfTypeName(hfTypeName);
+    }
+
+    @Override
+    public Appeal findByIdAndStatus(UUID appealId, AppealStatus appealStatus) {
+        return repository.findByIdAndStatus(appealId, appealStatus).orElseThrow(
+                () -> new ResourceNotFoundException("Ariza topilmadi yoki ariza holati o'zgargan"));
+    }
+
+    @Override
+    public Appeal findByIdStatusAndOffice(UUID appealId, AppealStatus appealStatus, Integer officeId) {
+        return repository.findByIdAndStatusAndOfficeId(appealId, appealStatus, officeId).orElseThrow(
+                () -> new ResourceNotFoundException("Ariza topilmadi yoki ariza holati o'zgargan"));
+    }
+
     private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal, Boolean shouldRegister) {
         Role role = user.getRole();
         AppealStatus appealStatus;
@@ -339,24 +357,6 @@ public class AppealServiceImpl implements AppealService {
             throw new RuntimeException(role.name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting ))) ...");
         }
         return appealStatus;
-    }
-
-    @Override
-    public void setHfTypeName(HfAppealDto appealDto) {
-        String hfTypeName = hfTypeService.getHfTypeNameById(appealDto.getHfTypeId());
-        appealDto.setHfTypeName(hfTypeName);
-    }
-
-    @Override
-    public Appeal findByIdAndStatus(UUID appealId, AppealStatus appealStatus) {
-        return repository.findByIdAndStatus(appealId, appealStatus).orElseThrow(
-                () -> new ResourceNotFoundException("Ariza topilmadi yoki ariza holati o'zgargan"));
-    }
-
-    @Override
-    public Appeal findByIdStatusAndOffice(UUID appealId, AppealStatus appealStatus, Integer officeId) {
-        return repository.findByIdAndStatusAndOfficeId(appealId, appealStatus, officeId).orElseThrow(
-                () -> new ResourceNotFoundException("Ariza topilmadi yoki ariza holati o'zgargan"));
     }
 
     private OrderNumberDto makeNumber(AppealType appealType) {

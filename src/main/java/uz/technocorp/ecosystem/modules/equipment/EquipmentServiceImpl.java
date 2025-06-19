@@ -9,8 +9,6 @@ import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
-import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
-import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSortService;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
@@ -52,8 +50,6 @@ public class EquipmentServiceImpl implements EquipmentService {
     private final TemplateService templateService;
     private final DistrictService districtService;
     private final AttachmentService attachmentService;
-    private final ChildEquipmentService childEquipmentService;
-    private final ChildEquipmentSortService childEquipmentSortService;
     private final OfficeService officeService;
     private final EquipmentRepository equipmentRepository;
 
@@ -124,7 +120,7 @@ public class EquipmentServiceImpl implements EquipmentService {
             params.setRegionId(office.getRegionId());
         } else if (user.getRole() == Role.LEGAL) {
             params.setLegalTin(profile.getTin());
-        }else {
+        } else {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
 
@@ -147,10 +143,12 @@ public class EquipmentServiceImpl implements EquipmentService {
                 else
                     return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION.name());
             } else {
-                if (tin != null) return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION.name(), intervalId);
+                if (tin != null)
+                    return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION.name(), intervalId);
                 if (registryNumber != null)
                     return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION.name(), intervalId);
-                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION.name(), intervalId);
+                else
+                    return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION.name(), intervalId);
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
@@ -162,7 +160,8 @@ public class EquipmentServiceImpl implements EquipmentService {
                 return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ATTRACTION.name());
 
         } else {
-            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
+            if (registryNumber != null)
+                return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
             Profile profile = profileService.getProfile(user.getProfileId());
             return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ATTRACTION.name());
         }
@@ -191,8 +190,8 @@ public class EquipmentServiceImpl implements EquipmentService {
         return new AttractionPassportView(
                 equipment.getId(),
                 equipment.getAttractionName(),
-                equipment.getChildEquipment() != null? equipment.getChildEquipment().getName() : null,
-                equipment.getChildEquipmentSort() != null? equipment.getChildEquipmentSort().getName() : null,
+                equipment.getChildEquipment() != null ? equipment.getChildEquipment().getName() : null,
+                equipment.getChildEquipmentSort() != null ? equipment.getChildEquipmentSort().getName() : null,
                 equipment.getManufacturedAt(),
                 equipment.getAcceptedAt(),
                 equipment.getFactoryNumber(),
@@ -220,7 +219,8 @@ public class EquipmentServiceImpl implements EquipmentService {
                         .getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR.name(), intervalId);
                 if (registryNumber != null)
                     return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR.name(), intervalId);
-                else return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR.name(), intervalId);
+                else
+                    return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR.name(), intervalId);
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
@@ -232,7 +232,8 @@ public class EquipmentServiceImpl implements EquipmentService {
                 return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ELEVATOR.name());
 
         } else {
-            if (registryNumber != null) return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
+            if (registryNumber != null)
+                return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
             Profile profile = profileService.getProfile(user.getProfileId());
             return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ELEVATOR.name());
         }
@@ -361,7 +362,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getParentOrganization(),
                 equipment.getNonDestructiveCheckDate(),
                 equipment.getAttractionPassportId(),
-                equipment.getAttractionPassport() == null? null : equipment.getAttractionPassport().getRegistryNumber(),
+                equipment.getAttractionPassport() == null ? null : equipment.getAttractionPassport().getRegistryNumber(),
                 equipment.getDescription(),
                 equipment.getInspectorId(),
                 equipment.getInspector() == null ? null : equipment.getInspector().getName(),

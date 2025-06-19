@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.prevention.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -40,6 +41,7 @@ public class PreventionParamsDto {
     private Integer size = 12;
 
     // District validation
+    @Schema(hidden = true)
     @AssertTrue(message = "Tuman tanlanganda, viloyat ham tanlanishi kerak")
     public boolean isDistrictRegionValid() {
         if (districtId != null) {
@@ -49,6 +51,7 @@ public class PreventionParamsDto {
     }
 
     // Date validation
+    @Schema(hidden = true)
     @AssertTrue(message = "Qidiruvning yakuniy sanasi boshlang'ich sanadan keyin bo'lishi kerak")
     public boolean isDateRangeValid() {
         if (startDate != null && endDate != null) {
