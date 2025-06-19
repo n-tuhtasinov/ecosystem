@@ -34,9 +34,9 @@ public class PreventionFileController {
     }
 
     // TODO Role check ( Regional )
-    @DeleteMapping()
-    public ResponseEntity<ApiResponse> delete(@CurrentUser User user, @RequestBody PathDto pathDto) {
-        service.delete(user, pathDto.getPath());
+    @DeleteMapping
+    public ResponseEntity<ApiResponse> delete(@CurrentUser User user, @RequestParam("path") String path) {
+        service.delete(user, path);
         return ResponseEntity.ok(new ApiResponse("Profilaktika fayli o'chirildi"));
     }
 }
