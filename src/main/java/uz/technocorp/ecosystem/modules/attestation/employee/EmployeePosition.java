@@ -11,9 +11,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum EmployeePosition {
 
-    LEADER("Raxbar"),
-    TECHNICIAN("Injener, Texnik xodim"),
-    EMPLOYEE("Oddiy xodim");
+    LEADER(1, "Raxbar"),
+    TECHNICIAN(2, "Injener, Texnik xodim"),
+    EMPLOYEE(2, "Oddiy xodim");
 
+    public final Integer direction; // Committee - 1  | Regional - 2
     public final String value;
 }
