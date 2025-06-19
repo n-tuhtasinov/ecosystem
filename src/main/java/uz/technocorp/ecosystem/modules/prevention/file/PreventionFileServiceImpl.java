@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
+import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -23,6 +25,7 @@ public class PreventionFileServiceImpl implements PreventionFileService {
 
     private final ProfileService profileService;
     private final PreventionFileRepository repository;
+    private final OfficeService officeService;
 
     @Override
     public PreventionFile get(User user, Integer year) {
