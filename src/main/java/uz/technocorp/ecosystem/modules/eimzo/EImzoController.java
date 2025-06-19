@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.eimzo.dto.SignDto;
 import uz.technocorp.ecosystem.modules.eimzo.dto.StatusDto;
@@ -123,6 +124,52 @@ public class EImzoController {
             return ResponseEntity.ok(pkcs7);
         } catch (Exception ex) {
             throw new ResourceNotFoundException(ex.getMessage());
+        }
+    }
+
+    // Frontend
+    @PostMapping("/frontend/mobile/auth")
+    public ResponseEntity<?> mobileAuth() {
+        try {
+            return ResponseEntity.ok(eImzoProxy.getAuthChallenge());
+        } catch (Exception ex) {
+            throw new CustomException(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/frontend/mobile/status")
+    public ResponseEntity<?> getDocumentStatus(@RequestParam String documentId) {
+        try {
+            return ResponseEntity.ok(eImzoProxy.getDocumentStatus(documentId));
+        } catch (Exception ex) {
+            throw new CustomException(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/backend/mobile/authenticate/{docId}")
+    public ResponseEntity<?> authenticateWithHeaders(@PathVariable String docId, HttpServletRequest request) {
+        try {
+            return ResponseEntity.ok(eImzoProxy.authenticateWithHeaders(docId, Helper.getIp(request), host));
+        } catch (Exception ex) {
+            throw new CustomException(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/frontend/mobile/sign")
+    public ResponseEntity<?> sign() {
+        try {
+            return ResponseEntity.ok(eImzoProxy.signDocument());
+        } catch (Exception ex) {
+            throw new CustomException(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/backend/mobile/verify")
+    public ResponseEntity<?> verifyDocument(@RequestParam("documentId") String documentId, @RequestParam("document") String document, HttpServletRequest request) {
+        try {
+            return ResponseEntity.ok(eImzoProxy.verifyDocument(documentId, document, Helper.getIp(request), host));
+        } catch (Exception ex) {
+            throw new CustomException(ex.getMessage());
         }
     }
 }
