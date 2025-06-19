@@ -34,13 +34,13 @@ public class Prevention extends BaseEntity {
     private Integer year;
 
     @Column(nullable = false)
-    private String preventionFile;
+    private String preventionFilePath;
 
     @Column
-    private String eventFile;
+    private String eventFilePath;
 
     @Column
-    private String organizationFile;
+    private String organizationFilePath;
 
     @Column(nullable = false)
     private Boolean viewed;

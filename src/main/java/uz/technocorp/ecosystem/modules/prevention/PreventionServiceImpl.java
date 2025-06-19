@@ -180,9 +180,9 @@ public class PreventionServiceImpl implements PreventionService {
         prevention.setTypeId(dto.getTypeId());
         prevention.setContent(dto.getContent());
         prevention.setYear(currentYear);
-        prevention.setPreventionFile(preventionFile);
-        prevention.setEventFile(dto.getEventFile());
-        prevention.setOrganizationFile(dto.getOrganizationFile());
+        prevention.setPreventionFilePath(preventionFile);
+        prevention.setEventFilePath(dto.getEventFile());
+        prevention.setOrganizationFilePath(dto.getOrganizationFile());
         prevention.setViewed(false);
         prevention.setViewDate(null);
         prevention.setInspectorName(user.getName());
@@ -309,9 +309,9 @@ public class PreventionServiceImpl implements PreventionService {
         dto.setLegalAddress(prevention.getLegalAddress());
         dto.setRegionName(regionService.findById(prevention.getRegionId()).getName());
         dto.setDistrictName(districtService.getDistrict(prevention.getDistrictId()).getName());
-        dto.setPreventionFile(prevention.getPreventionFile());
-        dto.setEventFile(prevention.getEventFile());
-        dto.setOrganizationFile(prevention.getOrganizationFile());
+        dto.setPreventionFilePath(prevention.getPreventionFilePath());
+        dto.setEventFilePath(prevention.getEventFilePath());
+        dto.setOrganizationFilePath(prevention.getOrganizationFilePath());
 
         return dto;
     }

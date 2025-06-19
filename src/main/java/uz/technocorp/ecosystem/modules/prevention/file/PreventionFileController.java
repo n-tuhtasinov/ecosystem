@@ -25,12 +25,14 @@ public class PreventionFileController {
         return ResponseEntity.ok(new ApiResponse(service.get(user, year)));
     }
 
+    // TODO Role check ( Regional )
     @PostMapping
     public ResponseEntity<ApiResponse> add(@CurrentUser User user, @RequestBody String filePath) {
         service.create(user, filePath);
         return ResponseEntity.ok(new ApiResponse("Profilaktika fayli saqlandi"));
     }
 
+    // TODO Role check ( Regional )
     @DeleteMapping("/{filePath}")
     public ResponseEntity<ApiResponse> delete(@CurrentUser User user, @PathVariable String filePath) {
         service.delete(user, filePath);

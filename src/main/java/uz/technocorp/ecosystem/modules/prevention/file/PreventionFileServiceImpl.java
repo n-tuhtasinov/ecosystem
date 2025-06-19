@@ -29,7 +29,7 @@ public class PreventionFileServiceImpl implements PreventionFileService {
         Profile profile = profileService.getProfile(user.getProfileId());
 
         return repository.findByYearAndRegionId(year, profile.getRegionId())
-                .orElseThrow(() -> new ResourceNotFoundException("File", "yil", year));
+                .orElse(new PreventionFile(null, year, profile.getRegionId()));
     }
 
     @Override
