@@ -20,7 +20,6 @@ import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -53,7 +52,7 @@ public class ProfileServiceImpl implements ProfileService {
 
                 .tin(dto.getTin())
                 .legalName(dto.getLegalName())
-                .legalAddress((region != null ? region.getName()+", " : "") + (district !=null ? district.getName()+", " : "") + dto.getLegalAddress())
+                .legalAddress((region != null ? region.getName() + ", " : "") + (district != null ? district.getName() + ", " : "") + dto.getLegalAddress())
                 .fullName(dto.getFullName())
                 .pin(dto.getPin())
                 .departmentId(dto.getDepartmentId())
@@ -118,7 +117,7 @@ public class ProfileServiceImpl implements ProfileService {
             Subquery<Long> subquery = Objects.requireNonNull(query).subquery(Long.class);
             Root<Prevention> preventionRoot = subquery.from(Prevention.class);
             subquery.select(preventionRoot.get("profileTin"))
-                    .where(cb.equal(preventionRoot.get("year"), LocalDate.now().getYear()));
+                    .where(cb.equal(preventionRoot.get("year"), params.getYear()));
             return cb.and(
                     cb.isNotNull(root.get("tin")),
                     cb.not(root.get("tin").in(subquery))
@@ -232,6 +231,7 @@ public class ProfileServiceImpl implements ProfileService {
         view.setTin(profile.getTin());
         view.setLegalName(profile.getLegalName());
         view.setLegalAddress(profile.getLegalAddress());
+        view.setRegionName(profile.getRegionName());
 
         return view;
     }

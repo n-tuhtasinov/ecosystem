@@ -32,7 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<PositionDto> getPositions() {
-        return Arrays.stream(EmployeePosition.values()).map(e -> new PositionDto(e.name(), e.value)).toList();
+        return Arrays.stream(EmployeePosition.values()).map(e -> new PositionDto(e.direction, e.value)).toList();
     }
 
     @Override
@@ -90,6 +90,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         HazardousFacility hf = checkHf(user.getProfileId(), dto.getHfId());
 
         return repository.deleteByHfIdAndPinIn(hf.getId(), dto.getPinList());
+    }
+
+    @Override
+    public List<Employee> getEmployeesByHf(UUID id, List<String> pinList) {
+        return repository.findByHfIdAndPinIn(id, pinList);
     }
 
     private HazardousFacility checkHf(UUID profileId, UUID hfId) {

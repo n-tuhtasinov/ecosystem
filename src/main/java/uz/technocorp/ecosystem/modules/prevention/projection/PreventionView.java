@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author Sukhrob
@@ -27,10 +26,12 @@ public class PreventionView {
     private LocalDateTime createdAt;
     private String createdBy;
     private String inspectorName;
-    private Long profileTin;
+    private Long tin;
     private String legalName;
     private String legalAddress;
-    private Integer regionId;
-    private Integer districtId;
-    private List<String> files;
+    private String regionName;
+    private String districtName;
+    private String preventionFile;
+    private String eventFile;
+    private String organizationFile;
 }
