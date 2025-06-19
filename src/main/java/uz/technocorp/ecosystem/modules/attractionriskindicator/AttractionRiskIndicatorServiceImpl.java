@@ -1,23 +1,18 @@
 package uz.technocorp.ecosystem.modules.attractionriskindicator;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.Attachment;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
 import uz.technocorp.ecosystem.modules.elevatorriskindicator.dto.EquipmentRiskIndicatorDto;
-import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentRepository;
 import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
-import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
@@ -28,7 +23,6 @@ import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -77,6 +71,7 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
                             .score(dto.indicatorType().getScore())
                             .description(dto.description())
                             .tin(dto.tin())
+                            .scoreValue(dto.indicatorType().getScore())
                             .riskAnalysisInterval(riskAnalysisInterval)
                             .build()
             );

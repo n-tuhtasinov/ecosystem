@@ -1,17 +1,16 @@
 package uz.technocorp.ecosystem.modules.checklist;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.shared.ApiResponse;
-import uz.technocorp.ecosystem.shared.AppConstants;
-import uz.technocorp.ecosystem.shared.ResponseMessage;
 import uz.technocorp.ecosystem.modules.checklist.dto.ChecklistDto;
 import uz.technocorp.ecosystem.modules.checklist.view.ChecklistView;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -45,19 +44,11 @@ public class ChecklistController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.DELETED));
     }
 
-    @GetMapping("/for-inspector")
-    public ResponseEntity<?> getAllForInspector( @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-                                                 @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-                                                 @RequestParam(value = "tin") Long tin) {
-        Page<ChecklistView> checklists = service.getChecklists(page, size, tin);
-        return ResponseEntity.ok(new ApiResponse(checklists));
-    }
-
     @GetMapping
-    public ResponseEntity<?> getAllForInspector( @CurrentUser User user,
-                                                 @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-                                                 @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size) {
-        Page<ChecklistView> checklists = service.getChecklists(user, page, size);
+    public ResponseEntity<?> getAllByObjectId(@RequestParam(value = "intervalId") Integer intervalId,
+                                              @RequestParam(value = "objectId") UUID objectId,
+                                              @RequestParam(value = "tin") Long tin) {
+        List<ChecklistView> checklists = service.getChecklists(tin, objectId, intervalId);
         return ResponseEntity.ok(new ApiResponse(checklists));
     }
 }

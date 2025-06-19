@@ -38,18 +38,20 @@ public class ChecklistServiceImpl implements ChecklistService {
         Profile profile = profileRepository
                 .findById(user.getProfileId())
                 .orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
+        attachmentRepository
+                .findByPath(checklistDto.path())
+                .orElseThrow(() -> new ResourceNotFoundException("Attachment", "path", checklistDto.path()));
         repository.save(
                 Checklist
                         .builder()
                         .path(checklistDto.path())
                         .templateId(checklistDto.templateId())
                         .tin(profile.getTin())
-                        .profile(profile)
+                        .intervalId(checklistDto.intervalId())
+                        .objectId(checklistDto.objectId())
                         .build()
         );
-        attachmentRepository
-                .findByPath(checklistDto.path())
-                .orElseThrow(() -> new ResourceNotFoundException("Attachment", "path", checklistDto.path()));
+        attachmentRepository.deleteByPath(checklistDto.path());
     }
 
     @Override
@@ -80,14 +82,9 @@ public class ChecklistServiceImpl implements ChecklistService {
     }
 
     @Override
-    public Page<ChecklistView> getChecklists(int page, int size, Long tin) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "created_at");
-        return repository.findAllChecklist(pageable, tin);
+    public List<ChecklistView> getChecklists(Long tin, UUID objectId, Integer intervalId) {
+
+        return repository.findAllChecklist(tin, objectId);
     }
 
-    @Override
-    public Page<ChecklistView> getChecklists(User user, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "created_at");
-        return repository.findAllChecklist(pageable, user.getProfileId());
-    }
 }

@@ -2,8 +2,7 @@ package uz.technocorp.ecosystem.modules.assigninspectorirs;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
-import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
+import uz.technocorp.ecosystem.modules.assigninspectorequipment.AssignInspectorInfo;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -26,7 +25,7 @@ public interface AIIRSRepository extends JpaRepository<AssignInspectorIrs, UUID>
                 join profile p on p.id = u.profile_id
                 where a.id = :assignId
             """, nativeQuery = true)
-    Optional<AssignInfoDto> findInfo(UUID assignId);
+    Optional<AssignInspectorInfo> findInfo(UUID assignId);
 
     Optional<AssignInspectorIrs> findByIrsIdAndIntervalId(UUID inspectorId, Integer intervalId);
 }

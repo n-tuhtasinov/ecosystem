@@ -1,8 +1,6 @@
 package uz.technocorp.ecosystem.modules.assigninspectorequipment;
 
 import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AIDto;
-import uz.technocorp.ecosystem.modules.assigninspectorequipment.dto.AssignInfoDto;
-import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 
 import java.util.UUID;
 
@@ -16,5 +14,5 @@ public interface AIEService {
 
     void create(AIDto dto);
     void update(UUID id, AIDto dto);
-    AssignInfoDto getInspectorInfo(UUID assignId);
+    AssignInspectorInfo getInspectorInfo(UUID assignId);
 }

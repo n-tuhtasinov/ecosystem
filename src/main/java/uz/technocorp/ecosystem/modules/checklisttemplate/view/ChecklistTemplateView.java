@@ -11,4 +11,5 @@ public interface ChecklistTemplateView {
     Integer getId();
     String getName();
     String getPath();
+    Boolean getActive();
 }

@@ -28,4 +28,6 @@ public class ChecklistTemplate extends AuditEntity {
     @Column(nullable = false)
     private String path;
 
+    private boolean active;
+
 }
