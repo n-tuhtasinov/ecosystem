@@ -47,14 +47,17 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public UUID create(UserDto dto) {
 
-        //get region
+        //get region and region name
         Region region = getRegion(dto.getRegionId());
+        String regionName = region != null? region.getName() : null;
 
-        //set region id if the user has office id
+        //set region id and region name if the user has office id
         Integer regionId = dto.getRegionId();
         if (dto.getOfficeId()!=null){
             OfficeViewById byId = officeService.getById(dto.getOfficeId());
-            regionId = byId.getRegionId();
+            Region innerRegion = regionService.findById(byId.getRegionId());
+            regionId = innerRegion.getId();
+            regionName = innerRegion.getName();
         }
 
         //get district
@@ -70,7 +73,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .departmentId(dto.getDepartmentId())
                 .officeId(dto.getOfficeId())
                 .regionId(regionId)
-                .regionName(region != null ? region.getName() : null)
+                .regionName(regionName)
                 .districtId(dto.getDistrictId())
                 .districtName(district != null ? district.getName() : null)
                 .position(dto.getPosition())
