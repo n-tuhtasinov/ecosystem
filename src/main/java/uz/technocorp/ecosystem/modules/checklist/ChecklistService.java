@@ -19,6 +19,5 @@ public interface ChecklistService {
     void create(User user, ChecklistDto checklistDto);
     void update(UUID id, User user, ChecklistDto checklistDto);
     void delete(UUID id);
-    Page<ChecklistView> getChecklists(int page, int size, Long tin);
-    Page<ChecklistView> getChecklists(User user, int page, int size);
+    List<ChecklistView> getChecklists(Long tin, UUID objectId, Integer intervalId);
 }

@@ -20,7 +20,7 @@ public interface ChecklistRepository extends JpaRepository<Checklist, UUID> {
     List<Checklist> findAllByTemplateId(Integer id);
 
     @Query(value = """
-            select cast(chl.id as varchar) as id,
+            select chl.id as id,
             chl.path as path,
             template_id as templateId,
             tpl.name as name
@@ -28,16 +28,6 @@ public interface ChecklistRepository extends JpaRepository<Checklist, UUID> {
             join checklist_template tpl on chl.template_id = tpl.id
             where tin = :tin
             """, nativeQuery = true)
-    Page<ChecklistView> findAllChecklist(Pageable pageable, Long tin);
+    List<ChecklistView> findAllChecklist(Long tin, UUID objectId);
 
-    @Query(value = """
-            select cast(chl.id as varchar) as id,
-            chl.path as path,
-            template_id as templateId,
-            tpl.name as name
-            from checklist chl
-            join checklist_template tpl on chl.template_id = tpl.id
-            where profile_id = :profileId
-            """, nativeQuery = true)
-    Page<ChecklistView> findAllChecklist(Pageable pageable, UUID profileId);
 }

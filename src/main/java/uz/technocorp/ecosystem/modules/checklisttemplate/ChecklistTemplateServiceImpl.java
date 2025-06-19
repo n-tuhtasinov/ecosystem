@@ -94,9 +94,8 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
                 throw new RuntimeException("Faylni o‘chirishda muammo yuz berdi: " + file.getAbsolutePath());
             }
         } else {
-            repository.deleteById(id);
+            throw new RuntimeException("Fayl mavjud emas: " + file.getAbsolutePath());
         }
-
         repository.deleteById(id);
     }
 

@@ -5,7 +5,8 @@ import lombok.*;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.checklisttemplate.ChecklistTemplate;
-import uz.technocorp.ecosystem.modules.profile.Profile;
+
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -20,9 +21,6 @@ import uz.technocorp.ecosystem.modules.profile.Profile;
 @NoArgsConstructor
 @Builder
 public class Checklist extends BaseEntity {
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private Profile profile;
 
     private Long tin;
 
@@ -41,5 +39,7 @@ public class Checklist extends BaseEntity {
 
     @Column(name = "interval_id")
     private Integer intervalId;
+
+    private UUID objectId;
 
 }
