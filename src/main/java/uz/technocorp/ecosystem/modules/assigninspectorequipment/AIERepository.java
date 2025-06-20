@@ -18,10 +18,13 @@ public interface AIERepository extends JpaRepository<AssignInspectorEquipment, U
             select u.id as id,
                 p.full_name as inspectorName,
                 a.created_at as date,
-                a.interval_id as intervalId
+                a.interval_id as intervalId,
+                i.start_date as startDate,
+                i.end_date as endDate
                 from  assign_inspector_equipment a
                 join users u on a.inspector_id = u.id
                 join profile p on p.id = u.profile_id
+                join risk_analysis_interval i on i.id = a.interval_id
                 where a.id = :assignId
             """, nativeQuery = true)
     Optional<AssignInspectorInfo> findInfo(UUID assignId);

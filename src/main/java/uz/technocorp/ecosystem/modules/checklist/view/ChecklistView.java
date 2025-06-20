@@ -13,5 +13,5 @@ public interface ChecklistView {
     UUID getId();
     String getPath();
     Integer getTemplateId();
-    String getTemplateName();
+    String getName();
 }

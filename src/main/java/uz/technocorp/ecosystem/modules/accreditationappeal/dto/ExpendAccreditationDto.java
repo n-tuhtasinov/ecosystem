@@ -26,7 +26,7 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccreditationDto implements AppealDto {
+public class ExpendAccreditationDto implements AppealDto {
 
     @SkipDb
     @NotBlank(message = "Telefon raqami kiritilmadi!")
@@ -46,7 +46,7 @@ public class AccreditationDto implements AppealDto {
 
     @Override
     public AppealType getAppealType() {
-        return AppealType.ACCREDIT_EXPERT_ORGANIZATION;
+        return AppealType.EXPEND_ACCREDITATION_SCOPE;
     }
 
     @Schema(hidden = true)
