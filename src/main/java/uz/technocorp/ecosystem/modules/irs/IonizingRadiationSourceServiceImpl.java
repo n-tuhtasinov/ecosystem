@@ -90,6 +90,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                         .appealId(appeal.getId())
                         .registryNumber(registryNumber)
                         .registrationDate(LocalDate.now())
+                        .inspectorName(appeal.getExecutorName())
                         .build()
         );
     }
@@ -189,7 +190,8 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                 irs.getRegistryNumber(),
                 irs.getProfileId(),
                 irs.getLegalTin(),
-                irs.getRegistrationDate());
+                irs.getRegistrationDate(),
+                irs.getInspectorName());
     }
 
     @Override

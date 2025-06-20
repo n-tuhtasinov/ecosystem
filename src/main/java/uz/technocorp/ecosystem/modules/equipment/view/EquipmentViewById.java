@@ -53,8 +53,6 @@ public record EquipmentViewById(
         UUID attractionPassportId,
         String attractionPassportRegistryNumber,
         String description,
-
-        UUID inspectorUserId,
         String inspectorName,
 
         Map<String, String> files,

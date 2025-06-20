@@ -193,12 +193,8 @@ public class Equipment extends BaseEntity {
 
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
-    @JoinColumn(name = "inspector_id", insertable = false, updatable = false)
-    private User inspector;
-
-    @Column(name = "inspector_id")
-    private UUID inspectorId;
+    @Column(nullable = false)
+    String inspectorName;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
