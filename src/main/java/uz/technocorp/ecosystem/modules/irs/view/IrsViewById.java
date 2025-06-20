@@ -42,5 +42,6 @@ public record IrsViewById(
         String registryNumber,
         UUID profileId,
         Long legalTin,
-        LocalDate registrationDate
+        LocalDate registrationDate,
+        String inspectorName
 ) {}

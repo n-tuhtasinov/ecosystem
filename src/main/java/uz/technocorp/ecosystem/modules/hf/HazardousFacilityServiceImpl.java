@@ -95,6 +95,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .spheres(hfAppealDto.getSpheres())
                         .files(hfAppealDto.getFiles())
                         .registryFilePath(registryFilePath)
+                        .inspectorName(appeal.getExecutorName())
                         .build());
     }
 
@@ -269,15 +270,19 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
             } else {
                 if (tin != null) return repository.getAllByLegalTin(pageable, tin, intervalId);
-                if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber, intervalId);
+                if (registryNumber != null)
+                    return repository.getAllByRegistryNumber(pageable, registryNumber, intervalId);
                 else return repository.getAllByRegion(pageable, regionId, intervalId);
             }
         } else if (role == Role.INSPECTOR) {
-            if (registryNumber != null) return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
-            if (tin != null) return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
+            if (registryNumber != null)
+                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
+            if (tin != null)
+                return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
             else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
         } else {
-            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            if (registryNumber != null)
+                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
             Profile profile = profileRepository
                     .findById(profileId)
                     .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));
@@ -341,7 +346,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 hf.getPeriodicUpdateFilePath(),
                 hf.isActive(),
                 hf.getFiles(),
-                hf.getRegistryFilePath());
+                hf.getRegistryFilePath(),
+                hf.getInspectorName());
     }
 
     protected HazardousFacility findById(UUID id) {

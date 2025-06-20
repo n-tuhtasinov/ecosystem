@@ -146,4 +146,7 @@ public class IonizingRadiationSource extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate registrationDate;
+
+    @Column(nullable = false)
+    private String inspectorName;
 }
