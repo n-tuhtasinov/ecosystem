@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.Attachment;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.checklist.dto.ChecklistDto;
 import uz.technocorp.ecosystem.modules.checklist.view.ChecklistView;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -32,6 +33,7 @@ public class ChecklistServiceImpl implements ChecklistService {
     private final ChecklistRepository repository;
     private final ProfileRepository profileRepository;
     private final AttachmentRepository attachmentRepository;
+    private final AttachmentService attachmentService;
 
     @Override
     public void create(User user, ChecklistDto checklistDto) {
@@ -76,10 +78,8 @@ public class ChecklistServiceImpl implements ChecklistService {
         Checklist checklist = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Checklist", "Id", id.toString()));
-        boolean delete = new File(checklist.getPath()).delete();
-        if (delete) {
-            repository.deleteById(checklist.getId());
-        }
+        attachmentService.deleteFileFromStorage(checklist.getPath());
+        repository.deleteById(checklist.getId());
     }
 
     @Override
