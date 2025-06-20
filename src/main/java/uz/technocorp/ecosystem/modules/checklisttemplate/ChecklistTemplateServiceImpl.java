@@ -11,12 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.Attachment;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.checklist.Checklist;
 import uz.technocorp.ecosystem.modules.checklist.ChecklistRepository;
 import uz.technocorp.ecosystem.modules.checklisttemplate.dto.ChecklistTemplateDto;
 import uz.technocorp.ecosystem.modules.checklisttemplate.view.ChecklistTemplateView;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -32,6 +36,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
     private final ChecklistTemplateRepository repository;
     private final AttachmentRepository attachmentRepository;
     private final ChecklistRepository checklistRepository;
+    private final AttachmentService attachmentService;
 
     @Override
     public void create(ChecklistTemplateDto dto) {
@@ -84,18 +89,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
         if (!checklists.isEmpty()) {
             throw new RuntimeException("Checklist shabloni asosida checklist yaratilganligi bois ushbu shablonni o'chirib bo'lmaydi!");
         }
-        File file = new File(checklistTemplate.getPath());
-        if (file.exists()) {
-            if (!file.canWrite()) {
-                throw new RuntimeException("Faylni o‘chirishga ruxsat yo‘q: " + file.getAbsolutePath());
-            }
-            boolean deleted = file.delete();
-            if (!deleted) {
-                throw new RuntimeException("Faylni o‘chirishda muammo yuz berdi: " + file.getAbsolutePath());
-            }
-        } else {
-            throw new RuntimeException("Fayl mavjud emas: " + file.getAbsolutePath());
-        }
+        attachmentService.deleteFileFromStorage(checklistTemplate.getPath());
         repository.deleteById(id);
     }
 

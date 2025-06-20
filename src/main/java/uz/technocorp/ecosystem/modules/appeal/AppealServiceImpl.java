@@ -155,6 +155,9 @@ public class AppealServiceImpl implements AppealService {
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
         JsonNode data = JsonMaker.makeJsonSkipFields(dto);
 
+        // Ariza statusini ariza turiga qarab belgilash;
+        AppealStatus appealStatus = getAppealStatus(dto.getAppealType());
+
         Appeal appeal = Appeal
                 .builder()
                 .appealType(dto.getAppealType())
@@ -169,7 +172,7 @@ public class AppealServiceImpl implements AppealService {
                 .districtId(dto.getDistrictId())
                 .officeId(office.getId())
                 .officeName(office.getName())
-                .status(AppealStatus.NEW) // shu joyida akkreditatsiya arizasida In_approval qilish kerak.
+                .status(appealStatus)
                 .address(region.getName() + ", " + district.getName() + ", " + dto.getAddress())
                 .legalAddress(profile.getLegalAddress())
                 .phoneNumber(dto.getPhoneNumber())
@@ -181,7 +184,7 @@ public class AppealServiceImpl implements AppealService {
         repository.save(appeal);
 
         //create appeal execution process
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.NEW, null));
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), appealStatus, null));
 
         return appeal.getId();
     }
@@ -346,7 +349,7 @@ public class AppealServiceImpl implements AppealService {
         ObjectNode data = (ObjectNode) appeal.getData();
         ObjectNode filesNode = (ObjectNode) data.get("files");
 
-        if (!filesNode.has(dto.fieldName())){
+        if (!filesNode.has(dto.fieldName())) {
             throw new ResourceNotFoundException("Field", "nom", dto.fieldName());
         }
         String filePathToDelete = filesNode.get(dto.fieldName()).textValue();
@@ -360,7 +363,7 @@ public class AppealServiceImpl implements AppealService {
         attachmentService.deleteByPath(dto.filePath());
 
         //delete file from the storage if the path is not null
-        if (filePathToDelete != null){
+        if (filePathToDelete != null) {
             attachmentService.deleteFileFromStorage(filePathToDelete);
         }
     }
@@ -546,5 +549,18 @@ public class AppealServiceImpl implements AppealService {
             default ->
                     throw new CustomException("Sizda arizani rad etish huquqi yo'q. Tizimda sizning rolingiz : " + user.getRole().name());
         };
+    }
+
+    private AppealStatus getAppealStatus(AppealType appealType) {
+        switch (appealType) {
+            case AppealType.ACCREDIT_EXPERT_ORGANIZATION,
+                 AppealType.RE_ACCREDIT_EXPERT_ORGANIZATION,
+                 AppealType.EXPEND_ACCREDITATION_SCOPE -> {
+                return AppealStatus.IN_APPROVAL;
+            }
+            default -> {
+                return AppealStatus.NEW;
+            }
+        }
     }
 }
