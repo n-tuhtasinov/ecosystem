@@ -9,12 +9,13 @@ import lombok.AllArgsConstructor;
  * @since v1.0
  */
 @AllArgsConstructor
-public enum EmployeePosition {
+public enum EmployeeLevel {
 
-    LEADER(1, "Raxbar"),
-    TECHNICIAN(2, "Injener, Texnik xodim"),
-    EMPLOYEE(2, "Oddiy xodim");
+    LEADER(1, "Raxbar", 5),
+    TECHNICIAN(2, "Injener, Texnik xodim", 3),
+    EMPLOYEE(2, "Oddiy xodim", 1);
 
     public final Integer direction; // Committee - 1  | Regional - 2
     public final String value;
+    public final Integer term; // Attestatsiya muddati
 }

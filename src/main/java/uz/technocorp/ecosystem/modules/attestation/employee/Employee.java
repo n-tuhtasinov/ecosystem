@@ -29,6 +29,9 @@ public class Employee extends BaseEntity {
     @Column(nullable = false)
     private String fullName;
 
+    @Column(nullable = false)
+    private String profession;
+
     @Column
     private String certNumber;
 
@@ -36,11 +39,17 @@ public class Employee extends BaseEntity {
     private LocalDate certDate;
 
     @Column
-    private LocalDate certExpiryDate;
+    private LocalDate ctcTrainingFromDate; // Kontexnazorat o'qigan muddati
 
     @Column
+    private LocalDate ctcTrainingToDate; // Kontexnazorat o'quv muddati
+
+    @Column
+    private LocalDate certExpiryDate;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private EmployeePosition position;
+    private EmployeeLevel level;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = HazardousFacility.class)
     @JoinColumn(name = "hf_id", insertable = false, updatable = false)

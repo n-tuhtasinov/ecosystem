@@ -1,12 +1,19 @@
 package uz.technocorp.ecosystem.modules.attestation.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeDto;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -19,7 +26,10 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttestationDto {
+public class AttestationDto implements AppealDto {
+
+    @NotBlank(message = "Telefon raqam kiritilmadi")
+    private String phoneNumber;
 
     @NotNull(message = "XICHO tanlanmadi")
     private UUID hfId;
@@ -30,7 +40,31 @@ public class AttestationDto {
     private Integer direction;
 
     @NotEmpty
-    private List<@NotBlank(message = "Xodim pinfl bo'sh bo'lmasligi kerak") String> pinList;
+    private List<@Valid EmployeeDto> pinList;
+
+    @Override
+    public AppealType getAppealType() {
+        return AppealType.ATTESTATION;
+    }
+
+    // Other fields
+    @Schema(hidden = true)
+    private Integer regionId;
+
+    @Schema(hidden = true)
+    private Integer districtId;
+
+    @Schema(hidden = true)
+    private String address;
+
+    @Schema(hidden = true)
+    private Map<String, String> files;
+
+    @Schema(hidden = true)
+    private LocalDate deadline;
+
+    @Schema(hidden = true)
+    private AttestationCreateDto createDto;
 
     /**
      * Tashkilot kesimida (pagination) :

@@ -10,16 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.office.Office;
-import uz.technocorp.ecosystem.modules.office.OfficeRepository;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.shared.AppConstants;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,7 +36,6 @@ public class AppealRepoImpl implements AppealRepo {
 
     private final EntityManager em;
     private final ProfileRepository profileRepository;
-    private final OfficeRepository officeRepository;
 
     @Override
     public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {

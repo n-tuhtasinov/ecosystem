@@ -36,6 +36,7 @@ public class AppealController {
 
     private final AppealService service;
     private final DocumentService documentService;
+    private final AppealPdfService appealPdfService;
 
     @PostMapping("/set-inspector")
     public ResponseEntity<?> setInspector(@Valid @RequestBody SetInspectorDto dto) {
@@ -64,7 +65,7 @@ public class AppealController {
 
     @PostMapping("/reply/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody ReplyDto replyDto) {
-        String path = service.prepareReplyPdfWithParam(user, replyDto);
+        String path = appealPdfService.prepareReplyPdfWithParam(user, replyDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
@@ -76,7 +77,7 @@ public class AppealController {
 
     @PostMapping("/reply/reject/generate-pdf")
     public ResponseEntity<ApiResponse> generateRejectPdf(@CurrentUser User user, @Valid @RequestBody ReplyDto replyDto) {
-        String path = service.prepareRejectPdfWithParam(user, replyDto);
+        String path = appealPdfService.prepareRejectPdfWithParam(user, replyDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 

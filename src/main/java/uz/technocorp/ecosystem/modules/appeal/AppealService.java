@@ -23,7 +23,7 @@ import java.util.UUID;
  */
 public interface AppealService {
 
-    void saveAndSign(User user, SignedAppealDto<? extends AppealDto> dto, HttpServletRequest request);
+    UUID saveAndSign(User user, SignedAppealDto<? extends AppealDto> dto, HttpServletRequest request);
 
     void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
 
@@ -41,12 +41,6 @@ public interface AppealService {
 
     AppealViewById getById(UUID appealId);
 
-    String preparePdfWithParam(AppealDto dto, User user);
-
-    String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
-
-    String prepareRejectPdfWithParam(User user, ReplyDto replyDto);
-
     void reject(User user, RejectDto dto);
 
     void confirm(User user, ConfirmationDto dto);
@@ -58,4 +52,6 @@ public interface AppealService {
     Appeal findByIdStatusAndOffice(UUID appealId, AppealStatus appealStatus, Integer officeId);
 
     void setFilePath(User user, UploadFileDto dto);
+
+    Appeal findById(UUID id);
 }

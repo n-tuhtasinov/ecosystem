@@ -1,6 +1,8 @@
 package uz.technocorp.ecosystem.modules.attestation;
 
 
+import jakarta.servlet.http.HttpServletRequest;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.attestation.dto.AttestationDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
@@ -12,5 +14,5 @@ import uz.technocorp.ecosystem.modules.user.User;
  */
 public interface AttestationService {
 
-    void create(User user, AttestationDto attestationDto);
+    void create(User user, SignedAppealDto<AttestationDto> attestationDto, HttpServletRequest request);
 }

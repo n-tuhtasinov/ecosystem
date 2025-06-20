@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.modules.attestation.employee.EmployeePosition;
+import uz.technocorp.ecosystem.modules.attestation.employee.EmployeeLevel;
 
 import java.time.LocalDate;
 
@@ -22,16 +22,30 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class EmployeeDto {
 
-    @NotBlank(message = "Pinfl yuborilmadi")
+    @NotBlank(message = "Pinfl kiritilmadi")
     private String pin;
 
     @NotBlank(message = "Ism sharif yuborilmadi")
     private String fullName;
 
-    @NotNull(message = "Xodim lavozimi tanlanmadi")
-    private EmployeePosition position;
+    @NotBlank(message = "Mutaxassislik yuborilmadi")
+    private String profession;
 
+    @NotNull(message = "Xodim darajasi tanlanmadi")
+    private EmployeeLevel level;
+
+    @NotBlank(message = "Sertifikat raqami kiritilmadi")
     private String certNumber;
+
+    @NotNull(message = "Sertifikat sanasi kiritilmadi")
     private LocalDate certDate;
+
+    @NotNull(message = "Sertifikat muddati kiritilmadi")
     private LocalDate certExpiryDate;
+
+    @NotNull(message = "Kontexnazorato'quv DM o'qigan muddati boshlanishi kiritilmadi")
+    private LocalDate ctcTrainingFromDate;
+
+    @NotNull(message = "Kontexnazorato'quv DM o'qigan muddati tugashi kiritilmadi")
+    private LocalDate ctcTrainingToDate;
 }

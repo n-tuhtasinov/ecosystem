@@ -1,8 +1,8 @@
 package uz.technocorp.ecosystem.modules.attestation.employee;
 
 import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeDeleteDto;
+import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeLevelDto;
 import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeListDto;
-import uz.technocorp.ecosystem.modules.attestation.employee.dto.PositionDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public interface EmployeeService {
 
-    List<PositionDto> getPositions();
+    List<EmployeeLevelDto> getEmployeeLevels();
 
     Integer add(User user, EmployeeListDto dto);
 

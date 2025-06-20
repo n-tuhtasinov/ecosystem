@@ -1,12 +1,13 @@
 package uz.technocorp.ecosystem.modules.attestation;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.attestation.employee.EmployeeLevel;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * @author Suxrob
@@ -28,12 +29,43 @@ public class Attestation extends BaseEntity {
     @Column(nullable = false)
     private String employeeName;
 
-    @Column
-    private String employeePosition;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EmployeeLevel employeeLevel;
 
     @Column
     private LocalDate expiryDate;
 
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
+    @JoinColumn(name = "appeal_id", insertable = false, updatable = false)
+    private Appeal appeal;
+
+    @Column(name = "appeal_id", nullable = false)
+    private UUID appealId;
+
+    @Column(nullable = false)
+    private Long legalTin;
+
+    @Column(nullable = false)
+    private String legalAddress;
+
+    @Column(nullable = false)
+    private String legalName;
+
+    @Column(nullable = false)
+    private UUID hfId;
+
+    @Column(nullable = false)
+    private String hfName;
+
+    @Column(nullable = false)
+    private String hfAddress;
+
+    @Column(nullable = false)
+    private Integer regionId;
+
+    @Column(nullable = false)
+    private Integer districtId;
 
 
 }

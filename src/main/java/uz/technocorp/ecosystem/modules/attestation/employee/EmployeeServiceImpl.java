@@ -1,13 +1,12 @@
 package uz.technocorp.ecosystem.modules.attestation.employee;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeDeleteDto;
 import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeDto;
+import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeLevelDto;
 import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeListDto;
-import uz.technocorp.ecosystem.modules.attestation.employee.dto.PositionDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -29,16 +28,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final HazardousFacilityService hfService;
     private final EmployeeRepository repository;
 
-
     @Override
-    public List<PositionDto> getPositions() {
-        return Arrays.stream(EmployeePosition.values()).map(e -> new PositionDto(e.direction, e.value)).toList();
+    public List<EmployeeLevelDto> getEmployeeLevels() {
+        return Arrays.stream(EmployeeLevel.values()).map(e -> new EmployeeLevelDto(e.direction, e.value)).toList();
     }
 
     @Override
     public Integer add(User user, EmployeeListDto employeeDto) {
         // Check if hf belongs to the profile
-        HazardousFacility hf = checkHf(user.getProfileId(), employeeDto.getHfId());
+        HazardousFacility hf = checkAndGetHf(user.getProfileId(), employeeDto.getHfId());
 
         List<Employee> employees = new ArrayList<>();
         for (EmployeeDto dto : employeeDto.getEmployeeList()) {
@@ -46,10 +44,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             employee.setPin(dto.getPin());
             employee.setFullName(dto.getFullName());
+            employee.setProfession(dto.getProfession());
             employee.setCertNumber(dto.getCertNumber());
             employee.setCertDate(dto.getCertDate());
             employee.setCertExpiryDate(dto.getCertExpiryDate());
-            employee.setPosition(dto.getPosition());
+            employee.setCtcTrainingFromDate(dto.getCtcTrainingFromDate());
+            employee.setCtcTrainingToDate(dto.getCtcTrainingToDate());
+            employee.setLevel(dto.getLevel());
             employee.setHfId(hf.getId());
 
             employees.add(employee);
@@ -62,7 +63,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public void updateEmployees(User user, EmployeeListDto listDto) {
         // Check if hf belongs to the profile
-        HazardousFacility hf = checkHf(user.getProfileId(), listDto.getHfId());
+        HazardousFacility hf = checkAndGetHf(user.getProfileId(), listDto.getHfId());
 
         // Collect pin to list
         List<String> pinsToUpdate = listDto.getEmployeeList().stream().map(EmployeeDto::getPin).toList();
@@ -77,7 +78,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employee.setCertNumber(dto.getCertNumber());
                 employee.setCertDate(dto.getCertDate());
                 employee.setCertExpiryDate(dto.getCertExpiryDate());
-                employee.setPosition(dto.getPosition());
+                employee.setCtcTrainingFromDate(dto.getCtcTrainingFromDate());
+                employee.setCtcTrainingToDate(dto.getCtcTrainingToDate());
+                employee.setLevel(dto.getLevel());
             }
         }
 
@@ -87,7 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Integer deleteByPinList(User user, EmployeeDeleteDto dto) {
         // Check if hf belongs to the profile
-        HazardousFacility hf = checkHf(user.getProfileId(), dto.getHfId());
+        HazardousFacility hf = checkAndGetHf(user.getProfileId(), dto.getHfId());
 
         return repository.deleteByHfIdAndPinIn(hf.getId(), dto.getPinList());
     }
@@ -97,7 +100,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return repository.findByHfIdAndPinIn(id, pinList);
     }
 
-    private HazardousFacility checkHf(UUID profileId, UUID hfId) {
+    private HazardousFacility checkAndGetHf(UUID profileId, UUID hfId) {
         return hfService.findByIdAndProfileId(profileId, hfId);
     }
 }

@@ -25,7 +25,7 @@ public class EmployeeController {
 
     @GetMapping("/positions")
     public ResponseEntity<ApiResponse> positions() {
-        return ResponseEntity.ok(new ApiResponse(service.getPositions()));
+        return ResponseEntity.ok(new ApiResponse(service.getEmployeeLevels()));
     }
 
     @PostMapping

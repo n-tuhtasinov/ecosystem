@@ -4,17 +4,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
-import uz.technocorp.ecosystem.shared.ApiResponse;
-import uz.technocorp.ecosystem.shared.ResponseMessage;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import uz.technocorp.ecosystem.modules.appeal.AppealPdfService;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAcceptanceAppealDto;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsTransferAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
+import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -28,6 +31,7 @@ import uz.technocorp.ecosystem.security.CurrentUser;
 public class IrsAppealController {
 
     private final AppealService appealService;
+    private final AppealPdfService appealPdfService;
 
     @PostMapping
     public ResponseEntity<ApiResponse> create(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<IrsAppealDto> signedDto, HttpServletRequest request) {
@@ -37,19 +41,19 @@ public class IrsAppealController {
 
     @PostMapping("/transfer")
     public ResponseEntity<?> createTransfer(@CurrentUser User user, @Valid @RequestBody IrsTransferAppealDto irsTransferDto) {
-        appealService.create(irsTransferDto,user);
+        appealService.create(irsTransferDto, user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/acceptance")
     public ResponseEntity<?> createAcceptance(@CurrentUser User user, @Valid @RequestBody IrsAcceptanceAppealDto irsAcceptanceDto) {
-        appealService.create(irsAcceptanceDto,user);
+        appealService.create(irsAcceptanceDto, user);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody IrsAppealDto irsDto) {
-        String path = appealService.preparePdfWithParam(irsDto, user);
+        String path = appealPdfService.preparePdfWithParam(irsDto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
