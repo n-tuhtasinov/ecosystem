@@ -33,4 +33,6 @@ public interface ProfileService {
     void addPhoneNumber(UUID profileId, String phoneNumber);
 
     ProfileInfoView getProfileInfo(Long tin);
+
+    boolean existsProfileByTin (Long tin);
 }

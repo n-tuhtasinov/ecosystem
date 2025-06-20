@@ -15,6 +15,7 @@ import uz.technocorp.ecosystem.shared.AppConstants;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -76,7 +77,12 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
-    public District getDistrict(Integer districtId) {
+    public District findById(Integer districtId) {
         return districtRepository.findById(districtId).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", districtId));
+    }
+
+    @Override
+    public District findBySoato(Integer soato) {
+        return districtRepository.findBySoato(soato).orElseThrow(() -> new ResourceNotFoundException("Tuman", "SOATO", soato));
     }
 }

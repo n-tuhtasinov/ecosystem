@@ -30,6 +30,7 @@ public interface DistrictService {
 
     DistrictViewById getById(Integer districtId);
 
-    District getDistrict(Integer districtId);
+    District findById(Integer districtId);
 
+    District findBySoato(Integer soato);
 }
