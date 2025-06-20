@@ -94,7 +94,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .nonDestructiveCheckDate(dto.nonDestructiveCheckDate())
                 .files(dto.files())
                 .description(dto.description())
-                .inspectorId(appeal.getExecutorId())
+                .inspectorName(appeal.getExecutorName())
                 .registryFilePath(registryFilepath)
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(dto.attractionPassportId())
@@ -364,8 +364,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getAttractionPassportId(),
                 equipment.getAttractionPassport() == null ? null : equipment.getAttractionPassport().getRegistryNumber(),
                 equipment.getDescription(),
-                equipment.getInspectorId(),
-                equipment.getInspector() == null ? null : equipment.getInspector().getName(),
+                equipment.getInspectorName(),
                 equipment.getFiles(),
                 equipment.getRegistryFilePath());
     }

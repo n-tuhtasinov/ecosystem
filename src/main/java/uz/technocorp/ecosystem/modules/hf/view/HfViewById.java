@@ -43,5 +43,6 @@ public record HfViewById (
         String periodicUpdateFilePath,
         boolean active,
         Map<String, String> files,
-        String registryFilePath
+        String registryFilePath,
+        String inspectorName
 ) {}
