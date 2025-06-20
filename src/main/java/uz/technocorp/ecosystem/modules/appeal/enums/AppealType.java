@@ -95,9 +95,9 @@ public enum AppealType {
     CERTIFY_HF_EMPLOYEE("", "", ""),
 
     // Ekspert tashkilotini akkreditatsiya qilish
-    ACCREDIT_EXPERT_ORGANIZATION("", "", ""),
-    RE_ACCREDIT_EXPERT_ORGANIZATION("", "", ""),
-    EXPEND_ACCREDITATION_SCOPE("", "", ""),
+    ACCREDIT_EXPERT_ORGANIZATION("", "accreditExpertOrganization", ""),
+    RE_ACCREDIT_EXPERT_ORGANIZATION("", "reAccreditExpertOrganization", ""),
+    EXPEND_ACCREDITATION_SCOPE("", "expendAccreditExpertOrganization", ""),
 
     // Sanoat xavfsizligi bo‘yicha ekspertiza xulosalari
     REGISTER_EXPERTISE_CONCLUSION("", "", ""),

@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.assigninspectorequipment;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -14,4 +15,6 @@ public interface AssignInspectorInfo {
     String getInspectorName();
     LocalDateTime getDate();
     Integer getIntervalId();
+    LocalDate getStartDate();
+    LocalDate getEndDate();
 }
