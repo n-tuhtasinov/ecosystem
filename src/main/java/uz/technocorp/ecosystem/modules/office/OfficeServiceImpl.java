@@ -71,4 +71,9 @@ public class OfficeServiceImpl implements OfficeService {
         return officeRepository.findById(officeId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "officeId", officeId));
     }
 
+    @Override
+    public Office findByRegionId(Integer regionId) {
+        return officeRepository.getOfficeByRegionId(regionId).orElseThrow(() -> new ResourceNotFoundException("Hududiy bo'lim", "regionId", regionId));
+    }
+
 }

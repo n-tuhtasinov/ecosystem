@@ -149,8 +149,8 @@ public class AppealServiceImpl implements AppealService {
         //make data
         Profile profile = profileService.getProfile(user.getProfileId());
         Region region = regionService.findById(dto.getRegionId());
-        District district = districtService.getDistrict(dto.getDistrictId());
-        Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
+        District district = districtService.findById(dto.getDistrictId());
+        Office office = officeService.findByRegionId(region.getId());
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
         JsonNode data = JsonMaker.makeJsonSkipFields(dto);
