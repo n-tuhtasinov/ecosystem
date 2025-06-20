@@ -12,12 +12,15 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
+import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
 import uz.technocorp.ecosystem.modules.prevention.Prevention;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
+import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 
 import java.util.Objects;
@@ -38,12 +41,24 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
     private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
+    private final RegionService regionService;
+    private final OfficeService officeService;
 
     @Override
     public UUID create(UserDto dto) {
 
-        //get region
+        //get region and region name
         Region region = getRegion(dto.getRegionId());
+        String regionName = region != null? region.getName() : null;
+
+        //set region id and region name if the user has office id
+        Integer regionId = dto.getRegionId();
+        if (dto.getOfficeId()!=null){
+            OfficeViewById byId = officeService.getById(dto.getOfficeId());
+            Region innerRegion = regionService.findById(byId.getRegionId());
+            regionId = innerRegion.getId();
+            regionName = innerRegion.getName();
+        }
 
         //get district
         District district = getDistrict(dto.getDistrictId());
@@ -57,8 +72,8 @@ public class ProfileServiceImpl implements ProfileService {
                 .pin(dto.getPin())
                 .departmentId(dto.getDepartmentId())
                 .officeId(dto.getOfficeId())
-                .regionId(dto.getRegionId())
-                .regionName(region != null ? region.getName() : null)
+                .regionId(regionId)
+                .regionName(regionName)
                 .districtId(dto.getDistrictId())
                 .districtName(district != null ? district.getName() : null)
                 .position(dto.getPosition())

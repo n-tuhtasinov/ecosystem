@@ -21,4 +21,6 @@ public interface AttachmentService {
     void deleteByPath(String path);
 
     void deleteByPaths(Collection<String> pathList);
+
+    void deleteFileFromStorage(String filePath);
 }

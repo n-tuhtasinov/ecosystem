@@ -1,10 +1,8 @@
 package uz.technocorp.ecosystem.modules.eimzo;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.eimzo.json.eimzo.EImzoAuthJson;
 import uz.technocorp.ecosystem.modules.eimzo.json.eimzo.EImzoChallengeJson;
 import uz.technocorp.ecosystem.modules.eimzo.json.eimzo.EImzoPingJson;
@@ -57,4 +55,24 @@ public interface EImzoProxy {
                         @RequestHeader(value = "X-Real-IP") String ip,
                         @RequestBody String documentBase64AndPkcs7Base64);
 
+    // Frontend
+    @PostMapping("/frontend/mobile/auth")
+    Object getAuthChallenge();
+
+    @PostMapping(path = "/frontend/mobile/status", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    Object getDocumentStatus(@RequestParam("documentId") String documentId);
+
+    @GetMapping("/backend/mobile/authenticate/{docId}")
+    Object authenticateWithHeaders(@PathVariable("docId") String docId,
+                                   @RequestHeader("X-Real-IP") String realIp,
+                                   @RequestHeader("Host") String host);
+
+    @PostMapping("/frontend/mobile/sign")
+    Object signDocument();
+
+    @PostMapping(path = "/backend/mobile/verify", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    Object verifyDocument(@RequestParam("documentId") String documentId,
+                          @RequestParam("document") String document,
+                          @RequestHeader("X-Real-IP") String realIp,
+                          @RequestHeader("Host") String host);
 }

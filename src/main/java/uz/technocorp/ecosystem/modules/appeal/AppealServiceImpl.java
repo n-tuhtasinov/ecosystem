@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -335,6 +336,33 @@ public class AppealServiceImpl implements AppealService {
     public Appeal findByIdStatusAndOffice(UUID appealId, AppealStatus appealStatus, Integer officeId) {
         return repository.findByIdAndStatusAndOfficeId(appealId, appealStatus, officeId).orElseThrow(
                 () -> new ResourceNotFoundException("Ariza topilmadi yoki ariza holati o'zgargan"));
+    }
+
+    @Override
+    @Transactional
+    public void setFilePath(User user, UploadFileDto dto) {
+        Appeal appeal = findById(dto.appealId());
+
+        ObjectNode data = (ObjectNode) appeal.getData();
+        ObjectNode filesNode = (ObjectNode) data.get("files");
+
+        if (!filesNode.has(dto.fieldName())){
+            throw new ResourceNotFoundException("Field", "nom", dto.fieldName());
+        }
+        String filePathToDelete = filesNode.get(dto.fieldName()).textValue();
+
+        filesNode.put(dto.fieldName(), dto.filePath());
+
+        appeal.setData(data);
+        repository.save(appeal);
+
+        //delete from the attachment table in order to save the file permanently
+        attachmentService.deleteByPath(dto.filePath());
+
+        //delete file from the storage if the path is not null
+        if (filePathToDelete != null){
+            attachmentService.deleteFileFromStorage(filePathToDelete);
+        }
     }
 
     private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal, Boolean shouldRegister) {
