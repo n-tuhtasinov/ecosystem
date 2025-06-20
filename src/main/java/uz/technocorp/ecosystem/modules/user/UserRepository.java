@@ -43,5 +43,5 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
                      join profile p on u.profile_id = p.id
             where p.tin = :tin
             """)
-    UserViewByLegal getLegalUserByTin(Long tin);
+    Optional<UserViewByLegal> findLegalUserByTin(Long tin);
 }

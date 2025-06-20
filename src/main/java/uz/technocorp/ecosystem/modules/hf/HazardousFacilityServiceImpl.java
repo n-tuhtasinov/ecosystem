@@ -80,7 +80,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .orderNumber(maxOrderNumber)
                         .profileId(appeal.getProfileId())
                         .legalAddress(appeal.getLegalAddress())
-                        .phoneNumber(appeal.getPhoneNumber())
                         .upperOrganization(hfAppealDto.getUpperOrganization())
                         .name(hfAppealDto.getName())
                         .address(appeal.getAddress())
@@ -163,7 +162,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setRegionId(dto.regionId());
         hazardousFacility.setDistrictId(dto.districtId());
         hazardousFacility.setLegalAddress(profile.getLegalAddress());
-        hazardousFacility.setPhoneNumber(dto.phoneNumber());
         hazardousFacility.setUpperOrganization(dto.upperOrganization());
         hazardousFacility.setName(dto.name());
         hazardousFacility.setAddress(dto.address());

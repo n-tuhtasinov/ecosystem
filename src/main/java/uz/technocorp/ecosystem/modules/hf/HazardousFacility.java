@@ -70,8 +70,6 @@ public class HazardousFacility extends BaseEntity {
     @Column(nullable = false)
     private String legalAddress;
 
-    private String phoneNumber;
-
     private String upperOrganization;
 
     private String name;
