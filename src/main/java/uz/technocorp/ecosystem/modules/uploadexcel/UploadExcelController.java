@@ -18,18 +18,13 @@ import uz.technocorp.ecosystem.shared.ApiResponse;
 @RestController
 @RequestMapping("/api/v1/upload-excel")
 @RequiredArgsConstructor
-public class UploadController {
+public class UploadExcelController {
+
+    private final UploadHfExcelService hfExcelService;
 
     @PostMapping("/hf")
     public ResponseEntity<?> uploadHf(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse("Yuklangan fayl bo'sh. Iltimos fayl tanlang"));
-        }
-
-        // Hozircha service qismi implementatsiya qilinmagani uchun, muvaffaqiyatli javob qaytaramiz.
-        // Keyingi qadamlarda bu qism to'ldiriladi.
-        // uploadExcelService.save(file);
-
+        hfExcelService.upload(file);
         return ResponseEntity.ok(new ApiResponse("Fayl muvaffaqiyatli yuklandi"));
     }
 }

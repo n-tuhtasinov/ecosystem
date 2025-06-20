@@ -35,4 +35,6 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, JpaSpec
             """, nativeQuery = true)
     Optional<ProfileInfoView> getProfileByTin(Long tin);
 
+    boolean existsByTin(Long tin);
+
 }
