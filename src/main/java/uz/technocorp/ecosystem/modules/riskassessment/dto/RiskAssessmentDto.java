@@ -1,5 +1,9 @@
 package uz.technocorp.ecosystem.modules.riskassessment.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
 /**
@@ -8,5 +12,11 @@ import java.util.UUID;
  * @created 17.04.2025
  * @since v1.0
  */
-public record RiskAssessmentDto(Long tin, Integer sumScore, UUID objectId) {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class RiskAssessmentDto {
+    private Long tin;
+    private Integer sumScore;
+    private UUID objectId;
 }
