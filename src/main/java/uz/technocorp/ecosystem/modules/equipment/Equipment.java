@@ -49,7 +49,7 @@ public class Equipment extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String registryNumber;
 
-    @Column(nullable = false)
+    @Column
     private Long orderNumber;
 
     @Column(nullable = false)

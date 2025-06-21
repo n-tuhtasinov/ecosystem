@@ -27,6 +27,7 @@ import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,8 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
     private final ChildEquipmentService childEquipmentService;
     private final EquipmentService equipmentService;
     private final EquipmentRepository equipmentRepository;
+
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
 
 
     @Transactional(rollbackFor = ExcelParsingException.class)
@@ -94,6 +97,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
 
                     getParams(dataFormatter, row, equipment); // u) params
                     setFiles(equipment); // set files
+                    equipment.setType(EquipmentType.CRANE); // set equipment type
 
                     equipmentRepository.save(equipment);
                 } catch (Exception e) {
@@ -109,7 +113,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
         }
     }
 
-    private void setFiles(Equipment equipment) {
+    private static void setFiles(Equipment equipment) {
         Map<String, String> files = new HashMap<>();
         files.put("boomLength", null);
         files.put("liftingCapacity", null);
@@ -129,8 +133,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
 
     private void getRegistrationDate(Row row, Equipment equipment) throws Exception {
         Cell cell = row.getCell(22);
-        isValidDate(cell, "ro'yhatga olingan sanasi(w)");
-        LocalDate registrationDate = cell.getLocalDateTimeCellValue().toLocalDate();
+        LocalDate registrationDate = getLocalDate(cell, "ro'yhatga olingan sanasi(w)");
         equipment.setRegistrationDate(registrationDate);
     }
 
@@ -148,30 +151,28 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
 
     private void getFullCheckDate(Row row, Equipment equipment) throws Exception {
         Cell cell = row.getCell(19);
-        isValidDate(cell, "To'liq texnk ko'rik sanasi(t)");
-        LocalDate fullCheckDate = cell.getLocalDateTimeCellValue().toLocalDate();
+        LocalDate fullCheckDate = getLocalDate(cell, "To'liq texnk ko'rik sanasi(t)");
         equipment.setPartialCheckDate(fullCheckDate);
     }
 
     private void getPartialCheckDate(Row row, Equipment equipment) throws Exception {
         Cell cell = row.getCell(18);
-        isValidDate(cell, "qisman ko'rik sanasi(s)");
-        LocalDate partialCheckDate = cell.getLocalDateTimeCellValue().toLocalDate();
+        LocalDate partialCheckDate = getLocalDate(cell, "qisman ko'rik sanasi(s)");
         equipment.setPartialCheckDate(partialCheckDate);
     }
 
     private void getManufacturedAt(Row row, Equipment equipment) throws Exception {
         Cell cell = row.getCell(16);
-        isValidDate(cell, "manufacturedAt(q)");
-        LocalDate manufacturedAt = cell.getLocalDateTimeCellValue().toLocalDate();
+        LocalDate manufacturedAt = getLocalDate(cell, "manufacturedAt(q)");
         equipment.setManufacturedAt(manufacturedAt);
     }
 
     private void getOldEquipment(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String oldEquipmentRegistryNumber = dataFormatter.formatCellValue(row.getCell(12));
-        isValid(oldEquipmentRegistryNumber, "oldEquipmentRegistryNumber(n)");
-        Equipment oldEquipment = equipmentService.findByRegistryNumber(oldEquipmentRegistryNumber);
-        equipment.setOldEquipmentId(oldEquipment.getId());
+        String oldEquipmentRegistryNumber = dataFormatter.formatCellValue(row.getCell(13));
+        if (oldEquipmentRegistryNumber !=null && !oldEquipmentRegistryNumber.isBlank()) {
+            Equipment oldEquipment = equipmentService.findByRegistryNumber(oldEquipmentRegistryNumber);
+            equipment.setOldEquipmentId(oldEquipment.getId());
+        }
     }
 
     private void getRegistryNumber(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
@@ -242,13 +243,20 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
         }
     }
 
-    private static void isValidDate(Cell cell, String fieldName) throws Exception {
+    private LocalDate getLocalDate(Cell cell, String fieldName) throws Exception {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             throw new Exception(fieldName + " bo'sh bo'lishi mumkin emas");
         }
-        if (cell.getCellType() != CellType.NUMERIC || !DateUtil.isCellDateFormatted(cell)) {
+        LocalDate manufacturedAt;
+        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell) ) {
+            manufacturedAt = cell.getLocalDateTimeCellValue().toLocalDate();
+        }else if (cell.getCellType() == CellType.STRING){
+            String dateStr = cell.getStringCellValue();
+            manufacturedAt = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(DATE_FORMAT));
+        }else {
             throw new Exception(fieldName + " format yacheykasi date bo'lishi kerak");
         }
+        return manufacturedAt;
     }
 
 
