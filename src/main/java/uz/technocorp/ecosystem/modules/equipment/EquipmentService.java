@@ -33,4 +33,6 @@ public interface EquipmentService {
     Equipment findById(UUID equipmentId);
 
     AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber);
+
+    Equipment findByRegistryNumber(String oldEquipmentRegistryNumber);
 }
