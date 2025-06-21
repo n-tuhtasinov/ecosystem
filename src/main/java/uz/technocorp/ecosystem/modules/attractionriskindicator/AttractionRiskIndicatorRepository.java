@@ -75,8 +75,8 @@ public interface AttractionRiskIndicatorRepository extends JpaRepository<Attract
     List<RiskIndicatorView> findAllFileContainsByTinAndDate(Long tin, Integer intervalId, UUID id);
 
     @Query(value = """
-            select cast(equipment_id as varchar) as objectId,
-            sum(score),
+            select equipment_id as objectId,
+            sum(score) as sumScore,
             tin
             from attraction_risk_indicator
             where risk_analysis_interval_id = :intervalId
