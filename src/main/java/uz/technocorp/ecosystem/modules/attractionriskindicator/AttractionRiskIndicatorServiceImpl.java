@@ -134,10 +134,11 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
         return repository.findAllFileContainsByTinAndDate(tin, intervalId, id);
     }
 
-    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
-    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
-    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
-    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
+//    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
+//    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
+//    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
+//    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
+    @Scheduled(cron = "0 20 14 21 06 *")
     public void sumScore() {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)

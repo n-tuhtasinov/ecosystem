@@ -4,20 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.modules.inspection.dto.InspectionActDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionCustom;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionFullDto;
-import uz.technocorp.ecosystem.modules.inspectionreport.dto.InspectionReportDto;
-import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportView;
+import uz.technocorp.ecosystem.modules.inspection.view.InspectionShortInfo;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,6 +66,14 @@ public class InspectionController {
     public ResponseEntity<?> getById(@PathVariable UUID id) {
         InspectionFullDto byId = service.getById(id);
         return ResponseEntity.ok(new ApiResponse(byId));
+    }
+
+    @GetMapping("/period")
+    public ResponseEntity<?> getAllByInspector(@CurrentUser User user,
+                                    @RequestParam LocalDate startDate,
+                                    @RequestParam LocalDate endDate) {
+        List<InspectionShortInfo> all = service.getAllByInspector(user, startDate, endDate);
+        return ResponseEntity.ok(new ApiResponse(all));
     }
 }
 
