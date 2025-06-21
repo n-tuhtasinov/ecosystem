@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.inspection.helper;
 
+import lombok.*;
+
 import java.util.UUID;
 
 /**
@@ -8,6 +10,9 @@ import java.util.UUID;
  * @created 25.05.2025
  * @since v1.0
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class InspectionCustom {
 
     private UUID id;

@@ -1,23 +1,18 @@
 package uz.technocorp.ecosystem.modules.elevatorriskindicator;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.Attachment;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
 import uz.technocorp.ecosystem.modules.elevatorriskindicator.dto.EquipmentRiskIndicatorDto;
-import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentRepository;
 import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
 import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
-import uz.technocorp.ecosystem.modules.irsriskindicator.IrsRiskIndicator;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
@@ -28,7 +23,6 @@ import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -141,10 +135,11 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
         return repository.findAllFileContainsByTinAndDate(tin, intervalId, id);
     }
 
-    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
-    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
-    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
-    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
+//    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
+//    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
+//    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
+//    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
+    @Scheduled(cron = "0 55 18 21 06 *")
     public void sumScore() {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
@@ -153,7 +148,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
         List<RiskAssessmentDto> allGroupByEquipmentAndTin = repository.findAllGroupByEquipmentAndTin(riskAnalysisInterval.getId());
         // Barcha qiymatlarni guruhlash: TIN + EquipmentId
         Map<Long, List<RiskAssessmentDto>> groupedByTin = allGroupByEquipmentAndTin.stream()
-                .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
+                .collect(Collectors.groupingBy(RiskAssessmentDto::getTin));
 
         // Har bir TIN uchun hisoblash
         for (Map.Entry<Long, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
@@ -162,18 +157,18 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
 
             // Null bo'lgan va bo'lmaganlarni ajratib olish
             Optional<RiskAssessmentDto> nullEquipment = dtoList.stream()
-                    .filter(dto -> dto.objectId() == null)
+                    .filter(dto -> dto.getObjectId() == null)
                     .findFirst();
 
-            int organizationScore = nullEquipment.map(RiskAssessmentDto::sumScore).orElse(0);
+            int organizationScore = nullEquipment.map(RiskAssessmentDto::getSumScore).orElse(0);
 
             // Endi null bo'lmaganlarga qo‘shib saqlaymiz
             dtoList.stream()
-                    .filter(dto -> dto.objectId() != null)
+                    .filter(dto -> dto.getObjectId() != null)
                     .forEach(dto -> {
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
-                                        .sumScore(dto.sumScore() + organizationScore)
+                                        .sumScore(dto.getSumScore() + organizationScore)
 //                                        .objectName(
 //                                                equipmentRepository.findById(dto.objectId())
 //                                                        .map(Equipment::getRegistryNumber)
@@ -181,10 +176,10 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
 //
 //                                        )
                                         .tin(tin)
-                                        .equipmentId(dto.objectId())
+                                        .equipmentId(dto.getObjectId())
                                         .build()
                         );
-                        if (dto.sumScore() + organizationScore > 80) {
+                        if (dto.getSumScore() + organizationScore > 80) {
                             Optional<Inspection> inspectionOptional = inspectionRepository
                                     .findAllByTinAndIntervalId(tin, riskAnalysisInterval.getId());
                             Set<Integer> regionIds = equipmentRepository.getAllRegionIdByLegalTin(tin);
@@ -193,7 +188,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
                                     inspectionRepository.save(
                                             Inspection
                                                     .builder()
-                                                    .tin(dto.tin())
+                                                    .tin(dto.getTin())
                                                     .regionId(profile.getRegionId())
                                                     .districtId(profile.getDistrictId())
                                                     .regionIds(regionIds)

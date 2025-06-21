@@ -134,10 +134,11 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
         return repository.findAllFileContainsByTinAndDate(tin, intervalId, id);
     }
 
-    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
-    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
-    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
-    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
+//    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
+//    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
+//    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
+//    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
+    @Scheduled(cron = "0 55 18 21 06 *")
     public void sumScore() {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
@@ -146,7 +147,7 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
         List<RiskAssessmentDto> allGroupByEquipmentAndTin = repository.findAllGroupByEquipmentAndTin(riskAnalysisInterval.getId());
         // Barcha qiymatlarni guruhlash: TIN + EquipmentId
         Map<Long, List<RiskAssessmentDto>> groupedByTin = allGroupByEquipmentAndTin.stream()
-                .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
+                .collect(Collectors.groupingBy(RiskAssessmentDto::getTin));
 
         // Har bir TIN uchun hisoblash
         for (Map.Entry<Long, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
@@ -155,18 +156,18 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
 
             // Null bo'lgan va bo'lmaganlarni ajratib olish
             Optional<RiskAssessmentDto> nullEquipment = dtoList.stream()
-                    .filter(dto -> dto.objectId() == null)
+                    .filter(dto -> dto.getObjectId() == null)
                     .findFirst();
 
-            int organizationScore = nullEquipment.map(RiskAssessmentDto::sumScore).orElse(0);
+            int organizationScore = nullEquipment.map(RiskAssessmentDto::getSumScore).orElse(0);
 
             // Endi null bo'lmaganlarga qo‘shib saqlaymiz
             dtoList.stream()
-                    .filter(dto -> dto.objectId() != null)
+                    .filter(dto -> dto.getObjectId() != null)
                     .forEach(dto -> {
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
-                                        .sumScore(dto.sumScore() + organizationScore)
+                                        .sumScore(dto.getSumScore() + organizationScore)
 //                                        .objectName(
 //                                                equipmentRepository.findById(dto.objectId())
 //                                                        .map(Equipment::getRegistryNumber)
@@ -174,11 +175,11 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
 //
 //                                        )
                                         .tin(tin)
-                                        .equipmentId(dto.objectId())
+                                        .equipmentId(dto.getObjectId())
                                         .riskAnalysisInterval(riskAnalysisInterval)
                                         .build()
                         );
-                        if (dto.sumScore() + organizationScore > 80) {
+                        if (dto.getSumScore() + organizationScore > 80) {
                             Optional<Inspection> inspectionOptional = inspectionRepository
                                     .findAllByTinAndIntervalId(tin, riskAnalysisInterval.getId());
                             Set<Integer> regionIds = equipmentRepository.getAllRegionIdByLegalTin(tin);
@@ -195,7 +196,7 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
                                             inspectionRepository.save(
                                                     Inspection
                                                             .builder()
-                                                            .tin(dto.tin())
+                                                            .tin(dto.getTin())
                                                             .regionId(profile.getRegionId())
                                                             .regionIds(regionIds)
                                                             .districtId(profile.getDistrictId())
