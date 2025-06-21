@@ -15,7 +15,7 @@ import java.util.List;
  */
 //TODO: fieldlarga validatsiya yozish kerak
 public record HfDto(Long legalTin, Integer regionId, Integer districtId,
-                    String phoneNumber, String upperOrganization, String name, String address,
+                    String upperOrganization, String name, String address,
                     String location, String hazardousSubstance,
                     Integer hfTypeId, String extraArea, String description, String registryNumber, LocalDate registrationDate,
                     String appointmentOrderPath, String cadastralPassportPath, String certificationPath, String permitPath,

@@ -22,7 +22,11 @@ public interface ProfileInfoView {
 
     Long getPin();
 
+    Integer getRegionId();
+
     String getRegionName();
+
+    Integer getDistrictId();
 
     String getDistrictName();
 

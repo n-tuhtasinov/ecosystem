@@ -29,4 +29,6 @@ public interface OfficeService {
     OfficeViewById getById(Integer officeId);
 
     Office findById(Integer officeId);
+
+    Office findByRegionId(Integer regionId);
 }

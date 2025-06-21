@@ -61,7 +61,7 @@ public abstract class BaseAppealPdfProcessor implements AppealPdfProcessor {
     }
 
     protected District getDistrict(Integer districtId) {
-        return districtService.getDistrict(districtId);
+        return districtService.findById(districtId);
     }
 
     protected Profile getProfile(UUID profileId) {
