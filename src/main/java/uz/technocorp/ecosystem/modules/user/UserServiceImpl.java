@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserViewByLegal getLegalUserByTin(Long tin) {
-        return userRepository.getLegalUserByTin(tin);
+        return userRepository.findLegalUserByTin(tin).orElseThrow(()-> new ResourceNotFoundException("User (roli legal)", "tin", tin));
     }
 
 

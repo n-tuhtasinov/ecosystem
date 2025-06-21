@@ -12,7 +12,7 @@ import uz.technocorp.ecosystem.modules.user.User;
  */
 public interface RiskAssessmentService {
 
-    Page<RiskAssessmentView> getAllHf(Long tin, Integer regionId, Integer intervalId, int page, int size);
-    Page<RiskAssessmentView> getAllIrs(Long tin, Integer regionId, Integer intervalId, int page, int size);
-    Page<RiskAssessmentView> getAllEquipments(Long tin, Integer regionId, Integer intervalId, int page, int size);
+    Page<RiskAssessmentView> getAllHf(User user, Long tin, Integer regionId, Integer intervalId, int page, int size);
+    Page<RiskAssessmentView> getAllIrs(User user, Long tin, Integer regionId, Integer intervalId, int page, int size);
+    Page<RiskAssessmentView> getAllEquipments(User user, Long tin, Integer regionId, Integer intervalId, int page, int size);
 }

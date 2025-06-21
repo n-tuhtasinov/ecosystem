@@ -105,11 +105,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(String.format("Bunday username topilmadi: '%s'", e.getMessage())));
     }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         logger.error(e.getMessage());
         String parameterName = e.getName();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(String.format("%s parametr uchun noto'g'ri qiymat berildi", parameterName)));
+    }
+
+    @ExceptionHandler(ExcelParsingException.class)
+    public ResponseEntity<ApiResponse> handleExcelParsingException(ExcelParsingException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(String.format("Faylning %d-qatorida xatolik yuz berdi. Xatolik: %s", ex.getRowNumber(), ex.getDetails())));
     }
 
     @ExceptionHandler(RuntimeException.class)

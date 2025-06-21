@@ -308,7 +308,7 @@ public class PreventionServiceImpl implements PreventionService {
         dto.setLegalName(prevention.getLegalName());
         dto.setLegalAddress(prevention.getLegalAddress());
         dto.setRegionName(regionService.findById(prevention.getRegionId()).getName());
-        dto.setDistrictName(districtService.getDistrict(prevention.getDistrictId()).getName());
+        dto.setDistrictName(districtService.findById(prevention.getDistrictId()).getName());
         dto.setPreventionFilePath(prevention.getPreventionFilePath());
         dto.setEventFilePath(prevention.getEventFilePath());
         dto.setOrganizationFilePath(prevention.getOrganizationFilePath());

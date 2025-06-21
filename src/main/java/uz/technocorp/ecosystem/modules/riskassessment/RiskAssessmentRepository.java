@@ -35,6 +35,23 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
 
     @Query(value = """
             select ra.id as id,
+                hf.name as name,
+                sum_score as score,
+                hf.address as address,
+                r.name as regionName,
+                d.name as districtName
+                from risk_assessment ra
+                join hazardous_facility hf on ra.hazardous_facility_id = hf.id
+                join region r on hf.region_id = r.id
+                join district d on hf.district_id = d.id
+                where ra.tin = :tin
+                and risk_analysis_interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<RiskAssessmentView> getAllHfByTin(Pageable pageable, Integer intervalId, Long tin);
+
+
+    @Query(value = """
+            select ra.id as id,
                 'INM' as name,
                 sum_score as score,
                 irs.address as address,
@@ -51,6 +68,22 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
 
     @Query(value = """
             select ra.id as id,
+                'INM' as name,
+                sum_score as score,
+                irs.address as address,
+                r.name as regionName,
+                d.name as districtName
+                from risk_assessment ra
+                join ionizing_radiation_source irs on ra.ionizing_radiation_source_id = irs.id
+                join region r on irs.region_id = r.id
+                join district d on irs.district_id = d.id
+                where ra.tin = :tin
+                and risk_analysis_interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<RiskAssessmentView> getAllIrsByTin(Pageable pageable, Integer intervalId, Long tin);
+
+    @Query(value = """
+            select ra.id as id,
                 e.type as name,
                 sum_score as score,
                 e.address as address,
@@ -62,4 +95,18 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
     Page<RiskAssessmentView> getAllEquipmentsByTinAndRegionId(Pageable pageable, Integer regionId, Integer intervalId, Long tin);
+
+    @Query(value = """
+            select ra.id as id,
+                e.type as name,
+                sum_score as score,
+                e.address as address,
+                e.region_name as regionName,
+                e.district_name as districtName
+                from risk_assessment ra
+                join equipment e on ra.equipment_id = e.id
+                where ra.tin = :tin
+                and risk_analysis_interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<RiskAssessmentView> getAllEquipmentsByTin(Pageable pageable, Integer intervalId, Long tin);
 }

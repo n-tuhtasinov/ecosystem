@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.riskassessment.projection.RiskAssessmentView;
+import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.AppConstants;
 
@@ -25,31 +27,35 @@ public class RiskAssessmentController {
     private final RiskAssessmentService service;
 
     @GetMapping("/hf")
-    public ResponseEntity<?> getAllHfRiskAssessments(@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+    public ResponseEntity<?> getAllHfRiskAssessments(@CurrentUser User user,
+                                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
                                                      @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
                                                      @RequestParam(value = "tin") Long tin,
-                                                     @RequestParam(value = "regionId") Integer regionId,
+                                                     @RequestParam(value = "regionId", required = false) Integer regionId,
                                                      @RequestParam(value = "intervalId") Integer intervalId) {
-        Page<RiskAssessmentView> allHf = service.getAllHf(tin, regionId, intervalId, page, size);
+        Page<RiskAssessmentView> allHf = service.getAllHf(user, tin, regionId, intervalId, page, size);
         return ResponseEntity.ok(new ApiResponse(allHf));
     }
+
     @GetMapping("/equipments")
-    public ResponseEntity<?> getAllEquipmentsRiskAssessments(@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-                                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-                                                     @RequestParam(value = "tin") Long tin,
-                                                     @RequestParam(value = "regionId") Integer regionId,
-                                                     @RequestParam(value = "intervalId") Integer intervalId) {
-        Page<RiskAssessmentView> allEquipments = service.getAllEquipments(tin, regionId, intervalId, page, size);
+    public ResponseEntity<?> getAllEquipmentsRiskAssessments(@CurrentUser User user,
+                                                             @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                                             @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                                             @RequestParam(value = "tin") Long tin,
+                                                             @RequestParam(value = "regionId", required = false) Integer regionId,
+                                                             @RequestParam(value = "intervalId") Integer intervalId) {
+        Page<RiskAssessmentView> allEquipments = service.getAllEquipments(user, tin, regionId, intervalId, page, size);
         return ResponseEntity.ok(new ApiResponse(allEquipments));
     }
 
     @GetMapping("/irs")
-    public ResponseEntity<?> getAllIrsRiskAssessments(@RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-                                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-                                                     @RequestParam(value = "tin") Long tin,
-                                                     @RequestParam(value = "regionId") Integer regionId,
-                                                     @RequestParam(value = "intervalId") Integer intervalId) {
-        Page<RiskAssessmentView> allIrs = service.getAllIrs(tin, regionId, intervalId, page, size);
+    public ResponseEntity<?> getAllIrsRiskAssessments(@CurrentUser User user,
+                                                      @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                                      @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                                      @RequestParam(value = "tin") Long tin,
+                                                      @RequestParam(value = "regionId", required = false) Integer regionId,
+                                                      @RequestParam(value = "intervalId") Integer intervalId) {
+        Page<RiskAssessmentView> allIrs = service.getAllIrs(user, tin, regionId, intervalId, page, size);
         return ResponseEntity.ok(new ApiResponse(allIrs));
     }
 }

@@ -12,10 +12,13 @@ import org.springframework.web.client.RestClient;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionRepository;
+import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.dto.IndividualUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 
@@ -24,6 +27,7 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -41,6 +45,9 @@ public class IIPServiceImpl implements IIPService {
     private final DistrictRepository districtRepository;
     private final RegionRepository regionRepository;
     private final OfficeRepository officeRepository;
+    private final DistrictService districtService;
+    private final RegionService regionService;
+    private final OfficeService officeService;
 
 
     private String getToken() {
@@ -89,9 +96,9 @@ public class IIPServiceImpl implements IIPService {
         if (node==null) throw new RuntimeException("MIP dan STIR bo'yicha so'rovga bo'sh javob qaytdi");
 
         //make legalUserDto
-        District district = districtRepository.findBySoato(node.get("companyBillingAddress").get("soato").asInt()).orElseThrow(() -> new ResourceNotFoundException("Tuman", "SOATO", node.get("companyBillingAddress").get("soato").asInt()));
-        Region region = regionRepository.findById(district.getRegionId()).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", district.getRegionId()));
-        Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Ushbu tashkilot joylashgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
+        District district = districtService.findBySoato(node.get("companyBillingAddress").get("soato").asInt());
+        Region region = regionService.findById(district.getRegionId());
+        Office office = officeService.findByRegionId(region.getId());
 
         LegalUserDto dto = new LegalUserDto(
                 Long.valueOf(tin),

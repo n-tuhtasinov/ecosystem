@@ -38,7 +38,7 @@ public class HazardousFacility extends BaseEntity {
     @Column(nullable = false)
     private String legalName;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Long orderNumber;
 
     private LocalDate registrationDate;
@@ -70,15 +70,13 @@ public class HazardousFacility extends BaseEntity {
     @Column(nullable = false)
     private String legalAddress;
 
-    private String phoneNumber;
-
     private String upperOrganization;
 
     private String name;
 
     private String address;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String location;
 
     @Column(nullable = false, columnDefinition = "text")
@@ -98,6 +96,7 @@ public class HazardousFacility extends BaseEntity {
     @Column(name = "hf_type_id")
     private Integer hfTypeId;
 
+    @Column(columnDefinition = "text")
     private String extraArea;
 
     @Column(columnDefinition = "text")
@@ -119,7 +118,7 @@ public class HazardousFacility extends BaseEntity {
     private boolean active;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb", nullable = false)
+    @Column(columnDefinition = "jsonb")
     private Map<String, String> files;
 
 //    //Identifikatsiya varag'i
