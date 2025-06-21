@@ -221,4 +221,6 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
     Set<Integer> getAllRegionIdByLegalTin(Long tin);
 
     Optional<HazardousFacility> findByIdAndProfileId(UUID id, UUID profileId);
+
+    Optional<HazardousFacility> findByRegistryNumber(String hfRegistryNumber);
 }

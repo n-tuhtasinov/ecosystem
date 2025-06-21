@@ -39,11 +39,11 @@ public class Equipment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private EquipmentType type;
 
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
     @JoinColumn(name = "appeal_id", insertable = false, updatable = false)
     private Appeal appeal;
 
-    @Column(name = "appeal_id", nullable = false)
+    @Column(name = "appeal_id")
     private UUID appealId;
 
     @Column(nullable = false, unique = true)
@@ -98,7 +98,7 @@ public class Equipment extends BaseEntity {
     @Column
     private String factory;
 
-    @Column(nullable = false)
+    @Column
     private String location;
 
     @Column(nullable = false)
@@ -207,6 +207,9 @@ public class Equipment extends BaseEntity {
 
     @Column(nullable = false)
     private String legalAddress;
+
+//    @Column(nullable = false)
+    private Boolean isActive;
 
 //    @Column(nullable = false)
 //    private String saleContractPath; // oldi-sotdi shartnomasi
