@@ -27,5 +27,5 @@ public interface ChildEquipmentRepository extends JpaRepository<ChildEquipment, 
             """)
     Page<ChildEquipment> findAllByEquipmentType(Pageable pageable, EquipmentType type);
 
-    Optional<ChildEquipment> findByNameAndEquipmentType(String name, EquipmentType type);
+    Optional<ChildEquipment> findByName(String name);
 }

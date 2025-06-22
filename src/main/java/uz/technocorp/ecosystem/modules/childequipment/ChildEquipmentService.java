@@ -27,5 +27,5 @@ public interface ChildEquipmentService {
 
     String getNameById(Integer childEquipmentId);
 
-    ChildEquipment findByNameAndEquipmentType(String childEquipmentName, EquipmentType equipmentType);
+    ChildEquipment findByNameAndEquipmentType(String childEquipmentName);
 }
