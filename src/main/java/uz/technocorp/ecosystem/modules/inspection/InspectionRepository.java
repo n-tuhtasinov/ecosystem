@@ -74,5 +74,5 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
                 join profile p on i.tin = p.tin
             order by i.id, i.start_date
             """, nativeQuery=true)
-    List<InspectionShortInfo> getAllByInspectorId(UUID id, LocalDate startDate, LocalDate endDate, InspectionStatus status);
+    List<InspectionShortInfo> getAllByInspectorId(UUID inspectorId, LocalDate startDate, LocalDate endDate, InspectionStatus status);
 }
