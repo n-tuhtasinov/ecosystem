@@ -61,7 +61,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
             // Oxirgi ma'lumotga ega qator raqami
             int lastRowNum = sheet.getLastRowNum();
 
-            for (int rowIndex = 1; rowIndex <= lastRowNum; rowIndex++) {
+            for (int rowIndex = 2; rowIndex <= lastRowNum; rowIndex++) {
 
                 Row row = sheet.getRow(rowIndex);
                 if (row == null) {
@@ -121,7 +121,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private static void getHfSpheres(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
-        String hfSpheresStr = dataFormatter.formatCellValue(row.getCell(11));
+        String hfSpheresStr = dataFormatter.formatCellValue(row.getCell(18));
         if (hfSpheresStr == null || hfSpheresStr.isBlank()) {
             throw new Exception("hfSphere(l) bo'sh bo'lishi mumkin emas");
         }
@@ -133,7 +133,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private static void getSubstance(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
-        String substance = dataFormatter.formatCellValue(row.getCell(10));
+        String substance = dataFormatter.formatCellValue(row.getCell(16));
         if (substance == null || substance.isBlank()) {
             throw new Exception("hazardousSubstance(k) bo'sh bo'lishi mumkin emas");
         }
@@ -141,7 +141,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private static void getExtraArea(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
-        String extraArea = dataFormatter.formatCellValue(row.getCell(9));
+        String extraArea = dataFormatter.formatCellValue(row.getCell(15));
         if (extraArea == null || extraArea.isBlank()) {
             throw new Exception("extraArea(j) bo'sh bo'lishi mumkin emas");
         }
@@ -149,7 +149,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private static void getHfType(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
-        String hfTypeIdStr = dataFormatter.formatCellValue(row.getCell(8));
+        String hfTypeIdStr = dataFormatter.formatCellValue(row.getCell(14));
         if (hfTypeIdStr == null || hfTypeIdStr.isBlank()) {
             throw new Exception("hfTypeId(i) bo'sh bo'lishi mumkin emas");
         }
@@ -157,7 +157,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private void getRegionAndAddress(DataFormatter dataFormatter, Row row, District district, HazardousFacility hf) throws Exception {
-        String addressExcel = dataFormatter.formatCellValue(row.getCell(7));
+        String addressExcel = dataFormatter.formatCellValue(row.getCell(13));
         if (addressExcel == null || addressExcel.isBlank()) {
             throw new Exception("address(h) bo'sh bo'lishi mumkin emas");
         }
@@ -170,7 +170,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private District getDistrict(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
-        String soato = dataFormatter.formatCellValue(row.getCell(6));
+        String soato = dataFormatter.formatCellValue(row.getCell(12));
         if (soato == null || soato.isBlank()) {
             throw new Exception("districtSoato(g) bo'sh bo'lishi mumkin emas");
         }
@@ -181,7 +181,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private static void getHfName(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
-        String name = dataFormatter.formatCellValue(row.getCell(5));
+        String name = dataFormatter.formatCellValue(row.getCell(8));
         if (name == null || name.isBlank()) {
             throw new Exception("name bo'sh bo'lishi mumkin emas");
         }
@@ -189,7 +189,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private void getLegal(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
-        String legalTin = dataFormatter.formatCellValue(row.getCell(4));
+        String legalTin = dataFormatter.formatCellValue(row.getCell(7));
         if (legalTin == null || legalTin.isBlank()) {
             throw new Exception("legalTin bo'sh bo'lishi mumkin emas");
         }
@@ -206,7 +206,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private static void getUpperOrganication(DataFormatter dataFormatter, Row row, HazardousFacility hf) {
-        String upperOrganization = dataFormatter.formatCellValue(row.getCell(3));
+        String upperOrganization = dataFormatter.formatCellValue(row.getCell(5));
         if (upperOrganization == null || upperOrganization.isBlank()) {
             upperOrganization = null;
         }
@@ -214,7 +214,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private static void getInspectorName(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
-        String inspectorName = dataFormatter.formatCellValue(row.getCell(2));
+        String inspectorName = dataFormatter.formatCellValue(row.getCell(3));
         if (inspectorName == null || inspectorName.isBlank()) {
             throw new Exception("inspectorName bo'sh bo'lishi mumkin emas");
         }
@@ -222,7 +222,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private static void getRegistryNumber(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
-        String registryNumber = dataFormatter.formatCellValue(row.getCell(1));
+        String registryNumber = dataFormatter.formatCellValue(row.getCell(2));
         if (registryNumber == null || registryNumber.isBlank()) {
             throw new Exception("registryNumber bo'sh bo'lishi mumkin emas");
         }
@@ -230,7 +230,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private void getRegistrationDate(Row row, HazardousFacility hf) throws Exception {
-        Cell cell = row.getCell(0);
+        Cell cell = row.getCell(1);
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             throw new Exception("registrationDate bo'sh bo'lishi mumkin emas");
         }
