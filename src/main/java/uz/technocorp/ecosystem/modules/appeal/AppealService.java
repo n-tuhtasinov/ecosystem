@@ -58,4 +58,6 @@ public interface AppealService {
     Appeal findByIdStatusAndOffice(UUID appealId, AppealStatus appealStatus, Integer officeId);
 
     void setFilePath(User user, UploadFileDto dto);
+
+    Long getCount(User user, AppealStatus status);
 }
