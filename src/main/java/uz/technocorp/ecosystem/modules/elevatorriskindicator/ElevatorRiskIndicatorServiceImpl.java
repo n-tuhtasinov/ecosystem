@@ -135,11 +135,10 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
         return repository.findAllFileContainsByTinAndDate(tin, intervalId, id);
     }
 
-//    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
-//    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
-//    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
-//    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
-    @Scheduled(cron = "0 55 18 21 06 *")
+    @Scheduled(cron = "0 30 23 31 3 *")  // 31-mart 23:30 da
+    @Scheduled(cron = "0 30 23 30 6 *")  // 30-iyun 23:30 da
+    @Scheduled(cron = "0 30 23 30 9 *")  // 30-sentyabr 23:30 da
+    @Scheduled(cron = "0 30 23 31 12 *") // 31-dekabr 23:30 da
     public void sumScore() {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
@@ -169,14 +168,9 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
                                         .sumScore(dto.getSumScore() + organizationScore)
-//                                        .objectName(
-//                                                equipmentRepository.findById(dto.objectId())
-//                                                        .map(Equipment::getRegistryNumber)
-//                                                        .orElse("Nomi ma'lum emas.")
-//
-//                                        )
                                         .tin(tin)
                                         .equipmentId(dto.getObjectId())
+                                        .riskAnalysisInterval(riskAnalysisInterval)
                                         .build()
                         );
                         if (dto.getSumScore() + organizationScore > 80) {
@@ -193,6 +187,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
                                                     .districtId(profile.getDistrictId())
                                                     .regionIds(regionIds)
                                                     .status(InspectionStatus.NEW)
+                                                    .intervalId(riskAnalysisInterval.getId())
                                                     .build()
                                     );
                                 });
