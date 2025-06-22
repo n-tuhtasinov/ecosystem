@@ -10,7 +10,7 @@ import java.util.UUID;
 * @since v1.0
 * @created 22.06.2025
 */
-public record CountParamDto(
+public record AppealCountParams(
         AppealStatus status,
         Long legalTin,
         UUID executorId,

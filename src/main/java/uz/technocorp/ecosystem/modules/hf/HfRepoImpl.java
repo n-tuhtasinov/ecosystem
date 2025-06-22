@@ -115,4 +115,23 @@ public class HfRepoImpl implements HfRepo {
 
         return new PageImpl<>(query.getResultList(), pageable, totalElements);
     }
+
+    @Override
+    public Long countByParams(Long legalTin, Integer regionId) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<HazardousFacility> countRoot = countQuery.from(HazardousFacility.class);
+        List<Predicate> countPredicates = new ArrayList<>();
+
+        if (legalTin != null) {
+            countPredicates.add(cb.equal(countRoot.get("legalTin"), legalTin));
+        }
+        if (regionId != null) {
+            countPredicates.add(cb.equal(countRoot.get("regionId"), regionId));
+        }
+
+        countQuery.select(cb.count(countRoot));
+        countQuery.where(countPredicates.toArray(new Predicate[0]));
+        return em.createQuery(countQuery).getSingleResult();
+    }
 }

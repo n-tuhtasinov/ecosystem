@@ -10,8 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
-import uz.technocorp.ecosystem.modules.appeal.dto.CountParamDto;
-import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.appeal.dto.AppealCountParams;
 import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
@@ -153,7 +152,7 @@ public class AppealRepoImpl implements AppealRepo {
     }
 
     @Override
-    public Long countByParams(CountParamDto params) {
+    public Long countByParams(AppealCountParams params) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Appeal> countRoot = countQuery.from(Appeal.class);

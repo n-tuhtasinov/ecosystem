@@ -111,4 +111,24 @@ public class IonizingRadiationSourceRepoImpl implements IonizingRadiationSourceR
 
         return new PageImpl<>(eQuery.getResultList(), pageable, totalElements);
     }
+
+    @Override
+    public Long countByParams(Long legalTin, Integer regionId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<IonizingRadiationSource> cRoot = countQuery.from(IonizingRadiationSource.class);
+        List<Predicate> cPredicates = new ArrayList<>();
+
+        if (legalTin != null) {
+            cPredicates.add(cb.equal(cRoot.get("legalTin"), legalTin));
+        }
+        if (regionId != null) {
+            cPredicates.add(cb.equal(cRoot.get("regionId"), regionId));
+        }
+
+        countQuery.select(cb.count(cRoot));
+        countQuery.where(cPredicates.toArray(new Predicate[0]));
+        TypedQuery<Long> cQuery = entityManager.createQuery(countQuery);
+        return cQuery.getSingleResult();
+    }
 }

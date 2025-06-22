@@ -21,10 +21,16 @@ import java.util.UUID;
 public interface IonizingRadiationSourceService {
 
     void create(Appeal appeal);
+
     void update(UUID id, IrsDto dto);
+
     void deregister(UUID id, IrsDeregisterDto dto);
+
     Page<IrsView> getAll(User user, IrsParams irsParams);
+
     Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
 
     IrsViewById getById(UUID irsId);
+
+    Long getCount(User user);
 }

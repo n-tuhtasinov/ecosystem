@@ -110,4 +110,10 @@ public class HazardousFacilityController {
         Page<HfPageView> all = service.getAllForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> getCount(@CurrentUser User user) {
+        Long count = service.getCount(user);
+        return ResponseEntity.ok(new ApiResponse(count));
+    }
 }
