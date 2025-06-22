@@ -13,4 +13,6 @@ import uz.technocorp.ecosystem.modules.irs.view.IrsView;
 public interface IonizingRadiationSourceRepo {
 
     Page<IrsView> getAll(IrsParams params);
+
+    Long countByParams(Long tin, Integer regionId);
 }

@@ -51,5 +51,4 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
     @Transactional
     @Query("update Appeal set conclusion = :conclusion, status = :status  where id = :id")
     void changeStatusAndSetConclusion(UUID id, String conclusion, AppealStatus status);
-
 }

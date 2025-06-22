@@ -192,6 +192,16 @@ public class EquipmentServiceImpl implements EquipmentService {
         return equipmentRepository.findByRegistryNumber(oldEquipmentRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", oldEquipmentRegistryNumber));
     }
 
+    @Override
+    public Long getCount(User user) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return switch (user.getRole()) {
+            case LEGAL -> equipmentRepository.countByParams(profile.getTin(), null);
+            case REGIONAL, INSPECTOR -> equipmentRepository.countByParams(null, profile.getRegionId());
+            default -> equipmentRepository.countByParams(null, null);
+        };
+    }
+
     private AttractionPassportView mapToAttractionPassportView(Equipment equipment) {
         return new AttractionPassportView(
                 equipment.getId(),

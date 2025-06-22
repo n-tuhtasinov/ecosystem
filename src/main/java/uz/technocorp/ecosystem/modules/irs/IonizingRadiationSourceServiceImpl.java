@@ -161,6 +161,16 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
         return mapToView(irs);
     }
 
+    @Override
+    public Long getCount(User user) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return switch (user.getRole()) {
+            case LEGAL -> repository.countByParams(profile.getTin(), null);
+            case REGIONAL, INSPECTOR -> repository.countByParams(null, profile.getRegionId());
+            default -> repository.countByParams(null, null);
+        };
+    }
+
     private IrsViewById mapToView(IonizingRadiationSource irs) {
         return new IrsViewById(
                 irs.getParentOrganization(),

@@ -79,6 +79,12 @@ public class IonizingRadiationSourceController {
         return ResponseEntity.ok(new ApiResponse(byId));
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<?> getCount(@CurrentUser User user) {
+        Long count = service.getCount(user);
+        return ResponseEntity.ok(new ApiResponse(count));
+    }
+
 
 
 

@@ -18,4 +18,5 @@ public interface HfRepo {
 
     Page<HfCustom> getHfCustoms(HfParams params);
 
+    Long countByParams (Long tin, Integer regionId);
 }
