@@ -41,6 +41,27 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 r.name as regionName,
                 d.name as districtName
                 from risk_assessment ra
+                join inspection i on i.tin = ra.tin
+                and ra.risk_analysis_interval_id = i.interval_id
+                and i.interval_id = :intervalId
+                join inspection_inspector ii on ii.inspection_id = i.id
+                and ii.inspector_id = :inspectorId
+                join hazardous_facility hf on ra.hazardous_facility_id = hf.id
+                join region r on hf.region_id = r.id
+                join district d on hf.district_id = d.id
+                where ra.tin = :tin and hf.region_id = :regionId
+                and risk_analysis_interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<RiskAssessmentView> getAllHfByTinAndInspectorId(Pageable pageable, UUID inspectorId, Integer intervalId, Long tin);
+
+    @Query(value = """
+            select ra.id as id,
+                hf.name as name,
+                sum_score as score,
+                hf.address as address,
+                r.name as regionName,
+                d.name as districtName
+                from risk_assessment ra
                 join hazardous_facility hf on ra.hazardous_facility_id = hf.id
                 join region r on hf.region_id = r.id
                 join district d on hf.district_id = d.id
@@ -74,6 +95,28 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 r.name as regionName,
                 d.name as districtName
                 from risk_assessment ra
+                join inspection i on i.tin = ra.tin
+                and ra.risk_analysis_interval_id = i.interval_id
+                and i.interval_id = :intervalId
+                join inspection_inspector ii on ii.inspection_id = i.id
+                and ii.inspector_id = :inspectorId
+                join ionizing_radiation_source irs on ra.ionizing_radiation_source_id = irs.id
+                join region r on irs.region_id = r.id
+                join district d on irs.district_id = d.id
+                where ra.tin = :tin and irs.region_id = :regionId
+                and risk_analysis_interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<RiskAssessmentView> getAllIrsByTinAndInspectorId(Pageable pageable, UUID inspectorId, Integer intervalId, Long tin);
+
+
+    @Query(value = """
+            select ra.id as id,
+                'INM' as name,
+                sum_score as score,
+                irs.address as address,
+                r.name as regionName,
+                d.name as districtName
+                from risk_assessment ra
                 join ionizing_radiation_source irs on ra.ionizing_radiation_source_id = irs.id
                 join region r on irs.region_id = r.id
                 join district d on irs.district_id = d.id
@@ -87,10 +130,12 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 e.type as name,
                 sum_score as score,
                 e.address as address,
-                e.region_name as regionName,
-                e.district_name as districtName
+                r.name as regionName,
+                d.name as districtName
                 from risk_assessment ra
                 join equipment e on ra.equipment_id = e.id
+                join region r on e.region_id = r.id
+                join district d on e.district_id = d.id
                 where ra.tin = :tin and e.region_id = :regionId
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
@@ -101,10 +146,33 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 e.type as name,
                 sum_score as score,
                 e.address as address,
-                e.region_name as regionName,
-                e.district_name as districtName
+                r.name as regionName,
+                d.name as districtName
+                from risk_assessment ra
+                join inspection i on i.tin = ra.tin
+                and ra.risk_analysis_interval_id = i.interval_id
+                and i.interval_id = :intervalId
+                join inspection_inspector ii on ii.inspection_id = i.id
+                and ii.inspector_id = :inspectorId
+                join equipment e on ra.equipment_id = e.id
+                join region r on e.region_id = r.id
+                join district d on e.district_id = d.id
+                where ra.tin = :tin and e.region_id = :regionId
+                and risk_analysis_interval_id = :intervalId
+            """, nativeQuery = true)
+    Page<RiskAssessmentView> getAllEquipmentsByTinAndInspectorId(Pageable pageable, UUID inspectorId, Integer intervalId, Long tin);
+
+    @Query(value = """
+            select ra.id as id,
+                e.type as name,
+                sum_score as score,
+                e.address as address,
+                r.name as regionName,
+                d.name as districtName
                 from risk_assessment ra
                 join equipment e on ra.equipment_id = e.id
+                join region r on e.region_id = r.id
+                join district d on e.district_id = d.id
                 where ra.tin = :tin
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
