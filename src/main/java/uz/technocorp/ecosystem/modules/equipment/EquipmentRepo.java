@@ -12,5 +12,8 @@ import uz.technocorp.ecosystem.modules.user.User;
  * @since v1.0
  */
 public interface EquipmentRepo {
+
     Page<EquipmentView> getAllByParams(User user, EquipmentParams params);
+
+    Long countByParams(Long legalTin, Integer regionId);
 }

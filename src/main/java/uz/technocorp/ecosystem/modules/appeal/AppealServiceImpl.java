@@ -83,6 +83,7 @@ public class AppealServiceImpl implements AppealService {
     private final HfTypeService hfTypeService;
     private final OfficeService officeService;
     private final DepartmentService departmentService;
+    private final AppealRepository appealRepository;
 
     @Override
     @Transactional
@@ -366,6 +367,18 @@ public class AppealServiceImpl implements AppealService {
         if (filePathToDelete != null) {
             attachmentService.deleteFileFromStorage(filePathToDelete);
         }
+    }
+
+    @Override
+    public Long getCount(User user, AppealStatus status) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return switch (user.getRole()){
+            case HEAD, MANAGER, CHAIRMAN -> appealRepository.countByParams(new AppealCountParams(status, null, null, null));
+            case LEGAL ->  appealRepository.countByParams(new AppealCountParams(status, profile.getTin(), null, null));
+            case INSPECTOR -> appealRepository.countByParams(new AppealCountParams(status, null, user.getId(), null));
+            case REGIONAL -> appealRepository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId()));
+            default -> throw new RuntimeException(user.getRole().name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting");
+        };
     }
 
     private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal, Boolean shouldRegister) {

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
@@ -115,4 +116,11 @@ public class AppealController {
         service.setFilePath(user, uploadFileDto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> getCount(@CurrentUser User user, @RequestParam AppealStatus status) {
+        Long count = service.getCount(user, status);
+        return ResponseEntity.ok(new ApiResponse(count));
+    }
+
 }
