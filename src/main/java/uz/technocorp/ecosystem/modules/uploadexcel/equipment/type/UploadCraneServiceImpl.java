@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.uploadexcel.equipment;
+package uz.technocorp.ecosystem.modules.uploadexcel.equipment.type;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
+import uz.technocorp.ecosystem.modules.uploadexcel.equipment.UploadEquipmentExcelService;
 import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 
@@ -37,7 +38,7 @@ import java.util.Map;
  * @created 21.06.2025
  * @since v1.0
  */
-@Service("crane")
+@Service("CRANE")
 @RequiredArgsConstructor
 @Slf4j
 public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
@@ -80,20 +81,23 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
 
                 try {
                     Equipment equipment = new Equipment();
-                    getLegal(dataFormatter, row, equipment); // b) legalTin
-                    getHf(dataFormatter, row, equipment); // b) hfRegistryNumber
-                    District district = getDistrict(dataFormatter, row, equipment); // g) districtSoato
-                    getRegionAndAddress(dataFormatter, row, district, equipment); // h) address
-                    getChildEquipment(dataFormatter, row, equipment); // k) child equipment
-                    getFactoryNumber(dataFormatter, row, equipment); // l) factoryNumber
-                    getRegistryNumber(dataFormatter, row, equipment); // m) registry number
-                    getOldEquipment(dataFormatter, row, equipment); // n) old equipment
-                    getManufacturedAt(row, equipment); // q) manufacturedAt
-                    getPartialCheckDate(row, equipment); // s) partialCheckDate
-                    getFullCheckDate(row, equipment); // t) full check date
-                    getRegistrationDate(row, equipment); // w) registration date
-                    getInspectorName(dataFormatter, row, equipment); // x) inspectorName
-                    getIsActive(dataFormatter, row, equipment); // z) is active
+
+                    getLegal(dataFormatter, row, equipment, 2); // b) legalTin
+                    getHf(dataFormatter, row, equipment, 5); // b) hfRegistryNumber
+                    District district = getDistrict(dataFormatter, row, equipment, 9); // g) districtSoato
+                    getRegionAndAddress(dataFormatter, row, district, equipment, 10); // h) address
+                    getChildEquipment(dataFormatter, row, equipment, 11); // k) child equipment
+                    getFactoryNumber(dataFormatter, row, equipment, 12); // l) factoryNumber
+                    getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
+                    getOldEquipment(dataFormatter, row, equipment, 14); // n) old equipment
+                    getFactory(dataFormatter, row, equipment, 15);
+                    getModel(dataFormatter, row, equipment, 16);
+                    getManufacturedAt(row, equipment, 17); // q) manufacturedAt
+                    getPartialCheckDate(row, equipment, 19); // s) partialCheckDate
+                    getFullCheckDate(row, equipment, 20); // t) full check date
+                    getRegistrationDate(row, equipment, 23); // w) registration date
+                    getInspectorName(dataFormatter, row, equipment, 24); // x) inspectorName
+                    getIsActive(dataFormatter, row, equipment, 26); // z) is active
 
                     getParams(dataFormatter, row, equipment); // u) params
                     setFiles(equipment); // set files
@@ -115,87 +119,104 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
 
     private static void setFiles(Equipment equipment) {
         Map<String, String> files = new HashMap<>();
-        files.put("boomLength", null);
-        files.put("liftingCapacity", null);
+        files.put("labelPath", null);
+        files.put("saleContractPath", null);
+        files.put("equipmentCertPath", null);
+        files.put("assignmentDecreePath", null);
+        files.put("expertisePath", null);
+        files.put("installationCertPath", null);
+        files.put("additionalFilePath", null);
         equipment.setFiles(files);
     }
 
     private void getParams(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String boomLength = dataFormatter.formatCellValue(row.getCell(20));
+        String boomLength = dataFormatter.formatCellValue(row.getCell(21));
         isValid(boomLength, "strellasining uzunligi(u)");
 
-        String liftingCapacity = dataFormatter.formatCellValue(row.getCell(21));
+        String liftingCapacity = dataFormatter.formatCellValue(row.getCell(22));
         isValid(liftingCapacity, "yuk ko'tar olishi(v)");
 
         Map<String, String> params = Map.of("boomLength", boomLength, "liftingCapacity", liftingCapacity);
         equipment.setParameters(params);
     }
 
-    private void getRegistrationDate(Row row, Equipment equipment) throws Exception {
-        Cell cell = row.getCell(22);
+    private void getModel(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String model = dataFormatter.formatCellValue(row.getCell(cellIndex));
+        isValid(model, "model(p)");
+        equipment.setModel(model);
+    }
+
+    private void getFactory(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String factory = dataFormatter.formatCellValue(row.getCell(cellIndex));
+        isValid(factory, "factory(o)");
+        equipment.setFactory(factory);
+    }
+
+    private void getRegistrationDate(Row row, Equipment equipment, int cellIndex) throws Exception {
+        Cell cell = row.getCell(cellIndex);
         LocalDate registrationDate = getLocalDate(cell, "ro'yhatga olingan sanasi(w)");
         equipment.setRegistrationDate(registrationDate);
     }
 
-    private void getIsActive(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String isActive = dataFormatter.formatCellValue(row.getCell(25));
+    private void getIsActive(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String isActive = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(isActive, "holati(z)");
         equipment.setIsActive(Boolean.parseBoolean(isActive));
     }
 
-    private void getInspectorName(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String inspectorName = dataFormatter.formatCellValue(row.getCell(23));
+    private void getInspectorName(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String inspectorName = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(inspectorName, "inspektor FIO(x)");
         equipment.setInspectorName(inspectorName);
     }
 
-    private void getFullCheckDate(Row row, Equipment equipment) throws Exception {
-        Cell cell = row.getCell(19);
+    private void getFullCheckDate(Row row, Equipment equipment, int cellIndex) throws Exception {
+        Cell cell = row.getCell(cellIndex);
         LocalDate fullCheckDate = getLocalDate(cell, "To'liq texnk ko'rik sanasi(t)");
         equipment.setPartialCheckDate(fullCheckDate);
     }
 
-    private void getPartialCheckDate(Row row, Equipment equipment) throws Exception {
-        Cell cell = row.getCell(18);
+    private void getPartialCheckDate(Row row, Equipment equipment, int cellIndex) throws Exception {
+        Cell cell = row.getCell(cellIndex);
         LocalDate partialCheckDate = getLocalDate(cell, "qisman ko'rik sanasi(s)");
         equipment.setPartialCheckDate(partialCheckDate);
     }
 
-    private void getManufacturedAt(Row row, Equipment equipment) throws Exception {
-        Cell cell = row.getCell(16);
+    private void getManufacturedAt(Row row, Equipment equipment, int cellIndex) throws Exception {
+        Cell cell = row.getCell(cellIndex);
         LocalDate manufacturedAt = getLocalDate(cell, "manufacturedAt(q)");
         equipment.setManufacturedAt(manufacturedAt);
     }
 
-    private void getOldEquipment(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String oldEquipmentRegistryNumber = dataFormatter.formatCellValue(row.getCell(13));
+    private void getOldEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String oldEquipmentRegistryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
         if (oldEquipmentRegistryNumber !=null && !oldEquipmentRegistryNumber.isBlank()) {
             Equipment oldEquipment = equipmentService.findByRegistryNumber(oldEquipmentRegistryNumber);
             equipment.setOldEquipmentId(oldEquipment.getId());
         }
     }
 
-    private void getRegistryNumber(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String registryNumber = dataFormatter.formatCellValue(row.getCell(12));
+    private void getRegistryNumber(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String registryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(registryNumber, "registryNumber(m)");
         equipment.setRegistryNumber(registryNumber);
     }
 
-    private void getFactoryNumber(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String factoryNumber = dataFormatter.formatCellValue(row.getCell(11));
+    private void getFactoryNumber(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String factoryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(factoryNumber, "factoryNumber(l)");
         equipment.setFactoryNumber(factoryNumber);
     }
 
-    private void getChildEquipment(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String childEquipmentName = dataFormatter.formatCellValue(row.getCell(10));
+    private void getChildEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String childEquipmentName = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(childEquipmentName, "childEquipmentName(k)");
-        ChildEquipment childEquipment = childEquipmentService.findByNameAndEquipmentType(childEquipmentName, EquipmentType.CRANE);
+        ChildEquipment childEquipment = childEquipmentService.findByNameAndEquipmentType(childEquipmentName);
         equipment.setChildEquipmentId(childEquipment.getId());
     }
 
-    private void getRegionAndAddress(DataFormatter dataFormatter, Row row, District district, Equipment equipment) throws Exception {
-        String addressExcel = dataFormatter.formatCellValue(row.getCell(9));
+    private void getRegionAndAddress(DataFormatter dataFormatter, Row row, District district, Equipment equipment, int cellIndex) throws Exception {
+        String addressExcel = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(addressExcel, "address(j)");
         Region region = regionService.findById(district.getRegionId());
         String fullAddress = String.format("%s, %s, %s",
@@ -205,8 +226,8 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
         equipment.setAddress(fullAddress);
     }
 
-    private District getDistrict(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String soato = dataFormatter.formatCellValue(row.getCell(8));
+    private District getDistrict(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String soato = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(soato, "districtSoato(i)");
         District district = districtService.findBySoato(Integer.valueOf(soato));
         equipment.setDistrictId(district.getId());
@@ -214,16 +235,16 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
         return district;
     }
 
-    private void getHf(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String hfRegistryNumber = dataFormatter.formatCellValue(row.getCell(4));
+    private void getHf(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String hfRegistryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
         if (hfRegistryNumber != null && !hfRegistryNumber.isBlank()) {
             HazardousFacility hf = hazardousFacilityService.findByRegistryNumber(hfRegistryNumber);
             equipment.setHazardousFacilityId(hf.getId());
         }
     }
 
-    private void getLegal (DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String legalTin = dataFormatter.formatCellValue(row.getCell(1));
+    private void getLegal (DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+        String legalTin = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(legalTin, "legalTin(b)");
 
         boolean isExist = profileService.existsProfileByTin(Long.parseLong(legalTin));
