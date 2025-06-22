@@ -300,6 +300,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         return repository.findByIdAndProfileId(id, profileId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
     }
 
+    @Override
+    public HazardousFacility findByRegistryNumber(String hfRegistryNumber) {
+        return repository.findByRegistryNumber(hfRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ro'yhatga olish raqami", hfRegistryNumber));
+    }
+
     protected String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto) {
         // Make parameters
         Map<String, String> parameters = new HashMap<>();

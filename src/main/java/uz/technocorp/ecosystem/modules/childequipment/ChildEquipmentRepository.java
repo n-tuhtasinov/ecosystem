@@ -8,6 +8,7 @@ import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -25,4 +26,6 @@ public interface ChildEquipmentRepository extends JpaRepository<ChildEquipment, 
             where (:type is null or c.equipmentType = :type)
             """)
     Page<ChildEquipment> findAllByEquipmentType(Pageable pageable, EquipmentType type);
+
+    Optional<ChildEquipment> findByNameAndEquipmentType(String name, EquipmentType type);
 }

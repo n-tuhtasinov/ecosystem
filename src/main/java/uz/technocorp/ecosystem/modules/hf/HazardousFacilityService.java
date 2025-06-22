@@ -32,7 +32,7 @@ public interface HazardousFacilityService {
     Page<HfCustom> getAll(User user, HfParams params);
     String getHfNameById(UUID hfId);
     Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
-
     HfViewById getById(UUID hfId);
     HazardousFacility findByIdAndProfileId(UUID id, UUID profileId);
+    HazardousFacility findByRegistryNumber(String hfRegistryNumber);
 }

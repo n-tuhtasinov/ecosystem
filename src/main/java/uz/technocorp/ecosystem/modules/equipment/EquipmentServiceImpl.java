@@ -99,6 +99,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(dto.attractionPassportId())
                 .legalAddress(appeal.getLegalAddress())
+                .isActive(true)
                 .build();
 
         equipmentRepository.save(equipment);
@@ -184,6 +185,11 @@ public class EquipmentServiceImpl implements EquipmentService {
         Equipment equipment = equipmentRepository.findByRegistryNumber(registryNumber).orElse(null);
         if (equipment == null) return null;
         return mapToAttractionPassportView(equipment);
+    }
+
+    @Override
+    public Equipment findByRegistryNumber(String oldEquipmentRegistryNumber) {
+        return equipmentRepository.findByRegistryNumber(oldEquipmentRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", oldEquipmentRegistryNumber));
     }
 
     private AttractionPassportView mapToAttractionPassportView(Equipment equipment) {
@@ -365,6 +371,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getAttractionPassport() == null ? null : equipment.getAttractionPassport().getRegistryNumber(),
                 equipment.getDescription(),
                 equipment.getInspectorName(),
+                equipment.getIsActive(),
                 equipment.getFiles(),
                 equipment.getRegistryFilePath());
     }
