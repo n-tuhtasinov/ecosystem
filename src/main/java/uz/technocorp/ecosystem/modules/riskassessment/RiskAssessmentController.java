@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.riskassessment.projection.RiskAssessmentView;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
@@ -42,9 +43,10 @@ public class RiskAssessmentController {
                                                              @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
                                                              @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
                                                              @RequestParam(value = "tin") Long tin,
+                                                             @RequestParam(value = "type") EquipmentType type,
                                                              @RequestParam(value = "regionId", required = false) Integer regionId,
                                                              @RequestParam(value = "intervalId") Integer intervalId) {
-        Page<RiskAssessmentView> allEquipments = service.getAllEquipments(user, tin, regionId, intervalId, page, size);
+        Page<RiskAssessmentView> allEquipments = service.getAllEquipments(user, tin, regionId, intervalId, page, size, type);
         return ResponseEntity.ok(new ApiResponse(allEquipments));
     }
 

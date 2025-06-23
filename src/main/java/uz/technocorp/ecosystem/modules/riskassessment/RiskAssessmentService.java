@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.riskassessment;
 
 import org.springframework.data.domain.Page;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.riskassessment.projection.RiskAssessmentView;
 import uz.technocorp.ecosystem.modules.user.User;
 
@@ -14,5 +15,5 @@ public interface RiskAssessmentService {
 
     Page<RiskAssessmentView> getAllHf(User user, Long tin, Integer regionId, Integer intervalId, int page, int size);
     Page<RiskAssessmentView> getAllIrs(User user, Long tin, Integer regionId, Integer intervalId, int page, int size);
-    Page<RiskAssessmentView> getAllEquipments(User user, Long tin, Integer regionId, Integer intervalId, int page, int size);
+    Page<RiskAssessmentView> getAllEquipments(User user, Long tin, Integer regionId, Integer intervalId, int page, int size, EquipmentType type);
 }

@@ -177,6 +177,7 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                                                 Inspection
                                                         .builder()
                                                         .tin(dto.getTin())
+                                                        .profileId(profile.getId())
                                                         .regionId(profile.getRegionId())
                                                         .districtId(profile.getDistrictId())
                                                         .regionIds(regionIds)
