@@ -23,7 +23,8 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 sum_score as score,
                 hf.address as address,
                 r.name as regionName,
-                d.name as districtName
+                d.name as districtName,
+                hf.registry_number as registryNumber
                 from risk_assessment ra
                 join hazardous_facility hf on ra.hazardous_facility_id = hf.id
                 join region r on hf.region_id = r.id
@@ -39,7 +40,8 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 sum_score as score,
                 hf.address as address,
                 r.name as regionName,
-                d.name as districtName
+                d.name as districtName,
+                hf.registry_number as registryNumber
                 from risk_assessment ra
                 join inspection i on i.tin = ra.tin
                 and ra.risk_analysis_interval_id = i.interval_id
@@ -60,7 +62,8 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 sum_score as score,
                 hf.address as address,
                 r.name as regionName,
-                d.name as districtName
+                d.name as districtName,
+                hf.registry_number as registryNumber
                 from risk_assessment ra
                 join hazardous_facility hf on ra.hazardous_facility_id = hf.id
                 join region r on hf.region_id = r.id
@@ -77,7 +80,8 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 sum_score as score,
                 irs.address as address,
                 r.name as regionName,
-                d.name as districtName
+                d.name as districtName,
+                irs.registry_number as registryNumber
                 from risk_assessment ra
                 join ionizing_radiation_source irs on ra.ionizing_radiation_source_id = irs.id
                 join region r on irs.region_id = r.id
@@ -93,7 +97,8 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 sum_score as score,
                 irs.address as address,
                 r.name as regionName,
-                d.name as districtName
+                d.name as districtName,
+                irs.registry_number as registryNumber
                 from risk_assessment ra
                 join inspection i on i.tin = ra.tin
                 and ra.risk_analysis_interval_id = i.interval_id
@@ -115,7 +120,8 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 sum_score as score,
                 irs.address as address,
                 r.name as regionName,
-                d.name as districtName
+                d.name as districtName,
+                irs.registry_number as registryNumber
                 from risk_assessment ra
                 join ionizing_radiation_source irs on ra.ionizing_radiation_source_id = irs.id
                 join region r on irs.region_id = r.id
@@ -131,7 +137,8 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 sum_score as score,
                 e.address as address,
                 r.name as regionName,
-                d.name as districtName
+                d.name as districtName,
+                e.registry_number as registryNumber
                 from risk_assessment ra
                 join equipment e on ra.equipment_id = e.id
                 and e.type = :type
@@ -148,7 +155,8 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 sum_score as score,
                 e.address as address,
                 r.name as regionName,
-                d.name as districtName
+                d.name as districtName,
+                e.registry_number as registryNumber
                 from risk_assessment ra
                 join inspection i on i.tin = ra.tin
                 and ra.risk_analysis_interval_id = i.interval_id
@@ -170,7 +178,8 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 sum_score as score,
                 e.address as address,
                 r.name as regionName,
-                d.name as districtName
+                d.name as districtName,
+                e.registry_number as registryNumber
                 from risk_assessment ra
                 join equipment e on ra.equipment_id = e.id
                 and e.type = :type
