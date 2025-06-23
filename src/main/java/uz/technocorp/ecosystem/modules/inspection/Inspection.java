@@ -5,6 +5,7 @@ import lombok.*;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.document.Document;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
+import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -30,6 +31,13 @@ import java.util.UUID;
 public class Inspection extends BaseEntity {
 
     private Long tin;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
+    @JoinColumn(name = "profile_id", insertable = false, updatable = false)
+    private Profile profile;
+
+    @Column(name = "profile_id")
+    private UUID profileId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = RiskAnalysisInterval.class)
     @JoinColumn(name = "interval_id", insertable = false, updatable = false)
