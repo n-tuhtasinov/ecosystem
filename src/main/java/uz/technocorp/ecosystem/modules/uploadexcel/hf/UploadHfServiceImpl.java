@@ -7,11 +7,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import uz.technocorp.ecosystem.exceptions.ExcelParsingException;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityRepository;
+import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hftype.HfType;
+import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
@@ -45,6 +50,8 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     private final UserService userService;
     private final DistrictService districtService;
     private final RegionService regionService;
+    private final HazardousFacilityService hazardousFacilityService;
+    private final HfTypeService hfTypeService;
 
     @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
@@ -85,8 +92,24 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
                     getSubstance(dataFormatter, row, hf); // k) hazardousSubstance
                     getHfSpheres(dataFormatter, row, hf); // l) hFSphere
                     setFiles(hf); // set files
+                    getDescription(dataFormatter, row, hf); // description
+
+                    //create registry file
+                    Appeal appeal = Appeal.builder().legalName(hf.getLegalName()).legalTin(hf.getLegalTin()).address(hf.getAddress()).build();
+                    String hfTypeName = hfTypeService.getHfTypeNameById(hf.getHfTypeId());
+                    HfAppealDto dto = new HfAppealDto();
+                    dto.setUpperOrganization(hf.getUpperOrganization());
+                    dto.setName(hf.getName());
+                    dto.setHfTypeName(hfTypeName);
+                    dto.setExtraArea(hf.getExtraArea());
+                    dto.setHazardousSubstance(hf.getHazardousSubstance());
+                    String registryPdfPath = hazardousFacilityService.createHfRegistryPdf(appeal, hf.getRegistryNumber(), dto);
+
+                    hf.setRegistryFilePath(registryPdfPath);
 
                     hazardousFacilityRepository.save(hf);
+
+
 
                 } catch (Exception e) {
                     log.error("Xatolik! Excel faylning {}-qatorida ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, e.getMessage());
@@ -99,6 +122,13 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
         } catch (Exception e) {
             log.error("Excel faylni qayta ishlashda kutilmagan xatolik: {}", e.getMessage());
             throw new RuntimeException("Excel faylni qayta ishlashda kutilmagan xatolik: " + e.getMessage(), e);
+        }
+    }
+
+    private void getDescription(DataFormatter dataFormatter, Row row, HazardousFacility hf) {
+        String description = dataFormatter.formatCellValue(row.getCell(17));
+        if (description != null &&  !description.isBlank()) {
+            hf.setDescription(description);
         }
     }
 
@@ -161,12 +191,12 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
         if (addressExcel == null || addressExcel.isBlank()) {
             throw new Exception("address(h) bo'sh bo'lishi mumkin emas");
         }
-        Region region = regionService.findById(district.getRegionId());
-        String fullAddress = String.format("%s, %s, %s",
-                region.getName(),
-                district.getName(),
-                addressExcel);
-        hf.setAddress(fullAddress);
+//        Region region = regionService.findById(district.getRegionId());
+//        String fullAddress = String.format("%s, %s, %s",
+//                region.getName(),
+//                district.getName(),
+//                addressExcel);
+        hf.setAddress(addressExcel);
     }
 
     private District getDistrict(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
