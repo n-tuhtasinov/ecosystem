@@ -134,12 +134,13 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 d.name as districtName
                 from risk_assessment ra
                 join equipment e on ra.equipment_id = e.id
+                and e.type = :type
                 join region r on e.region_id = r.id
                 join district d on e.district_id = d.id
                 where ra.tin = :tin and e.region_id = :regionId
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
-    Page<RiskAssessmentView> getAllEquipmentsByTinAndRegionId(Pageable pageable, Integer regionId, Integer intervalId, Long tin);
+    Page<RiskAssessmentView> getAllEquipmentsByTinAndRegionId(Pageable pageable, Integer regionId, Integer intervalId, Long tin, String type);
 
     @Query(value = """
             select ra.id as id,
@@ -155,12 +156,13 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 join inspection_inspector ii on ii.inspection_id = i.id
                 and ii.inspector_id = :inspectorId
                 join equipment e on ra.equipment_id = e.id
+                and e.type = :type
                 join region r on e.region_id = r.id
                 join district d on e.district_id = d.id
                 where ra.tin = :tin and e.region_id = :regionId
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
-    Page<RiskAssessmentView> getAllEquipmentsByTinAndInspectorId(Pageable pageable, UUID inspectorId, Integer intervalId, Long tin);
+    Page<RiskAssessmentView> getAllEquipmentsByTinAndInspectorId(Pageable pageable, UUID inspectorId, Integer intervalId, Long tin, String type);
 
     @Query(value = """
             select ra.id as id,
@@ -171,10 +173,11 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 d.name as districtName
                 from risk_assessment ra
                 join equipment e on ra.equipment_id = e.id
+                and e.type = :type
                 join region r on e.region_id = r.id
                 join district d on e.district_id = d.id
                 where ra.tin = :tin
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
-    Page<RiskAssessmentView> getAllEquipmentsByTin(Pageable pageable, Integer intervalId, Long tin);
+    Page<RiskAssessmentView> getAllEquipmentsByTin(Pageable pageable, Integer intervalId, Long tin, String type);
 }
