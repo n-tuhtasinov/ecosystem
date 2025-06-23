@@ -99,6 +99,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(dto.attractionPassportId())
                 .legalAddress(appeal.getLegalAddress())
+                .isActive(true)
                 .build();
 
         equipmentRepository.save(equipment);
@@ -184,6 +185,21 @@ public class EquipmentServiceImpl implements EquipmentService {
         Equipment equipment = equipmentRepository.findByRegistryNumber(registryNumber).orElse(null);
         if (equipment == null) return null;
         return mapToAttractionPassportView(equipment);
+    }
+
+    @Override
+    public Equipment findByRegistryNumber(String oldEquipmentRegistryNumber) {
+        return equipmentRepository.findByRegistryNumber(oldEquipmentRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", oldEquipmentRegistryNumber));
+    }
+
+    @Override
+    public Long getCount(User user) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return switch (user.getRole()) {
+            case LEGAL -> equipmentRepository.countByParams(profile.getTin(), null);
+            case REGIONAL, INSPECTOR -> equipmentRepository.countByParams(null, profile.getRegionId());
+            default -> equipmentRepository.countByParams(null, null);
+        };
     }
 
     private AttractionPassportView mapToAttractionPassportView(Equipment equipment) {
@@ -285,7 +301,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("registryNumber", info.registryNumber());
         parameters.put("factoryNumber", dto.factoryNumber());
         parameters.put("regionName", regionService.findById(appeal.getRegionId()).getName());
-        parameters.put("districtName", districtService.getDistrict(appeal.getDistrictId()).getName());
+        parameters.put("districtName", districtService.findById(appeal.getDistrictId()).getName());
         parameters.put("address", appeal.getAddress());
         parameters.put("riskLevel", dto.riskLevel().value);
 
@@ -365,6 +381,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getAttractionPassport() == null ? null : equipment.getAttractionPassport().getRegistryNumber(),
                 equipment.getDescription(),
                 equipment.getInspectorName(),
+                equipment.getIsActive(),
                 equipment.getFiles(),
                 equipment.getRegistryFilePath());
     }

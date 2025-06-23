@@ -184,6 +184,11 @@ public class ProfileServiceImpl implements ProfileService {
                 .orElseThrow(() -> new ResourceNotFoundException("Tashkilot haqida ma'lumot", "STIR", tin));
     }
 
+    @Override
+    public boolean existsProfileByTin(Long tin) {
+        return profileRepository.existsByTin(tin);
+    }
+
     private void setRegion(Integer regionId, Profile profile) {
         if (regionId == null) {
             profile.setRegionId(null);

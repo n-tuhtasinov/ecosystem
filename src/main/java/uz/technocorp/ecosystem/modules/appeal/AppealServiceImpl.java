@@ -137,11 +137,14 @@ public class AppealServiceImpl implements AppealService {
         //make data
         Profile profile = profileService.getProfile(user.getProfileId());
         Region region = regionService.findById(dto.getRegionId());
-        District district = districtService.getDistrict(dto.getDistrictId());
-        Office office = officeRepository.getOfficeByRegionId(region.getId()).orElseThrow(() -> new ResourceNotFoundException("Arizada ko'rsatilgan " + region.getName() + " uchun qo'mita tomonidan hududiy bo'lim qo'shilmagan"));
+        District district = districtService.findById(dto.getDistrictId());
+        Office office = officeService.findByRegionId(region.getId());
         String executorName = getExecutorName(dto.getAppealType());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
         JsonNode data = JsonMaker.makeJsonSkipFields(dto);
+
+        // Ariza statusini ariza turiga qarab belgilash;
+        AppealStatus appealStatus = getAppealStatus(dto.getAppealType());
 
         Appeal appeal = Appeal
                 .builder()
@@ -157,7 +160,7 @@ public class AppealServiceImpl implements AppealService {
                 .districtId(dto.getDistrictId())
                 .officeId(office.getId())
                 .officeName(office.getName())
-                .status(AppealStatus.NEW) // shu joyida akkreditatsiya arizasida In_approval qilish kerak.
+                .status(appealStatus)
                 .address(region.getName() + ", " + district.getName() + ", " + dto.getAddress())
                 .legalAddress(profile.getLegalAddress())
                 .phoneNumber(dto.getPhoneNumber())
@@ -169,7 +172,7 @@ public class AppealServiceImpl implements AppealService {
         repository.save(appeal);
 
         //create appeal execution process
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.NEW, null));
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), appealStatus, null));
 
         return appeal.getId();
     }
@@ -310,6 +313,18 @@ public class AppealServiceImpl implements AppealService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ariza", "Id", id));
     }
 
+    @Override
+    public Long getCount(User user, AppealStatus status) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return switch (user.getRole()){
+            case HEAD, MANAGER, CHAIRMAN -> appealRepository.countByParams(new AppealCountParams(status, null, null, null));
+            case LEGAL ->  appealRepository.countByParams(new AppealCountParams(status, profile.getTin(), null, null));
+            case INSPECTOR -> appealRepository.countByParams(new AppealCountParams(status, null, user.getId(), null));
+            case REGIONAL -> appealRepository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId()));
+            default -> throw new RuntimeException(user.getRole().name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting");
+        };
+    }
+
     private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal, Boolean shouldRegister) {
         Role role = user.getRole();
         AppealStatus appealStatus;
@@ -361,4 +376,16 @@ public class AppealServiceImpl implements AppealService {
         return executorName;
     }
 
+    private AppealStatus getAppealStatus(AppealType appealType) {
+        switch (appealType) {
+            case AppealType.ACCREDIT_EXPERT_ORGANIZATION,
+                 AppealType.RE_ACCREDIT_EXPERT_ORGANIZATION,
+                 AppealType.EXPEND_ACCREDITATION_SCOPE -> {
+                return AppealStatus.IN_APPROVAL;
+            }
+            default -> {
+                return AppealStatus.NEW;
+            }
+        }
+    }
 }

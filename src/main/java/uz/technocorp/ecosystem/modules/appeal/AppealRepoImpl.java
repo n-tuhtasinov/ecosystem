@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.appeal.dto.AppealCountParams;
+import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
@@ -45,8 +47,9 @@ public class AppealRepoImpl implements AppealRepo {
                 Sort.Direction.DESC,
                 "created_at");
 
-        // select uchun alohida query va root
         CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        // select uchun alohida query va root
         CriteriaQuery<AppealCustom> cq = cb.createQuery(AppealCustom.class);
         Root<Appeal> appealRoot = cq.from(Appeal.class);
         List<Predicate> predicates = new ArrayList<>();
@@ -145,5 +148,30 @@ public class AppealRepoImpl implements AppealRepo {
         Long totalElements = em.createQuery(countQuery).getSingleResult();
 
         return new PageImpl<>(query.getResultList(), pageable, totalElements);
+    }
+
+    @Override
+    public Long countByParams(AppealCountParams params) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<Appeal> countRoot = countQuery.from(Appeal.class);
+        List<Predicate> countPredicates = new ArrayList<>();
+
+        if (params.status() != null) {
+            countPredicates.add(cb.equal(countRoot.get("status"), params.status()));
+        }
+        if (params.legalTin() != null) {
+            countPredicates.add(cb.equal(countRoot.get("legalTin"), params.legalTin()));
+        }
+        if (params.officeId() != null) {
+            countPredicates.add(cb.equal(countRoot.get("officeId"), params.officeId()));
+        }
+        if (params.executorId() != null) {
+            countPredicates.add(cb.equal(countRoot.get("executorId"), params.executorId()));
+        }
+
+        countQuery.select(cb.count(countRoot));
+        countQuery.where(countPredicates.toArray(new Predicate[0]));
+        return em.createQuery(countQuery).getSingleResult();
     }
 }

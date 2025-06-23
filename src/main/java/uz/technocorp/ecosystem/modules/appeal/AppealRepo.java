@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal;
 
 import org.springframework.data.domain.Page;
+import uz.technocorp.ecosystem.modules.appeal.dto.AppealCountParams;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.user.User;
 
@@ -15,4 +16,5 @@ import java.util.Map;
 public interface AppealRepo {
 
     Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params);
+    Long countByParams(AppealCountParams params);
 }

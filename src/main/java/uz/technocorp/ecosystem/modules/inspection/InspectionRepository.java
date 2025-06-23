@@ -1,7 +1,12 @@
 package uz.technocorp.ecosystem.modules.inspection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
+import uz.technocorp.ecosystem.modules.inspection.view.InspectionShortInfo;
 import uz.technocorp.ecosystem.modules.inspection.view.InspectionView;
+
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,4 +51,28 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
                         order_path, measures_path, result_path
             """, nativeQuery=true)
     Optional<InspectionView> getInspectionById(UUID id);
+
+    @Query(value = """
+            select distinct on (i.id) i.id            as id,
+                                      i.start_date    as startDate,
+                                      i.end_date      as endDate,
+                                      i.tin           as tin,
+                                      p.legal_name    as legalName,
+                                      p.legal_address as legalAddress,
+                                      i.special_code  as specialCode
+            from (select i.*
+                from inspection i
+                join inspection_inspector ii on i.id = ii.inspection_id
+                and i.status = :status and ii.inspector_id = :inspectorId
+                where i.end_date between :startDate and :endDate
+                union all
+                select i.*
+                from inspection i
+                join inspection_inspector ii on i.id = ii.inspection_id
+                and i.status = :status and ii.inspector_id = :inspectorId
+                where i.start_date between :startDate and :endDate) i
+                join profile p on i.tin = p.tin
+            order by i.id, i.start_date
+            """, nativeQuery=true)
+    List<InspectionShortInfo> getAllByInspectorId(UUID inspectorId, LocalDate startDate, LocalDate endDate, InspectionStatus status);
 }

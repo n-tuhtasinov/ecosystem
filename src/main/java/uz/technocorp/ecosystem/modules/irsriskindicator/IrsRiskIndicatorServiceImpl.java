@@ -125,10 +125,10 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
         return repository.findAllFileContainsByTinAndDate(tin, intervalId, id);
     }
 
-    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
-    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
-    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
-    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
+    @Scheduled(cron = "0 30 22 31 3 *")  // 31-mart 22:30 da
+    @Scheduled(cron = "0 30 22 30 6 *")  // 30-iyun 22:30 da
+    @Scheduled(cron = "0 30 22 30 9 *")  // 30-sentyabr 22:30 da
+    @Scheduled(cron = "0 30 22 31 12 *") // 31-dekabr 22:30 da
     public void sumScore() {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
@@ -137,7 +137,7 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
         List<RiskAssessmentDto> allGroupByIrsAndTin = repository.findAllGroupByIrsAndTin(riskAnalysisInterval.getId());
         // Barcha qiymatlarni guruhlash: TIN + IrsId
         Map<Long, List<RiskAssessmentDto>> groupedByTin = allGroupByIrsAndTin.stream()
-                .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
+                .collect(Collectors.groupingBy(RiskAssessmentDto::getTin));
 
         // Har bir TIN uchun hisoblash
         for (Map.Entry<Long, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
@@ -146,33 +146,27 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
 
             // Null bo'lgan va bo'lmaganlarni ajratib olish
             Optional<RiskAssessmentDto> nullIrs = dtoList.stream()
-                    .filter(dto -> dto.objectId() == null)
+                    .filter(dto -> dto.getObjectId() == null)
                     .findFirst();
 
-            int organizationScore = nullIrs.map(RiskAssessmentDto::sumScore).orElse(0);
+            int organizationScore = nullIrs.map(RiskAssessmentDto::getSumScore).orElse(0);
 
             // Endi null bo'lmaganlarga qo‘shib saqlaymiz
             dtoList.stream()
-                    .filter(dto -> dto.objectId() != null)
+                    .filter(dto -> dto.getObjectId() != null)
                     .forEach(dto -> {
 
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
-                                        .sumScore(dto.sumScore() + organizationScore)
-//                                        .objectName(
-//                                                irsRepository.findById(dto.objectId())
-//                                                        .map(IonizingRadiationSource::getSymbol)
-//                                                        .orElse("Nomi ma'lum emas.")
-//
-//                                        )
+                                        .sumScore(dto.getSumScore() + organizationScore)
                                         .tin(tin)
-                                        .ionizingRadiationSourceId(dto.objectId())
+                                        .ionizingRadiationSourceId(dto.getObjectId())
                                         .riskAnalysisInterval(riskAnalysisInterval)
                                         .build()
                         );
 
 
-                        if (dto.sumScore() + organizationScore > 80) {
+                        if (dto.getSumScore() + organizationScore > 80) {
                             Set<Integer> regionIds = irsRepository.getAllRegionIdByLegalTin(tin);
                             Optional<Inspection> inspectionOptional = inspectionRepository
                                     .findAllByTinAndIntervalId(tin, riskAnalysisInterval.getId());
@@ -182,11 +176,12 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                                         .ifPresent(profile -> inspectionRepository.save(
                                                 Inspection
                                                         .builder()
-                                                        .tin(dto.tin())
+                                                        .tin(dto.getTin())
                                                         .regionId(profile.getRegionId())
                                                         .districtId(profile.getDistrictId())
                                                         .regionIds(regionIds)
                                                         .status(InspectionStatus.NEW)
+                                                        .intervalId(riskAnalysisInterval.getId())
                                                         .build()
                                         ));
 

@@ -73,8 +73,8 @@ public interface HfRiskIndicatorRepository extends JpaRepository<HfRiskIndicator
 
 
     @Query(value = """
-            select cast(hazardous_facility_id as varchar) as objectId,
-            sum(score),
+            select hazardous_facility_id as objectId,
+            sum(score) as sumScore,
             tin
             from hf_risk_indicator
             where risk_analysis_interval_id = :intervalId

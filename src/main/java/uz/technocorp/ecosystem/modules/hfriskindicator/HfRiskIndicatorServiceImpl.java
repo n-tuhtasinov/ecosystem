@@ -173,10 +173,10 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
         return repository.findAllFileContainsByTinAndDate(tin, id, intervalId);
     }
 
-    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 10:00 da
-    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 10:00 da
-    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 10:00 da
-    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 10:00 da
+    @Scheduled(cron = "0 0 22 31 3 *")  // 31-mart 22:00 da
+    @Scheduled(cron = "0 0 22 30 6 *")  // 30-iyun 22:00 da
+    @Scheduled(cron = "0 0 22 30 9 *")  // 30-sentyabr 22:00 da
+    @Scheduled(cron = "0 0 22 31 12 *") // 31-dekabr 22:00 da
     public void sumScore() {
         RiskAnalysisInterval riskAnalysisInterval = intervalRepository
                 .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
@@ -185,7 +185,7 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
         List<RiskAssessmentDto> allGroupByHazardousFacilityAndTin = repository.findAllGroupByHfIdAndTin(riskAnalysisInterval.getId());
         // Barcha qiymatlarni guruhlash: TIN + hazardousFacilityId
         Map<Long, List<RiskAssessmentDto>> groupedByTin = allGroupByHazardousFacilityAndTin.stream()
-                .collect(Collectors.groupingBy(RiskAssessmentDto::tin));
+                .collect(Collectors.groupingBy(RiskAssessmentDto::getTin));
 
         // Har bir TIN uchun hisoblash
         for (Map.Entry<Long, List<RiskAssessmentDto>> entry : groupedByTin.entrySet()) {
@@ -194,31 +194,25 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
 
             // Null bo'lgan va bo'lmaganlarni ajratib olish
             Optional<RiskAssessmentDto> nullFacility = dtoList.stream()
-                    .filter(dto -> dto.objectId() == null)
+                    .filter(dto -> dto.getObjectId() == null)
                     .findFirst();
 
-            int organizationScore = nullFacility.map(RiskAssessmentDto::sumScore).orElse(0);
+            int organizationScore = nullFacility.map(RiskAssessmentDto::getSumScore).orElse(0);
 
 
             // Endi null bo'lmaganlarga qo‘shib saqlaymiz
             dtoList.stream()
-                    .filter(dto -> dto.objectId() != null)
+                    .filter(dto -> dto.getObjectId() != null)
                     .forEach(dto -> {
                         riskAssessmentRepository.save(
                                 RiskAssessment.builder()
-                                        .sumScore(dto.sumScore() + organizationScore)
-//                                        .objectName(
-//                                                hazardousFacilityRepository.findById(dto.objectId())
-//                                                        .map(HazardousFacility::getName)
-//                                                        .orElse("Nomi ma'lum emas.")
-//
-//                                        )
+                                        .sumScore(dto.getSumScore() + organizationScore)
                                         .tin(tin)
-                                        .hazardousFacilityId(dto.objectId())
+                                        .hazardousFacilityId(dto.getObjectId())
                                         .riskAnalysisInterval(riskAnalysisInterval)
                                         .build()
                         );
-                        if (dto.sumScore() + organizationScore > 80) {
+                        if (dto.getSumScore() + organizationScore > 80) {
                             Optional<Inspection> inspectionOptional = inspectionRepository
                                     .findAllByTinAndIntervalId(tin, riskAnalysisInterval.getId());
                             Set<Integer> regionIds = hazardousFacilityRepository.getAllRegionIdByLegalTin(tin);
@@ -229,11 +223,12 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                                             inspectionRepository.save(
                                                     Inspection
                                                             .builder()
-                                                            .tin(dto.tin())
+                                                            .tin(dto.getTin())
                                                             .regionId(profile.getRegionId())
                                                             .regionIds(regionIds)
                                                             .districtId(profile.getDistrictId())
                                                             .status(InspectionStatus.NEW)
+                                                            .intervalId(riskAnalysisInterval.getId())
                                                             .build()
                                             );
                                         });
@@ -247,7 +242,5 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                         }
                     });
         }
-
     }
-
 }

@@ -54,4 +54,6 @@ public interface AppealService {
     void setFilePath(User user, UploadFileDto dto);
 
     Appeal findById(UUID id);
+
+    Long getCount(User user, AppealStatus status);
 }

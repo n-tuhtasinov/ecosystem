@@ -58,8 +58,8 @@ public interface ElevatorRiskIndicatorRepository extends JpaRepository<ElevatorR
     List<RiskIndicatorView> findAllByTinAndDate(Long tin, Integer intervalId);
 
     @Query(value = """
-            select cast(equipment_id as varchar) as objectId,
-            sum(score),
+            select equipment_id as objectId,
+            sum(score) as sumScore,
             tin
             from elevator_risk_indicator
             where risk_analysis_interval_id = :intervalId

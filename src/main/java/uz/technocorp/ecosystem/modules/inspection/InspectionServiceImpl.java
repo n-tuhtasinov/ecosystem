@@ -13,10 +13,12 @@ import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionCustom;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionFullDto;
+import uz.technocorp.ecosystem.modules.inspection.view.InspectionShortInfo;
 import uz.technocorp.ecosystem.modules.inspection.view.InspectionView;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -109,5 +111,10 @@ public class InspectionServiceImpl implements InspectionService {
                 view.getResultPath(),
                 inspectors
         );
+    }
+
+    @Override
+    public List<InspectionShortInfo> getAllByInspector(User user, LocalDate startDate, LocalDate endDate) {
+        return repository.getAllByInspectorId(user.getId(), startDate, endDate, InspectionStatus.IN_PROCESS);
     }
 }
