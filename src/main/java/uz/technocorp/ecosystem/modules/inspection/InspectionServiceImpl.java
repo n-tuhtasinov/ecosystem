@@ -115,6 +115,6 @@ public class InspectionServiceImpl implements InspectionService {
 
     @Override
     public List<InspectionShortInfo> getAllByInspector(User user, LocalDate startDate, LocalDate endDate) {
-        return repository.getAllByInspectorId(user.getId(), startDate, endDate, InspectionStatus.IN_PROCESS);
+        return repository.getAllByInspectorId(user.getId(), startDate, endDate, InspectionStatus.IN_PROCESS.name());
     }
 }

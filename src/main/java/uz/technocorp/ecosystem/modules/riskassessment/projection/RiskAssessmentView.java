@@ -16,4 +16,6 @@ public interface RiskAssessmentView {
     String getRegionName();
     String getDistrictName();
     UUID getId();
+    UUID getObjectId();
+    String getRegistryNumber();
 }
