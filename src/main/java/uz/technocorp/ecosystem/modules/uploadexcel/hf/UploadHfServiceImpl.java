@@ -147,6 +147,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
         files.put("deviceTestingPath", null);
         files.put("appointmentOrderPath", null);
         files.put("ecologicalConclusionPath", null);
+        files.put("fireSafetyConclusionPath", null);
         hf.setFiles(files);
     }
 
