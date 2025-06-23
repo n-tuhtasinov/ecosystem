@@ -15,11 +15,17 @@ import java.util.List;
 public interface HfTypeService {
 
     void create(HfTypeDto dto);
+
     void update(Integer id, HfTypeDto dto);
+
     void delete(Integer id);
+
     HfType getById(Integer id);
+
     List<HfType> getAll(String search);
+
     Page<HfType> getAllPage(int page, int size, String search);
 
     String getHfTypeNameById(Integer hfTypeId);
+
 }

@@ -20,12 +20,14 @@ public enum HFSphere {
     GEOLOGY("Geologiya"),
     GRAIN("Don"),
     RAILWAY("Temir yo'l"),
-    AGTKSH("AGTKSH"),
     OKMK("OKMK"),
+    NKMK("NKMK"),
+    AGTSH("AGTSH"),
+    GPZ("GPZ"),
     AGNKS("AGNKS"),
-    NKMK_AJ("NKMK AJ"),
-    D_YA("D/ya");
-
+    AYOQSH("AYOQSH"),
+    AGTKSH("AGTKSH"),
+    DEPARTMENT("Boshqarma");
 
     public final String label;
     private static final Map<String, HFSphere> BY_LABEL = new HashMap<>();
