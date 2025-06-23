@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.uploadexcel.equipment.UploadEquipmentExcelService;
 import uz.technocorp.ecosystem.modules.uploadexcel.hf.UploadHfExcelService;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -30,8 +31,8 @@ public class UploadExcelController {
     }
 
     @PostMapping("/equipment/{equipmentType}")
-    public ResponseEntity<?> uploadEquipment(@PathVariable String equipmentType, @RequestParam MultipartFile file) {
-        UploadEquipmentExcelService equipmentExcelService = uploadEquipmentServices.get(equipmentType);
+    public ResponseEntity<?> uploadEquipment(@PathVariable EquipmentType equipmentType, @RequestParam MultipartFile file) {
+        UploadEquipmentExcelService equipmentExcelService = uploadEquipmentServices.get(equipmentType.name());
         equipmentExcelService.upload(file);
         return ResponseEntity.ok(new ApiResponse("Fayl muvaffaqiyatli yuklandi"));
     }
