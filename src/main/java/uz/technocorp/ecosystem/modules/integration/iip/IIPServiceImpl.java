@@ -142,8 +142,6 @@ public class IIPServiceImpl implements IIPService {
         if (node == null || node.get("data") == null)
             throw new RuntimeException("MIP dan JSHSHIR bo'yicha so'rovga bo'sh javob qaytdi");
 
-        log.error("PinInfo olindi: {}", node.toPrettyString());
-
         //make individual user dto
         JsonNode data = node.withArray("data").get(0);
         String fullName = data.get("surnamelat").asText() + " " + data.get("namelat").asText() + " " + data.get("patronymlat").asText("");

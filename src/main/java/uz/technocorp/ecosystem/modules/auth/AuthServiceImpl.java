@@ -87,9 +87,7 @@ public class AuthServiceImpl implements AuthService {
     public UserMeDto loginViaOneId(OneIdDto dto, HttpServletResponse response) {
 
         AccessDataDto accessData = getAccessData(dto);
-        log.error("Token olindi: {}", accessData.toString());
         UserInfoFromOneIdDto userInfoFromOneIdDto = getUserInfoByAccessData(accessData);
-        log.error("User ma'lumotlari olindi: {}", userInfoFromOneIdDto.toString());
 
         //check whether the user is legal or not
         if (userInfoFromOneIdDto.getAuth_method().name().equals("LEPKCSMETHOD")){
