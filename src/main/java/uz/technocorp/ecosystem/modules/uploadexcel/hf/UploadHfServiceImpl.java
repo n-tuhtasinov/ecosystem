@@ -105,9 +105,6 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
                     hf.setRegistryFilePath(registryPdfPath);
 
                     hazardousFacilityRepository.save(hf);
-
-
-
                 } catch (Exception e) {
                     log.error("Xatolik! Excel faylning {}-qatoridagi {} sonli ro'yhat raqamli ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, registryNumber, e.getMessage());
 //                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
