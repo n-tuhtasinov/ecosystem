@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
+import uz.technocorp.ecosystem.modules.inspection.dto.InspectorShortInfo;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionCustom;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionFullDto;
@@ -84,7 +85,7 @@ public class InspectionServiceImpl implements InspectionService {
         InspectionView view = repository
                 .getInspectionById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv", "Id", id));
-        List<InspectorDto> inspectors;
+        List<InspectorShortInfo> inspectors;
         try {
             inspectors = objectMapper.readValue(
                     view.getInspectors(),
