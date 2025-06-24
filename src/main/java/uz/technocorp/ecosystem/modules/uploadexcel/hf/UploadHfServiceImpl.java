@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import uz.technocorp.ecosystem.exceptions.ExcelParsingException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
@@ -15,18 +13,17 @@ import uz.technocorp.ecosystem.modules.hf.HazardousFacilityRepository;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
-import uz.technocorp.ecosystem.modules.hftype.HfType;
 import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
-import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +50,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     private final HazardousFacilityService hazardousFacilityService;
     private final HfTypeService hfTypeService;
 
-    @Transactional(rollbackFor = ExcelParsingException.class)
+//    @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
     public void upload(MultipartFile file) {
         if (file.isEmpty()) {
@@ -75,12 +72,13 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
                     continue;
                 }
                 int excelRowNumber = rowIndex + 1;
+                String registryNumber = null;
 
                 try {
                     HazardousFacility hf = new HazardousFacility();
 
+                    registryNumber = getRegistryNumber(dataFormatter, row, hf); // b) registryNumber
                     getRegistrationDate(row, hf); // a) registrationDate
-                    getRegistryNumber(dataFormatter, row, hf); // b) registryNumber
                     getInspectorName(dataFormatter, row, hf); // c) inspectorName
                     getUpperOrganication(dataFormatter, row, hf); // d) upperOrganization
                     getLegal(dataFormatter, row, hf); // e) legalTin
@@ -103,8 +101,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
                     dto.setHfTypeName(hfTypeName);
                     dto.setExtraArea(hf.getExtraArea());
                     dto.setHazardousSubstance(hf.getHazardousSubstance());
-                    String registryPdfPath = hazardousFacilityService.createHfRegistryPdf(appeal, hf.getRegistryNumber(), dto);
-
+                    String registryPdfPath = hazardousFacilityService.createHfRegistryPdf(appeal, hf.getRegistryNumber(), dto, hf.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
                     hf.setRegistryFilePath(registryPdfPath);
 
                     hazardousFacilityRepository.save(hf);
@@ -112,16 +109,17 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
 
 
                 } catch (Exception e) {
-                    log.error("Xatolik! Excel faylning {}-qatorida ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, e.getMessage());
-                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
+                    log.error("Xatolik! Excel faylning {}-qatoridagi {} sonli ro'yhat raqamli ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, registryNumber, e.getMessage());
+//                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
                 }
             }
+            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum+1);
 
-        } catch (ExcelParsingException e) {
-            throw e; // to rollback transaction
+//        } catch (ExcelParsingException e) {
+//            throw e; // to rollback transaction
         } catch (Exception e) {
             log.error("Excel faylni qayta ishlashda kutilmagan xatolik: {}", e.getMessage());
-            throw new RuntimeException("Excel faylni qayta ishlashda kutilmagan xatolik: " + e.getMessage(), e);
+//            throw new RuntimeException("Excel faylni qayta ishlashda kutilmagan xatolik: " + e.getMessage(), e);
         }
     }
 
@@ -252,12 +250,13 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
         hf.setInspectorName(inspectorName);
     }
 
-    private static void getRegistryNumber(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
+    private static String getRegistryNumber(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
         String registryNumber = dataFormatter.formatCellValue(row.getCell(2));
         if (registryNumber == null || registryNumber.isBlank()) {
             throw new Exception("registryNumber bo'sh bo'lishi mumkin emas");
         }
-        hf.setRegistryNumber(registryNumber);
+        hf.setRegistryNumber(registryNumber.trim());
+        return registryNumber;
     }
 
     private void getRegistrationDate(Row row, HazardousFacility hf) throws Exception {

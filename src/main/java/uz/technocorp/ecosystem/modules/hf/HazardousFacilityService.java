@@ -49,5 +49,5 @@ public interface HazardousFacilityService {
 
     Long getCount(User user);
 
-    String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto);
+    String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto, String now);
 }
