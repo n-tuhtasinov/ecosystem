@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.uploadexcel.equipment.type;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import uz.technocorp.ecosystem.exceptions.ExcelParsingException;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
 import uz.technocorp.ecosystem.modules.district.District;
@@ -14,6 +17,8 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentRepository;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
@@ -54,6 +59,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
     private final EquipmentRepository equipmentRepository;
 
     private static final String DATE_FORMAT = "dd.MM.yyyy";
+    private final ObjectMapper objectMapper;
 
 
     @Transactional(rollbackFor = ExcelParsingException.class)
@@ -66,7 +72,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(8);                              //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
@@ -78,44 +84,66 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
                     continue;
                 }
                 int excelRowNumber = rowIndex + 1;
+                String registryNumber = null;
 
                 try {
                     Equipment equipment = new Equipment();
 
+                    String identityLetter = "K";                                         //TODO: Shu joyga qarash kerak
+
+                    registryNumber = getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
                     getLegal(dataFormatter, row, equipment, 2); // b) legalTin
-                    getHf(dataFormatter, row, equipment, 5); // b) hfRegistryNumber
+//                    getHf(dataFormatter, row, equipment, 5); // b) hfRegistryNumber
                     District district = getDistrict(dataFormatter, row, equipment, 9); // g) districtSoato
                     getRegionAndAddress(dataFormatter, row, district, equipment, 10); // h) address
-                    getChildEquipment(dataFormatter, row, equipment, 11); // k) child equipment
+                    String childEquipmentName = getChildEquipment(dataFormatter, row, equipment, 11);// k) child equipment
                     getFactoryNumber(dataFormatter, row, equipment, 12); // l) factoryNumber
-                    getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
-                    getOldEquipment(dataFormatter, row, equipment, 14); // n) old equipment
+                    getOldEquipment(dataFormatter, row, equipment, identityLetter, 14); // n) old equipment
                     getFactory(dataFormatter, row, equipment, 15);
                     getModel(dataFormatter, row, equipment, 16);
                     getManufacturedAt(row, equipment, 17); // q) manufacturedAt
                     getPartialCheckDate(row, equipment, 19); // s) partialCheckDate
                     getFullCheckDate(row, equipment, 20); // t) full check date
-                    getNonDestructiveCheckDate(row, equipment, 21); // nonDestructiveCheckDate
-
+//                    getNonDestructiveCheckDate(row, equipment, 21); // nonDestructiveCheckDate       //TODO: Shu joyga qarash kerak
                     getRegistrationDate(row, equipment, 27); // w) registration date
                     getInspectorName(dataFormatter, row, equipment, 28); // x) inspectorName
                     getIsActive(dataFormatter, row, equipment, 30); // z) is active
 
-                    getParams(dataFormatter, row, equipment); // u) params
+                    EquipmentType equipmentType = EquipmentType.BOILER;                      //TODO: Shu joyga qarash kerak
+                    getParams(dataFormatter, row, equipment); // u) params                   //TODO: Shu joyga qarash kerak
+
                     setFiles(equipment); // set files
-                    equipment.setType(EquipmentType.BOILER); // set equipment type
+                    equipment.setType(equipmentType); // set equipment type
+
+                    // create registry file
+                    EquipmentInfoDto info = new EquipmentInfoDto(equipmentType, equipment.getRegistryNumber(), null);
+                    ObjectNode objectNode = objectMapper.createObjectNode();
+                    objectNode.put("childEquipmentName", childEquipmentName);
+                    Appeal appeal = Appeal.builder()
+                            .legalAddress(equipment.getLegalAddress())
+                            .data(objectNode)
+                            .legalTin(equipment.getLegalTin())
+                            .legalName(equipment.getLegalName())
+                            .address(equipment.getAddress())
+                            .build();
+                    EquipmentDto dto = new EquipmentDto(
+                            null, null, null, equipment.getFactoryNumber(), equipment.getModel(), equipment.getFactory(), null, equipment.getManufacturedAt(), null,
+                            null, null, equipment.getParameters(), null, null, null, null, null, null,
+                            null, null, null, null, null, null, null);
+                    equipmentService.createEquipmentRegistryPdf(appeal, dto, info, equipment.getRegistrationDate());
 
                     equipmentRepository.save(equipment);
                 } catch (Exception e) {
-                    log.error("Xatolik! Excel faylning {}-qatorida ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, e.getMessage());
-                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
+                    log.error("Xatolik! Excel faylning {}-qatoridagi {} sonli ro'yhat raqamli ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, registryNumber, e.getMessage());
+//                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
                 }
             }
-        } catch (ExcelParsingException e) {
-            throw e; // to rollback transaction
+            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum+1);
+//        } catch (ExcelParsingException e) {
+//            throw e; // to rollback transaction
         } catch (Exception e) {
             log.error("Excel faylni qayta ishlashda kutilmagan xatolik: {}", e.getMessage());
-            throw new RuntimeException("Excel faylni qayta ishlashda kutilmagan xatolik: " + e.getMessage(), e);
+//            throw new RuntimeException("Excel faylni qayta ishlashda kutilmagan xatolik: " + e.getMessage(), e);
         }
     }
 
@@ -203,18 +231,19 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
         equipment.setManufacturedAt(manufacturedAt);
     }
 
-    private void getOldEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+    private void getOldEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, String identityLetter, int cellIndex) throws Exception {
         String oldEquipmentRegistryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
         if (oldEquipmentRegistryNumber !=null && !oldEquipmentRegistryNumber.isBlank()) {
-            Equipment oldEquipment = equipmentService.findByRegistryNumber(oldEquipmentRegistryNumber);
+            Equipment oldEquipment = equipmentService.findByRegistryNumber(identityLetter + oldEquipmentRegistryNumber);
             equipment.setOldEquipmentId(oldEquipment.getId());
         }
     }
 
-    private void getRegistryNumber(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+    private String getRegistryNumber(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
         String registryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(registryNumber, "registryNumber(m)");
         equipment.setRegistryNumber(registryNumber);
+        return registryNumber;
     }
 
     private void getFactoryNumber(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
@@ -223,22 +252,23 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
         equipment.setFactoryNumber(factoryNumber);
     }
 
-    private void getChildEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+    private String getChildEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
         String childEquipmentName = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(childEquipmentName, "childEquipmentName(k)");
         ChildEquipment childEquipment = childEquipmentService.findByNameAndEquipmentType(childEquipmentName);
         equipment.setChildEquipmentId(childEquipment.getId());
+        return childEquipmentName;
     }
 
     private void getRegionAndAddress(DataFormatter dataFormatter, Row row, District district, Equipment equipment, int cellIndex) throws Exception {
         String addressExcel = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(addressExcel, "address(j)");
-        Region region = regionService.findById(district.getRegionId());
-        String fullAddress = String.format("%s, %s, %s",
-                region.getName(),
-                district.getName(),
-                addressExcel);
-        equipment.setAddress(fullAddress);
+//        Region region = regionService.findById(district.getRegionId());
+//        String fullAddress = String.format("%s, %s, %s",
+//                region.getName(),
+//                district.getName(),
+//                addressExcel);
+        equipment.setAddress(addressExcel);
     }
 
     private District getDistrict(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
@@ -267,6 +297,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
             LegalUserDto legalDto = iipService.getGnkInfo(legalTin);
             userService.create(legalDto);
         }
+
         ProfileInfoView profileInfo = profileService.getProfileInfo(Long.parseLong(legalTin));
         equipment.setLegalTin(profileInfo.getTin());
         equipment.setLegalName(profileInfo.getLegalName());
