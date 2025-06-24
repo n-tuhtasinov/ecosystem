@@ -73,7 +73,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(1);
+            Sheet sheet = workbook.getSheetAt(0);                                   //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
@@ -90,7 +90,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
                 try {
                     Equipment equipment = new Equipment();
 
-                    String identityLatter = "P";
+                    String identityLatter = "P";                                    //TODO: Shu joyga qarash kerak
 
                     registryNumber = getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
                     getLegal(dataFormatter, row, equipment, 2); // b) legalTin
@@ -109,8 +109,8 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
                     getInspectorName(dataFormatter, row, equipment, 24); // x) inspectorName
                     getIsActive(dataFormatter, row, equipment, 26); // z) is active
 
-                    EquipmentType equipmentType = EquipmentType.CRANE;
-                    getParams(dataFormatter, row, equipment); // u) params
+                    EquipmentType equipmentType = EquipmentType.CRANE;                  //TODO: Shu joyga qarash kerak
+                    getParams(dataFormatter, row, equipment); // u) params              //TODO: Shu joyga qarash kerak
 
                     setFiles(equipment); // set files
                     equipment.setType(equipmentType); // set equipment type
@@ -130,14 +130,16 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
                             null, null, null, equipment.getFactoryNumber(), equipment.getModel(), equipment.getFactory(), null, equipment.getManufacturedAt(), null,
                             null, null, equipment.getParameters(), null, null, null, null, null, null,
                             null, null, null, null, null, null, null);
-                    equipmentService.createEquipmentRegistryPdf(appeal, dto, info, equipment.getRegistrationDate());
+                    String registryPdfPath = equipmentService.createEquipmentRegistryPdf(appeal, dto, info, equipment.getRegistrationDate());
 
+                    equipment.setRegistryFilePath(registryPdfPath);
                     equipmentRepository.save(equipment);
                 } catch (Exception e) {
                     log.error("Xatolik! Excel faylning {}-qatoridagi {} sonli ro'yhat raqamli ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, registryNumber, e.getMessage());
 //                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
                 }
             }
+            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum+1);
 //        } catch (ExcelParsingException e) {
 //            throw e; // to rollback transaction
         } catch (Exception e) {
@@ -283,6 +285,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
             LegalUserDto legalDto = iipService.getGnkInfo(legalTin);
             userService.create(legalDto);
         }
+
         ProfileInfoView profileInfo = profileService.getProfileInfo(Long.parseLong(legalTin));
         equipment.setLegalTin(profileInfo.getTin());
         equipment.setLegalName(profileInfo.getLegalName());

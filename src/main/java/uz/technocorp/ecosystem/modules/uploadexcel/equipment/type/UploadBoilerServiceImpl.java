@@ -72,7 +72,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(8);                              //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
@@ -89,7 +89,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
                 try {
                     Equipment equipment = new Equipment();
 
-                    String identityLetter = "K";
+                    String identityLetter = "K";                                         //TODO: Shu joyga qarash kerak
 
                     registryNumber = getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
                     getLegal(dataFormatter, row, equipment, 2); // b) legalTin
@@ -104,13 +104,13 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
                     getManufacturedAt(row, equipment, 17); // q) manufacturedAt
                     getPartialCheckDate(row, equipment, 19); // s) partialCheckDate
                     getFullCheckDate(row, equipment, 20); // t) full check date
-                    getNonDestructiveCheckDate(row, equipment, 21); // nonDestructiveCheckDate
+//                    getNonDestructiveCheckDate(row, equipment, 21); // nonDestructiveCheckDate       //TODO: Shu joyga qarash kerak
                     getRegistrationDate(row, equipment, 27); // w) registration date
                     getInspectorName(dataFormatter, row, equipment, 28); // x) inspectorName
                     getIsActive(dataFormatter, row, equipment, 30); // z) is active
 
-                    EquipmentType equipmentType = EquipmentType.BOILER;
-                    getParams(dataFormatter, row, equipment); // u) params
+                    EquipmentType equipmentType = EquipmentType.BOILER;                      //TODO: Shu joyga qarash kerak
+                    getParams(dataFormatter, row, equipment); // u) params                   //TODO: Shu joyga qarash kerak
 
                     setFiles(equipment); // set files
                     equipment.setType(equipmentType); // set equipment type
@@ -138,6 +138,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
 //                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
                 }
             }
+            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum+1);
 //        } catch (ExcelParsingException e) {
 //            throw e; // to rollback transaction
         } catch (Exception e) {
@@ -296,6 +297,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
             LegalUserDto legalDto = iipService.getGnkInfo(legalTin);
             userService.create(legalDto);
         }
+
         ProfileInfoView profileInfo = profileService.getProfileInfo(Long.parseLong(legalTin));
         equipment.setLegalTin(profileInfo.getTin());
         equipment.setLegalName(profileInfo.getLegalName());
