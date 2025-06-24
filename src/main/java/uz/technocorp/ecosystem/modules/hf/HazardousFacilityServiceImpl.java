@@ -315,7 +315,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         };
     }
 
-    protected String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto) {
+    @Override
+    public String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto) {
         // Make parameters
         Map<String, String> parameters = new HashMap<>();
         parameters.put("upperOrganization", hfAppealDto.getUpperOrganization() != null ? hfAppealDto.getUpperOrganization() : "-");
