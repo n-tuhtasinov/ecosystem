@@ -72,7 +72,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(8);                              //TODO: Shu joyga qarash kerak
+            Sheet sheet = workbook.getSheetAt(0);                              //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
