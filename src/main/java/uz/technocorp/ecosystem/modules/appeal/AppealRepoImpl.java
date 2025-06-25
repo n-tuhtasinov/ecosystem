@@ -95,7 +95,7 @@ public class AppealRepoImpl implements AppealRepo {
             countPredicates.add(cb.equal(countRoot.get("executorId"), params.get("executorId")));
         }
 
-        if (appealTypes != null) {
+        if (appealTypes != null && !appealTypes.isEmpty() ) {
             predicates.add(appealRoot.get("appealType").in(appealTypes));
             countPredicates.add(countRoot.get("appealType").in(appealTypes));
         }

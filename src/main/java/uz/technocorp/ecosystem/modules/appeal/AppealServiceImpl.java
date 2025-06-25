@@ -55,6 +55,7 @@ import uz.technocorp.ecosystem.utils.JsonParser;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Rasulov Komil
@@ -227,17 +228,25 @@ public class AppealServiceImpl implements AppealService {
         switch (user.getRole()){
             case LEGAL -> params.put("legalTin", profile.getTin().toString());
             case INSPECTOR -> params.put("executorId", user.getId().toString());
-            case REGIONAL -> {
-                if (profile.getRegionId() == null) throw new RuntimeException(String.format("IDsi %s bo'lgan profile uchun regionId biriktirilmagan", profile.getId()));
-                params.put("regionId", profile.getRegionId().toString());
-            }
-            case MANAGER -> appealTypes = user.getDirections().stream().map(AppealType::getAppealTypeByDirection).filter(Objects::nonNull).toList();
+            case REGIONAL -> putRegionIdSafely(params, profile);
+            case MANAGER -> appealTypes = getAppealTypes(user);
             //TODO: Qolgan roli uchun ko'rinishni qilish kerak
 
             default -> throw new RuntimeException("Ushbu role uchun logika ishlab chiqilmagan!");
         }
-
         return repository.getAppealCustoms(user, params, appealTypes);
+    }
+
+    private static List<AppealType> getAppealTypes(User user) {
+        return user.getDirections().stream()
+                .map(AppealType::getEnumListByDirection)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    private static void putRegionIdSafely(Map<String, String> params, Profile profile) {
+        if (profile.getRegionId() == null) throw new RuntimeException(String.format("IDsi %s bo'lgan profile uchun regionId biriktirilmagan", profile.getId()));
+        params.put("regionId", profile.getRegionId().toString());
     }
 
     @Override

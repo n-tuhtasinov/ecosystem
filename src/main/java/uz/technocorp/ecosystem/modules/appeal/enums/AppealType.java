@@ -5,7 +5,9 @@ import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Rasulov Komil
@@ -134,18 +136,16 @@ public enum AppealType {
     public final String sort;
     public final String symbol;
     public final String direction;
-    private static final Map<String, AppealType> BY_DIRECTION = new HashMap<>();
+    private static final Map<String, List<AppealType>> LIST_BY_DIRECTION;
 
     static {
-        for (AppealType value : AppealType.values()) {
-            BY_DIRECTION.put(value.direction, value);
-        }
+        LIST_BY_DIRECTION = Arrays.stream(AppealType.values()).collect(Collectors.groupingBy(appealType -> appealType.direction));
     }
 
-    public static AppealType getAppealTypeByDirection(String direction) {
-        if (direction == null || direction.isBlank() || !BY_DIRECTION.containsKey(direction)) {
-            return null;
+    public static List<AppealType> getEnumListByDirection(String direction) {
+        if (direction == null || direction.isEmpty()) {
+            return List.of();
         }
-        return BY_DIRECTION.get(direction);
+        return LIST_BY_DIRECTION.getOrDefault(direction, List.of());
     }
 }
