@@ -44,6 +44,7 @@ public class InspectionServiceImpl implements InspectionService {
         inspection.setTin(dto.tin());
         inspection.setEndDate(dto.endDate());
         inspection.setStartDate(dto.startDate());
+        inspection.setDecreePath(dto.decreePath());
         inspection.setInspectorIds(dto.inspectorIdList());
         inspection.setIntervalId(dto.intervalId());
         inspection.setStatus(InspectionStatus.IN_PROCESS);
@@ -102,12 +103,13 @@ public class InspectionServiceImpl implements InspectionService {
                 view.getStartDate(),
                 view.getEndDate(),
                 view.getStatus(),
-                view.getProgramPath(),
                 view.getSpecialCode(),
+                view.getDecreePath(),
                 view.getSchedulePath(),
-                view.getNotificationLetterDate(),
                 view.getNotificationLetterPath(),
+                view.getNotificationLetterDate(),
                 view.getOrderPath(),
+                view.getProgramPath(),
                 view.getMeasuresPath(),
                 view.getResultPath(),
                 inspectors

@@ -86,7 +86,7 @@ public class Inspection extends BaseEntity {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    private Document decree;
 //
-//    private String decreePath;
+    private String decreePath;
 //
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    private Document act;

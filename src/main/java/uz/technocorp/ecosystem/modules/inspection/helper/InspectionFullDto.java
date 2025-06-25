@@ -26,6 +26,7 @@ public class InspectionFullDto {
     private LocalDate endDate;
     private String status;
     private String specialCode;
+    private String decreePath;
     private String schedulePath;
     private String notificationLetterPath;
     private LocalDate notificationLetterDate;
