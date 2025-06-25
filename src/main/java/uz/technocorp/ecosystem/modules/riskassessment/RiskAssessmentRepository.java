@@ -53,7 +53,7 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 join hazardous_facility hf on ra.hazardous_facility_id = hf.id
                 join region r on hf.region_id = r.id
                 join district d on hf.district_id = d.id
-                where ra.tin = :tin and hf.region_id = :regionId
+                where ra.tin = :tin
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
     Page<RiskAssessmentView> getAllHfByTinAndInspectorId(Pageable pageable, UUID inspectorId, Integer intervalId, Long tin);
@@ -113,7 +113,7 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 join ionizing_radiation_source irs on ra.ionizing_radiation_source_id = irs.id
                 join region r on irs.region_id = r.id
                 join district d on irs.district_id = d.id
-                where ra.tin = :tin and irs.region_id = :regionId
+                where ra.tin = :tin
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
     Page<RiskAssessmentView> getAllIrsByTinAndInspectorId(Pageable pageable, UUID inspectorId, Integer intervalId, Long tin);
@@ -175,7 +175,7 @@ public interface RiskAssessmentRepository extends JpaRepository<RiskAssessment, 
                 and e.type = :type
                 join region r on e.region_id = r.id
                 join district d on e.district_id = d.id
-                where ra.tin = :tin and e.region_id = :regionId
+                where ra.tin = :tin
                 and risk_analysis_interval_id = :intervalId
             """, nativeQuery = true)
     Page<RiskAssessmentView> getAllEquipmentsByTinAndInspectorId(Pageable pageable, UUID inspectorId, Integer intervalId, Long tin, String type);
