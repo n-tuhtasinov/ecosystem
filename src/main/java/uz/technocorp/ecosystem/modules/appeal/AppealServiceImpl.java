@@ -402,10 +402,10 @@ public class AppealServiceImpl implements AppealService {
     public Long getCount(User user, AppealStatus status) {
         Profile profile = profileService.getProfile(user.getProfileId());
         return switch (user.getRole()){
-            case HEAD, MANAGER, CHAIRMAN -> appealRepository.countByParams(new AppealCountParams(status, null, null, null));
-            case LEGAL ->  appealRepository.countByParams(new AppealCountParams(status, profile.getTin(), null, null));
-            case INSPECTOR -> appealRepository.countByParams(new AppealCountParams(status, null, user.getId(), null));
-            case REGIONAL -> appealRepository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId()));
+            case HEAD, MANAGER, CHAIRMAN -> appealRepository.countByParams(new AppealCountParams(status, null, null, null, null));
+            case LEGAL ->  appealRepository.countByParams(new AppealCountParams(status, profile.getTin(), null, null, null));
+            case INSPECTOR -> appealRepository.countByParams(new AppealCountParams(status, null, user.getId(), null, null));
+            case REGIONAL -> appealRepository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId(), null));
             default -> throw new RuntimeException(user.getRole().name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting");
         };
     }
