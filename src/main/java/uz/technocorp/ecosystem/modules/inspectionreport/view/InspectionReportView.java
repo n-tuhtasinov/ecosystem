@@ -19,4 +19,5 @@ public interface InspectionReportView {
     String getStatus();
     UUID getReportExecutionId();
     UUID getInspectorId();
+    String getInspectorName();
 }
