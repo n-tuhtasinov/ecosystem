@@ -106,9 +106,9 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
                     getPartialCheckDate(row, equipment, 19); // s) partialCheckDate
                     getFullCheckDate(row, equipment, 20); // t) full check date
 //                    getNonDestructiveCheckDate(row, equipment, 21); // nonDestructiveCheckDate       //TODO: Shu joyga qarash kerak
-                    getRegistrationDate(row, equipment, 27); // w) registration date
-                    getInspectorName(dataFormatter, row, equipment, 28); // x) inspectorName
-                    getIsActive(dataFormatter, row, equipment, 30); // z) is active
+                    getRegistrationDate(row, equipment, 25); // w) registration date
+                    getInspectorName(dataFormatter, row, equipment, 26); // x) inspectorName
+                    getIsActive(dataFormatter, row, equipment, 28); // z) is active
                     getParams(dataFormatter, row, equipment); // u) params                             //TODO: Shu joyga qarash kerak
                     setFiles(equipment); // set files
                     equipment.setType(equipmentType); // set equipment type
@@ -128,8 +128,9 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
                             null, null, null, equipment.getFactoryNumber(), equipment.getModel(), equipment.getFactory(), null, equipment.getManufacturedAt(), null,
                             null, null, equipment.getParameters(), null, null, null, null, null, null,
                             null, null, null, null, null, null, null);
-                    equipmentService.createEquipmentRegistryPdf(appeal, dto, info, equipment.getRegistrationDate());
+                    String registryPdfPath = equipmentService.createEquipmentRegistryPdf(appeal, dto, info, equipment.getRegistrationDate());
 
+                    equipment.setRegistryFilePath(registryPdfPath);
                     equipmentRepository.save(equipment);
                 } catch (Exception e) {
                     log.error("Xatolik! Excel faylning {}-qatoridagi {} sonli ro'yhat raqamli ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, registryNumber, e.getMessage());
@@ -166,17 +167,17 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
     private void getParams(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
         Map<String, String> params = new HashMap<>();
 
-        String capacity = dataFormatter.formatCellValue(row.getCell(24));
+        String capacity = dataFormatter.formatCellValue(row.getCell(22));
         isValid(capacity, "Ishlab chiqarish hajmi(y)");
         params.put("capacity", capacity);
 
-        String environment = dataFormatter.formatCellValue(row.getCell(25));
+        String environment = dataFormatter.formatCellValue(row.getCell(23));
         isValid(environment, "Muhit harorati(z)");
         params.put("environment", environment);
 
-        String pressure = dataFormatter.formatCellValue(row.getCell(26));
-        isValid(pressure, "Ruxsat etilgan bosim(AA)");
-        params.put("pressure", pressure);
+//        String pressure = dataFormatter.formatCellValue(row.getCell(24));
+//        isValid(pressure, "Ruxsat etilgan bosim(AA)");
+        params.put("pressure", "-");
 
         equipment.setParameters(params);
     }
