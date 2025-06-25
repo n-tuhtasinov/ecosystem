@@ -20,11 +20,11 @@ public enum EquipmentType {
     PIPELINE("Quvur"),
     ATTRACTION_PASSPORT("Attraksion pasporti"),
     ATTRACTION("Atraksion"),
-    CHEMICAL_CONTAINER("Bosim ostida ishlovchi idish(kimyoviy)"),
-    HEAT_PIPELINE("Bug' va issiq suv quvurlari"),
+    CHEMICAL_CONTAINER("Bosim ostida ishlovchi idish (kimyo)"),
+    HEAT_PIPELINE("Bug' va issiq suv quvuri"),
     BOILER_UTILIZER("Qozon utilizator"),
-    LPG_CONTAINER("Bosim ostida ishlovchi idishlar (suyiltirilgan uglevodor gazi uchun)"),
-    LPG_POWERED("Uglevodorod gazi ishlatadigan qurilmalar");
+    LPG_CONTAINER("Bosim ostida ishlovchi idish (SUG)"),
+    LPG_POWERED("Yiliga bitta uskuna uchun 100 000 va undan ortiq m3 tabiiy va SUGdan yoqilg‘i sifatida foydalanuvchi texnik qurilma");
 
     public final String value;
 }
