@@ -165,6 +165,14 @@ public class AppealRepoImpl implements AppealRepo {
             countPredicates.add(cb.equal(countRoot.get("executorId"), params.executorId()));
         }
 
+        // if appealTypes is not null and is empty, this user should not see any type of appeal.
+        // Because the user has not any appeal type in his directions list
+        if (params.appealTypes() != null && params.appealTypes().isEmpty() ) {
+            countPredicates.add(countRoot.get("appealType").in(List.of()));
+        }
+        if (params.appealTypes() != null && !params.appealTypes().isEmpty() ) {
+            countPredicates.add(countRoot.get("appealType").in(params.appealTypes()));
+        }
         countQuery.select(cb.count(countRoot));
         countQuery.where(countPredicates.toArray(new Predicate[0]));
         return em.createQuery(countQuery).getSingleResult();

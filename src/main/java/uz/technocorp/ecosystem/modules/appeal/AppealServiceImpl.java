@@ -221,7 +221,6 @@ public class AppealServiceImpl implements AppealService {
     public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
         //get profile by user
         Profile profile = profileService.getProfile(user.getProfileId());
-
         List<AppealType> appealTypes = null;
 
         //to display data by user role
@@ -229,9 +228,8 @@ public class AppealServiceImpl implements AppealService {
             case LEGAL -> params.put("legalTin", profile.getTin().toString());
             case INSPECTOR -> params.put("executorId", user.getId().toString());
             case REGIONAL -> putRegionIdSafely(params, profile);
-            case MANAGER -> appealTypes = getAppealTypes(user);
+            case MANAGER, HEAD, CHAIRMAN -> appealTypes = getAppealTypes(user);
             //TODO: Qolgan roli uchun ko'rinishni qilish kerak
-
             default -> throw new RuntimeException("Ushbu role uchun logika ishlab chiqilmagan!");
         }
         return repository.getAppealCustoms(user, params, appealTypes);
@@ -402,12 +400,18 @@ public class AppealServiceImpl implements AppealService {
     public Long getCount(User user, AppealStatus status) {
         Profile profile = profileService.getProfile(user.getProfileId());
         return switch (user.getRole()){
-            case HEAD, MANAGER, CHAIRMAN -> appealRepository.countByParams(new AppealCountParams(status, null, null, null, null));
+            case HEAD, MANAGER, CHAIRMAN -> appealRepository.countByParams(makeAppealCountParamsByDirections(user, status));
             case LEGAL ->  appealRepository.countByParams(new AppealCountParams(status, profile.getTin(), null, null, null));
             case INSPECTOR -> appealRepository.countByParams(new AppealCountParams(status, null, user.getId(), null, null));
             case REGIONAL -> appealRepository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId(), null));
+            //TODO: boshqa rollar uchun logika yozish kerak
             default -> throw new RuntimeException(user.getRole().name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting");
         };
+    }
+
+    private AppealCountParams makeAppealCountParamsByDirections(User user, AppealStatus status) {
+        List<AppealType> appealTypes = getAppealTypes(user);
+        return new AppealCountParams(status, null, null, null, appealTypes);
     }
 
     private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal, Boolean shouldRegister) {
