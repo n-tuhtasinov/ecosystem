@@ -62,7 +62,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
     private final ObjectMapper objectMapper;
 
 
-    @Transactional(rollbackFor = ExcelParsingException.class)
+//    @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
     public void upload(MultipartFile file) {
 
@@ -311,6 +311,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
     }
 
     private LocalDate getLocalDate(Cell cell, String fieldName) throws Exception {
+
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             throw new Exception(fieldName + " bo'sh bo'lishi mumkin emas");
         }
