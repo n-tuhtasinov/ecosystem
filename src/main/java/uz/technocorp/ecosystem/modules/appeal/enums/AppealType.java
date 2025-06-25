@@ -100,7 +100,7 @@ public enum AppealType {
     EXPEND_ACCREDITATION_SCOPE("", "expendAccreditExpertOrganization", ""),
 
     // Sanoat xavfsizligi bo‘yicha ekspertiza xulosalari
-    REGISTER_EXPERTISE_CONCLUSION("", "", ""),
+    REGISTER_EXPERTISE_CONCLUSION("", "registerExpertiseConclusion", ""),
 //    DEREGISTER_EXPERTISE_CONCLUSION("", "", ""),
 
     // Litsenziya va ruxsatnomalar

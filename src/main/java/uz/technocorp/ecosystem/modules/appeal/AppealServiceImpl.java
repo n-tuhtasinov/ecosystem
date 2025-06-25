@@ -319,6 +319,7 @@ public class AppealServiceImpl implements AppealService {
                 case "registerHf" -> hfService.create(appeal);
                 case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
                 case "registerEquipment", "registerAttractionPassport" -> equipmentService.create(appeal);
+                // akkreditatsiyani yaratish -> accreditationService.create(appeal);
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }
         }
@@ -415,6 +416,9 @@ public class AppealServiceImpl implements AppealService {
                     number = orderNumber + "-QUR-" + LocalDate.now().getYear();
             case "registerAttractionPassport", "reRegisterAttractionPassport" ->
                     number = orderNumber + "-ATP-" + LocalDate.now().getYear();
+            case "accreditExpertOrganization", "reAccreditExpertOrganization", "expendAccreditExpertOrganization" ->
+                number = orderNumber + "-AKK-" + LocalDate.now().getYear();
+            case "registerExpertiseConclusion" -> number = orderNumber + "-EXP-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
         return new OrderNumberDto(orderNumber, number);
@@ -425,7 +429,7 @@ public class AppealServiceImpl implements AppealService {
 
         switch (appealType) {
             case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> executorName = "INM ijrochi ismi";
-            case ACCREDIT_EXPERT_ORGANIZATION -> executorName = "kimdir";
+            case ACCREDIT_EXPERT_ORGANIZATION, RE_ACCREDIT_EXPERT_ORGANIZATION, EXPEND_ACCREDITATION_SCOPE -> executorName = "kimdir";
             case REGISTER_DECLARATION -> executorName = "yana kimdir";
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
         }
