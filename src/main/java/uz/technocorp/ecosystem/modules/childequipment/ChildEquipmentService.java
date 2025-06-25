@@ -28,4 +28,6 @@ public interface ChildEquipmentService {
     String getNameById(Integer childEquipmentId);
 
     ChildEquipment findByNameAndEquipmentType(String childEquipmentName);
+
+    void deleteById(Integer childEquipmentId);
 }

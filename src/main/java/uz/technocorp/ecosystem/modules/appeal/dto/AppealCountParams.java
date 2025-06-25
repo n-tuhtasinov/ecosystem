@@ -1,7 +1,9 @@
 package uz.technocorp.ecosystem.modules.appeal.dto;
 
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -14,5 +16,6 @@ public record AppealCountParams(
         AppealStatus status,
         Long legalTin,
         UUID executorId,
-        Integer officeId
+        Integer officeId,
+        List<AppealType> appealTypes
 ) {}
