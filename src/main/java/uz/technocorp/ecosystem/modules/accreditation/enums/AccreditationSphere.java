@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.accreditation;
+package uz.technocorp.ecosystem.modules.accreditation.enums;
 
 /**
  * @author Rasulov Komil

@@ -41,7 +41,7 @@ public class AppealRepoImpl implements AppealRepo {
     private final OfficeRepository officeRepository;
 
     @Override
-    public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
+    public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params, List<AppealType> appealTypes) {
         Pageable pageable= PageRequest.of(
                 Integer.parseInt(params.getOrDefault("page", AppConstants.DEFAULT_PAGE_NUMBER))-1,
                 Integer.parseInt(params.getOrDefault("size", AppConstants.DEFAULT_PAGE_SIZE)),
@@ -74,6 +74,7 @@ public class AppealRepoImpl implements AppealRepo {
             countPredicates.add(cb.equal(countRoot.get("legalTin"), params.get("legalTin")));
         }
 
+
         if (params.get("startDate") != null && !params.get("startDate").isEmpty()) {
             predicates.add(cb.greaterThanOrEqualTo(appealRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay()));
             countPredicates.add(cb.greaterThanOrEqualTo(countRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay()));
@@ -84,9 +85,9 @@ public class AppealRepoImpl implements AppealRepo {
             countPredicates.add(cb.lessThanOrEqualTo(countRoot.get("createdAt"), LocalDate.parse(params.get("endDate")).atTime(23,59,59)));
         }
 
-        if (params.get("officeId") != null) {
-            predicates.add(cb.equal(appealRoot.get("officeId"), params.get("officeId")));
-            countPredicates.add(cb.equal(countRoot.get("officeId"), params.get("officeId")));
+        if (params.get("regionId") != null) {
+            predicates.add(cb.equal(appealRoot.get("regionId"), params.get("regionId")));
+            countPredicates.add(cb.equal(countRoot.get("regionId"), params.get("regionId")));
         }
 
         if (params.get("executorId") != null) {
@@ -94,23 +95,9 @@ public class AppealRepoImpl implements AppealRepo {
             countPredicates.add(cb.equal(countRoot.get("executorId"), params.get("executorId")));
         }
 
-        //get profile by user
-        Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", user.getProfileId()));
-
-
-        //to display data by user role
-        if (user.getRole().equals(Role.LEGAL)){
-            predicates.add(cb.equal(appealRoot.get("profileId"), user.getProfileId()));
-            countPredicates.add(cb.equal(countRoot.get("profileId"), user.getProfileId()));
-        } else if (user.getRole().equals(Role.INSPECTOR)) {
-            predicates.add(cb.equal(appealRoot.get("executorId"), user.getId()));
-            countPredicates.add(cb.equal(countRoot.get("executorId"), user.getId()));
-        } else if (user.getRole().equals(Role.REGIONAL)) {
-            if (profile.getOfficeId() == null) throw new RuntimeException(String.format("IDsi %s bo'lgan profile uchun hududiy bo'lim biriktirilmagan", profile.getId()));
-            predicates.add(cb.equal(appealRoot.get("officeId"), profile.getOfficeId()));
-            countPredicates.add(cb.equal(countRoot.get("officeId"), profile.getOfficeId()));
-        }else {
-            //TODO: Qolgan roli uchun ko'rinishni qilish kerak
+        if (appealTypes != null) {
+            predicates.add(appealRoot.get("appealType").in(appealTypes));
+            countPredicates.add(countRoot.get("appealType").in(appealTypes));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
