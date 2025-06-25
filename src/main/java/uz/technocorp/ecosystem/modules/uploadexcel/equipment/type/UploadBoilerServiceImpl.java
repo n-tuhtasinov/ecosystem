@@ -72,7 +72,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(0);                              //TODO: Shu joyga qarash kerak
+            Sheet sheet = workbook.getSheetAt(8);                                              //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
@@ -89,14 +89,15 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
                 try {
                     Equipment equipment = new Equipment();
 
-                    String identityLetter = "K";                                         //TODO: Shu joyga qarash kerak
+                    String identityLetter = "K";                                                    //TODO: Shu joyga qarash kerak
+                    EquipmentType equipmentType = EquipmentType.BOILER;                             //TODO: Shu joyga qarash kerak
 
                     registryNumber = getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
                     getLegal(dataFormatter, row, equipment, 2); // b) legalTin
 //                    getHf(dataFormatter, row, equipment, 5); // b) hfRegistryNumber
                     District district = getDistrict(dataFormatter, row, equipment, 9); // g) districtSoato
                     getRegionAndAddress(dataFormatter, row, district, equipment, 10); // h) address
-                    String childEquipmentName = getChildEquipment(dataFormatter, row, equipment, 11);// k) child equipment
+                    String childEquipmentName = getChildEquipment(dataFormatter, row, equipment, equipmentType, 11);// k) child equipment
                     getFactoryNumber(dataFormatter, row, equipment, 12); // l) factoryNumber
                     getOldEquipment(dataFormatter, row, equipment, identityLetter, 14); // n) old equipment
                     getFactory(dataFormatter, row, equipment, 15);
@@ -108,10 +109,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
                     getRegistrationDate(row, equipment, 27); // w) registration date
                     getInspectorName(dataFormatter, row, equipment, 28); // x) inspectorName
                     getIsActive(dataFormatter, row, equipment, 30); // z) is active
-
-                    EquipmentType equipmentType = EquipmentType.BOILER;                      //TODO: Shu joyga qarash kerak
-                    getParams(dataFormatter, row, equipment); // u) params                   //TODO: Shu joyga qarash kerak
-
+                    getParams(dataFormatter, row, equipment); // u) params                             //TODO: Shu joyga qarash kerak
                     setFiles(equipment); // set files
                     equipment.setType(equipmentType); // set equipment type
 
@@ -252,10 +250,10 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
         equipment.setFactoryNumber(factoryNumber);
     }
 
-    private String getChildEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+    private String getChildEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, EquipmentType equipmentType, int cellIndex) throws Exception {
         String childEquipmentName = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(childEquipmentName, "childEquipmentName(k)");
-        ChildEquipment childEquipment = childEquipmentService.findByNameAndEquipmentType(childEquipmentName);
+        ChildEquipment childEquipment = childEquipmentService.findByNameAndEquipmentType(childEquipmentName, equipmentType);
         equipment.setChildEquipmentId(childEquipment.getId());
         return childEquipmentName;
     }
