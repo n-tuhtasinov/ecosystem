@@ -62,7 +62,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
     private final ObjectMapper objectMapper;
 
 
-    @Transactional(rollbackFor = ExcelParsingException.class)
+//    @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
     public void upload(MultipartFile file) {
 
@@ -72,7 +72,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(8);                              //TODO: Shu joyga qarash kerak
+            Sheet sheet = workbook.getSheetAt(0);                              //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
@@ -311,6 +311,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
     }
 
     private LocalDate getLocalDate(Cell cell, String fieldName) throws Exception {
+
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             throw new Exception(fieldName + " bo'sh bo'lishi mumkin emas");
         }

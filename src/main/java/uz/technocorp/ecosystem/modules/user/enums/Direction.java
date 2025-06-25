@@ -8,10 +8,12 @@ package uz.technocorp.ecosystem.modules.user.enums;
  */
 public enum Direction {
     APPEAL,
+    HF,
+    EQUIPMENT,
+    IRS,
     REGISTRY,
-    CERTIFICATE,
-    ATTESTAT,
     ATTESTATION,
-    ACCREDITATION;
-
+    ACCREDITATION,
+    CADASTRE,
+    PERMITS
 }
