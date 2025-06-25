@@ -218,7 +218,26 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
-        return repository.getAppealCustoms(user, params);
+        //get profile by user
+        Profile profile = profileService.getProfile(user.getProfileId());
+
+        List<AppealType> appealTypes = null;
+
+        //to display data by user role
+        if (user.getRole().equals(Role.LEGAL)){
+            params.put("legalTin", profile.getTin().toString());
+        } else if (user.getRole().equals(Role.INSPECTOR)) {
+            params.put("executorId", user.getId().toString());
+        } else if (user.getRole().equals(Role.REGIONAL)) {
+            if (profile.getOfficeId() == null) throw new RuntimeException(String.format("IDsi %s bo'lgan profile uchun hududiy bo'lim biriktirilmagan", profile.getId()));
+            params.put("regionId", profile.getRegionId().toString());
+        } else if (user.getRole().equals(Role.MANAGER)) {
+            appealTypes = user.getDirections().stream().map(AppealType::getAppealTypeByDirection).toList();
+        } else {
+            //TODO: Qolgan roli uchun ko'rinishni qilish kerak
+            throw new RuntimeException("Ushbu role uchun logika ishlab chiqilmagan!");
+        }
+        return repository.getAppealCustoms(user, params, appealTypes);
     }
 
     @Override
