@@ -82,6 +82,12 @@ public class ReAccreditationDto implements AppealDto {
     @SkipDb
     private String qualityManagementSystemPath;
 
+    @SkipDb
+    private String certificateNumber;
+
+    @SkipDb
+    private LocalDate certificateDate;
+
     public void buildFiles() {
         files.put("accreditationFieldPath", accreditationFieldPath);
         files.put("organizationCharterPath", organizationCharterPath);

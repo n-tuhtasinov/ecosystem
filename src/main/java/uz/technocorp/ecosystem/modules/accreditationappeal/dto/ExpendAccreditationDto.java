@@ -77,10 +77,18 @@ public class ExpendAccreditationDto implements AppealDto {
 
     @SkipDb
     private String propertyOwnerShipPath;
+
     @SkipDb
     private String qualityPerformanceInstructionPath;
+
     @SkipDb
     private String qualityManagementSystemPath;
+
+    @SkipDb
+    private String certificateNumber;
+
+    @SkipDb
+    private LocalDate certificateDate;
 
     public void buildFiles() {
         files.put("accreditationFieldPath", accreditationFieldPath);
