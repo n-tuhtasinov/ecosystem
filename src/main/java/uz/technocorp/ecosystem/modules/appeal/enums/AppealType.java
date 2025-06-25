@@ -131,13 +131,12 @@ public enum AppealType {
 
     public static AppealType getAppealTypeByDirection(String direction) {
         if (direction == null || direction.isEmpty()) {
-            Arrays.stream(AppealType.values())
-                    .filter(appealType -> appealType.direction.equals(direction))
-                    .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("Ariza turi", "Direction", direction));
-
-
-
+            return null;
         }
+        return Arrays.stream(AppealType.values())
+                .filter(appealType -> appealType.direction.equals(direction))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Ariza turi", "Direction", direction));
+
     }
 }
