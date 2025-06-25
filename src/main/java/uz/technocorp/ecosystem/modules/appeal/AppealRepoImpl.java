@@ -95,9 +95,9 @@ public class AppealRepoImpl implements AppealRepo {
             countPredicates.add(cb.equal(countRoot.get("executorId"), params.get("executorId")));
         }
 
-        // if appealTypes is null or empty, this user should not see any type of appeal.
+        // if appealTypes is not null and is empty, this user should not see any type of appeal.
         // Because the user has not any appeal type in his directions list
-        if (appealTypes == null || appealTypes.isEmpty() ) {
+        if (appealTypes != null && appealTypes.isEmpty() ) {
             predicates.add(appealRoot.get("appealType").in(List.of()));
             countPredicates.add(countRoot.get("appealType").in(List.of()));
         }
