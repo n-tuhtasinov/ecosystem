@@ -8,7 +8,12 @@ import java.time.LocalDate;
  * @created 23.05.2025
  * @since v1.0
  */
-public record InspectionUpdateDto(String specialCode, LocalDate notificationLetterDate,
-                                  String notificationLetterPath, String orderPath, String schedulePath,
-                                  String programPath, String measuresPath, String resultPath) {
+public record InspectionUpdateDto(String specialCode,
+                                  LocalDate notificationLetterDate,
+                                  String notificationLetterPath,
+                                  String orderPath,
+                                  String schedulePath,
+                                  String programPath,
+                                  String measuresPath,
+                                  String resultPath) {
 }
