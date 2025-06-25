@@ -189,6 +189,6 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     private String getQrCodeBase64(Path filePath) {
-        return generator.generateQRCodeBase64(fileBaseUrl + "/" + getStandardizedPath(filePath), 250, 250);
+        return generator.generateQRCodeBase64(fileBaseUrl + getStandardizedPath(filePath), 250, 250);
     }
 }
