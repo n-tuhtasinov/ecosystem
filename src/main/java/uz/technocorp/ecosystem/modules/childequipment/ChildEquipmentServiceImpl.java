@@ -73,4 +73,9 @@ public class ChildEquipmentServiceImpl implements ChildEquipmentService {
     public ChildEquipment findByNameAndEquipmentType(String childEquipmentName) {
         return childEquipmentRepository.findByName(childEquipmentName).orElseThrow(() -> new ResourceNotFoundException("Child equipment", "nom", childEquipmentName));
     }
+
+    @Override
+    public void deleteById(Integer childEquipmentId) {
+        childEquipmentRepository.deleteById(childEquipmentId);
+    }
 }

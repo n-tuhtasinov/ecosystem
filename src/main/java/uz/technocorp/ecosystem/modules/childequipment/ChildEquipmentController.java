@@ -56,4 +56,10 @@ public class ChildEquipmentController {
         return ResponseEntity.ok(new ApiResponse(child));
     }
 
+    @DeleteMapping("/{childEquipmentId}")
+    public ResponseEntity<?> deleteById (@PathVariable Integer childEquipmentId) {
+        childEquipmentService.deleteById(childEquipmentId);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
+    }
+
 }
