@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfDeregisterAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfModificationAppealDto;
-import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -30,7 +30,7 @@ import java.util.UUID;
 public class HfAppealController {
 
     private final AppealService appealService;
-    private final HfTypeService hfTypeService;
+    private final AppealPdfService appealPdfService;
 
     @PostMapping
     public ResponseEntity<ApiResponse> createAndSign(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<HfAppealDto> signedDto, HttpServletRequest request) {
@@ -61,9 +61,7 @@ public class HfAppealController {
 
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody HfAppealDto hfDto) {
-        String path = appealService.preparePdfWithParam(hfDto, user);
+        String path = appealPdfService.preparePdfWithParam(hfDto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
-
-
 }

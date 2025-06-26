@@ -7,24 +7,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * @author Sukhrob
+ * @author Suxrob
  * @version 1.0
- * @created 19.05.2025
+ * @created 25.06.2025
  * @since v1.0
  */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReplyDto {
+public class ReplyAttestationDto {
 
     @NotNull(message = "Ariza ID si jo'natilmadi")
     private UUID appealId;
 
-    @NotBlank(message = "Xulosa qismi yuborilmadi")
-    private String conclusion;
+    @NotNull(message = "Attestatsiya ijro muddati kiritilmadi")
+    private LocalDateTime dateOfAttestation;
 
+    @NotBlank(message = "Xulosa qismi yuborilmadi")
+    private String resolution;
 }

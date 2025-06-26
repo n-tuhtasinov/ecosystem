@@ -46,10 +46,9 @@ public abstract class BaseAppealPdfProcessor implements AppealPdfProcessor {
 
     @Override
     public final String preparePdfWithParam(AppealDto dto, User user) {
-        Template template = getTemplate(getTemplateType());
         Profile profile = getProfile(user.getProfileId());
-
         Map<String, String> parameters = buildParameters(dto, profile);
+        Template template = getTemplate(getTemplateType());
         String folderPath = folderPath();
 
         return attachmentService.createPdfFromHtml(template.getContent(), folderPath, parameters, true);

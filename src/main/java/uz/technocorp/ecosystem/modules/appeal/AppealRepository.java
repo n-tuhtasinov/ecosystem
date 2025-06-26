@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.appeal.repo.AppealRepo;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 
@@ -45,10 +47,16 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
 
     Optional<Appeal> findByIdAndStatus(UUID appealId, AppealStatus appealStatus);
 
+    Optional<Appeal> findByIdAndStatusAndAppealType(UUID appealId, AppealStatus appealStatus, AppealType type);
+
     Optional<Appeal> findByIdAndStatusAndOfficeId(UUID appealId, AppealStatus appealStatus, Integer officeId);
+
+    Optional<Appeal> findByIdAndStatusAndOfficeIdAndAppealType(UUID appealId, AppealStatus appealStatus, Integer officeId, AppealType type);
 
     @Modifying
     @Transactional
     @Query("update Appeal set conclusion = :conclusion, status = :status  where id = :id")
     void changeStatusAndSetConclusion(UUID id, String conclusion, AppealStatus status);
+
+    Optional<Appeal> findByIdAndAppealType(UUID appealId, AppealType type);
 }

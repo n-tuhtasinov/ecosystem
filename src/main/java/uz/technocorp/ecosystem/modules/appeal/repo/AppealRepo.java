@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal;
+package uz.technocorp.ecosystem.modules.appeal.repo;
 
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealCountParams;
