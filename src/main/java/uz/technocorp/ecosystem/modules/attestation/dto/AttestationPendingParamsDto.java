@@ -1,9 +1,6 @@
 package uz.technocorp.ecosystem.modules.attestation.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Suxrob
@@ -13,11 +10,18 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AttestationPendingParamsDto {
 
     private String search; // legalTin or legalName
     private Integer regionId;
+
+    @Builder.Default
+    private Integer page = 1;
+
+    @Builder.Default
+    private Integer size = 10;
 
 }

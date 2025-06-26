@@ -34,6 +34,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AttestationController {
 
+    private final AttestationAppealService attestationAppealService;
     private final HazardousFacilityService hfService;
     private final AppealPdfService appealPdfService;
     private final AppealService appealService;
@@ -56,7 +57,7 @@ public class AttestationController {
 
     @GetMapping("/pending")
     public ResponseEntity<ApiResponse> getAllPending(@CurrentUser User user, @Valid AttestationPendingParamsDto dto) {
-        return ResponseEntity.ok(new ApiResponse(service.getAllPending(user, dto)));
+        return ResponseEntity.ok(new ApiResponse(attestationAppealService.getAllPending(user, dto)));
     }
 
     //TODO   ROLE -> LEGAL
