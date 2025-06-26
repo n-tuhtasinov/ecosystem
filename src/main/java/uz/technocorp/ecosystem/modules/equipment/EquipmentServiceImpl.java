@@ -339,7 +339,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         StringBuilder dynamicRows = new StringBuilder();
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             dynamicRows.append("<div class=\"list-item\">")
-                    .append("<div>").append(EquipmentParameter.nameWithUnit(entry.getKey())).append("</div>")
+                    .append("<div class=\"bold\">").append(EquipmentParameter.nameWithUnit(entry.getKey())).append(":").append("</div>")
                     .append("<div>").append(entry.getValue()).append("</div>")
                     .append("</div>");
         }
