@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.AccreditationDto;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ExpendAccreditationDto;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ReAccreditationDto;
-import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -31,6 +30,7 @@ import uz.technocorp.ecosystem.shared.ResponseMessage;
 @RequiredArgsConstructor
 public class AccreditationAppealController {
 
+    private final AppealPdfService appealPdfService;
     private AppealService appealService;
 
     @PostMapping
@@ -53,22 +53,21 @@ public class AccreditationAppealController {
 
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
-        String path = appealService.preparePdfWithParam(dto, user);
+        String path = appealPdfService.preparePdfWithParam(dto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping("/redo/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromReAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
-        String path = appealService.preparePdfWithParam(dto, user);
+        String path = appealPdfService.preparePdfWithParam(dto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping("/expend/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromExpendAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
-        String path = appealService.preparePdfWithParam(dto, user);
+        String path = appealPdfService.preparePdfWithParam(dto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
-
 
 
 }

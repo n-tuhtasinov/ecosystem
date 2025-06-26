@@ -355,14 +355,11 @@ public class AppealServiceImpl implements AppealService {
     public Long getCount(User user, AppealStatus status) {
         Profile profile = getProfile(user.getProfileId());
         return switch (user.getRole()) {
-            case HEAD, MANAGER, CHAIRMAN ->
-                    appealRepository.countByParams(makeAppealCountParamsByDirections(user, status));
-            case LEGAL ->
-                    appealRepository.countByParams(new AppealCountParams(status, profile.getTin(), null, null, null));
-            case INSPECTOR ->
-                    appealRepository.countByParams(new AppealCountParams(status, null, user.getId(), null, null));
+            case HEAD, MANAGER, CHAIRMAN -> repository.countByParams(makeAppealCountParamsByDirections(user, status));
+            case LEGAL -> repository.countByParams(new AppealCountParams(status, profile.getTin(), null, null, null));
+            case INSPECTOR -> repository.countByParams(new AppealCountParams(status, null, user.getId(), null, null));
             case REGIONAL ->
-                    appealRepository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId(), null));
+                    repository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId(), null));
             //TODO: boshqa rollar uchun logika yozish kerak
             default ->
                     throw new RuntimeException(user.getRole().name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting");
