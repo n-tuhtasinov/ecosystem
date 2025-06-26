@@ -32,4 +32,6 @@ public class InspectionReport extends BaseEntity {
 
     @Column(name = "inspection_id")
     private UUID inspectionId;
+
+    private boolean eliminated;
 }
