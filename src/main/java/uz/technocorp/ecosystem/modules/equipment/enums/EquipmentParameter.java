@@ -22,7 +22,7 @@ public enum EquipmentParameter {
     FUEL("fuel", "Yoqilg'i", "gaz"),
     HEIGHT("height", "Balandlik", "metr"),
     LENGTH("length", "Uzunlik", "metr"),
-    LIFTING_CAPACITY("liftingCapacity", "Ko'tarish sig'imi", "kg"),
+    LIFTING_CAPACITY("liftingCapacity", "Ko'tarish sig'imi", ""),
     PASSENGER_COUNT("passengerCount", "Yo'lovchilar soni", ""),
     PASSENGERS_PER_MINUTE("passengersPerMinute", "Daqiqadagi yo'lovchilar soni", "odam/minut"),
     PRESSURE("pressure", "Bosim", "MPa"),
