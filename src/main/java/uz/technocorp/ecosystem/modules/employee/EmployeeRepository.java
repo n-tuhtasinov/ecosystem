@@ -19,6 +19,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     List<Employee> findByHfIdAndPinIn(UUID hfId, List<String> pins);
 
+    List<Employee> findAllByHfId(UUID hfId);
+
     @Transactional
     int deleteAllByHfIdAndPinIn(UUID hfId, List<String> pins);
 }
