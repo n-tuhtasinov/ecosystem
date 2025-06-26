@@ -46,6 +46,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Rasulov Komil
@@ -215,7 +216,33 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public Page<AppealCustom> getAppealCustoms(User user, Map<String, String> params) {
-        return repository.getAppealCustoms(user, params);
+        //get profile by user
+        Profile profile = profileService.getProfile(user.getProfileId());
+        List<AppealType> appealTypes = null;
+
+        //to display data by user role
+        switch (user.getRole()) {
+            case LEGAL -> params.put("legalTin", profile.getTin().toString());
+            case INSPECTOR -> params.put("executorId", user.getId().toString());
+            case REGIONAL -> putRegionIdSafely(params, profile);
+            case MANAGER, HEAD, CHAIRMAN -> appealTypes = getAppealTypes(user);
+            //TODO: Qolgan roli uchun ko'rinishni qilish kerak
+            default -> throw new RuntimeException("Ushbu role uchun logika ishlab chiqilmagan!");
+        }
+        return repository.getAppealCustoms(user, params, appealTypes);
+    }
+
+    private static List<AppealType> getAppealTypes(User user) {
+        return user.getDirections().stream()
+                .map(AppealType::getEnumListByDirection)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    private static void putRegionIdSafely(Map<String, String> params, Profile profile) {
+        if (profile.getRegionId() == null)
+            throw new RuntimeException(String.format("IDsi %s bo'lgan profile uchun regionId biriktirilmagan", profile.getId()));
+        params.put("regionId", profile.getRegionId().toString());
     }
 
     @Override
@@ -268,6 +295,7 @@ public class AppealServiceImpl implements AppealService {
                 case "registerHf" -> hfService.create(appeal);
                 case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
                 case "registerEquipment", "registerAttractionPassport" -> equipmentService.create(appeal);
+                // akkreditatsiyani yaratish -> accreditationService.create(appeal);
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }
         }
@@ -327,13 +355,23 @@ public class AppealServiceImpl implements AppealService {
     public Long getCount(User user, AppealStatus status) {
         Profile profile = getProfile(user.getProfileId());
         return switch (user.getRole()) {
-            case HEAD, MANAGER, CHAIRMAN -> repository.countByParams(new AppealCountParams(status, null, null, null));
-            case LEGAL -> repository.countByParams(new AppealCountParams(status, profile.getTin(), null, null));
-            case INSPECTOR -> repository.countByParams(new AppealCountParams(status, null, user.getId(), null));
-            case REGIONAL -> repository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId()));
+            case HEAD, MANAGER, CHAIRMAN ->
+                    appealRepository.countByParams(makeAppealCountParamsByDirections(user, status));
+            case LEGAL ->
+                    appealRepository.countByParams(new AppealCountParams(status, profile.getTin(), null, null, null));
+            case INSPECTOR ->
+                    appealRepository.countByParams(new AppealCountParams(status, null, user.getId(), null, null));
+            case REGIONAL ->
+                    appealRepository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId(), null));
+            //TODO: boshqa rollar uchun logika yozish kerak
             default ->
                     throw new RuntimeException(user.getRole().name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting");
         };
+    }
+
+    private AppealCountParams makeAppealCountParamsByDirections(User user, AppealStatus status) {
+        List<AppealType> appealTypes = getAppealTypes(user);
+        return new AppealCountParams(status, null, null, null, appealTypes);
     }
 
     private AppealStatus setApproverNameAndGetAppealStatusByRole(User user, Appeal appeal, Boolean shouldRegister) {
@@ -370,6 +408,9 @@ public class AppealServiceImpl implements AppealService {
                     number = orderNumber + "-QUR-" + LocalDate.now().getYear();
             case "registerAttractionPassport", "reRegisterAttractionPassport" ->
                     number = orderNumber + "-ATP-" + LocalDate.now().getYear();
+            case "accreditExpertOrganization", "reAccreditExpertOrganization", "expendAccreditExpertOrganization" ->
+                    number = orderNumber + "-AKK-" + LocalDate.now().getYear();
+            case "registerExpertiseConclusion" -> number = orderNumber + "-EXP-" + LocalDate.now().getYear();
             case "registerAttestation" -> number = orderNumber + "-ATT-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
@@ -381,7 +422,8 @@ public class AppealServiceImpl implements AppealService {
 
         switch (appealType) {
             case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> executorName = "INM ijrochi ismi";
-            case ACCREDIT_EXPERT_ORGANIZATION -> executorName = "kimdir";
+            case ACCREDIT_EXPERT_ORGANIZATION, RE_ACCREDIT_EXPERT_ORGANIZATION, EXPEND_ACCREDITATION_SCOPE ->
+                    executorName = "kimdir";
             case REGISTER_DECLARATION -> executorName = "yana kimdir";
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
         }

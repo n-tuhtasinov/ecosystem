@@ -10,6 +10,7 @@ import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.List;
@@ -47,4 +48,6 @@ public interface HazardousFacilityService {
     HazardousFacility findByRegistryNumber(String hfRegistryNumber);
 
     Long getCount(User user);
+
+    String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto, String now);
 }

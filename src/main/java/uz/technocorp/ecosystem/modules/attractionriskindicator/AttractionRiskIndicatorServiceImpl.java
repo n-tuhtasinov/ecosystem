@@ -189,6 +189,7 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
                                                     Inspection
                                                             .builder()
                                                             .tin(dto.getTin())
+                                                            .profileId(profile.getId())
                                                             .regionId(profile.getRegionId())
                                                             .regionIds(regionIds)
                                                             .districtId(profile.getDistrictId())

@@ -1,19 +1,21 @@
 package uz.technocorp.ecosystem.modules.accreditationappeal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationSphere;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,20 +31,23 @@ import java.util.Map;
 public class ReAccreditationDto implements AppealDto {
 
     @SkipDb
-    @NotBlank(message = "Telefon raqami kiritilmadi!")
+    @Schema(hidden = true)
     private String phoneNumber;
 
     @SkipDb
-    @NotBlank(message = "Manzil kiritilmadi!")
+    @Schema(hidden = true)
     private String address;
 
     @SkipDb
-    @NotNull(message = "Viloyat tanlanmadi!")
+    @Schema(hidden = true)
     private Integer regionId;
 
     @SkipDb
-    @NotNull(message = "Tuman tanlanmadi!")
+    @Schema(hidden = true)
     private Integer districtId;
+
+    @Enumerated(EnumType.STRING)
+    private List<AccreditationSphere> accreditationSpheres;
 
     @Override
     public AppealType getAppealType() {
@@ -76,6 +81,12 @@ public class ReAccreditationDto implements AppealDto {
     private String qualityPerformanceInstructionPath;
     @SkipDb
     private String qualityManagementSystemPath;
+
+    @SkipDb
+    private String certificateNumber;
+
+    @SkipDb
+    private LocalDate certificateDate;
 
     public void buildFiles() {
         files.put("accreditationFieldPath", accreditationFieldPath);

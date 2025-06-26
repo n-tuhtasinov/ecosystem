@@ -4,24 +4,26 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import uz.technocorp.ecosystem.exceptions.ExcelParsingException;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityRepository;
+import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
-import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +47,10 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     private final UserService userService;
     private final DistrictService districtService;
     private final RegionService regionService;
+    private final HazardousFacilityService hazardousFacilityService;
+    private final HfTypeService hfTypeService;
 
-    @Transactional(rollbackFor = ExcelParsingException.class)
+//    @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
     public void upload(MultipartFile file) {
         if (file.isEmpty()) {
@@ -68,12 +72,13 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
                     continue;
                 }
                 int excelRowNumber = rowIndex + 1;
+                String registryNumber = null;
 
                 try {
                     HazardousFacility hf = new HazardousFacility();
 
+                    registryNumber = getRegistryNumber(dataFormatter, row, hf); // b) registryNumber
                     getRegistrationDate(row, hf); // a) registrationDate
-                    getRegistryNumber(dataFormatter, row, hf); // b) registryNumber
                     getInspectorName(dataFormatter, row, hf); // c) inspectorName
                     getUpperOrganication(dataFormatter, row, hf); // d) upperOrganization
                     getLegal(dataFormatter, row, hf); // e) legalTin
@@ -85,20 +90,40 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
                     getSubstance(dataFormatter, row, hf); // k) hazardousSubstance
                     getHfSpheres(dataFormatter, row, hf); // l) hFSphere
                     setFiles(hf); // set files
+                    getDescription(dataFormatter, row, hf); // description
+
+                    //create registry file
+                    Appeal appeal = Appeal.builder().legalName(hf.getLegalName()).legalTin(hf.getLegalTin()).address(hf.getAddress()).build();
+                    String hfTypeName = hfTypeService.getHfTypeNameById(hf.getHfTypeId());
+                    HfAppealDto dto = new HfAppealDto();
+                    dto.setUpperOrganization(hf.getUpperOrganization());
+                    dto.setName(hf.getName());
+                    dto.setHfTypeName(hfTypeName);
+                    dto.setExtraArea(hf.getExtraArea());
+                    dto.setHazardousSubstance(hf.getHazardousSubstance());
+                    String registryPdfPath = hazardousFacilityService.createHfRegistryPdf(appeal, hf.getRegistryNumber(), dto, hf.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+                    hf.setRegistryFilePath(registryPdfPath);
 
                     hazardousFacilityRepository.save(hf);
-
                 } catch (Exception e) {
-                    log.error("Xatolik! Excel faylning {}-qatorida ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, e.getMessage());
-                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
+                    log.error("Xatolik! Excel faylning {}-qatoridagi {} sonli ro'yhat raqamli ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, registryNumber, e.getMessage());
+//                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
                 }
             }
+            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum+1);
 
-        } catch (ExcelParsingException e) {
-            throw e; // to rollback transaction
+//        } catch (ExcelParsingException e) {
+//            throw e; // to rollback transaction
         } catch (Exception e) {
             log.error("Excel faylni qayta ishlashda kutilmagan xatolik: {}", e.getMessage());
-            throw new RuntimeException("Excel faylni qayta ishlashda kutilmagan xatolik: " + e.getMessage(), e);
+//            throw new RuntimeException("Excel faylni qayta ishlashda kutilmagan xatolik: " + e.getMessage(), e);
+        }
+    }
+
+    private void getDescription(DataFormatter dataFormatter, Row row, HazardousFacility hf) {
+        String description = dataFormatter.formatCellValue(row.getCell(17));
+        if (description != null &&  !description.isBlank()) {
+            hf.setDescription(description);
         }
     }
 
@@ -117,6 +142,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
         files.put("deviceTestingPath", null);
         files.put("appointmentOrderPath", null);
         files.put("ecologicalConclusionPath", null);
+        files.put("fireSafetyConclusionPath", null);
         hf.setFiles(files);
     }
 
@@ -161,12 +187,12 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
         if (addressExcel == null || addressExcel.isBlank()) {
             throw new Exception("address(h) bo'sh bo'lishi mumkin emas");
         }
-        Region region = regionService.findById(district.getRegionId());
-        String fullAddress = String.format("%s, %s, %s",
-                region.getName(),
-                district.getName(),
-                addressExcel);
-        hf.setAddress(fullAddress);
+//        Region region = regionService.findById(district.getRegionId());
+//        String fullAddress = String.format("%s, %s, %s",
+//                region.getName(),
+//                district.getName(),
+//                addressExcel);
+        hf.setAddress(addressExcel);
     }
 
     private District getDistrict(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
@@ -221,12 +247,13 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
         hf.setInspectorName(inspectorName);
     }
 
-    private static void getRegistryNumber(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
+    private static String getRegistryNumber(DataFormatter dataFormatter, Row row, HazardousFacility hf) throws Exception {
         String registryNumber = dataFormatter.formatCellValue(row.getCell(2));
         if (registryNumber == null || registryNumber.isBlank()) {
             throw new Exception("registryNumber bo'sh bo'lishi mumkin emas");
         }
-        hf.setRegistryNumber(registryNumber);
+        hf.setRegistryNumber(registryNumber.trim());
+        return registryNumber;
     }
 
     private void getRegistrationDate(Row row, HazardousFacility hf) throws Exception {

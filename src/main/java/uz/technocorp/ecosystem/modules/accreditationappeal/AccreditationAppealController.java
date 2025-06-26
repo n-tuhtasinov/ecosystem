@@ -14,6 +14,7 @@ import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ReAccreditationDt
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -48,6 +49,24 @@ public class AccreditationAppealController {
     public ResponseEntity<?> createExpendAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ExpendAccreditationDto> accreditationDto, HttpServletRequest request) {
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/generate-pdf")
+    public ResponseEntity<ApiResponse> generatePdfFromAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
+        String path = appealService.preparePdfWithParam(dto, user);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @PostMapping("/redo/generate-pdf")
+    public ResponseEntity<ApiResponse> generatePdfFromReAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
+        String path = appealService.preparePdfWithParam(dto, user);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @PostMapping("/expend/generate-pdf")
+    public ResponseEntity<ApiResponse> generatePdfFromExpendAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
+        String path = appealService.preparePdfWithParam(dto, user);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
 

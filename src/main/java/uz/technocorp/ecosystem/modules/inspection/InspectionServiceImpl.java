@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
+import uz.technocorp.ecosystem.modules.inspection.dto.InspectorShortInfo;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionCustom;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionFullDto;
@@ -43,6 +44,7 @@ public class InspectionServiceImpl implements InspectionService {
         inspection.setTin(dto.tin());
         inspection.setEndDate(dto.endDate());
         inspection.setStartDate(dto.startDate());
+        inspection.setDecreePath(dto.decreePath());
         inspection.setInspectorIds(dto.inspectorIdList());
         inspection.setIntervalId(dto.intervalId());
         inspection.setStatus(InspectionStatus.IN_PROCESS);
@@ -84,7 +86,7 @@ public class InspectionServiceImpl implements InspectionService {
         InspectionView view = repository
                 .getInspectionById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv", "Id", id));
-        List<InspectorDto> inspectors;
+        List<InspectorShortInfo> inspectors;
         try {
             inspectors = objectMapper.readValue(
                     view.getInspectors(),
@@ -101,12 +103,13 @@ public class InspectionServiceImpl implements InspectionService {
                 view.getStartDate(),
                 view.getEndDate(),
                 view.getStatus(),
-                view.getProgramPath(),
                 view.getSpecialCode(),
+                view.getDecreePath(),
                 view.getSchedulePath(),
-                view.getNotificationLetterDate(),
                 view.getNotificationLetterPath(),
+                view.getNotificationLetterDate(),
                 view.getOrderPath(),
+                view.getProgramPath(),
                 view.getMeasuresPath(),
                 view.getResultPath(),
                 inspectors
@@ -115,6 +118,6 @@ public class InspectionServiceImpl implements InspectionService {
 
     @Override
     public List<InspectionShortInfo> getAllByInspector(User user, LocalDate startDate, LocalDate endDate) {
-        return repository.getAllByInspectorId(user.getId(), startDate, endDate, InspectionStatus.IN_PROCESS);
+        return repository.getAllByInspectorId(user.getId(), startDate, endDate, InspectionStatus.IN_PROCESS.name());
     }
 }

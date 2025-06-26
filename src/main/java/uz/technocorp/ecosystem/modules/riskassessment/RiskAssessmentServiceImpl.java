@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -60,17 +61,17 @@ public class RiskAssessmentServiceImpl implements RiskAssessmentService {
     }
 
     @Override
-    public Page<RiskAssessmentView> getAllEquipments(@CurrentUser User user, Long tin, Integer regionId, Integer intervalId, int page, int size) {
+    public Page<RiskAssessmentView> getAllEquipments(@CurrentUser User user, Long tin, Integer regionId, Integer intervalId, int page, int size, EquipmentType type) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "sum_score");
         Role role = user.getRole();
         if (role.equals(Role.REGIONAL)) {
             Profile profile = profileService.getProfile(user.getProfileId());
             Office office = officeService.findById(profile.getOfficeId());
-            return repository.getAllEquipmentsByTinAndRegionId(pageable, office.getRegionId(), intervalId, tin);
+            return repository.getAllEquipmentsByTinAndRegionId(pageable, office.getRegionId(), intervalId, tin, type.name());
         } else if (role.equals(Role.INSPECTOR)) {
-            return repository.getAllEquipmentsByTinAndInspectorId(pageable, user.getId(), intervalId, tin);
+            return repository.getAllEquipmentsByTinAndInspectorId(pageable, user.getId(), intervalId, tin, type.name());
         } else {
-            return repository.getAllEquipmentsByTin(pageable, intervalId, tin);
+            return repository.getAllEquipmentsByTin(pageable, intervalId, tin, type.name());
         }
     }
 }

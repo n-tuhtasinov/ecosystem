@@ -40,7 +40,7 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
                 order_path as orderPath,
                 measures_path as measuresPath,
                 result_path as resultPath,
-                array_agg(json_build_object('id', u.id, 'name', p.full_name)) as inspectors
+                json_agg(json_build_object('id', u.id, 'name', p.full_name)) as inspectors
                 from inspection i
                 join inspection_inspector ii on i.id = ii.inspection_id
                 join users u on ii.inspector_id = u.id
@@ -74,5 +74,5 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
                 join profile p on i.tin = p.tin
             order by i.id, i.start_date
             """, nativeQuery=true)
-    List<InspectionShortInfo> getAllByInspectorId(UUID inspectorId, LocalDate startDate, LocalDate endDate, InspectionStatus status);
+    List<InspectionShortInfo> getAllByInspectorId(UUID inspectorId, LocalDate startDate, LocalDate endDate, String status);
 }

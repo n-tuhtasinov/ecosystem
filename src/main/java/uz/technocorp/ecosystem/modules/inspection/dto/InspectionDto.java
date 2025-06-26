@@ -10,5 +10,5 @@ import java.util.UUID;
  * @created 23.05.2025
  * @since v1.0
  */
-public record InspectionDto(LocalDate startDate, LocalDate endDate, Long tin, List<UUID> inspectorIdList, Integer intervalId) {
+public record InspectionDto(LocalDate startDate, LocalDate endDate, Long tin, List<UUID> inspectorIdList, Integer intervalId, String decreePath) {
 }

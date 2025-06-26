@@ -22,9 +22,13 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
                 ire.execution_file_path as executionFilePath,
                 ire.rejected_cause as rejectedCause,
                 status,
-                ire.id as reportExecutionId
+                ire.id as reportExecutionId,
+                u.id as inspectorId,
+                p.full_name as inspectorName
                 from inspection_report ir
-                join inspection_report_execution ire on ir.id = ire.report_id
+                left join inspection_report_execution ire on ir.id = ire.report_id
+                join users u on ir.created_by = u.id
+                join profile p on u.profile_id = p.id
                 where ir.inspection_id = :inspectionId
             """, nativeQuery = true)
     List<InspectionReportView> findAlByInspectionId(UUID inspectionId);

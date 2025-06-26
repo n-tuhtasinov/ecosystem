@@ -11,6 +11,8 @@ import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,7 +41,7 @@ public class HfEventController {
             String registryNumber = "123-TEST-XICHO";
             HfAppealDto hfAppealDto = JsonParser.parseJsonData(appeal.getData(), HfAppealDto.class);
 
-            return service.createHfRegistryPdf(appeal, registryNumber, hfAppealDto);
+            return service.createHfRegistryPdf(appeal, registryNumber, hfAppealDto, LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         }
         return "Bunday ID li ariza topilmadi";
     }
