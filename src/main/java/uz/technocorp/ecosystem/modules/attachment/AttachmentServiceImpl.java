@@ -125,11 +125,11 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public void deleteFileFromStorage(String filePath) {
 
-        if (filePath==null || filePath.isBlank() || !filePath.startsWith("/files")) {
+        if (filePath == null || filePath.isBlank() || !filePath.startsWith("/files")) {
             throw new RuntimeException("Tizimda faqat /files deb boshlangan fayllarnigina o'chirish mumkin");
         }
 
-        if (filePath.startsWith("/")){
+        if (filePath.startsWith("/")) {
             filePath = filePath.substring(1);
         }
 
@@ -138,9 +138,9 @@ public class AttachmentServiceImpl implements AttachmentService {
             boolean deleted = Files.deleteIfExists(fileToDelete);
             if (deleted) {
                 log.info("Fayl muvaffaqiyatli o'chirildi: {}", fileToDelete.toAbsolutePath());
-            }else {
+            } else {
                 log.warn("O'chirilishi kerak bo'lgan fayl topilmadi: {}", fileToDelete.toAbsolutePath());
-                throw new RuntimeException("O'chirilishi kerak bo'lgan fayl topilmadi: "+ filePath);
+                throw new RuntimeException("O'chirilishi kerak bo'lgan fayl topilmadi: " + filePath);
             }
         } catch (Exception e) {
             log.error("Faylni o'chirib bo'lmadi: {}. Xatolik: {}", filePath, e.getMessage());
@@ -176,7 +176,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private String replaceVariables(String htmlContent, Map<String, String> variables) {
         String result = htmlContent;
         for (Map.Entry<String, String> entry : variables.entrySet()) {
-            if (entry.getValue() == null){
+            if (entry.getValue() == null) {
                 throw new CustomException(entry.getKey() + " is null");
             }
             result = result.replace("{" + entry.getKey() + "}", entry.getValue());

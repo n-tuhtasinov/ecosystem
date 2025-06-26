@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.equipmentappeal.dto.*;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
@@ -25,8 +25,8 @@ import uz.technocorp.ecosystem.shared.ApiResponse;
 @RequiredArgsConstructor
 public class EquipmentGeneratePdfController {
 
-    private final AppealService appealService;
     private final EquipmentAppealService equipmentAppealService;
+    private final AppealPdfService appealPdfService;
 
     @PostMapping("/boiler")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @RequestBody BoilerDto boilerDto) {
@@ -106,6 +106,6 @@ public class EquipmentGeneratePdfController {
     }
 
     private String preparePdfWithParam(AppealDto dto, User user) {
-        return appealService.preparePdfWithParam(dto, user);
+        return appealPdfService.preparePdfWithParam(dto, user);
     }
 }

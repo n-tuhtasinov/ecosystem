@@ -1,8 +1,9 @@
-package uz.technocorp.ecosystem.modules.attestation.employee;
+package uz.technocorp.ecosystem.modules.employee;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,5 +19,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     List<Employee> findByHfIdAndPinIn(UUID hfId, List<String> pins);
 
-    int deleteByHfIdAndPinIn(UUID hfId, List<String> pins);
+    @Transactional
+    int deleteAllByHfIdAndPinIn(UUID hfId, List<String> pins);
 }
