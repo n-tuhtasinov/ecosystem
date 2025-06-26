@@ -23,11 +23,13 @@ import java.util.UUID;
  */
 public interface AppealService {
 
-    void saveAndSign(User user, SignedAppealDto<? extends AppealDto> dto, HttpServletRequest request);
+    UUID saveAndSign(User user, SignedAppealDto<? extends AppealDto> dto, HttpServletRequest request);
 
-    void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
+    void saveReplyAndSign(User user, SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request);
 
-    void replyReject(User user, SignedReplyDto replyDto, HttpServletRequest request);
+    void replyAccept(User user, SignedReplyDto<?> replyDto, HttpServletRequest request);
+
+    void replyReject(User user, SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request);
 
     UUID create(AppealDto dto, User user); //TODO Barcha ariza yaratiladigan controllerlar saveAndSign ga o'tkazilgandan keyin Service dan o'chirib, ServiceImplda private method qilib qo'yish kerak
 
@@ -41,12 +43,6 @@ public interface AppealService {
 
     AppealViewById getById(UUID appealId);
 
-    String preparePdfWithParam(AppealDto dto, User user);
-
-    String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
-
-    String prepareRejectPdfWithParam(User user, ReplyDto replyDto);
-
     void reject(User user, RejectDto dto);
 
     void confirm(User user, ConfirmationDto dto);
@@ -59,5 +55,8 @@ public interface AppealService {
 
     void setFilePath(User user, UploadFileDto dto);
 
+    Appeal findById(UUID id);
+
     Long getCount(User user, AppealStatus status);
+
 }

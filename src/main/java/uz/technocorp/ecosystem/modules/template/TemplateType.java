@@ -12,6 +12,8 @@ public enum TemplateType {
     XICHO_APPEAL,
     EQUIPMENT_APPEAL,
     ATTRACTION_PASSPORT_APPEAL,
+    ATTESTATION_LEADER_APPEAL,
+    ATTESTATION_EMPLOYEE_APPEAL,
 
     // Reestr
     REGISTRY_HF,
@@ -25,5 +27,9 @@ public enum TemplateType {
     REPLY_ATTRACTION_PASSPORT_APPEAL,
 
     // Arizani rad etish
-    REJECT_APPEAL;
+    REJECT_APPEAL,
+
+    // Attestatsiyaga Qo'mita va Huduiy bo'lim javob xati
+    REPLY_COMMITTEE_TO_APPEAL,
+    REPLY_REGIONAL_TO_APPEAL,
 }

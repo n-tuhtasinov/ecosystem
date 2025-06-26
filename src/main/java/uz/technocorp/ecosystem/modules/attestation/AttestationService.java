@@ -1,8 +1,16 @@
 package uz.technocorp.ecosystem.modules.attestation;
 
-
-import uz.technocorp.ecosystem.modules.attestation.dto.AttestationDto;
+import org.springframework.data.domain.Page;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
+import uz.technocorp.ecosystem.modules.attestation.dto.AttestationConductDto;
+import uz.technocorp.ecosystem.modules.attestation.dto.AttestationParamsDto;
+import uz.technocorp.ecosystem.modules.attestation.dto.AttestationPendingParamsDto;
+import uz.technocorp.ecosystem.modules.attestation.view.AttestationView;
 import uz.technocorp.ecosystem.modules.user.User;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Suxrob
@@ -12,5 +20,15 @@ import uz.technocorp.ecosystem.modules.user.User;
  */
 public interface AttestationService {
 
-    void create(User user, AttestationDto attestationDto);
+    Page<?> getAllByParams(User user, AttestationParamsDto dto);
+
+    Page<AppealViewById> getAllPending(User user, AttestationPendingParamsDto dto);
+
+    AttestationView getById(User user, UUID attestationId);
+
+    List<AttestationView> getByAppeal(User user, UUID appealId);
+
+    void create(Appeal appeal);
+
+    void conduct(User user, AttestationConductDto dto);
 }

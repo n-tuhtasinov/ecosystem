@@ -220,5 +220,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findLegalUserByTin(tin).orElseThrow(()-> new ResourceNotFoundException("User (roli legal)", "tin", tin));
     }
 
+    @Override
+    public User findById(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+    }
 
 }
