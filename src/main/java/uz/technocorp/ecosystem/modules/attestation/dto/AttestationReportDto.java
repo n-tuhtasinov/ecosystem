@@ -14,9 +14,9 @@ public class AttestationReportDto {
     private String legalAddress;
     private String hfName;
     private String hfAddress;
-    private Integer totalEmployees;
-    private Integer leadersPassed;
-    private Integer techniciansPassed;
-    private Integer employeesPassed;
-    private Integer failedEmployees;
+    private Long totalEmployees;
+    private Long leadersPassed;
+    private Long techniciansPassed;
+    private Long employeesPassed;
+    private Long failedEmployees;
 }

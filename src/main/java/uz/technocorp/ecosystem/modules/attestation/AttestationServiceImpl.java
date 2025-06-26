@@ -54,17 +54,6 @@ public class AttestationServiceImpl implements AttestationService {
     }
 
     @Override
-    public Page<AppealViewById> getAllPending(User user, AttestationPendingParamsDto dto) {
-        return switch (user.getRole()) {
-            case MANAGER, HEAD -> getAllPendingForCommittee(user, dto);
-            case REGIONAL -> getAllPendingForRegional(user, dto);
-            case INSPECTOR -> getAllPendingForInspector(user, dto);
-            case LEGAL -> getAllPendingForLegal(user, dto);
-            default -> throw new CustomException("Sizda attestatsiya ko'rish ruhsati yo'q");
-        };
-    }
-
-    @Override
     public AttestationView getById(User user, UUID attestationId) {
         return switch (user.getRole()) {
             case MANAGER, HEAD, CHAIRMAN -> getByIdForCommittee(attestationId);
@@ -120,12 +109,12 @@ public class AttestationServiceImpl implements AttestationService {
     public void conduct(User user, AttestationConductDto dto) {
         List<Attestation> list = switch (user.getRole()) {
             case MANAGER, HEAD -> repository.findAllByAppealIdAndEmployeeLevel(dto.getAppealId(), EmployeeLevel.LEADER);
-            case REGIONAL -> getRegionalAttestationByAppealId(user, dto);
+            case INSPECTOR -> getPendingAttForInspector(user, dto);
             default -> throw new CustomException("Sizda xodimlarni attestatsiyadan o'tkazish huquqi yo`q!");
         };
 
         if (list == null || list.isEmpty()) {
-            throw new CustomException("Attestatsiya xodimlari topilmadi");
+            throw new CustomException("Sizga biriktirilgan attestatsiya xodimlari topilmadi");
         }
 
         for (Attestation att : list) {
@@ -184,27 +173,10 @@ public class AttestationServiceImpl implements AttestationService {
         return new PageImpl<>(attestations.stream().map(this::map).toList(), pageable, attestations.getTotalElements());
     }
 
-    private Page<AppealViewById> getAllPendingForCommittee(User user, AttestationPendingParamsDto dto) {
-        return null;
-    }
-
-    private Page<AppealViewById> getAllPendingForRegional(User user, AttestationPendingParamsDto dto) {
-        return null;
-    }
-
-    private Page<AppealViewById> getAllPendingForInspector(User user, AttestationPendingParamsDto dto) {
-        return null;
-    }
-
-    private Page<AppealViewById> getAllPendingForLegal(User user, AttestationPendingParamsDto dto) {
-
-
-        return null;
-    }
-
-    private List<Attestation> getRegionalAttestationByAppealId(User user, AttestationConductDto dto) {
+    private List<Attestation> getPendingAttForInspector(User user, AttestationConductDto dto) {
         Integer regionId = getRegionId(user);
-        return repository.findAllByAppealIdAndRegionIdAndEmployeeLevelNot(dto.getAppealId(), regionId, EmployeeLevel.LEADER);
+        return repository.findAllByAppealIdAndExecutorIdAndRegionIdAndStatusAndEmployeeLevelNot(
+                dto.getAppealId(), user.getId(), regionId, AttestationStatus.PENDING, EmployeeLevel.LEADER/*Excluding the LEADER*/);
     }
 
     private List<AttestationView> getAllByTinAndAppealId(User user, UUID appealId) {
