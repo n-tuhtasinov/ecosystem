@@ -18,6 +18,7 @@ import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.attestation.AttestationService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
@@ -31,13 +32,13 @@ import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
 import uz.technocorp.ecosystem.modules.office.Office;
-import uz.technocorp.ecosystem.modules.office.OfficeRepository;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.User;
-import uz.technocorp.ecosystem.modules.user.UserRepository;
+import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.utils.JsonMaker;
 
@@ -56,19 +57,20 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AppealServiceImpl implements AppealService {
 
-    private final AppealRepository repository;
+    private final IonizingRadiationSourceService ionizingRadiationSourceService;
+    private final AppealExecutionProcessService appealExecutionProcessService;
+    private final AttestationService attestationService;
+    private final AttachmentService attachmentService;
+    private final HazardousFacilityService hfService;
+    private final EquipmentService equipmentService;
+    private final DocumentService documentService;
+    private final DistrictService districtService;
+    private final ProfileService profileService;
     private final RegionService regionService;
     private final HfTypeService hfTypeService;
-    private final UserRepository userRepository;
-    private final ProfileService profileService;
-    private final DistrictService districtService;
-    private final DocumentService documentService;
-    private final EquipmentService equipmentService;
-    private final OfficeRepository officeRepository;
-    private final HazardousFacilityService hfService;
-    private final AttachmentService attachmentService;
-    private final AppealExecutionProcessService appealExecutionProcessService;
-    private final IonizingRadiationSourceService ionizingRadiationSourceService;
+    private final OfficeService officeService;
+    private final AppealRepository repository;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -77,7 +79,7 @@ public class AppealServiceImpl implements AppealService {
         UUID appealId = create(dto.getDto(), user);
 
         // Create a document
-        documentService.create(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
+        createDocument(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
 
         // Delete files from Attachment
         attachmentService.deleteByPaths(dto.getDto().getFiles().values());
@@ -87,7 +89,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     @Transactional
-    public void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request) {
+    public void saveReplyAndSign(User user, SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request) {
         // Check appeal by (appealId, status, inspectorId)
         Appeal appeal = repository.findByIdAndStatusAndExecutorId(replyDto.getDto().getAppealId(), AppealStatus.IN_PROCESS, user.getId())
                 .orElseThrow(
@@ -101,19 +103,29 @@ public class AppealServiceImpl implements AppealService {
         }
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPORT, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
+        createDocument(new DocumentDto(appeal.getId(), DocumentType.REPORT, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.IN_AGREEMENT);
 
         // Create an execution process by the appeal
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.IN_AGREEMENT, replyDto.getDto().getConclusion()));
+        createExecutionProcess(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.IN_AGREEMENT, replyDto.getDto().getConclusion()));
     }
 
     @Override
     @Transactional
-    public void replyReject(User user, SignedReplyDto replyDto, HttpServletRequest request) {
-        Integer officeId = profileService.getProfile(user.getProfileId()).getOfficeId();
+    public void replyAccept(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
+        switch (user.getRole()) {
+            case REGIONAL -> acceptByRegional(user, replyDto, request);
+            case MANAGER, HEAD -> acceptByCommittee(user, replyDto, request);
+            default -> throw new CustomException("Sizda attestatsiyaga javob berish huquqi yo'q");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void replyReject(User user, SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request) {
+        Integer officeId = getProfile(user.getProfileId()).getOfficeId();
 
         Appeal appeal = switch (user.getRole()) {
             case Role.MANAGER -> findByIdAndStatus(replyDto.getDto().getAppealId(), AppealStatus.NEW);
@@ -122,20 +134,20 @@ public class AppealServiceImpl implements AppealService {
         };
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
+        createDocument(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
 
         // Change appealStatus and set conclusion
         repository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().getConclusion(), AppealStatus.CANCELED);
 
         // Create an execution process by the appeal
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.CANCELED, replyDto.getDto().getConclusion()));
+        createExecutionProcess(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.CANCELED, replyDto.getDto().getConclusion()));
     }
 
     @Override
     public UUID create(AppealDto dto, User user) {
 
         //make data
-        Profile profile = profileService.getProfile(user.getProfileId());
+        Profile profile = getProfile(user.getProfileId());
         Region region = regionService.findById(dto.getRegionId());
         District district = districtService.findById(dto.getDistrictId());
         Office office = officeService.findByRegionId(region.getId());
@@ -172,7 +184,7 @@ public class AppealServiceImpl implements AppealService {
         repository.save(appeal);
 
         //create appeal execution process
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), appealStatus, null));
+        createExecutionProcess(new AppealExecutionProcessDto(appeal.getId(), appealStatus, null));
 
         return appeal.getId();
     }
@@ -187,9 +199,7 @@ public class AppealServiceImpl implements AppealService {
     @Override
     @Transactional
     public void setInspector(SetInspectorDto dto) {
-        User user = userRepository
-                .findById(dto.inspectorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Inspektor", "Id", dto.inspectorId()));
+        User user = userService.findById(dto.inspectorId());
         Appeal appeal = findById(dto.appealId());
 
         appeal.setExecutorId(dto.inspectorId());
@@ -200,7 +210,7 @@ public class AppealServiceImpl implements AppealService {
         repository.save(appeal);
 
         // create an execution process by appeal
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), AppealStatus.IN_PROCESS, null));
+        createExecutionProcess(new AppealExecutionProcessDto(dto.appealId(), AppealStatus.IN_PROCESS, null));
     }
 
     @Override
@@ -230,7 +240,7 @@ public class AppealServiceImpl implements AppealService {
         documentService.reject(user, dto);
 
         // create an execution process by appeal
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), AppealStatus.IN_PROCESS, dto.description()));
+        createExecutionProcess(new AppealExecutionProcessDto(dto.appealId(), AppealStatus.IN_PROCESS, dto.description()));
     }
 
     @Override
@@ -250,7 +260,7 @@ public class AppealServiceImpl implements AppealService {
         documentService.confirmationByAppeal(user, dto.documentId());
 
         // create an execution process by appeal
-        appealExecutionProcessService.create(new AppealExecutionProcessDto(dto.appealId(), appealStatus, null));
+        createExecutionProcess(new AppealExecutionProcessDto(dto.appealId(), appealStatus, null));
 
         //create registry for the appeal if the appeal's status is completed
         if (appealStatus == AppealStatus.COMPLETED) {
@@ -315,13 +325,14 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public Long getCount(User user, AppealStatus status) {
-        Profile profile = profileService.getProfile(user.getProfileId());
-        return switch (user.getRole()){
-            case HEAD, MANAGER, CHAIRMAN -> appealRepository.countByParams(new AppealCountParams(status, null, null, null));
-            case LEGAL ->  appealRepository.countByParams(new AppealCountParams(status, profile.getTin(), null, null));
-            case INSPECTOR -> appealRepository.countByParams(new AppealCountParams(status, null, user.getId(), null));
-            case REGIONAL -> appealRepository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId()));
-            default -> throw new RuntimeException(user.getRole().name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting");
+        Profile profile = getProfile(user.getProfileId());
+        return switch (user.getRole()) {
+            case HEAD, MANAGER, CHAIRMAN -> repository.countByParams(new AppealCountParams(status, null, null, null));
+            case LEGAL -> repository.countByParams(new AppealCountParams(status, profile.getTin(), null, null));
+            case INSPECTOR -> repository.countByParams(new AppealCountParams(status, null, user.getId(), null));
+            case REGIONAL -> repository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId()));
+            default ->
+                    throw new RuntimeException(user.getRole().name() + " roli uchun hali logika yozilmagan. Backendchilarga ayting");
         };
     }
 
@@ -359,6 +370,7 @@ public class AppealServiceImpl implements AppealService {
                     number = orderNumber + "-QUR-" + LocalDate.now().getYear();
             case "registerAttractionPassport", "reRegisterAttractionPassport" ->
                     number = orderNumber + "-ATP-" + LocalDate.now().getYear();
+            case "registerAttestation" -> number = orderNumber + "-ATT-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
         return new OrderNumberDto(orderNumber, number);
@@ -387,5 +399,62 @@ public class AppealServiceImpl implements AppealService {
                 return AppealStatus.NEW;
             }
         }
+    }
+
+    private void acceptByCommittee(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
+        ReplyAttestationDto dto = (ReplyAttestationDto) replyDto.getDto();
+        Appeal appeal = repository.findByIdAndStatusAndAppealType(dto.getAppealId(), AppealStatus.NEW, AppealType.ATTESTATION_COMMITTEE)
+                .orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.getAppealId()));
+        appeal.setExecutorId(user.getId());
+        appeal.setExecutorName(user.getName());
+        appeal.setDeadline(dto.getDateOfAttestation().toLocalDate());
+        appeal.setResolution(dto.getResolution());
+        appeal.setStatus(AppealStatus.COMPLETED);
+        repository.save(appeal);
+
+        // Create a reply document
+        createDocument(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
+
+        // Create an execution process by the appeal
+        createExecutionProcess(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.COMPLETED, dto.getResolution()));
+
+        // Create attestation
+        attestationService.create(appeal);
+    }
+
+    private void acceptByRegional(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
+        SetInspectorDto dto = (SetInspectorDto) replyDto.getDto();
+        User inspector = userService.findById(dto.inspectorId());
+        Integer officeId = getProfile(user.getProfileId()).getOfficeId();
+
+        Appeal appeal = repository.findByIdAndStatusAndOfficeIdAndAppealType(dto.appealId(), AppealStatus.NEW, officeId, AppealType.ATTESTATION_REGIONAL)
+                .orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.appealId()));
+        appeal.setExecutorId(inspector.getId());
+        appeal.setExecutorName(inspector.getName());
+        appeal.setDeadline(dto.deadline());
+        appeal.setResolution(dto.resolution());
+        appeal.setStatus(AppealStatus.COMPLETED);
+        repository.save(appeal);
+
+        // Create a reply document
+        createDocument(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
+
+        // Create an execution process by the appeal
+        createExecutionProcess(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.COMPLETED, dto.resolution()));
+
+        // Create attestation
+        attestationService.create(appeal);
+    }
+
+    private Profile getProfile(UUID profileId) {
+        return profileService.getProfile(profileId);
+    }
+
+    private void createDocument(DocumentDto dto) {
+        documentService.create(dto);
+    }
+
+    private void createExecutionProcess(AppealExecutionProcessDto dto) {
+        appealExecutionProcessService.create(dto);
     }
 }

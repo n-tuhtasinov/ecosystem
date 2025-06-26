@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
+import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
@@ -71,8 +72,33 @@ public class AppealController {
     }
 
     @PostMapping("/reply")
-    public ResponseEntity<ApiResponse> reply(@CurrentUser User user, @Valid @RequestBody SignedReplyDto replyDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> reply(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request) {
         service.saveReplyAndSign(user, replyDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/reply/regional-accept/generate-pdf")
+    public ResponseEntity<ApiResponse> generateRegionalAcceptPdf(@CurrentUser User user, @Valid @RequestBody SetInspectorDto inspectorDto) {
+        String path = appealPdfService.prepareRegionalAcceptPdfWithParam(user, inspectorDto);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @PostMapping("/reply/regional-accept")
+    public ResponseEntity<ApiResponse> replyAcceptRegional(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<SetInspectorDto> signedReplyDto, HttpServletRequest request) {
+        service.replyAccept(user, signedReplyDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+
+    @PostMapping("/reply/committee-accept/generate-pdf")
+    public ResponseEntity<ApiResponse> generateCommitteeAcceptPdf(@CurrentUser User user, @Valid @RequestBody ReplyAttestationDto replyAttestationDto) {
+        String path = appealPdfService.prepareCommitteeAcceptPdfWithParam(user, replyAttestationDto);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @PostMapping("/reply/committee-accept")
+    public ResponseEntity<ApiResponse> replyAcceptByCommittee(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<ReplyAttestationDto> signedReplyDto, HttpServletRequest request) {
+        service.replyAccept(user, signedReplyDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
@@ -83,7 +109,7 @@ public class AppealController {
     }
 
     @PostMapping("/reply/reject")
-    public ResponseEntity<ApiResponse> replyReject(@CurrentUser User user, @Valid @RequestBody SignedReplyDto replyDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> replyReject(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request) {
         service.replyReject(user, replyDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }

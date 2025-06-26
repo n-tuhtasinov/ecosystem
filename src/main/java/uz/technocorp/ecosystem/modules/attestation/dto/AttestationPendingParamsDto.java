@@ -8,14 +8,16 @@ import lombok.Setter;
 /**
  * @author Suxrob
  * @version 1.0
- * @created 20.06.2025
+ * @created 25.06.2025
  * @since v1.0
  */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttestationCreateDto {
+public class AttestationPendingParamsDto {
 
-    private String id;
+    private String search; // legalTin or legalName
+    private Integer regionId;
+
 }

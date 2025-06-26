@@ -25,9 +25,11 @@ public interface AppealService {
 
     UUID saveAndSign(User user, SignedAppealDto<? extends AppealDto> dto, HttpServletRequest request);
 
-    void saveReplyAndSign(User user, SignedReplyDto replyDto, HttpServletRequest request);
+    void saveReplyAndSign(User user, SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request);
 
-    void replyReject(User user, SignedReplyDto replyDto, HttpServletRequest request);
+    void replyAccept(User user, SignedReplyDto<?> replyDto, HttpServletRequest request);
+
+    void replyReject(User user, SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request);
 
     UUID create(AppealDto dto, User user); //TODO Barcha ariza yaratiladigan controllerlar saveAndSign ga o'tkazilgandan keyin Service dan o'chirib, ServiceImplda private method qilib qo'yish kerak
 
@@ -56,4 +58,5 @@ public interface AppealService {
     Appeal findById(UUID id);
 
     Long getCount(User user, AppealStatus status);
+
 }

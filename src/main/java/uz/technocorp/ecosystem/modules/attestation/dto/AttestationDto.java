@@ -2,16 +2,22 @@ package uz.technocorp.ecosystem.modules.attestation.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeDto;
+import uz.technocorp.ecosystem.modules.attestation.enums.AttestationDirection;
+import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDto;
+import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,65 +34,81 @@ import java.util.UUID;
 @NoArgsConstructor
 public class AttestationDto implements AppealDto {
 
+    @SkipDb
     @NotBlank(message = "Telefon raqam kiritilmadi")
     private String phoneNumber;
 
-    @NotNull(message = "XICHO tanlanmadi")
+    @NotNull(message = "XICHO ID jo'natilmadi")
     private UUID hfId;
 
-    @NotNull
-    @Min(value = 1)
-    @Max(value = 2)
-    private Integer direction;
+    @NotBlank(message = "XICHO tanlanmadi")
+    private String hfRegistryNumber;
 
-    @NotEmpty
-    private List<@Valid EmployeeDto> pinList;
+    private String hfUpperOrganizationName;
 
-    @Override
-    public AppealType getAppealType() {
-        return AppealType.ATTESTATION;
-    }
+    @NotBlank(message = "Tashkilot nomi kiritilmadi")
+    private String legalName;
 
-    // Other fields
-    @Schema(hidden = true)
-    private Integer regionId;
+    @NotNull(message = "STIR kiritilmadi")
+    private Long legalTin;
 
-    @Schema(hidden = true)
-    private Integer districtId;
+    @NotBlank(message = "XICHO nomi kiritilmadi")
+    private String hfName;
 
-    @Schema(hidden = true)
+    @SkipDb
+    @NotBlank(message = "XICHO manzili kiritilmadi")
     private String address;
 
+    @SkipDb
+    @NotNull(message = "XICHO joylashgan viloyat kiritilmadi")
+    private Integer regionId;
+
+    @SkipDb
+    @NotNull(message = "XICHO joylashgan tuman kiritilmadi")
+    private Integer districtId;
+
+    @NotNull(message = "Attestatsiyadan o'tadigan xodimlar turi tanlanmadi")
+    private AttestationDirection direction;
+
+    private LocalDateTime dateOfAttestation;
+
+    @NotEmpty(message = "Attestatsiya uchun xodim tanlanmadi")
+    private List<@Valid EmployeeDto> employeeList;
+
+    // Other field
+    @SkipDb
+    @Schema(hidden = true)
+    private String dynamicRows;
+
+    // Override fields
+    @Override
+    @Schema(hidden = true)
+    public AppealType getAppealType() {
+        return AttestationDirection.REGIONAL.equals(direction) ? AppealType.ATTESTATION_REGIONAL : AppealType.ATTESTATION_COMMITTEE;
+    }
+
+    @SkipDb
     @Schema(hidden = true)
     private Map<String, String> files;
 
+    @Override
+    public LocalDate getDeadline() {
+        return dateOfAttestation != null ? dateOfAttestation.toLocalDate() : null;
+    }
+
+    // Validation
     @Schema(hidden = true)
-    private LocalDate deadline;
+    @AssertTrue(message = "Texnik va oddiy xodimlar attestatsiyadan o'tkazish sanasi kiritilishi kerak")
+    public boolean isDateOfAttestation() {
+        if (AttestationDirection.REGIONAL.equals(direction)) {
+            return dateOfAttestation != null;
+        }
+        return true;
+    }
 
     @Schema(hidden = true)
-    private AttestationCreateDto createDto;
-
-    /**
-     * Tashkilot kesimida (pagination) :
-     *
-     * 1. Tashkilot manzili
-     * 2. Tashkilot STIR
-     * 3. Xicho nomi
-     * 4. Xicho addressi
-     * 5. Jami xodimlar soni
-     * 6. Attestatsiyadan o'tgan raxbar xodimlar soni
-     * 7. Attestatsiyadan o'tgan texnik xodimlar soni
-     * 8. Attestatsiyadan o'tgan xodimlar soni
-     *
-     *
-     * Xicho kesimida (pagination) :
-     *
-     * 1. Xodim FISH
-     * 2. Lavozimi
-     * 3. PINFL
-     * 4. Tashkilot nomi
-     * 5. Tashkilot STIR
-     * 6. Xicho nomi
-     * 7. Attestatsiya sanasi
-     */
+    @AssertTrue(message = "Kiritilgan xodim tanlangan yo'nalishda emas")
+    public boolean isValidEmployeesLevel() {
+        return employeeList.stream().allMatch(e -> e.getLevel().getDirection().equals(direction.getValue()));
+    }
 }

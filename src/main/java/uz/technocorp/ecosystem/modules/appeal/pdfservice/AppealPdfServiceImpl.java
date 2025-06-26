@@ -1,10 +1,14 @@
-package uz.technocorp.ecosystem.modules.appeal;
+package uz.technocorp.ecosystem.modules.appeal.pdfservice;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.ReplyAttestationDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.ReplyDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.appeal.processor.AppealPdfProcessor;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.department.DepartmentService;
@@ -20,10 +24,11 @@ import uz.technocorp.ecosystem.modules.template.Template;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
@@ -40,14 +45,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AppealPdfServiceImpl implements AppealPdfService {
 
-    private final OfficeService officeService;
-    private final AppealService appealService;
-    private final ProfileService profileService;
-    private final TemplateService templateService;
-    private final HazardousFacilityService hfService;
-    private final DepartmentService departmentService;
-    private final AttachmentService attachmentService;
     private final Map<Class<? extends AppealDto>, AppealPdfProcessor> processors;
+    private final AttachmentService attachmentService;
+    private final DepartmentService departmentService;
+    private final HazardousFacilityService hfService;
+    private final TemplateService templateService;
+    private final ProfileService profileService;
+    private final AppealService appealService;
+    private final OfficeService officeService;
+    private final UserService userService;
 
     @Override
     public String preparePdfWithParam(AppealDto dto, User user) {
@@ -74,12 +80,60 @@ public class AppealPdfServiceImpl implements AppealPdfService {
     }
 
     @Override
+    public String prepareRegionalAcceptPdfWithParam(User user, SetInspectorDto dto) {
+        Appeal appeal = appealService.findById(dto.appealId());
+        User inspector = userService.findById(dto.inspectorId());
+        Template template = templateService.getByType(TemplateType.REPLY_REGIONAL_TO_APPEAL.name());
+
+        // Appeal date
+        String[] splitAppealDate = getSplitDate(appeal.getCreatedAt());
+        String appealDate = splitAppealDate[0] + " yil " + splitAppealDate[2] + " " + splitAppealDate[1];
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("date", appealDate);
+        parameters.put("officeName", appeal.getOfficeName());
+        parameters.put("inspectorName", inspector.getName());
+        parameters.put("comment", dto.resolution());
+        parameters.put("userName", user.getName());
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/attestation", parameters, true);
+    }
+
+    @Override
+    public String prepareCommitteeAcceptPdfWithParam(User user, ReplyAttestationDto dto) {
+        Appeal appeal = appealService.findById(dto.getAppealId());
+        Template template = templateService.getByType(TemplateType.REPLY_COMMITTEE_TO_APPEAL.name());
+
+        // Attestation date
+        String[] splitAttDate = getSplitDate(dto.getDateOfAttestation());
+        String dateOfAttestation = splitAttDate[0] + " yil " + splitAttDate[2] + " " + splitAttDate[1];
+
+        // Appeal date
+        String[] splitAppealDate = getSplitDate(appeal.getCreatedAt());
+        String appealDate = splitAppealDate[0] + " yil " + splitAppealDate[2] + " " + splitAppealDate[1];
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("date", appealDate);
+        parameters.put("officeName", appeal.getOfficeName());
+        parameters.put("dateOfAttestation", dateOfAttestation);
+        parameters.put("timeOfAttestation", splitAttDate[3]);
+        parameters.put("comment", dto.getResolution());
+        parameters.put("userName", user.getName());
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/attestation", parameters, true);
+    }
+
+    @Override
     public String prepareRejectPdfWithParam(User user, ReplyDto dto) {
         Appeal appeal = appealService.findById(dto.getAppealId());
 
         Template template = templateService.getByType(TemplateType.REJECT_APPEAL.name());
 
-        String[] formattedDate = appeal.getCreatedAt().format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.of("uz"))).split(" ");
+        String[] formattedDate = getSplitDate(appeal.getCreatedAt());
         String appealDate = formattedDate[2] + " yil " + formattedDate[0] + " " + formattedDate[1];
 
         String[] workSpace = getExecutorWorkspace(user);
@@ -113,12 +167,12 @@ public class AppealPdfServiceImpl implements AppealPdfService {
 
     private Map<String, String> buildBaseParameters(String userName, ReplyDto replyDto, Appeal appeal) {
         // Current date
-        String[] formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.of("uz"))).split(" ");
+        String[] formattedDate = getSplitDate(LocalDateTime.now());
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("day", formattedDate[0]);
+        parameters.put("day", formattedDate[2]);
         parameters.put("month", formattedDate[1]);
-        parameters.put("year", formattedDate[2]);
+        parameters.put("year", formattedDate[0]);
         parameters.put("officeName", appeal.getOfficeName());
         parameters.put("inspectorName", userName);
         parameters.put("legalName", appeal.getLegalName());
@@ -222,5 +276,9 @@ public class AppealPdfServiceImpl implements AppealPdfService {
             default ->
                     throw new CustomException("Sizda arizani rad etish huquqi yo'q. Tizimda sizning rolingiz : " + user.getRole().name());
         };
+    }
+
+    private String[] getSplitDate(LocalDateTime date) {
+        return date.format(DateTimeFormatter.ofPattern("yyyy MMMM dd HH:mm", Locale.of("uz"))).split(" ");
     }
 }

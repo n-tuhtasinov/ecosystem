@@ -1,8 +1,9 @@
-package uz.technocorp.ecosystem.modules.attestation.employee;
+package uz.technocorp.ecosystem.modules.employee;
 
 
 import jakarta.persistence.*;
 import lombok.*;
+import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
@@ -36,16 +37,19 @@ public class Employee extends BaseEntity {
     private String certNumber;
 
     @Column
+    private LocalDate dateOfEmployment;
+
+    @Column
     private LocalDate certDate;
+
+    @Column
+    private LocalDate certExpiryDate;
 
     @Column
     private LocalDate ctcTrainingFromDate; // Kontexnazorat o'qigan muddati
 
     @Column
     private LocalDate ctcTrainingToDate; // Kontexnazorat o'quv muddati
-
-    @Column
-    private LocalDate certExpiryDate;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -58,22 +62,7 @@ public class Employee extends BaseEntity {
     @Column(name = "hf_id")
     private UUID hfId;
 
-    /**
-     * @goal XICHO xodimlarini attestatsiyadan o'tkazish kerak
-     *
-     * @case xodimlar 3 toifaga bo'linadi ( Rahbar, Injener, Oddiy xodim )
-     * xodimlar 2-5 yil oraliqda qayta attestatsiyadan o'tadi
-     *
-     * Rahbar qo'mita orqali o'tadi, qolgan xodimlar hududiy bo'lim orqali
-     *
-     * Injener va oddiy xodimlar uchun attestatsiya jarayoni :
-     * @process XICHO rahbar ariza shakllantirib ( xodimlar listini tayyorlab ) qo'mitaga ariza tashlaydi
-     * 1. Ariza tegishli hududiy bo'limga tushadi va hududiy bo'lim inspektor biriktiradi
-     * 2. Inspektor xicho ga borib xodimlarni attestatsiyadan o'tkazadi
-     *
-     *
-     *
-     *
-     *
-     */
+    @Column
+    private String hfName;
+
 }

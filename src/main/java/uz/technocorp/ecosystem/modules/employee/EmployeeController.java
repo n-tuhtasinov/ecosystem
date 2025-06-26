@@ -1,11 +1,11 @@
-package uz.technocorp.ecosystem.modules.attestation.employee;
+package uz.technocorp.ecosystem.modules.employee;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeDeleteDto;
-import uz.technocorp.ecosystem.modules.attestation.employee.dto.EmployeeListDto;
+import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDeleteDto;
+import uz.technocorp.ecosystem.modules.employee.dto.EmployeeListDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;

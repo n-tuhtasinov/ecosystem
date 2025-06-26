@@ -1,7 +1,9 @@
-package uz.technocorp.ecosystem.modules.appeal;
+package uz.technocorp.ecosystem.modules.appeal.pdfservice;
 
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.ReplyAttestationDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.ReplyDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 /**
@@ -15,6 +17,10 @@ public interface AppealPdfService {
     String preparePdfWithParam(AppealDto dto, User user);
 
     String prepareReplyPdfWithParam(User user, ReplyDto replyDto);
+
+    String prepareRegionalAcceptPdfWithParam(User user, SetInspectorDto inspectorDto);
+
+    String prepareCommitteeAcceptPdfWithParam(User user, ReplyAttestationDto dto);
 
     String prepareRejectPdfWithParam(User user, ReplyDto replyDto);
 }

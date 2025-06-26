@@ -1,6 +1,7 @@
-package uz.technocorp.ecosystem.modules.attestation.employee;
+package uz.technocorp.ecosystem.modules.employee.enums;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author Suxrob
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
  * @created 14.06.2025
  * @since v1.0
  */
+@Getter
 @AllArgsConstructor
 public enum EmployeeLevel {
 
@@ -15,7 +17,7 @@ public enum EmployeeLevel {
     TECHNICIAN(2, "Injener, Texnik xodim", 3),
     EMPLOYEE(2, "Oddiy xodim", 1);
 
-    public final Integer direction; // Committee - 1  | Regional - 2
-    public final String value;
-    public final Integer term; // Attestatsiya muddati
+    private final Integer direction; // Committee - 1  | Regional - 2
+    private final String value;
+    private final Integer term; // Attestatsiya muddati
 }

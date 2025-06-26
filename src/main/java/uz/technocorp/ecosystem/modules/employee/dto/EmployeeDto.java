@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.attestation.employee.dto;
+package uz.technocorp.ecosystem.modules.employee.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.modules.attestation.employee.EmployeeLevel;
+import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 
 import java.time.LocalDate;
 
@@ -48,4 +48,6 @@ public class EmployeeDto {
 
     @NotNull(message = "Kontexnazorato'quv DM o'qigan muddati tugashi kiritilmadi")
     private LocalDate ctcTrainingToDate;
+
+    private LocalDate dateOfEmployment;
 }

@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.attestation.employee.dto;
+package uz.technocorp.ecosystem.modules.employee.dto;
 
 /**
  * @author Suxrob
