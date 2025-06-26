@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import uz.technocorp.ecosystem.modules.attestation.dto.AttestationPendingParamsDto;
 import uz.technocorp.ecosystem.modules.attestation.dto.AttestationReportDto;
+import uz.technocorp.ecosystem.modules.attestation.enums.AttestationStatus;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.UUID;
  * @since v1.0
  */
 @Repository
-public interface AttestationRepository extends JpaRepository<Attestation, UUID>, JpaSpecificationExecutor<Attestation> {
+public interface AttestationRepository extends JpaRepository<Attestation, UUID>, JpaSpecificationExecutor<Attestation>, CustomAttestationRepository {
 
     Optional<Attestation> findByIdAndLegalTin(UUID attestationId, Long tin);
 
@@ -31,7 +33,12 @@ public interface AttestationRepository extends JpaRepository<Attestation, UUID>,
 
     List<Attestation> findAllByAppealIdAndRegionIdAndEmployeeLevelNot(UUID appealId, Integer regionId, EmployeeLevel employeeLevel);
 
+    List<Attestation> findAllByAppealIdAndExecutorIdAndRegionIdAndStatusAndEmployeeLevelNot(UUID appealId, UUID inspectorId, Integer regionId, AttestationStatus status, EmployeeLevel employeeLevel);
+
     List<Attestation> findAllByAppealIdAndLegalTin(UUID appealId, Long tin);
+
+    @Query("select distinct(appealId) from Attestation where status = 'PENDING' and employeeLevel = 'LEADER' ")
+    List<UUID> getAllPendingForCommittee();
 
     @Query(
             value = """

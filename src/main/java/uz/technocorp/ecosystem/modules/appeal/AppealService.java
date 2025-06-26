@@ -59,4 +59,6 @@ public interface AppealService {
 
     Long getCount(User user, AppealStatus status);
 
+    List<AppealViewById> getByIds(List<UUID> appealIds);
+
 }
