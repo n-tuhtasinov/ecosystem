@@ -63,7 +63,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
     private static final String DATE_FORMAT = "dd.MM.yyyy";
 
 
-    @Transactional(rollbackFor = ExcelParsingException.class)
+//    @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
     public void upload(MultipartFile file) {
 

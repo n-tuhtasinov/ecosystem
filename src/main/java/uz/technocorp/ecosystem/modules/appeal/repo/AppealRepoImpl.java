@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -90,8 +91,8 @@ public class AppealRepoImpl implements AppealRepo {
         }
 
         if (params.get("executorId") != null) {
-            predicates.add(cb.equal(appealRoot.get("executorId"), params.get("executorId")));
-            countPredicates.add(cb.equal(countRoot.get("executorId"), params.get("executorId")));
+            predicates.add(cb.equal(appealRoot.get("executorId"), UUID.fromString(params.get("executorId"))));
+            countPredicates.add(cb.equal(countRoot.get("executorId"), UUID.fromString(params.get("executorId"))));
         }
 
         // if appealTypes is not null and is empty, this user should not see any type of appeal.

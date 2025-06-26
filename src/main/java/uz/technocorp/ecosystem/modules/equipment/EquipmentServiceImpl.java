@@ -183,7 +183,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber) {
-        Equipment equipment = equipmentRepository.findByRegistryNumber(registryNumber).orElse(null);
+        Equipment equipment = equipmentRepository.findFetchedEquipmentByRegistryNumber(registryNumber).orElse(null);
         if (equipment == null) return null;
         return mapToAttractionPassportView(equipment);
     }
