@@ -1,9 +1,14 @@
 package uz.technocorp.ecosystem.modules.inspection;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.appeal.dto.ReplyDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
+import uz.technocorp.ecosystem.modules.inspection.dto.InspectionActDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
@@ -74,6 +79,12 @@ public class InspectionController {
                                     @RequestParam LocalDate endDate) {
         List<InspectionShortInfo> all = service.getAllByInspector(user, startDate, endDate);
         return ResponseEntity.ok(new ApiResponse(all));
+    }
+
+    @PostMapping("/act")
+    public ResponseEntity<ApiResponse> reply(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<InspectionActDto> actDto, HttpServletRequest request) {
+        service.createAct(user, actDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 }
 

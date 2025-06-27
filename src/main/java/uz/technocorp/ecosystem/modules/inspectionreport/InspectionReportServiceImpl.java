@@ -68,9 +68,14 @@ public class InspectionReportServiceImpl implements InspectionReportService {
     public Page<InspectionReportView> getAllByInspectionId(User user, UUID inspectionId, int page, int size, boolean eliminated) {
         Pageable pageable = PageRequest.of(page-1, size);
         if (user.getRole().equals(Role.INSPECTOR)) {
-            return repository.findAlByInspectionIdAndInspectorId(user.getId(), inspectionId, pageable);
+            return repository.getAllByInspectionIdAndInspectorId(user.getId(), inspectionId, pageable);
         }
-        return repository.findAlByInspectionId(inspectionId, pageable, eliminated);
+        return repository.getAllByInspectionId(inspectionId, pageable, eliminated);
+    }
+
+    @Override
+    public List<InspectionReportView> getAllByInspectionId(UUID inspectionId) {
+        return repository.getAllByInspectionId(inspectionId);
     }
 
 }

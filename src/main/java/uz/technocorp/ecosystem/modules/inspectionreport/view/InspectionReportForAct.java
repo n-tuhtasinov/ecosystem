@@ -1,0 +1,17 @@
+package uz.technocorp.ecosystem.modules.inspectionreport.view;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+/**
+ * @author Rasulov Komil
+ * @version 1.0
+ * @created 27.06.2025
+ * @since v1.0
+ */
+public interface InspectionReportForAct {
+
+    UUID getId();
+    String getAssignedTasks();
+    LocalDate getDeadline();
+}
