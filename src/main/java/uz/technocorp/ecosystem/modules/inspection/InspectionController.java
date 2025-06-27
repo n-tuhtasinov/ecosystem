@@ -82,9 +82,16 @@ public class InspectionController {
     }
 
     @PostMapping("/act")
-    public ResponseEntity<ApiResponse> reply(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<InspectionActDto> actDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> createAct(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<InspectionActDto> actDto, HttpServletRequest request) {
         service.createAct(user, actDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
+
+    @PostMapping("/act/generate-pdf")
+    public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody InspectionActDto actDto, HttpServletRequest request) {
+        String path = service.generatePdf(user, actDto, request);
+        return ResponseEntity.ok(new ApiResponse(path));
+    }
+    // TODO attachmentlarni delete qilish kerak Inspection modulida
 }
 

@@ -1,9 +1,11 @@
 package uz.technocorp.ecosystem.modules.inspection;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.inspection.view.InspectionShortInfo;
 import uz.technocorp.ecosystem.modules.inspection.view.InspectionView;
+import uz.technocorp.ecosystem.modules.inspection.view.InspectorInfoForInspectionAct;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -75,4 +77,20 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
             order by i.id, i.start_date
             """, nativeQuery=true)
     List<InspectionShortInfo> getAllByInspectorId(UUID inspectorId, LocalDate startDate, LocalDate endDate, String status);
+
+    @Query(value = """
+            select u.id as inspectorId,
+            p.full_name as inspectorName,
+            o.name as officeName
+            from inspection i
+            join inspection_inspector ii on i.id = ii.inspection_id and ii.inspection_id = :inspectionId
+            join users u on ii.inspector_id = u.id
+            join profile p on u.profile_id = p.id
+            join office o on p.office_id = o.id
+            """, nativeQuery=true)
+    List<InspectorInfoForInspectionAct> getAllInspectorInfoByInspectionId(UUID inspectionId);
+
+    // TODO tekshiruv akti uchun {inspectorId, inspectorName, officeName} listini qaytarish
+
+    List<Inspection> findAllByIntervalId(Integer id);
 }

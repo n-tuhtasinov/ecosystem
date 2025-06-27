@@ -12,6 +12,6 @@ import java.util.UUID;
 public interface InspectionReportForAct {
 
     UUID getId();
-    String getAssignedTasks();
+    String getDefect();
     LocalDate getDeadline();
 }
