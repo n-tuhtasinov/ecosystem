@@ -34,4 +34,6 @@ public class InspectionReport extends BaseEntity {
     private UUID inspectionId;
 
     private boolean eliminated;
+
+    private LocalDate deadline;
 }

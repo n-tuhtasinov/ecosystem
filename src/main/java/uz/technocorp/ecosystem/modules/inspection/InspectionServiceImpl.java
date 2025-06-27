@@ -72,7 +72,13 @@ public class InspectionServiceImpl implements InspectionService {
         Inspection inspection = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv", "Id", id));
-        inspection.setStatus(status);
+        if (status.equals(InspectionStatus.COMPLETED)) {
+            if (inspection.getStatus().equals(InspectionStatus.UNRESOLVED)) {
+                inspection.setStatus(InspectionStatus.DELAYED);
+            }
+        } else {
+            inspection.setStatus(status);
+        }
         repository.save(inspection);
     }
 
