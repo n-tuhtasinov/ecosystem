@@ -1,15 +1,12 @@
 package uz.technocorp.ecosystem.modules.uploadexcel.equipment.type;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import uz.technocorp.ecosystem.exceptions.ExcelParsingException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
@@ -26,7 +23,6 @@ import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
-import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.uploadexcel.equipment.UploadEquipmentExcelService;
 import uz.technocorp.ecosystem.modules.user.UserService;
@@ -44,10 +40,10 @@ import java.util.Map;
  * @created 21.06.2025
  * @since v1.0
  */
-@Service("CRANE")
+@Service("ESCALATOR")
 @RequiredArgsConstructor
 @Slf4j
-public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
+public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
 
     private final IIPService iipService;
     private final ProfileService profileService;
@@ -73,7 +69,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(0);                                   //TODO: Shu joyga qarash kerak
+            Sheet sheet = workbook.getSheetAt(2);                                   //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
@@ -90,8 +86,8 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
                 try {
                     Equipment equipment = new Equipment();
 
-                    String identityLatter = "P";                                    //TODO: Shu joyga qarash kerak
-                    EquipmentType equipmentType = EquipmentType.CRANE;              //TODO: Shu joyga qarash kerak
+                    String identityLatter = "E";                                        //TODO: Shu joyga qarash kerak
+                    EquipmentType equipmentType = EquipmentType.ESCALATOR;              //TODO: Shu joyga qarash kerak
 
                     registryNumber = getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
                     getLegal(dataFormatter, row, equipment, 2); // b) legalTin
@@ -106,9 +102,9 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
                     getManufacturedAt(row, equipment, 17); // q) manufacturedAt
                     getPartialCheckDate(row, equipment, 19); // s) partialCheckDate
                     getFullCheckDate(row, equipment, 20); // t) full check date
-                    getRegistrationDate(row, equipment, 23); // w) registration date
-                    getInspectorName(dataFormatter, row, equipment, 24); // x) inspectorName
-                    getIsActive(dataFormatter, row, equipment, 26); // z) is active
+                    getRegistrationDate(row, equipment, 25); // w) registration date
+                    getInspectorName(dataFormatter, row, equipment, 26); // x) inspectorName
+                    getIsActive(dataFormatter, row, equipment, 28); // z) is active
                     getParams(dataFormatter, row, equipment); // u) params              //TODO: Shu joyga qarash kerak
                     setFiles(equipment); // set files
                     equipment.setType(equipmentType); // set equipment type
@@ -159,13 +155,24 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
     }
 
     private void getParams(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String boomLength = dataFormatter.formatCellValue(row.getCell(21));
-        isValid(boomLength, "strellasining uzunligi(u)");
+        Map<String, String> params = new HashMap<>();
 
-        String liftingCapacity = dataFormatter.formatCellValue(row.getCell(22));
-        isValid(liftingCapacity, "yuk ko'tar olishi(v)");
+        String passengersPerMinute = dataFormatter.formatCellValue(row.getCell(21));
+        isValid(passengersPerMinute, "O'tkazish qobilyati(v)");
+        params.put("passengersPerMinute", passengersPerMinute);
 
-        Map<String, String> params = Map.of("boomLength", boomLength, "liftingCapacity", liftingCapacity);
+        String length = dataFormatter.formatCellValue(row.getCell(22));
+        isValid(length, "Uzunligi(w)");
+        params.put("length", length);
+
+        String speed = dataFormatter.formatCellValue(row.getCell(23));
+        isValid(speed, "Tezligi(w)");
+        params.put("speed", speed);
+
+        String height = dataFormatter.formatCellValue(row.getCell(24));
+        isValid(height, "Ko'tarish balandligi(w)");
+        params.put("height", height);
+
         equipment.setParameters(params);
     }
 

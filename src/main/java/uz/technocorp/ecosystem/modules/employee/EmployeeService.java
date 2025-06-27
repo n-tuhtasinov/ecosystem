@@ -24,5 +24,5 @@ public interface EmployeeService {
 
     Integer deleteByPinList(User user, EmployeeDeleteDto dto);
 
-    List<Employee> getEmployeesByHf(UUID id, List<String> pinList);
+    List<Employee> getEmployeesByHf(UUID hfId);
 }

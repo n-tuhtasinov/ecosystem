@@ -22,8 +22,6 @@ public interface AttestationService {
 
     Page<?> getAllByParams(User user, AttestationParamsDto dto);
 
-    Page<AppealViewById> getAllPending(User user, AttestationPendingParamsDto dto);
-
     AttestationView getById(User user, UUID attestationId);
 
     List<AttestationView> getByAppeal(User user, UUID appealId);

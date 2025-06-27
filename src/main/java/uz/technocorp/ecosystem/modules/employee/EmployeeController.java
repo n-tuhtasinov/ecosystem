@@ -10,6 +10,8 @@ import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 
+import java.util.UUID;
+
 /**
  * @author Suxrob
  * @version 1.0
@@ -26,6 +28,11 @@ public class EmployeeController {
     @GetMapping("/positions")
     public ResponseEntity<ApiResponse> positions() {
         return ResponseEntity.ok(new ApiResponse(service.getEmployeeLevels()));
+    }
+
+    @GetMapping("/by-hf/{hfId}")
+    public ResponseEntity<ApiResponse> positions(@PathVariable("hfId") UUID hfId) {
+        return ResponseEntity.ok(new ApiResponse(service.getEmployeesByHf(hfId)));
     }
 
     @PostMapping

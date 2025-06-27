@@ -366,6 +366,14 @@ public class AppealServiceImpl implements AppealService {
         };
     }
 
+    @Override
+    public List<AppealViewById> getByIds(List<UUID> appealIds) {
+        if (appealIds != null && !appealIds.isEmpty()) {
+            return repository.findAllByIdIn(appealIds);
+        }
+        return null;
+    }
+
     private AppealCountParams makeAppealCountParamsByDirections(User user, AppealStatus status) {
         List<AppealType> appealTypes = getAppealTypes(user);
         return new AppealCountParams(status, null, null, null, appealTypes);

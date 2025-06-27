@@ -1,15 +1,12 @@
 package uz.technocorp.ecosystem.modules.uploadexcel.equipment.type;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import uz.technocorp.ecosystem.exceptions.ExcelParsingException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
@@ -26,7 +23,6 @@ import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
-import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.uploadexcel.equipment.UploadEquipmentExcelService;
 import uz.technocorp.ecosystem.modules.user.UserService;
@@ -44,10 +40,10 @@ import java.util.Map;
  * @created 21.06.2025
  * @since v1.0
  */
-@Service("CRANE")
+@Service("CONTAINER")
 @RequiredArgsConstructor
 @Slf4j
-public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
+public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
 
     private final IIPService iipService;
     private final ProfileService profileService;
@@ -58,9 +54,9 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
     private final ChildEquipmentService childEquipmentService;
     private final EquipmentService equipmentService;
     private final EquipmentRepository equipmentRepository;
-    private final ObjectMapper objectMapper;
 
     private static final String DATE_FORMAT = "dd.MM.yyyy";
+    private final ObjectMapper objectMapper;
 
 
 //    @Transactional(rollbackFor = ExcelParsingException.class)
@@ -73,7 +69,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(0);                                   //TODO: Shu joyga qarash kerak
+            Sheet sheet = workbook.getSheetAt(9);                                              //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
@@ -90,8 +86,8 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
                 try {
                     Equipment equipment = new Equipment();
 
-                    String identityLatter = "P";                                    //TODO: Shu joyga qarash kerak
-                    EquipmentType equipmentType = EquipmentType.CRANE;              //TODO: Shu joyga qarash kerak
+                    String identityLetter = "A";                                                    //TODO: Shu joyga qarash kerak
+                    EquipmentType equipmentType = EquipmentType.CONTAINER;                             //TODO: Shu joyga qarash kerak
 
                     registryNumber = getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
                     getLegal(dataFormatter, row, equipment, 2); // b) legalTin
@@ -100,16 +96,17 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
                     getRegionAndAddress(dataFormatter, row, district, equipment, 10); // h) address
                     String childEquipmentName = getChildEquipment(dataFormatter, row, equipment, equipmentType, 11);// k) child equipment
                     getFactoryNumber(dataFormatter, row, equipment, 12); // l) factoryNumber
-                    getOldEquipment(dataFormatter, row, equipment, identityLatter, 14); // n) old equipment
+                    getOldEquipment(dataFormatter, row, equipment, identityLetter, 14); // n) old equipment
                     getFactory(dataFormatter, row, equipment, 15);
                     getModel(dataFormatter, row, equipment, 16);
                     getManufacturedAt(row, equipment, 17); // q) manufacturedAt
                     getPartialCheckDate(row, equipment, 19); // s) partialCheckDate
                     getFullCheckDate(row, equipment, 20); // t) full check date
-                    getRegistrationDate(row, equipment, 23); // w) registration date
-                    getInspectorName(dataFormatter, row, equipment, 24); // x) inspectorName
-                    getIsActive(dataFormatter, row, equipment, 26); // z) is active
-                    getParams(dataFormatter, row, equipment); // u) params              //TODO: Shu joyga qarash kerak
+//                    getNonDestructiveCheckDate(row, equipment, 21); // nonDestructiveCheckDate       //TODO: Shu joyga qarash kerak
+                    getRegistrationDate(row, equipment, 25); // w) registration date
+                    getInspectorName(dataFormatter, row, equipment, 26); // x) inspectorName
+                    getIsActive(dataFormatter, row, equipment, 28); // z) is active
+                    getParams(dataFormatter, row, equipment); // u) params                             //TODO: Shu joyga qarash kerak
                     setFiles(equipment); // set files
                     equipment.setType(equipmentType); // set equipment type
 
@@ -146,6 +143,12 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
         }
     }
 
+    private void getNonDestructiveCheckDate(Row row, Equipment equipment, int cellIndex) throws Exception {
+        Cell cell = row.getCell(cellIndex);
+        LocalDate nonDestructiveCheckDate = getLocalDate(cell, "Putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi(v)");
+        equipment.setNonDestructiveCheckDate(nonDestructiveCheckDate);
+    }
+
     private static void setFiles(Equipment equipment) {
         Map<String, String> files = new HashMap<>();
         files.put("labelPath", null);
@@ -159,13 +162,20 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
     }
 
     private void getParams(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
-        String boomLength = dataFormatter.formatCellValue(row.getCell(21));
-        isValid(boomLength, "strellasining uzunligi(u)");
+        Map<String, String> params = new HashMap<>();
 
-        String liftingCapacity = dataFormatter.formatCellValue(row.getCell(22));
-        isValid(liftingCapacity, "yuk ko'tar olishi(v)");
+        String capacity = dataFormatter.formatCellValue(row.getCell(22));
+        isValid(capacity, "Ishlab chiqarish hajmi(y)");
+        params.put("capacity", capacity);
 
-        Map<String, String> params = Map.of("boomLength", boomLength, "liftingCapacity", liftingCapacity);
+        String environment = dataFormatter.formatCellValue(row.getCell(23));
+        isValid(environment, "Muhit harorati(z)");
+        params.put("environment", environment);
+
+//        String pressure = dataFormatter.formatCellValue(row.getCell(24));
+//        isValid(pressure, "Ruxsat etilgan bosim(AA)");
+        params.put("pressure", "-");
+
         equipment.setParameters(params);
     }
 
@@ -297,6 +307,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
     }
 
     private LocalDate getLocalDate(Cell cell, String fieldName) throws Exception {
+
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             throw new Exception(fieldName + " bo'sh bo'lishi mumkin emas");
         }

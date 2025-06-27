@@ -19,6 +19,7 @@ public enum TemplateType {
     REGISTRY_HF,
     REGISTRY_EQUIPMENT,
     REGISTRY_ATTRACTION,
+    REGISTRY_ATTRACTION_PASSPORT,
 
     // Inspektor javob xati ( Ma'lumotnoma )
     REPLY_HF_APPEAL,

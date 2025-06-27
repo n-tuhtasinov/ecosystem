@@ -88,8 +88,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> getEmployeesByHf(UUID id, List<String> pinList) {
-        return repository.findByHfIdAndPinIn(id, pinList);
+    public List<Employee> getEmployeesByHf(UUID hfId) {
+        return repository.findAllByHfId(hfId);
     }
 
     private HazardousFacility checkAndGetHf(UUID profileId, UUID hfId) {
