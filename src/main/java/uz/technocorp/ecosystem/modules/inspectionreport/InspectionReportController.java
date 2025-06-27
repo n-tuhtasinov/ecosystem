@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.inspectionreport;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.inspectionreport.dto.InspectionReportDto;
@@ -8,6 +9,7 @@ import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportVie
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 
 import java.util.List;
@@ -38,9 +40,13 @@ public class InspectionReportController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.UPDATED));
     }
 
-    @GetMapping("/{inspectionId}")
-    public ResponseEntity<?> getAll(@PathVariable UUID inspectionId) {
-        List<InspectionReportView> allByInspectionId = service.getAllByInspectionId(inspectionId);
+    @GetMapping
+    public ResponseEntity<?> getAll(@CurrentUser User user,
+                                    @RequestParam(value = "inspectionId") UUID inspectionId,
+                                    @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                    @RequestParam(value = "eliminated", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Boolean eliminated) {
+        Page<InspectionReportView> allByInspectionId = service.getAllByInspectionId(user, inspectionId, page, size, eliminated);
         return ResponseEntity.ok(new ApiResponse(allByInspectionId));
     }
 }

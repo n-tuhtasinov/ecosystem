@@ -1,6 +1,9 @@
 package uz.technocorp.ecosystem.modules.inspectionreportexecution;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.inspection.InspectionService;
@@ -11,9 +14,11 @@ import uz.technocorp.ecosystem.modules.inspectionreport.InspectionReportService;
 import uz.technocorp.ecosystem.modules.inspectionreport.dto.InspectionReportDto;
 import uz.technocorp.ecosystem.modules.inspectionreportexecution.dto.IRExecutionDto;
 import uz.technocorp.ecosystem.modules.inspectionreportexecution.enums.InspectionReportExecutionStatus;
+import uz.technocorp.ecosystem.modules.inspectionreportexecution.view.InspectionReportExecutionView;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -68,14 +73,20 @@ public class InspectionReportExecutionServiceImpl implements InspectionReportExe
             InspectionReport inspectionReport = inspectionReportRepository
                     .findById(inspectionReportExecution.getReportId())
                     .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
-            Integer countNotAcceptedReports = repository.getCountNotAcceptedReports(inspectionReport.getInspectionId());
             repository.save(inspectionReportExecution);
-
-            if (countNotAcceptedReports.equals(1)) {
-                inspectionService.updateStatus(inspectionReport.getInspectionId(), InspectionStatus.CONDUCTED);
+            Integer countNotEliminatedReports = inspectionReportRepository.getCountNotEliminatedReports(inspectionReport.getInspectionId());
+            inspectionReport.setEliminated(true);
+            inspectionReportRepository.save(inspectionReport);
+            if (countNotEliminatedReports.equals(1)) {
+                inspectionService.updateStatus(inspectionReport.getInspectionId(), InspectionStatus.COMPLETED);
             }
 
         }
         throw new ResourceNotFoundException("Tekshiruv ijro hisoboti siz uchun", "Id", id);
+    }
+
+    @Override
+    public List<InspectionReportExecutionView> getAllByInspectionReportId(UUID reportId) {
+        return repository.getAllByReportId(reportId);
     }
 }

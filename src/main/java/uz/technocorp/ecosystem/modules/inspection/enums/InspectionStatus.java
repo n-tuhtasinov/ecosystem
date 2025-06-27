@@ -12,5 +12,6 @@ public enum InspectionStatus {
     EXPIRED,
     CONDUCTED,
     COMPLETED,
-    UNRESOLVED
+    UNRESOLVED,
+    DELAYED
 }
