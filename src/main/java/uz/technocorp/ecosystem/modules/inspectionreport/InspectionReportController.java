@@ -45,7 +45,7 @@ public class InspectionReportController {
                                     @RequestParam(value = "inspectionId") UUID inspectionId,
                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-                                    @RequestParam(value = "eliminated", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Boolean eliminated) {
+                                    @RequestParam(value = "eliminated") Boolean eliminated) {
         Page<InspectionReportView> allByInspectionId = service.getAllByInspectionId(user, inspectionId, page, size, eliminated);
         return ResponseEntity.ok(new ApiResponse(allByInspectionId));
     }
