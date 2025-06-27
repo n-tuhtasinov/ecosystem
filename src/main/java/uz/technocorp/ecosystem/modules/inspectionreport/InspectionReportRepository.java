@@ -46,7 +46,7 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
                 join profile p on u.profile_id = p.id
                 where ir.inspection_id = :inspectionId
             """, nativeQuery = true)
-    Page<InspectionReportView> findAlByInspectionIdAndInspectorId(UUID inspectionId, UUID inspectorId, Pageable pageable);
+    Page<InspectionReportView> findAlByInspectionIdAndInspectorId(UUID inspectorId, UUID inspectionId, Pageable pageable);
 
     @Query(value = """
             select count(distinct id)
