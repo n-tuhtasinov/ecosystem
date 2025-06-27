@@ -20,4 +20,5 @@ public interface InspectionReportService {
     void update(User user, UUID id, InspectionReportDto dto);
     void confirm(User user, UUID id);
     Page<InspectionReportView> getAllByInspectionId(User user, UUID inspectionId, int page, int size, boolean eliminated);
+    List<InspectionReportView> getAllByInspectionId( UUID inspectionId);
 }
