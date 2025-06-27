@@ -20,6 +20,8 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
     @Query(value = """
             select ir.id as id,
                 assigned_tasks as assignedTasks,
+                ir.created_at as date,
+                ir.deadline as deadline,
                 eliminated,
                 inspection_id as inspectionId,
                 u.id as inspectorId,
@@ -30,7 +32,7 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
                 where ir.inspection_id = :inspectionId
                 and eliminated = :eliminated
             """, nativeQuery = true)
-    Page<InspectionReportView> findAlByInspectionId(UUID inspectionId, Pageable pageable, boolean eliminated);
+    Page<InspectionReportView> getAllByInspectionId(UUID inspectionId, Pageable pageable, boolean eliminated);
 
     @Query(value = """
             select ir.id as id,
@@ -46,7 +48,7 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
                 join profile p on u.profile_id = p.id
                 where ir.inspection_id = :inspectionId
             """, nativeQuery = true)
-    Page<InspectionReportView> findAlByInspectionIdAndInspectorId(UUID inspectorId, UUID inspectionId, Pageable pageable);
+    Page<InspectionReportView> getAllByInspectionIdAndInspectorId(UUID inspectorId, UUID inspectionId, Pageable pageable);
 
     @Query(value = """
             select count(distinct id)
@@ -55,4 +57,13 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
             and eliminated is not true
             """, nativeQuery = true)
     Integer getCountNotEliminatedReports(UUID inspectionId);
+
+    @Query(value = """
+            select id,
+                assigned_tasks as assignedTasks,
+                deadline as deadline
+                from inspection_report
+                where inspection_id = :inspectionId
+            """, nativeQuery = true)
+    List<InspectionReportView> getAllByInspectionId(UUID inspectionId);
 }

@@ -1,6 +1,10 @@
 package uz.technocorp.ecosystem.modules.inspection;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
+import uz.technocorp.ecosystem.modules.inspection.dto.InspectionActDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
@@ -28,4 +32,6 @@ public interface InspectionService {
     Page<InspectionCustom> getAll(User user, int page, int size, Long tin, InspectionStatus status, Integer intervalId);
     InspectionFullDto getById(UUID id);
     List<InspectionShortInfo> getAllByInspector(User user, LocalDate startDate, LocalDate endDate);
+
+    void createAct(User user, SignedReplyDto<InspectionActDto> actDto, HttpServletRequest request);
 }

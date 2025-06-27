@@ -4,10 +4,18 @@ package uz.technocorp.ecosystem.modules.inspection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
+import uz.technocorp.ecosystem.modules.document.DocumentService;
+import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
+import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
+import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
+import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
+import uz.technocorp.ecosystem.modules.inspection.dto.InspectionActDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectorShortInfo;
@@ -17,7 +25,6 @@ import uz.technocorp.ecosystem.modules.inspection.helper.InspectionFullDto;
 import uz.technocorp.ecosystem.modules.inspection.view.InspectionShortInfo;
 import uz.technocorp.ecosystem.modules.inspection.view.InspectionView;
 import uz.technocorp.ecosystem.modules.user.User;
-import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,6 +42,8 @@ public class InspectionServiceImpl implements InspectionService {
 
     private final InspectionRepository repository;
     private final ObjectMapper objectMapper;
+    private final DocumentService documentService;
+
 
     @Override
     public void update(UUID id, InspectionDto dto) {
@@ -125,5 +134,22 @@ public class InspectionServiceImpl implements InspectionService {
     @Override
     public List<InspectionShortInfo> getAllByInspector(User user, LocalDate startDate, LocalDate endDate) {
         return repository.getAllByInspectorId(user.getId(), startDate, endDate, InspectionStatus.IN_PROCESS.name());
+    }
+
+    @Override
+    public void createAct(User user, SignedReplyDto<InspectionActDto> actDto, HttpServletRequest request) {
+        documentService.create(
+                new DocumentDto(
+                        actDto.getDto().getInspectionId(),
+                        DocumentType.ACT,
+                        actDto.getFilePath(),
+                        actDto.getSign(),
+                        Helper.getIp(request),
+                        user.getId(),
+                        List.of(user.getId()),
+                        null)
+
+        );
+        updateStatus(user.getId(), InspectionStatus.CONDUCTED);
     }
 }

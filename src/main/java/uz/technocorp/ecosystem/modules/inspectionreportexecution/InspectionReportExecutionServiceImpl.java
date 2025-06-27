@@ -33,7 +33,6 @@ import java.util.UUID;
 public class InspectionReportExecutionServiceImpl implements InspectionReportExecutionService {
 
     private final InspectionReportExecutionRepository repository;
-    private final InspectionReportService inspectionReportService;
     private final InspectionReportRepository inspectionReportRepository;
     private final InspectionService inspectionService;
 
@@ -55,7 +54,11 @@ public class InspectionReportExecutionServiceImpl implements InspectionReportExe
         InspectionReportExecution inspectionReportExecution = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
-        UUID inspectorId = inspectionReportExecution.getCreatedBy();
+
+        InspectionReport inspectionReport = inspectionReportRepository
+                .findById(inspectionReportExecution.getReportId())
+                .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
+        UUID inspectorId = inspectionReport.getCreatedBy();
         if (user.getId().equals(inspectorId)) {
             inspectionReportExecution.setRejectedCause(dto.paramValue());
             inspectionReportExecution.setStatus(InspectionReportExecutionStatus.REJECTED);
@@ -67,12 +70,15 @@ public class InspectionReportExecutionServiceImpl implements InspectionReportExe
     public void accept(User user, UUID id) {
         InspectionReportExecution inspectionReportExecution = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
-        UUID inspectorId = inspectionReportExecution.getCreatedBy();
+
+
+        InspectionReport inspectionReport = inspectionReportRepository
+                .findById(inspectionReportExecution.getReportId())
+                .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
+
+        UUID inspectorId = inspectionReport.getCreatedBy();
         if (user.getId().equals(inspectorId)) {
             inspectionReportExecution.setStatus(InspectionReportExecutionStatus.ACCEPTED);
-            InspectionReport inspectionReport = inspectionReportRepository
-                    .findById(inspectionReportExecution.getReportId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
             repository.save(inspectionReportExecution);
             Integer countNotEliminatedReports = inspectionReportRepository.getCountNotEliminatedReports(inspectionReport.getInspectionId());
             inspectionReport.setEliminated(true);
