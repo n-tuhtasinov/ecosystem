@@ -2,6 +2,8 @@ package uz.technocorp.ecosystem.modules.attestation.dto;
 
 import lombok.*;
 
+import java.util.UUID;
+
 /**
  * @author Suxrob
  * @version 1.0
@@ -15,8 +17,9 @@ import lombok.*;
 @NoArgsConstructor
 public class AttestationPendingParamsDto {
 
-    private String search; // legalTin or legalName
+    private String search;
     private Integer regionId;
+    private UUID inspectorId;
 
     @Builder.Default
     private Integer page = 1;
