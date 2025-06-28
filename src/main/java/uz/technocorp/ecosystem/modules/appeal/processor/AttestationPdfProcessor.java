@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.attestation.dto.AttestationDto;
+import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationDto;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationDirection;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
