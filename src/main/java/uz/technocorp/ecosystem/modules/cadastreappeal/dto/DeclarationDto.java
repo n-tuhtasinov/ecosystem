@@ -20,17 +20,17 @@ import java.util.UUID;
 /**
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
- * @created 26.06.2025
+ * @created 28.06.2025
  * @since v1.0
  */
+@NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class CadastrePassportDto implements AppealDto {
+public class DeclarationDto implements AppealDto {
 
     @SkipDb
-    @NotBlank(message = "Telefon raqami kiritilmadi!")
+    @NotBlank(message = "Telefon raqam jo'natilmadi")
     private String phoneNumber;
 
     @NotNull(message = "XICHO idsi jo'natilmadi")
@@ -43,24 +43,39 @@ public class CadastrePassportDto implements AppealDto {
     @NotBlank(message = "XICHO manzili jo'natilmadi")
     private String address;
 
-    @NotNull(message = "TXYuZ kadast pasportini ishlab chiqargan tashkilot STIRi jo'natilmadi")
-    private Long organizationTin;
+    @NotNull(message = "Viloyat IDsi jo'natilmadi")
+    private Integer regionId;
 
-    @NotBlank(message = "TXYuZ kadast pasportini ishlab chiqargan tashkilot nomi jo'natilmadi")
-    private String organizationName;
+    @NotNull(message = "Tuman IDsi jo'natilmadi")
+    private Integer districtId;
 
-    @NotBlank(message = "TXYuZ kadast pasportini ishlab chiqargan tashkilot manzili")
-    private String organizationAddress;
+    @NotBlank(message = "Deklaratsiya qilingan obyekt haqida ma'lumot kiritilmadi")
+    private String information;
 
-    @NotBlank(message = "TXYuZ lokatsiyasi kiritilmadi")
-    private String location;
+    @NotNull(message = "Deklaratsiya ishlab chiqqan tashkilot STIRi jo'natilmadi")
+    private Long producingOrganizationTin;
+
+    @NotBlank(message = "Deklaratsiya ishlab chiqqan tashkilot nomi jo'natilmadi")
+    private String producingOrganizationName;
+
+    @NotBlank(message = "Deklaratsiya qilingan obyektni ishlatayotgan tashkilot nomi jo'natilmadi")
+    private String operatingOrganizationName;
+
+    @NotBlank(message = "Expertiza raqami kiritilmadi")
+    private String expertiseNumber;
+
+    @NotNull(message = "Expertiza sanasi kiritilmadi")
+    private LocalDate expertiseDate;
+
+    @NotBlank(message = "Deklaratsiya ro'yhatga olgan tashkilot nomi jo'natilmadi")
+    private String registrationOrganizationName;
 
     @SkipDb
-    @NotBlank(message = "Passport titul varag'i nusxasi yuklanmadi")
-    private String passportPath;
+    @NotBlank(message = "Deklaratsiya titul varag'i nusxasi jo'natilmadi")
+    private String declarationPath;
 
     @SkipDb
-    @NotBlank(message = "Passportni kelishilganligi titul varag'i yuklanmadi")
+    @NotBlank(message = "Deklaratsiya kelishganlik titul varag'i nusxasi jo'natilmadi")
     private String agreementPath;
 
     @Schema(hidden = true)
@@ -68,16 +83,8 @@ public class CadastrePassportDto implements AppealDto {
 
     @Override
     public AppealType getAppealType() {
-        return AppealType.REGISTER_CADASTRE_PASSPORT;
+        return AppealType.REGISTER_DECLARATION;
     }
-
-    @SkipDb
-    @NotNull(message = "Xicho joylashgan viloyat jo'natilmadi")
-    private Integer regionId;
-
-    @SkipDb
-    @NotNull(message = "Xicho joylashgan tuman jo'natilmadi")
-    private Integer districtId;
 
     @Override
     public LocalDate getDeadline() {
@@ -85,7 +92,7 @@ public class CadastrePassportDto implements AppealDto {
     }
 
     public void buildFiles(){
-        files.put("passportPath", passportPath);
+        files.put("declarationPath", declarationPath);
         files.put("agreementPath", agreementPath);
     }
 
