@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class EmployeeDto {
+public class EmployeeAddDto {
 
     @NotBlank(message = "Pinfl kiritilmadi")
     private String pin;
@@ -34,20 +34,10 @@ public class EmployeeDto {
     @NotNull(message = "Xodim darajasi tanlanmadi")
     private EmployeeLevel level;
 
-    @NotBlank(message = "Sertifikat raqami kiritilmadi")
     private String certNumber;
-
-    @NotNull(message = "Sertifikat sanasi kiritilmadi")
     private LocalDate certDate;
-
-    @NotNull(message = "Sertifikat muddati kiritilmadi")
     private LocalDate certExpiryDate;
-
-    @NotNull(message = "Kontexnazorato'quv DM o'qigan muddati boshlanishi kiritilmadi")
     private LocalDate ctcTrainingFromDate;
-
-    @NotNull(message = "Kontexnazorato'quv DM o'qigan muddati tugashi kiritilmadi")
     private LocalDate ctcTrainingToDate;
-
     private LocalDate dateOfEmployment;
 }
