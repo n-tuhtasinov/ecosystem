@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
-import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionActDto;
@@ -28,11 +28,18 @@ import uz.technocorp.ecosystem.modules.inspection.view.InspectionView;
 import uz.technocorp.ecosystem.modules.inspection.view.InspectorInfoForInspectionAct;
 import uz.technocorp.ecosystem.modules.inspectionreport.InspectionReportService;
 import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportForAct;
+import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
+import uz.technocorp.ecosystem.modules.profile.Profile;
+import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.template.Template;
+import uz.technocorp.ecosystem.modules.template.TemplateService;
+import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * @author Rasulov Komil
@@ -48,6 +55,10 @@ public class InspectionServiceImpl implements InspectionService {
     private final ObjectMapper objectMapper;
     private final DocumentService documentService;
     private final InspectionReportService inspectionReportService;
+    private final TemplateService templateService;
+    private final ProfileService profileService;
+    private final OfficeService officeService;
+    private final AttachmentService attachmentService;
 
 
     @Override
@@ -162,9 +173,92 @@ public class InspectionServiceImpl implements InspectionService {
     }
 
     @Override
-    public String generatePdf(User user, InspectionActDto actDto, HttpServletRequest request) {
-        List<InspectorInfoForInspectionAct> inspectors = repository.getAllInspectorInfoByInspectionId(actDto.getInspectionId());
-        List<InspectionReportForAct> defects = inspectionReportService.getAllByInspectionId(actDto.getInspectionId());
-        return "";
+    public String generatePdf(User user, InspectionActDto dto, HttpServletRequest request) {
+        // User
+        Profile profile = profileService.getProfile(user.getProfileId());
+        Office userOffice = officeService.findById(profile.getOfficeId());
+
+        // Inspection
+        Inspection inspection = repository.findById(dto.getInspectionId()).orElseThrow(() -> new ResourceNotFoundException("Tekshiruv topilmadi"));
+        Profile inspectionProfile = profileService.findByTin(inspection.getTin());
+        Office inspectionOffice = officeService.findByRegionId(inspection.getRegionId());
+        String[] splitDate = inspection.getDecreeDate().format((DateTimeFormatter.ofPattern("yyyy MMMM dd", Locale.of("uz")))).split(" ");
+        String date = splitDate[0] + " yil " + splitDate[2] + " " + splitDate[1];
+
+        // Inspectors
+        List<InspectorInfoForInspectionAct> inspectors = repository.getAllInspectorInfoByInspectionId(dto.getInspectionId());
+        if (inspectors == null || inspectors.isEmpty()) {
+            throw new RuntimeException("Inspektorlar ro'yxati bo'sh");
+        }
+        StringBuilder inspectorsFullInfo = new StringBuilder();
+        for (InspectorInfoForInspectionAct inspector : inspectors) {
+            inspectorsFullInfo.append(inspector.getOfficeName())
+                    .append(" ")
+                    .append("inspektori")
+                    .append(" ")
+                    .append(inspector.getInspectorName());
+        }
+
+        StringBuilder inspectorList = new StringBuilder();
+        for (InspectorInfoForInspectionAct inspector : inspectors) {
+            inspectorList.append(inspector.getOfficeName())
+                    .append("<div class=\"signature-text\">")
+                    .append("<p class=\"bold\">")
+                    .append(inspector.getOfficeName())
+                    .append(" inspektori:</p>")
+                    .append("<p>")
+                    .append(inspector.getInspectorName())
+                    .append("</p>")
+                    .append("</div>");
+        }
+
+        // Defects
+        List<InspectionReportForAct> defects = inspectionReportService.getAllByInspectionId(dto.getInspectionId());
+        if (defects == null || defects.isEmpty()) {
+            throw new RuntimeException("Kamchiliklar ro'yxati bo'sh");
+        }
+        StringBuilder defectsFullInfo = new StringBuilder();
+        for (int i = 1; i <= defects.size(); i++) {
+            defectsFullInfo.append("<tr>")
+                    .append("<td>")
+                    .append(i)
+                    .append("</td>")
+                    .append("<td style=\"text-align: left;\">")
+                    .append(defects.get(i - 1).getDefect())
+                    .append("</td>")
+                    .append("<td>")
+                    .append(defects.get(i - 1).getDeadline())
+                    .append("</td>")
+                    .append("</tr>");
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+
+        parameters.put("officeName", userOffice.getName());
+        parameters.put("districtName", dto.getDistrictName());
+        parameters.put("date", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        parameters.put("pronoun", inspectors.size() == 1 ? "Men" : "Biz");
+        parameters.put("inspectors", inspectorsFullInfo.toString());
+        parameters.put("specialCode", inspection.getSpecialCode());
+        parameters.put("inspectionOfficeName", inspectionOffice.getName());
+        parameters.put("decreeDate", date);
+        parameters.put("decreeNumber", inspection.getDecreeNumber());
+        parameters.put("legalAddress", inspectionProfile.getLegalAddress());
+        parameters.put("legalName", inspectionProfile.getLegalName());
+        parameters.put("tin", inspection.getTin().toString());
+        parameters.put("objects", dto.getObjects());
+        parameters.put("directorName", inspectionProfile.getFullName());
+        parameters.put("sectionFirst", dto.getSectionFirst());
+        parameters.put("sectionSecond", dto.getSectionSecond());
+        parameters.put("sectionThird", defectsFullInfo.toString());
+        parameters.put("sectionFourth", dto.getSectionFourth());
+        parameters.put("sectionFifth", dto.getSectionFifth());
+        parameters.put("sectionSixth", dto.getSectionSixth());
+        parameters.put("inspectorList", inspectorList.toString());
+
+        Template template = templateService.getByType(TemplateType.REPLY_INSPECTION_REPORT.name());
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/inspection", parameters, true);
     }
 }

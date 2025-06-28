@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import uz.technocorp.ecosystem.modules.attestation.dto.AttestationPendingParamsDto;
 import uz.technocorp.ecosystem.modules.attestation.dto.AttestationReportDto;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationStatus;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;

@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.attestation;
+package uz.technocorp.ecosystem.modules.attestationappeal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
-import uz.technocorp.ecosystem.modules.attestation.dto.AttestationPendingParamsDto;
+import uz.technocorp.ecosystem.modules.attestation.Attestation;
+import uz.technocorp.ecosystem.modules.attestation.AttestationRepository;
+import uz.technocorp.ecosystem.modules.attestation.AttestationSpecification;
+import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationPendingParamsDto;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationStatus;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 import uz.technocorp.ecosystem.modules.profile.Profile;
