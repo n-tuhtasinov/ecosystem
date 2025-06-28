@@ -3,10 +3,7 @@ package uz.technocorp.ecosystem.modules.employee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDeleteDto;
-import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDto;
-import uz.technocorp.ecosystem.modules.employee.dto.EmployeeLevelDto;
-import uz.technocorp.ecosystem.modules.employee.dto.EmployeeListDto;
+import uz.technocorp.ecosystem.modules.employee.dto.*;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
@@ -40,7 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         HazardousFacility hf = checkAndGetHf(user.getProfileId(), employeeDto.getHfId());
 
         List<Employee> employees = new ArrayList<>();
-        for (EmployeeDto dto : employeeDto.getEmployeeList()) {
+        for (EmployeeAddDto dto : employeeDto.getEmployeeList()) {
             Employee employee = new Employee();
 
             employee.setPin(dto.getPin());
@@ -62,13 +59,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         HazardousFacility hf = checkAndGetHf(user.getProfileId(), listDto.getHfId());
 
         // Collect pin to list
-        List<String> pinsToUpdate = listDto.getEmployeeList().stream().map(EmployeeDto::getPin).toList();
+        List<String> pinsToUpdate = listDto.getEmployeeList().stream().map(EmployeeAddDto::getPin).toList();
 
         // Get all employee by pinList
         Map<String, Employee> employeeMap = repository.findByHfIdAndPinIn(listDto.getHfId(), pinsToUpdate)
                 .stream().collect(Collectors.toMap(Employee::getPin, Function.identity()));
 
-        for (EmployeeDto dto : listDto.getEmployeeList()) {
+        for (EmployeeAddDto dto : listDto.getEmployeeList()) {
             Employee employee = employeeMap.get(dto.getPin());
             if (employee != null) {
                 // Set changed fields
@@ -96,7 +93,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return hfService.findByIdAndProfileId(hfId, profileId);
     }
 
-    private void setFields(Employee employee, EmployeeDto dto, HazardousFacility hf) {
+    private void setFields(Employee employee, EmployeeAddDto dto, HazardousFacility hf) {
         employee.setProfession(dto.getProfession());
         employee.setCertNumber(dto.getCertNumber());
         employee.setDateOfEmployment(dto.getDateOfEmployment());
