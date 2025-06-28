@@ -87,8 +87,7 @@ public class InspectionReportExecutionServiceImpl implements InspectionReportExe
                 inspectionService.updateStatus(inspectionReport.getInspectionId(), InspectionStatus.COMPLETED);
             }
 
-        }
-        throw new ResourceNotFoundException("Tekshiruv ijro hisoboti siz uchun", "Id", id);
+        } else throw new ResourceNotFoundException("Tekshiruv ijro hisoboti siz uchun", "Id", id);
     }
 
     @Override

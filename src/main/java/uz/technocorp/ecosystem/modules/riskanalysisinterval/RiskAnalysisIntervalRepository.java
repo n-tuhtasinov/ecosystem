@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.riskanalysisinterval;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface RiskAnalysisIntervalRepository extends JpaRepository<RiskAnalys
     List<RiskAnalysisInterval> findAllByYear(Integer year);
 
     Optional<RiskAnalysisInterval> findByStatus(RiskAnalysisIntervalStatus riskAnalysisIntervalStatus);
+
+
 }

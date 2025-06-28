@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportForAct;
 import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportView;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
 
     @Query(value = """
             select ir.id as id,
-                assigned_tasks as assignedTasks,
+                defect as assignedTasks,
                 ir.created_at as date,
                 ir.deadline as deadline,
                 eliminated,
@@ -36,7 +37,7 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
 
     @Query(value = """
             select ir.id as id,
-                assigned_tasks as assignedTasks,
+                defect as assignedTasks,
                 ir.created_at as date,
                 ir.deadline as deadline,
                 eliminated,
@@ -60,10 +61,10 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
 
     @Query(value = """
             select id,
-                assigned_tasks as assignedTasks,
+                defect,
                 deadline as deadline
                 from inspection_report
                 where inspection_id = :inspectionId
             """, nativeQuery = true)
-    List<InspectionReportView> getAllByInspectionId(UUID inspectionId);
+    List<InspectionReportForAct> getAllByInspectionId(UUID inspectionId);
 }

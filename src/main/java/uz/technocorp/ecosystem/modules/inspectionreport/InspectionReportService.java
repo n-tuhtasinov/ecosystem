@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.inspectionreport;
 
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.inspectionreport.dto.InspectionReportDto;
+import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportForAct;
 import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportView;
 import uz.technocorp.ecosystem.modules.user.User;
 
@@ -20,5 +21,5 @@ public interface InspectionReportService {
     void update(User user, UUID id, InspectionReportDto dto);
     void confirm(User user, UUID id);
     Page<InspectionReportView> getAllByInspectionId(User user, UUID inspectionId, int page, int size, boolean eliminated);
-    List<InspectionReportView> getAllByInspectionId( UUID inspectionId);
+    List<InspectionReportForAct> getAllByInspectionId(UUID inspectionId);
 }

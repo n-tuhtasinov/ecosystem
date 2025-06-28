@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationStatus;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -29,6 +30,19 @@ public class AttestationSpecification {
         };
     }
 
+    // LegalTin or LegalName
+    public Specification<Attestation> hasLegal(String search) {
+        return (root, cq, cb) -> {
+            if (search == null || search.isBlank()) {
+                return null;
+            }
+            Long pin = parseTin(search);
+            return pin != null
+                    ? cb.equal(root.get("legalTin"), pin)
+                    : cb.like(cb.lower(root.get("legalName")), "%" + search.toLowerCase() + "%");
+        };
+    }
+
     public Specification<Attestation> hasLegalTin(Long tin) {
         return (root, cq, cb)
                 -> tin == null ? cb.conjunction() : cb.equal(root.get("legalTin"), tin);
@@ -42,22 +56,9 @@ public class AttestationSpecification {
         return (root, query, cb) -> level == null ? cb.conjunction() : cb.equal(root.get("employeeLevel"), level);
     }
 
-    public Specification<Attestation> hasLegalTin(String legalTin) {
-        return (root, query, cb) -> legalTin == null ? cb.conjunction() : cb.equal(root.get("legalTin"), legalTin);
-    }
-
-    public Specification<Attestation> legalNameContains(String legalName) {
-        return (root, query, cb)
-                -> (legalName == null || legalName.isEmpty())
-                ? cb.conjunction()
-                : cb.like(cb.lower(root.get("legalName")), "%" + legalName.toLowerCase() + "%");
-    }
-
-    public Specification<Attestation> hfNameContains(String hfName) {
-        return (root, query, cb)
-                -> (hfName == null || hfName.isEmpty())
-                ? cb.conjunction()
-                : cb.like(cb.lower(root.get("hfName")), "%" + hfName.toLowerCase() + "%");
+    public Specification<Attestation> hasEmployeeLevels(List<EmployeeLevel> levels) {
+        return (root, query, criteriaBuilder)
+                -> (levels == null || levels.isEmpty()) ? criteriaBuilder.conjunction() : root.get("employeeLevel").in(levels);
     }
 
     public Specification<Attestation> hasRegionId(Integer regionId) {
@@ -71,6 +72,13 @@ public class AttestationSpecification {
     private Long parsePin(String query) {
         try {
             return query.length() == 14 ? Long.parseLong(query) : null;
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+    private Long parseTin(String query) {
+        try {
+            return query.length() == 9 ? Long.parseLong(query) : null;
         } catch (NumberFormatException ex) {
             return null;
         }

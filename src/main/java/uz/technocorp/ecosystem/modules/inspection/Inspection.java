@@ -30,6 +30,7 @@ import java.util.UUID;
 @Builder
 public class Inspection extends BaseEntity {
 
+    @Column(nullable = false)
     private Long tin;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
@@ -87,6 +88,8 @@ public class Inspection extends BaseEntity {
 //    private Document decree;
 //
     private String decreePath;
+    private LocalDate decreeDate;
+    private String decreeNumber;
 //
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    private Document act;

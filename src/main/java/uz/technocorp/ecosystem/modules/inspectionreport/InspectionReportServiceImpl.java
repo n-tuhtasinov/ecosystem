@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.inspectionreport.dto.InspectionReportDto;
+import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportForAct;
 import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportView;
 import uz.technocorp.ecosystem.modules.inspectionreportexecution.enums.InspectionReportExecutionStatus;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -34,7 +35,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
                 InspectionReport
                         .builder()
                         .inspectionId(inspectionId)
-                        .assignedTasks(dto.assignedTasks())
+                        .defect(dto.assignedTasks())
                         .deadline(dto.deadline())
                         .build()
         );
@@ -47,7 +48,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
         UUID inspectorId = inspectionReport.getCreatedBy();
         if (user.getId().equals(inspectorId)) {
-            inspectionReport.setAssignedTasks(dto.assignedTasks());
+            inspectionReport.setDefect(dto.assignedTasks());
             inspectionReport.setDeadline(dto.deadline());
             repository.save(inspectionReport);
         }
@@ -74,7 +75,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
     }
 
     @Override
-    public List<InspectionReportView> getAllByInspectionId(UUID inspectionId) {
+    public List<InspectionReportForAct> getAllByInspectionId(UUID inspectionId) {
         return repository.getAllByInspectionId(inspectionId);
     }
 

@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.document;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByReply;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByRequest;
 
@@ -50,4 +51,5 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
     List<DocumentViewByReply> getReplyDocumentsByAppealIdAndAgreementStatus(UUID appealId, String documentType, String agreementStatus);
 
     Optional<Document> findByBelongId(UUID belongId);
+    Optional<Document> findByBelongIdAndDocumentType(UUID belongId, DocumentType documentType);
 }

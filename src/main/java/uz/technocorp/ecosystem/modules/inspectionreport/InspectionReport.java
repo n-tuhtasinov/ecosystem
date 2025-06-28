@@ -24,7 +24,7 @@ import java.util.UUID;
 public class InspectionReport extends BaseEntity {
 
     @Column(columnDefinition = "text")
-    private String assignedTasks;
+    private String defect;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Inspection.class)
     @JoinColumn(name = "inspection_id", insertable = false, updatable = false)

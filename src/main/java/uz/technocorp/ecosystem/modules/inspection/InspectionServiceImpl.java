@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
@@ -24,6 +25,9 @@ import uz.technocorp.ecosystem.modules.inspection.helper.InspectionCustom;
 import uz.technocorp.ecosystem.modules.inspection.helper.InspectionFullDto;
 import uz.technocorp.ecosystem.modules.inspection.view.InspectionShortInfo;
 import uz.technocorp.ecosystem.modules.inspection.view.InspectionView;
+import uz.technocorp.ecosystem.modules.inspection.view.InspectorInfoForInspectionAct;
+import uz.technocorp.ecosystem.modules.inspectionreport.InspectionReportService;
+import uz.technocorp.ecosystem.modules.inspectionreport.view.InspectionReportForAct;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
@@ -43,6 +47,7 @@ public class InspectionServiceImpl implements InspectionService {
     private final InspectionRepository repository;
     private final ObjectMapper objectMapper;
     private final DocumentService documentService;
+    private final InspectionReportService inspectionReportService;
 
 
     @Override
@@ -57,6 +62,8 @@ public class InspectionServiceImpl implements InspectionService {
         inspection.setInspectorIds(dto.inspectorIdList());
         inspection.setIntervalId(dto.intervalId());
         inspection.setStatus(InspectionStatus.IN_PROCESS);
+        inspection.setDecreeDate(dto.decreeDate());
+        inspection.setDecreeNumber(dto.decreeNumber());
         repository.save(inspection);
     }
 
@@ -136,6 +143,7 @@ public class InspectionServiceImpl implements InspectionService {
         return repository.getAllByInspectorId(user.getId(), startDate, endDate, InspectionStatus.IN_PROCESS.name());
     }
 
+    @Transactional
     @Override
     public void createAct(User user, SignedReplyDto<InspectionActDto> actDto, HttpServletRequest request) {
         documentService.create(
@@ -151,5 +159,12 @@ public class InspectionServiceImpl implements InspectionService {
 
         );
         updateStatus(user.getId(), InspectionStatus.CONDUCTED);
+    }
+
+    @Override
+    public String generatePdf(User user, InspectionActDto actDto, HttpServletRequest request) {
+        List<InspectorInfoForInspectionAct> inspectors = repository.getAllInspectorInfoByInspectionId(actDto.getInspectionId());
+        List<InspectionReportForAct> defects = inspectionReportService.getAllByInspectionId(actDto.getInspectionId());
+        return "";
     }
 }

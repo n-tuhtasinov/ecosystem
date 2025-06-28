@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,6 +49,9 @@ public class AccreditationDto implements AppealDto {
 
     @Enumerated(EnumType.STRING)
     private List<AccreditationSphere> accreditationSpheres;
+
+    @NotBlank(message = "Mas'ul vakilning ism sharifi yuborilmadi!")
+    private String responsiblePersonName;
 
     @Override
     public AppealType getAppealType() {
