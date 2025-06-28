@@ -69,8 +69,8 @@ public class HazardousFacilityController {
     }
 
     @GetMapping("/select")
-    public ResponseEntity<?> findAllByProfile(@CurrentUser User user) {
-        List<HfSelectView> allByProfile = service.findAllByProfile(user);
+    public ResponseEntity<?> findAllByUser(@CurrentUser User user, @RequestParam(required = false, defaultValue = "") String registryNumber ) {
+        List<HfSelectView> allByProfile = service.findAllByUser(user, registryNumber);
         return ResponseEntity.ok(new ApiResponse(allByProfile));
     }
 
