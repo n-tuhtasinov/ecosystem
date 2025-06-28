@@ -218,7 +218,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     @Override
     public List<HfSelectView> findAllByProfile(User user) {
-        return repository.findAllByProfileId(user.getProfileId());
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return repository.findAllByProfileId(profile.getTin());
     }
 
     @Override
