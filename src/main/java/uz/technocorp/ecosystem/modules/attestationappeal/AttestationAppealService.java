@@ -1,8 +1,8 @@
-package uz.technocorp.ecosystem.modules.attestation;
+package uz.technocorp.ecosystem.modules.attestationappeal;
 
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
-import uz.technocorp.ecosystem.modules.attestation.dto.AttestationPendingParamsDto;
+import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationPendingParamsDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 /**

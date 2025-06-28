@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.attestation.dto;
+package uz.technocorp.ecosystem.modules.attestationappeal.dto;
 
 import lombok.*;
 
