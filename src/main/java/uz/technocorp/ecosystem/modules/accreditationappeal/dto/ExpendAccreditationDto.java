@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,6 +51,9 @@ public class ExpendAccreditationDto implements AppealDto {
     @Enumerated(EnumType.STRING)
     private List<AccreditationSphere> accreditationSpheres;
 
+    @NotBlank(message = "Mas'ul vakilning ism sharifi yuborilmadi!")
+    private String responsiblePersonName;
+
     @Override
     public AppealType getAppealType() {
         return AppealType.EXPEND_ACCREDITATION_SCOPE;
@@ -85,10 +90,16 @@ public class ExpendAccreditationDto implements AppealDto {
     private String qualityManagementSystemPath;
 
     @SkipDb
+    @NotBlank(message = "Akkreditatsiya attestatining ro'yxat raqami yuborilmadi!")
     private String certificateNumber;
 
     @SkipDb
+    @NotNull(message = "Akkreditatsiya attestati berilgan sana yuborilmadi!")
     private LocalDate certificateDate;
+
+    @SkipDb
+    @NotNull(message = "Akkreditatsiya attestatining amal qilish muddati yuborilmadi!")
+    private LocalDate certificateValidityDate;
 
     public void buildFiles() {
         files.put("accreditationFieldPath", accreditationFieldPath);
