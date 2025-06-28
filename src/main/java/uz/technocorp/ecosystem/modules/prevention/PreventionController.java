@@ -43,9 +43,10 @@ public class PreventionController {
     }
 
     @GetMapping("/{preventionId}")
-    public ResponseEntity<ApiResponse> getById(@CurrentUser User user, @PathVariable("preventionId") UUID preventionId) {
+    public ResponseEntity<PreventionView> getById(@CurrentUser User user, @PathVariable("preventionId") UUID preventionId) {
         PreventionView prevention = service.getById(user, preventionId);
-        return ResponseEntity.ok(new ApiResponse(prevention));
+//        return ResponseEntity.ok(new ApiResponse(prevention));
+        return ResponseEntity.ok(prevention);
     }
 
     @DeleteMapping("/{preventionId}")
