@@ -13,7 +13,6 @@ import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationDirection;
-import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDto;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;

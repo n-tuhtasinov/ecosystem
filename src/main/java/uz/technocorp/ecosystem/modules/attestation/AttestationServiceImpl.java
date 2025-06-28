@@ -13,7 +13,7 @@ import uz.technocorp.ecosystem.modules.attestation.enums.AttestationDirection;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationStatus;
 import uz.technocorp.ecosystem.modules.attestation.view.AttestationView;
 import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationDto;
-import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDto;
+import uz.technocorp.ecosystem.modules.attestationappeal.dto.EmployeeDto;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.user.User;

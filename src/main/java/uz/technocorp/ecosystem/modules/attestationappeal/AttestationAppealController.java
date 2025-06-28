@@ -11,7 +11,7 @@ import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationDto;
 import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationPendingParamsDto;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationDirection;
-import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDto;
+import uz.technocorp.ecosystem.modules.attestationappeal.dto.EmployeeDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
