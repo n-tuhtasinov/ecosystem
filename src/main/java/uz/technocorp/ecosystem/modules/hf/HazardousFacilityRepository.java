@@ -24,16 +24,17 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
     Optional<Long> findMaxOrderNumber();
 
     @Query(value = """
-            select hf.id as id,
-            hf.registry_number as registryNumber,
-            hf.name,
-            hf.region_id as regionId,
-            hf.district_id as districtId,
-            hf.address
+            select hf.id              as id,
+                   hf.registry_number as registryNumber,
+                   hf.name,
+                   hf.region_id       as regionId,
+                   hf.district_id     as districtId,
+                   hf.address
             from hazardous_facility hf
-            where  hf.legal_tin = :legalTin
+            where (:registryNumber = '' or :registryNumber = hf.registry_number)
+              and hf.legal_tin = :legalTin
             """, nativeQuery = true)
-    List<HfSelectView> findAllByProfileId(Long legalTin);
+    List<HfSelectView> findAllByTinAndRegistryNumber(Long legalTin, String registryNumber);
 
 
     @Query("""
