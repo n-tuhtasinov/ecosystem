@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -33,35 +34,44 @@ public class RiskAssessmentServiceImpl implements RiskAssessmentService {
     public Page<RiskAssessmentView> getAllHf(@CurrentUser User user, Long tin, Integer regionId, Integer intervalId, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "sum_score");
         Role role = user.getRole();
-        if (role.equals(Role.REGIONAL) || role.equals(Role.INSPECTOR)) {
+        if (role.equals(Role.REGIONAL)) {
             Profile profile = profileService.getProfile(user.getProfileId());
             Office office = officeService.findById(profile.getOfficeId());
             return repository.getAllHfByTinAndRegionId(pageable, office.getRegionId(), intervalId, tin);
+        } else if (role.equals(Role.INSPECTOR)) {
+            return repository.getAllHfByTinAndInspectorId(pageable, user.getId(), intervalId, tin);
+        } else {
+            return repository.getAllHfByTin(pageable, intervalId, tin);
         }
-        return repository.getAllHfByTin(pageable, intervalId, tin);
     }
 
     @Override
     public Page<RiskAssessmentView> getAllIrs(@CurrentUser User user, Long tin, Integer regionId, Integer intervalId, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "sum_score");
         Role role = user.getRole();
-        if (role.equals(Role.REGIONAL) || role.equals(Role.INSPECTOR)) {
+        if (role.equals(Role.REGIONAL)) {
             Profile profile = profileService.getProfile(user.getProfileId());
             Office office = officeService.findById(profile.getOfficeId());
             return repository.getAllIrsByTinAndRegionId(pageable, office.getRegionId(), intervalId, tin);
+        } else if (role.equals(Role.INSPECTOR)) {
+            return repository.getAllIrsByTinAndInspectorId(pageable, user.getId(), intervalId, tin);
+        } else {
+            return repository.getAllIrsByTin(pageable, intervalId, tin);
         }
-        return repository.getAllIrsByTin(pageable, intervalId, tin);
     }
 
     @Override
-    public Page<RiskAssessmentView> getAllEquipments(@CurrentUser User user, Long tin, Integer regionId, Integer intervalId, int page, int size) {
+    public Page<RiskAssessmentView> getAllEquipments(@CurrentUser User user, Long tin, Integer regionId, Integer intervalId, int page, int size, EquipmentType type) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.Direction.DESC, "sum_score");
         Role role = user.getRole();
-        if (role.equals(Role.REGIONAL) || role.equals(Role.INSPECTOR)) {
+        if (role.equals(Role.REGIONAL)) {
             Profile profile = profileService.getProfile(user.getProfileId());
             Office office = officeService.findById(profile.getOfficeId());
-            return repository.getAllEquipmentsByTinAndRegionId(pageable, office.getRegionId(), intervalId, tin);
+            return repository.getAllEquipmentsByTinAndRegionId(pageable, office.getRegionId(), intervalId, tin, type.name());
+        } else if (role.equals(Role.INSPECTOR)) {
+            return repository.getAllEquipmentsByTinAndInspectorId(pageable, user.getId(), intervalId, tin, type.name());
+        } else {
+            return repository.getAllEquipmentsByTin(pageable, intervalId, tin, type.name());
         }
-        return repository.getAllEquipmentsByTin(pageable, intervalId, tin);
     }
 }

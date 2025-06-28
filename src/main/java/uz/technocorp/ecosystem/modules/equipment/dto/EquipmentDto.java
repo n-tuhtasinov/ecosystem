@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipment.dto;
 
+import lombok.Builder;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
 

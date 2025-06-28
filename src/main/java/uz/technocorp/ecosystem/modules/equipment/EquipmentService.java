@@ -3,6 +3,8 @@ package uz.technocorp.ecosystem.modules.equipment;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
@@ -10,6 +12,7 @@ import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.user.User;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -33,4 +36,10 @@ public interface EquipmentService {
     Equipment findById(UUID equipmentId);
 
     AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber);
+
+    Equipment findByRegistryNumber(String oldEquipmentRegistryNumber);
+
+    Long getCount(User user);
+
+    String createEquipmentRegistryPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate);
 }

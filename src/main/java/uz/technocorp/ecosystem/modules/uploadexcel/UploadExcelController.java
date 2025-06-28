@@ -2,12 +2,14 @@ package uz.technocorp.ecosystem.modules.uploadexcel;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
+import uz.technocorp.ecosystem.modules.uploadexcel.equipment.UploadEquipmentExcelService;
+import uz.technocorp.ecosystem.modules.uploadexcel.hf.UploadHfExcelService;
 import uz.technocorp.ecosystem.shared.ApiResponse;
+
+import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -19,12 +21,19 @@ import uz.technocorp.ecosystem.shared.ApiResponse;
 @RequestMapping("/api/v1/upload-excel")
 @RequiredArgsConstructor
 public class UploadExcelController {
-
-    private final UploadHfExcelService hfExcelService;
+    private final UploadHfExcelService uploadHfService;
+    private final Map<String, UploadEquipmentExcelService> uploadEquipmentServices;
 
     @PostMapping("/hf")
     public ResponseEntity<?> uploadHf(@RequestParam("file") MultipartFile file) {
-        hfExcelService.upload(file);
+        uploadHfService.upload(file);
+        return ResponseEntity.ok(new ApiResponse("Fayl muvaffaqiyatli yuklandi"));
+    }
+
+    @PostMapping("/equipment/{equipmentType}")
+    public ResponseEntity<?> uploadEquipment(@PathVariable EquipmentType equipmentType, @RequestParam MultipartFile file) {
+        UploadEquipmentExcelService equipmentExcelService = uploadEquipmentServices.get(equipmentType.name());
+        equipmentExcelService.upload(file);
         return ResponseEntity.ok(new ApiResponse("Fayl muvaffaqiyatli yuklandi"));
     }
 }

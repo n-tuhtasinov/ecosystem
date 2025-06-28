@@ -54,7 +54,9 @@ public record EquipmentViewById(
         String attractionPassportRegistryNumber,
         String description,
         String inspectorName,
+        Boolean isActive,
 
         Map<String, String> files,
         String registryFilePath
+
 ) {}

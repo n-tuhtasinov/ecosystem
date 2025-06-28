@@ -17,7 +17,17 @@ public enum HFSphere {
     BOILER("Issiq suv"),
     CHEMISTRY("Himiya"),
     COAL("Ko'mir"),
-    GEOLOGY("Geologiya");
+    GEOLOGY("Geologiya"),
+    GRAIN("Don"),
+    RAILWAY("Temir yo'l"),
+    OKMK("OKMK"),
+    NKMK("NKMK"),
+    AGTSH("AGTSH"),
+    GPZ("GPZ"),
+    AGNKS("AGNKS"),
+    AYOQSH("AYOQSH"),
+    AGTKSH("AGTKSH"),
+    DEPARTMENT("Boshqarma");
 
     public final String label;
     private static final Map<String, HFSphere> BY_LABEL = new HashMap<>();

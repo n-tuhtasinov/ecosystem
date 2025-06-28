@@ -70,4 +70,5 @@ public class HfTypeServiceImpl implements HfTypeService {
     public String getHfTypeNameById(Integer hfTypeId) {
         return repository.findById(hfTypeId).orElseThrow(() -> new ResourceNotFoundException("XICHO turi", "ID", hfTypeId)).getName();
     }
+
 }

@@ -58,8 +58,8 @@ public interface IrsRiskIndicatorRepository extends JpaRepository<IrsRiskIndicat
     List<RiskIndicatorView> findAllByTinAndDate(Long tin, Integer intervalId);
 
     @Query(value = """
-            select cast(ionizing_radiation_source_id as varchar) as objectId,
-            sum(score),
+            select ionizing_radiation_source_id as objectId,
+            sum(score) as sumScore,
             tin
             from irs_risk_indicator
             where risk_analysis_interval_id = :intervalId

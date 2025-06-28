@@ -31,6 +31,7 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -61,7 +62,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
 
         // Create registry PDF
-        String registryFilepath = createEquipmentRegistryPdf(appeal, dto, info);
+        String registryFilepath = createEquipmentRegistryPdf(appeal, dto, info, LocalDate.now());
 
         Equipment equipment = Equipment.builder()
                 .type(info.equipmentType())
@@ -99,6 +100,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(dto.attractionPassportId())
                 .legalAddress(appeal.getLegalAddress())
+                .isActive(true)
                 .build();
 
         equipmentRepository.save(equipment);
@@ -181,9 +183,24 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber) {
-        Equipment equipment = equipmentRepository.findByRegistryNumber(registryNumber).orElse(null);
+        Equipment equipment = equipmentRepository.findFetchedEquipmentByRegistryNumber(registryNumber).orElse(null);
         if (equipment == null) return null;
         return mapToAttractionPassportView(equipment);
+    }
+
+    @Override
+    public Equipment findByRegistryNumber(String oldEquipmentRegistryNumber) {
+        return equipmentRepository.findByRegistryNumber(oldEquipmentRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", oldEquipmentRegistryNumber));
+    }
+
+    @Override
+    public Long getCount(User user) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return switch (user.getRole()) {
+            case LEGAL -> equipmentRepository.countByParams(profile.getTin(), null);
+            case REGIONAL, INSPECTOR -> equipmentRepository.countByParams(null, profile.getRegionId());
+            default -> equipmentRepository.countByParams(null, null);
+        };
     }
 
     private AttractionPassportView mapToAttractionPassportView(Equipment equipment) {
@@ -239,11 +256,12 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
     }
 
-    protected String createEquipmentRegistryPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info) {
+    @Override
+    public String createEquipmentRegistryPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate) {
         // Create registry PDF with parameters
         return EquipmentType.ATTRACTION_PASSPORT.equals(info.equipmentType())
-                ? createAttractionPassportPdf(appeal, dto, info) // Attraction Passport
-                : createEquipmentPdf(appeal, dto, info); // All Equipments
+                ? createAttractionPassportPdf(appeal, dto, info, registrationDate) // Attraction Passport
+                : createEquipmentPdf(appeal, dto, info, registrationDate); // All Equipments
     }
 
     protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
@@ -272,7 +290,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         return new EquipmentInfoDto(equipmentType, label + orderNumber, orderNumber);
     }
 
-    private String createAttractionPassportPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info) {
+    private String createAttractionPassportPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate) {
         Map<String, String> parameters = new HashMap<>();
 
         parameters.put("attractionName", dto.attractionName());
@@ -288,26 +306,27 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("districtName", districtService.findById(appeal.getDistrictId()).getName());
         parameters.put("address", appeal.getAddress());
         parameters.put("riskLevel", dto.riskLevel().value);
+        parameters.put("registrationDate", registrationDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 
         String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
 
         return attachmentService.createPdfFromHtml(content, "reestr/attraction-passport", parameters, false);
     }
 
-    private String createEquipmentPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info) {
+    private String createEquipmentPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate) {
         Map<String, String> parameters = new HashMap<>();
 
         parameters.put("legalAddress", appeal.getLegalAddress());
-        parameters.put("equipmentType", EquipmentType.valueOf(appeal.getData().get("type").asText()).value);
+        parameters.put("equipmentType", info.equipmentType().value);
         parameters.put("childEquipmentName", appeal.getData().get("childEquipmentName").asText());
         parameters.put("legalTin", appeal.getLegalTin().toString());
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("factoryNumber", dto.factoryNumber());
         parameters.put("factory", dto.factory());
         parameters.put("model", dto.model());
-        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+        parameters.put("manufacturedAt", dto.manufacturedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         parameters.put("number", info.registryNumber());
-        parameters.put("registrationDate", LocalDate.now().toString());
+        parameters.put("registrationDate", registrationDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         parameters.put("address", appeal.getAddress());
         parameters.put("dynamicParameters", makeDynamicRows(dto.parameters()));
 
@@ -320,7 +339,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         StringBuilder dynamicRows = new StringBuilder();
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             dynamicRows.append("<div class=\"list-item\">")
-                    .append("<div>").append(EquipmentParameter.nameWithUnit(entry.getKey())).append("</div>")
+                    .append("<div class=\"bold\">").append(EquipmentParameter.nameWithUnit(entry.getKey())).append(":").append("</div>")
                     .append("<div>").append(entry.getValue()).append("</div>")
                     .append("</div>");
         }
@@ -365,6 +384,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getAttractionPassport() == null ? null : equipment.getAttractionPassport().getRegistryNumber(),
                 equipment.getDescription(),
                 equipment.getInspectorName(),
+                equipment.getIsActive(),
                 equipment.getFiles(),
                 equipment.getRegistryFilePath());
     }

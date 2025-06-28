@@ -3,7 +3,8 @@ package uz.technocorp.ecosystem.modules.attestation;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.attestation.employee.EmployeeLevel;
+import uz.technocorp.ecosystem.modules.attestation.enums.AttestationStatus;
+import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDate;
@@ -34,6 +35,9 @@ public class Attestation extends BaseEntity {
     private EmployeeLevel employeeLevel;
 
     @Column
+    private LocalDate dateOfAttestation;
+
+    @Column
     private LocalDate expiryDate;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
@@ -47,10 +51,10 @@ public class Attestation extends BaseEntity {
     private Long legalTin;
 
     @Column(nullable = false)
-    private String legalAddress;
+    private String legalName;
 
     @Column(nullable = false)
-    private String legalName;
+    private String legalAddress;
 
     @Column(nullable = false)
     private UUID hfId;
@@ -62,10 +66,18 @@ public class Attestation extends BaseEntity {
     private String hfAddress;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AttestationStatus status;
+
+    @Column(nullable = false)
     private Integer regionId;
 
     @Column(nullable = false)
     private Integer districtId;
 
+    @Column
+    private UUID executorId;
 
+    @Column
+    private String reportPdfPath;
 }

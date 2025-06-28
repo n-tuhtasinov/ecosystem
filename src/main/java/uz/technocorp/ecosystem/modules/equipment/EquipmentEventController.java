@@ -13,6 +13,8 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,7 +43,7 @@ public class EquipmentEventController {
             EquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), EquipmentDto.class);
             EquipmentInfoDto info = service.getEquipmentInfoByAppealType(appeal.getAppealType());
 
-            return service.createEquipmentRegistryPdf(appeal, dto, info);
+            return service.createEquipmentRegistryPdf(appeal, dto, info, LocalDate.now());
         }
         return "Bunday ID li ariza topilmadi";
     }

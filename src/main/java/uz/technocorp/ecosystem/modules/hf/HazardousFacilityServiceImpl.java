@@ -34,6 +34,7 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +70,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
         HfAppealDto hfAppealDto = JsonParser.parseJsonData(appeal.getData(), HfAppealDto.class);
 
-        String registryFilePath = createHfRegistryPdf(appeal, registryNumber, hfAppealDto);
+        String registryFilePath = createHfRegistryPdf(appeal, registryNumber, hfAppealDto, LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 
         repository.save(
                 HazardousFacility.builder()
@@ -216,8 +217,9 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     }
 
     @Override
-    public List<HfSelectView> findAllByProfile(User user) {
-        return repository.findAllByProfileId(user.getProfileId());
+    public List<HfSelectView> findAllByUser(User user, String registryNumber) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return repository.findAllByTinAndRegistryNumber(profile.getTin(), registryNumber.trim());
     }
 
     @Override
@@ -300,7 +302,23 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         return repository.findByIdAndProfileId(id, profileId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
     }
 
-    protected String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto) {
+    @Override
+    public HazardousFacility findByRegistryNumber(String hfRegistryNumber) {
+        return repository.findByRegistryNumber(hfRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ro'yhatga olish raqami", hfRegistryNumber));
+    }
+
+    @Override
+    public Long getCount(User user) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return switch (user.getRole()) {
+            case LEGAL -> repository.countByParams(profile.getTin(), null);
+            case REGIONAL, INSPECTOR -> repository.countByParams(null, profile.getRegionId());
+            default -> repository.countByParams(null, null);
+        };
+    }
+
+    @Override
+    public String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto, String now) {
         // Make parameters
         Map<String, String> parameters = new HashMap<>();
         parameters.put("upperOrganization", hfAppealDto.getUpperOrganization() != null ? hfAppealDto.getUpperOrganization() : "-");
@@ -309,7 +327,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         parameters.put("name", hfAppealDto.getName());
         parameters.put("address", appeal.getAddress());
         parameters.put("hfTypeName", hfAppealDto.getHfTypeName());
-        parameters.put("registrationDate", LocalDate.now().toString());
+        parameters.put("registrationDate", now);
         parameters.put("number", registryNumber);
         parameters.put("extraArea", hfAppealDto.getExtraArea() != null ? hfAppealDto.getExtraArea() : "-");
         parameters.put("hazardousSubstance", hfAppealDto.getHazardousSubstance());

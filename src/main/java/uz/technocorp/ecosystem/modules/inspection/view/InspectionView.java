@@ -33,6 +33,8 @@ public interface InspectionView {
 
     String getOrderPath();
 
+    String getDecreePath();
+
     String getProgramPath();
 
     String getMeasuresPath();

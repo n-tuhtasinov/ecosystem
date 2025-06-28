@@ -9,5 +9,9 @@ package uz.technocorp.ecosystem.modules.inspection.enums;
 public enum InspectionStatus {
     NEW,
     IN_PROCESS,
-    CONDUCTED
+    EXPIRED,
+    CONDUCTED,
+    COMPLETED,
+    UNRESOLVED,
+    DELAYED
 }

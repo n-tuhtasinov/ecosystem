@@ -4,11 +4,7 @@ import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.user.dto.InspectorDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
-import uz.technocorp.ecosystem.modules.user.view.CommitteeUserView;
-import uz.technocorp.ecosystem.modules.user.view.OfficeUserView;
-import uz.technocorp.ecosystem.modules.user.view.UserViewById;
-import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
-import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
+import uz.technocorp.ecosystem.modules.user.view.*;
 
 import java.util.List;
 import java.util.Map;
@@ -45,4 +41,6 @@ public interface UserService {
     UserViewByInspectorPin getInspectorByPin(long pin);
 
     UserViewByLegal getLegalUserByTin(Long tin);
+
+    User findById(UUID id);
 }

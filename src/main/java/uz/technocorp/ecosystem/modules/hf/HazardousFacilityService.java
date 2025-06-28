@@ -10,6 +10,7 @@ import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
+import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.List;
@@ -24,15 +25,29 @@ import java.util.UUID;
 public interface HazardousFacilityService {
 
     void create(Appeal appeal);
-//    void create(HfDto dto);
+
+    //    void create(HfDto dto);
     void update(UUID id, HfDto dto);
+
     void deregister(UUID id, HfDeregisterDto dto);
+
     void periodicUpdate(UUID id, HfPeriodicUpdateDto dto);
-    List<HfSelectView> findAllByProfile(User user);
+
+    List<HfSelectView> findAllByUser(User user, String registryNumber);
+
     Page<HfCustom> getAll(User user, HfParams params);
+
     String getHfNameById(UUID hfId);
+
     Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
 
     HfViewById getById(UUID hfId);
+
     HazardousFacility findByIdAndProfileId(UUID id, UUID profileId);
+
+    HazardousFacility findByRegistryNumber(String hfRegistryNumber);
+
+    Long getCount(User user);
+
+    String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto, String now);
 }

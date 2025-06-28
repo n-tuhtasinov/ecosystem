@@ -20,14 +20,13 @@ import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignedReplyDto {
+public class SignedReplyDto<T> {
     @NotBlank(message = "File path kiritilmadi!")
     private String filePath;
 
     @NotBlank(message = "Imzolangan malumot kiritilmadi")
     private String sign;
 
-    @NotNull(message = "Inspektor javobi malumotlari jo'natilmadi")
-    private @Valid ReplyDto dto;
-
+    @NotNull(message = "Javob malumotlari jo'natilmadi")
+    private @Valid T dto;
 }

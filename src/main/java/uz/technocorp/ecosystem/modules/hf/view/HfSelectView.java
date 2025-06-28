@@ -9,8 +9,10 @@ import java.util.UUID;
  * @since v1.0
  */
 public interface HfSelectView {
-
     UUID getId();
     String getName();
     String getRegistryNumber();
+    Integer getRegionId();
+    Integer getDistrictId();
+    String getAddress();
 }

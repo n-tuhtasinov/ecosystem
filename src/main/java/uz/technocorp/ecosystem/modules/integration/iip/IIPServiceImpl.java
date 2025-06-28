@@ -9,15 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
-import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.district.District;
-import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.office.Office;
-import uz.technocorp.ecosystem.modules.office.OfficeRepository;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.region.Region;
-import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.dto.IndividualUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
@@ -27,7 +23,6 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -42,16 +37,13 @@ public class IIPServiceImpl implements IIPService {
 
     private final IIPProperties properties;
     private final RestClient restClient;
-    private final DistrictRepository districtRepository;
-    private final RegionRepository regionRepository;
-    private final OfficeRepository officeRepository;
     private final DistrictService districtService;
     private final RegionService regionService;
     private final OfficeService officeService;
 
 
     private String getToken() {
-        String credentials = properties.getConsumerKey()+":"+properties.getConsumerSecret();
+        String credentials = properties.getConsumerKey() + ":" + properties.getConsumerSecret();
         String base64 = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -67,7 +59,7 @@ public class IIPServiceImpl implements IIPService {
                 .retrieve()
                 .body(Map.class);
 
-        if (response==null){
+        if (response == null) {
             throw new RuntimeException("MIP dan token olishda bo'sh javob qaytdi");
         }
 
@@ -93,18 +85,25 @@ public class IIPServiceImpl implements IIPService {
                 .retrieve()
                 .body(JsonNode.class);
 
-        if (node==null) throw new RuntimeException("MIP dan STIR bo'yicha so'rovga bo'sh javob qaytdi");
+        if (node == null) throw new RuntimeException("MIP dan STIR bo'yicha so'rovga bo'sh javob qaytdi");
 
         //make legalUserDto
-        District district = districtService.findBySoato(node.get("companyBillingAddress").get("soato").asInt());
+        Integer districtSoato = node.get("companyBillingAddress").get("soato").asInt();
+        //except two district soato (1714401365 - Namangan shahar, Davlatobod tumani, 1714401367- Namangan shahar, Yangi Namangan tumani)
+        if (districtSoato.toString().length() > 7 && !districtSoato.equals(1714401365) && !districtSoato.equals(1714401367)) {
+            String substring = districtSoato.toString().substring(0, 7);
+            districtSoato = Integer.parseInt(substring);
+        }
+
+        District district = districtService.findBySoato(districtSoato);
         Region region = regionService.findById(district.getRegionId());
         Office office = officeService.findByRegionId(region.getId());
 
         LegalUserDto dto = new LegalUserDto(
                 Long.valueOf(tin),
-                (node.get("company").get("shortName").asText()!=null && !node.get("company").get("shortName").asText().trim().isEmpty()) ? node.get("company").get("shortName").asText() : node.get("company").get("name").asText(),
+                (node.get("company").get("shortName").asText() != null && !node.get("company").get("shortName").asText().trim().isEmpty()) ? node.get("company").get("shortName").asText() : node.get("company").get("name").asText(),
                 node.get("companyBillingAddress").get("streetName").asText(),
-                node.get("director").get("lastName").asText()+ " " +node.get("director").get("firstName").asText()+ " "+ node.get("director").get("middleName").asText(),
+                node.get("director").get("lastName").asText() + " " + node.get("director").get("firstName").asText() + " " + node.get("director").get("middleName").asText(),
                 district.getRegionId(),
                 district.getId(),
                 node.get("directorContact").get("phone").asText(),
@@ -122,7 +121,7 @@ public class IIPServiceImpl implements IIPService {
         String token = getToken();
 
         //get gnkInfo as jsonNode
-        Map<String,Object> fields = new HashMap<>();
+        Map<String, Object> fields = new HashMap<>();
         fields.put("transaction_id", 3);
         fields.put("is_consent", "Y");
         fields.put("sender_pinfl", pin);
@@ -140,9 +139,8 @@ public class IIPServiceImpl implements IIPService {
                 .retrieve()
                 .body(JsonNode.class);
 
-        if (node==null || node.get("data")==null) throw new RuntimeException("MIP dan JSHSHIR bo'yicha so'rovga bo'sh javob qaytdi");
-
-        log.error("PinInfo olindi: {}", node.toPrettyString());
+        if (node == null || node.get("data") == null)
+            throw new RuntimeException("MIP dan JSHSHIR bo'yicha so'rovga bo'sh javob qaytdi");
 
         //make individual user dto
         JsonNode data = node.withArray("data").get(0);

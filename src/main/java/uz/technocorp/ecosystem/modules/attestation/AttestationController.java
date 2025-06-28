@@ -1,19 +1,16 @@
 package uz.technocorp.ecosystem.modules.attestation;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import uz.technocorp.ecosystem.modules.appeal.AppealPdfService;
-import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
-import uz.technocorp.ecosystem.modules.attestation.dto.AttestationDto;
+import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.attestation.dto.AttestationConductDto;
+import uz.technocorp.ecosystem.modules.attestation.dto.AttestationParamsDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
+
+import java.util.UUID;
 
 /**
  * @author Suxrob
@@ -27,19 +24,27 @@ import uz.technocorp.ecosystem.shared.ApiResponse;
 public class AttestationController {
 
     private final AttestationService service;
-    private final AppealPdfService appealPdfService;
 
-    //TODO   ROLE.LEGAL
-    @PostMapping("/generate-pdf")
-    public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody AttestationDto attestationDto) {
-        String path = appealPdfService.preparePdfWithParam(attestationDto, user);
-        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    @GetMapping
+    public ResponseEntity<ApiResponse> getAll(@CurrentUser User user, @Valid AttestationParamsDto dto) {
+        return ResponseEntity.ok(new ApiResponse(service.getAllByParams(user, dto)));
     }
 
-    //TODO   ROLE.LEGAL
-    @PostMapping
-    public ResponseEntity<ApiResponse> create(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<AttestationDto> signedDto, HttpServletRequest request) {
-        service.create(user, signedDto, request);
-        return ResponseEntity.ok().body(new ApiResponse("Ariza yaratildi"));
+    @GetMapping("/{attestationId}")
+    public ResponseEntity<ApiResponse> get(@CurrentUser User user, @PathVariable UUID attestationId) {
+        return ResponseEntity.ok().body(new ApiResponse(service.getById(user, attestationId)));
     }
+
+    @GetMapping("/by-appeal/{appealId}")
+    public ResponseEntity<ApiResponse> getByAppeal(@CurrentUser User user, @PathVariable UUID appealId) {
+        return ResponseEntity.ok().body(new ApiResponse(service.getByAppeal(user, appealId)));
+    }
+
+    // TODO ROLE -> REGIONAL & COMMITTEE
+    @PostMapping("/conduct")
+    public ResponseEntity<ApiResponse> conduct(@CurrentUser User user, @Valid @RequestBody AttestationConductDto conductDto) {
+        service.conduct(user, conductDto);
+        return ResponseEntity.ok().body(new ApiResponse("Muvaffaqiyatli amalga oshirildi"));
+    }
+
 }

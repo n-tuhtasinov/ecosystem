@@ -112,6 +112,9 @@ public class HfAppealDto implements AppealDto {
     @SkipDb
     private String ecologicalConclusionPath;
 
+    @SkipDb
+    private String fireSafetyConclusionPath;
+
     @Schema(hidden = true)
     private Map<String, String> files = new HashMap<>();
 
@@ -139,6 +142,7 @@ public class HfAppealDto implements AppealDto {
         files.put("deviceTestingPath", deviceTestingPath);
         files.put("appointmentOrderPath", appointmentOrderPath);
         files.put("ecologicalConclusionPath", ecologicalConclusionPath);
+        files.put("fireSafetyConclusionPath", fireSafetyConclusionPath);
     }
 
     @AssertTrue

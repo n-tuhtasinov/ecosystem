@@ -24,7 +24,7 @@ import java.util.UUID;
 public class InspectionReport extends BaseEntity {
 
     @Column(columnDefinition = "text")
-    private String assignedTasks;
+    private String defect;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Inspection.class)
     @JoinColumn(name = "inspection_id", insertable = false, updatable = false)
@@ -32,4 +32,8 @@ public class InspectionReport extends BaseEntity {
 
     @Column(name = "inspection_id")
     private UUID inspectionId;
+
+    private boolean eliminated;
+
+    private LocalDate deadline;
 }

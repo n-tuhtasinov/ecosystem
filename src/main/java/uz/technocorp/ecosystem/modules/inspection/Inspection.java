@@ -5,6 +5,7 @@ import lombok.*;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.document.Document;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
+import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -29,7 +30,15 @@ import java.util.UUID;
 @Builder
 public class Inspection extends BaseEntity {
 
+    @Column(nullable = false)
     private Long tin;
+
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
+    @JoinColumn(name = "profile_id", insertable = false, updatable = false)
+    private Profile profile;
+
+    @Column(name = "profile_id")
+    private UUID profileId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = RiskAnalysisInterval.class)
     @JoinColumn(name = "interval_id", insertable = false, updatable = false)
@@ -78,7 +87,9 @@ public class Inspection extends BaseEntity {
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    private Document decree;
 //
-//    private String decreePath;
+    private String decreePath;
+    private LocalDate decreeDate;
+    private String decreeNumber;
 //
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    private Document act;

@@ -12,10 +12,12 @@ import java.util.UUID;
 public interface InspectionReportView {
 
     UUID getId();
-    String getExecutionFilePath();
-    LocalDate getFileUploadDate();
-    String getRejectedCause();
     String getAssignedTasks();
-    String getStatus();
-    UUID getReportExecutionId();
+    LocalDate getDate();
+    LocalDate getDeadline();
+    Boolean getEliminated();
+    UUID getInspectionId();
+    UUID getInspectorId();
+    String getInspectorName();
+
 }

@@ -27,7 +27,7 @@ public class PreventionSpecification {
             Long tin = parseTin(search);
             return tin != null
                     ? cb.equal(root.get("profileTin"), tin)
-                    : cb.like(cb.lower(root.get("profileName")), "%" + search.toLowerCase() + "%");
+                    : cb.like(cb.lower(root.get("legalName")), "%" + search.toLowerCase() + "%");
         };
     }
 
