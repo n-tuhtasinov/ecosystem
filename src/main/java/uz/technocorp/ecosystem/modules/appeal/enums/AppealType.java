@@ -116,7 +116,7 @@ public enum AppealType {
     OBTAIN_CONCLUSION("", "", "", "PERMITS"),
 
     // Xavfli ishlab chiqarish obyektlari kadastr pasporti
-    REGISTER_CADASTRE_PASSPORT("", "", "", "CADASTRE"),
+    REGISTER_CADASTRE_PASSPORT("", "registerCadastrePassport", "", "CADASTRE"),
     DEREGISTER_CADASTRE_PASSPORT("", "", "", "CADASTRE"),
 
     // Sanoat xavfsizligi deklaratsiyasi
