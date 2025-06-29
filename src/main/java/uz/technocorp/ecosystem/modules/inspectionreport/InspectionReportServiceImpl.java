@@ -35,7 +35,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
                 InspectionReport
                         .builder()
                         .inspectionId(inspectionId)
-                        .defect(dto.assignedTasks())
+                        .defect(dto.defect())
                         .deadline(dto.deadline())
                         .build()
         );
@@ -48,7 +48,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv ijro hisoboti", "Id", id));
         UUID inspectorId = inspectionReport.getCreatedBy();
         if (user.getId().equals(inspectorId)) {
-            inspectionReport.setDefect(dto.assignedTasks());
+            inspectionReport.setDefect(dto.defect());
             inspectionReport.setDeadline(dto.deadline());
             repository.save(inspectionReport);
         }

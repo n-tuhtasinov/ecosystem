@@ -42,6 +42,9 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
                 order_path as orderPath,
                 measures_path as measuresPath,
                 result_path as resultPath,
+                decree_path as decreePath,
+                decree_date as decreeDate,
+                decree_number as decreeNumber,
                 json_agg(json_build_object('id', u.id, 'name', p.full_name)) as inspectors
                 from inspection i
                 join inspection_inspector ii on i.id = ii.inspection_id

@@ -90,7 +90,7 @@ public class InspectionController {
     @PostMapping("/act/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody InspectionActDto actDto, HttpServletRequest request) {
         String path = service.generatePdf(user, actDto, request);
-        return ResponseEntity.ok(new ApiResponse(path));
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
     // TODO attachmentlarni delete qilish kerak Inspection modulida
 }
