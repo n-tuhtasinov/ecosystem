@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.attestation.dto;
+package uz.technocorp.ecosystem.modules.attestationappeal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -13,7 +13,6 @@ import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationDirection;
-import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDto;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;

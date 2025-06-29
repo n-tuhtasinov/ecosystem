@@ -26,5 +26,5 @@ public class EmployeeListDto {
     private UUID hfId;
 
     @NotNull(message = "Xodimlar qo'shilmadi")
-    private List<@Valid EmployeeDto> employeeList;
+    private List<@Valid EmployeeAddDto> employeeList;
 }

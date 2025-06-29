@@ -33,7 +33,7 @@ public interface HazardousFacilityService {
 
     void periodicUpdate(UUID id, HfPeriodicUpdateDto dto);
 
-    List<HfSelectView> findAllByProfile(User user);
+    List<HfSelectView> findAllByUser(User user, String registryNumber);
 
     Page<HfCustom> getAll(User user, HfParams params);
 
