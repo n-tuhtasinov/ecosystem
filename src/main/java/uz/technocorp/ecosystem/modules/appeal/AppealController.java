@@ -89,7 +89,6 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-
     @PostMapping("/reply/committee-accept/generate-pdf")
     public ResponseEntity<ApiResponse> generateCommitteeAcceptPdf(@CurrentUser User user, @Valid @RequestBody ReplyAttestationDto replyAttestationDto) {
         String path = appealPdfService.prepareCommitteeAcceptPdfWithParam(user, replyAttestationDto);
