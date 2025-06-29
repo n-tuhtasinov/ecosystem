@@ -1,14 +1,6 @@
 package uz.technocorp.ecosystem.modules.hf.view;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
-import uz.technocorp.ecosystem.modules.hftype.HfType;
-import uz.technocorp.ecosystem.modules.profile.Profile;
-import uz.technocorp.ecosystem.modules.region.Region;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,8 +13,9 @@ import java.util.UUID;
  * @created 10.06.2025
  * @since v1.0
  */
-public record HfViewById (
+public record HfViewById(
         Long legalTin,
+        String legalName,
         LocalDate registrationDate,
         String registryNumber,
         UUID profileId,
@@ -45,4 +38,5 @@ public record HfViewById (
         Map<String, String> files,
         String registryFilePath,
         String inspectorName
-) {}
+) {
+}
