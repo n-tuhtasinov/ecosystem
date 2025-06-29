@@ -112,10 +112,7 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
         // Status
         Specification<Attestation> hasStatus = specification.hasStatus(AttestationStatus.PENDING);
 
-        // Latest
-        Specification<Attestation> latest = specification.isLatest();
-
-        Specification<Attestation> spec = where(hasLegalTin).and(hasStatus).and(latest);
+        Specification<Attestation> spec = where(hasLegalTin).and(hasStatus);
         Page<UUID> appealIds = repository.findDistinctAppealIds(spec, getPageable(dto));
         if (appealIds.getTotalElements() == 0) {
             return Page.empty();
@@ -137,13 +134,10 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
         // Region
         Specification<Attestation> hasRegion = specification.hasRegionId(dto.getRegionId());
 
-        // Latest
-        Specification<Attestation> latest = specification.isLatest();
-
-        return where(hasStatus).and(hasLegal).and(hasRegion).and(latest);
+        return where(hasStatus).and(hasLegal).and(hasRegion);
     }
 
     private Pageable getPageable(AttestationPendingParamsDto dto) {
-        return PageRequest.of(dto.getPage(), dto.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+        return PageRequest.of(dto.getPage() - 1, dto.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 }

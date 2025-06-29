@@ -25,7 +25,7 @@ public class AttestationSpecification {
     public Specification<Attestation> hasSearch(String search) {
         return (root, cq, cb) -> {
             if (search == null || search.isBlank()) {
-                return null;
+                return cb.conjunction();
             }
             Long pin = parsePin(search);
             return pin != null
@@ -38,7 +38,7 @@ public class AttestationSpecification {
     public Specification<Attestation> hasLegal(String search) {
         return (root, cq, cb) -> {
             if (search == null || search.isBlank()) {
-                return null;
+                return cb.conjunction();
             }
             Long pin = parseTin(search);
             return pin != null
@@ -71,19 +71,6 @@ public class AttestationSpecification {
 
     public Specification<Attestation> hasExecutorId(UUID executorId) {
         return (root, query, cb) -> executorId == null ? cb.conjunction() : cb.equal(root.get("executorId"), executorId);
-    }
-
-    public Specification<Attestation> isLatest() {
-        return (root, query, cb) -> {
-            Subquery<LocalDateTime> subquery = query.subquery(LocalDateTime.class);
-            Root<Attestation> subRoot = subquery.from(Attestation.class);
-
-            Expression<LocalDateTime> createdAtExpression = subRoot.get("createdAt").as(LocalDateTime.class);
-            subquery.select(cb.greatest(createdAtExpression));
-            subquery.where(cb.equal(subRoot.get("appealId"), root.get("appealId")));
-
-            return cb.equal(root.get("createdAt"), subquery);
-        };
     }
 
     private Long parsePin(String query) {
