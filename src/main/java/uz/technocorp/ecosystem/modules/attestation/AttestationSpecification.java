@@ -1,10 +1,14 @@
 package uz.technocorp.ecosystem.modules.attestation;
 
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationStatus;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,6 +73,19 @@ public class AttestationSpecification {
         return (root, query, cb) -> executorId == null ? cb.conjunction() : cb.equal(root.get("executorId"), executorId);
     }
 
+    public Specification<Attestation> isLatest() {
+        return (root, query, cb) -> {
+            Subquery<LocalDateTime> subquery = query.subquery(LocalDateTime.class);
+            Root<Attestation> subRoot = subquery.from(Attestation.class);
+
+            Expression<LocalDateTime> createdAtExpression = subRoot.get("createdAt").as(LocalDateTime.class);
+            subquery.select(cb.greatest(createdAtExpression));
+            subquery.where(cb.equal(subRoot.get("appealId"), root.get("appealId")));
+
+            return cb.equal(root.get("createdAt"), subquery);
+        };
+    }
+
     private Long parsePin(String query) {
         try {
             return query.length() == 14 ? Long.parseLong(query) : null;
@@ -76,6 +93,7 @@ public class AttestationSpecification {
             return null;
         }
     }
+
     private Long parseTin(String query) {
         try {
             return query.length() == 9 ? Long.parseLong(query) : null;
