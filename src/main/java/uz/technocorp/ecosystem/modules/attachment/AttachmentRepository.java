@@ -20,6 +20,7 @@ public interface AttachmentRepository extends JpaRepository<Attachment, UUID> {
 
     Optional<Attachment> findByPath(String path);
 
+    @Transactional
     void deleteByPath(String path);
 
     @Modifying
