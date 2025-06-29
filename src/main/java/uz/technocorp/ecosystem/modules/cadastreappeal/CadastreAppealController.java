@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.CadastrePassportDto;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.ConfirmCadastreDto;
@@ -69,6 +70,18 @@ public class CadastreAppealController {
     public ResponseEntity<ApiResponse> generateRejectionPdf(@CurrentUser User user, @Valid @RequestBody RejectCadastreDto rejectCadastreDto) {
         String path = cadastreAppealService.generateRejectionPdf(user, rejectCadastreDto);
         return ResponseEntity.ok(new ApiResponse("Pdf fayl yaratildi", path));
+    }
+
+    @PostMapping("/confirmation")
+    public ResponseEntity<ApiResponse> confirm(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<ConfirmCadastreDto> replyDto, HttpServletRequest request ) {
+        cadastreAppealService.confirm(user, replyDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CONFIRMED));
+    }
+
+    @PostMapping("/rejection")
+    public ResponseEntity<ApiResponse> reject(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<RejectCadastreDto> replyDto, HttpServletRequest request) {
+        cadastreAppealService.reject(user, replyDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.REJECTED));
     }
 
 }
