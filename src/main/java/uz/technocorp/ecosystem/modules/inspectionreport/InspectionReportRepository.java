@@ -20,7 +20,7 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
 
     @Query(value = """
             select ir.id as id,
-                defect as assignedTasks,
+                defect,
                 ir.created_at as date,
                 ir.deadline as deadline,
                 eliminated,
@@ -37,7 +37,7 @@ public interface InspectionReportRepository extends JpaRepository<InspectionRepo
 
     @Query(value = """
             select ir.id as id,
-                defect as assignedTasks,
+                defect,
                 ir.created_at as date,
                 ir.deadline as deadline,
                 eliminated,

@@ -8,5 +8,5 @@ import java.time.LocalDate;
  * @created 29.05.2025
  * @since v1.0
  */
-public record InspectionReportDto(String assignedTasks, LocalDate deadline) {
+public record InspectionReportDto(String defect, LocalDate deadline) {
 }

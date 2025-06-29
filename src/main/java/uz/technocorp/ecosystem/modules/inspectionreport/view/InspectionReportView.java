@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface InspectionReportView {
 
     UUID getId();
-    String getAssignedTasks();
+    String getDefect();
     LocalDate getDate();
     LocalDate getDeadline();
     Boolean getEliminated();
