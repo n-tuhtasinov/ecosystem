@@ -1,7 +1,6 @@
-package uz.technocorp.ecosystem.modules.cadastreappeal;
+package uz.technocorp.ecosystem.modules.declarationappeal;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +15,9 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
-import uz.technocorp.ecosystem.modules.cadastreappeal.dto.ConfirmCadastreDto;
-import uz.technocorp.ecosystem.modules.cadastreappeal.dto.RejectCadastreDto;
+import uz.technocorp.ecosystem.modules.cadastrepassportappeal.CadastrePassportAppealService;
+import uz.technocorp.ecosystem.modules.cadastrepassportappeal.dto.ConfirmPassportDto;
+import uz.technocorp.ecosystem.modules.cadastrepassportappeal.dto.RejectPassportDto;
 import uz.technocorp.ecosystem.modules.department.DepartmentService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
@@ -46,7 +46,7 @@ import java.util.*;
  */
 @Service
 @RequiredArgsConstructor
-public class CadastreAppealServiceImpl implements CadastreAppealService {
+public class DeclarationAppealServiceImpl implements DeclarationAppealService {
 
 
     private final AppealService appealService;
@@ -60,15 +60,10 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
     private final AppealExecutionProcessService appealExecutionProcessService;
 
     @Override
-    public String generateConfirmationPdf(User user, ConfirmCadastreDto confirmCadastreDto) {
-        Appeal appeal = appealService.findById(confirmCadastreDto.appealId());
+    public String generateConfirmationPdf(User user, ConfirmPassportDto confirmPassportDto) {
 
-        Template template;
-        if (appeal.getAppealType() == AppealType.REGISTER_CADASTRE_PASSPORT){
-            template = templateService.getByType(TemplateType.REPLY_ACCEPT_CADASTRE_PASSPORT_APPEAL.name());
-        }else {
-            template = templateService.getByType(TemplateType.REPLY_ACCEPT_DECLARATION_APPEAL.name());
-        }
+        Appeal appeal = appealService.findById(confirmPassportDto.appealId());
+        Template template = templateService.getByType(TemplateType.REPLY_ACCEPT_DECLARATION_APPEAL.name());
 
         String[] appealFormattedDate = getSplitDate(appeal.getCreatedAt());
         String appealDate = appealFormattedDate[0] + " yil " + appealFormattedDate[2] + " " + appealFormattedDate[1];
@@ -84,7 +79,7 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
         parameters.put("appealNumber", appeal.getNumber());
         parameters.put("executorWorkspace", workSpace[0]);
         parameters.put("confirmationDate", confirmationDate);
-        parameters.put("registryNumber", confirmCadastreDto.registryNumber());
+        parameters.put("registryNumber", confirmPassportDto.registryNumber());
         parameters.put("executorFullWorkspace", workSpace[0] + " " + workSpace[1]);
         parameters.put("executorName", user.getName());
 
@@ -93,16 +88,10 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
     }
 
     @Override
-    public String generateRejectionPdf(User user, RejectCadastreDto rejectCadastreDto) {
+    public String generateRejectionPdf(User user, RejectPassportDto rejectPassportDto) {
 
-        Appeal appeal = appealService.findById(rejectCadastreDto.appealId());
-
-        Template template;
-        if (appeal.getAppealType() == AppealType.REGISTER_CADASTRE_PASSPORT){
-            template = templateService.getByType(TemplateType.REPLY_REJECT_CADASTRE_PASSPORT_APPEAL.name());
-        }else {
-            template = templateService.getByType(TemplateType.REPLY_REJECT_DECLARATION_APPEAL.name());
-        }
+        Appeal appeal = appealService.findById(rejectPassportDto.appealId());
+        Template template = templateService.getByType(TemplateType.REPLY_REJECT_DECLARATION_APPEAL.name());
 
         String[] appealFormattedDate = getSplitDate(appeal.getCreatedAt());
         String appealDate = appealFormattedDate[0] + " yil " + appealFormattedDate[2] + " " + appealFormattedDate[1];
@@ -113,7 +102,7 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("date", appealDate);
         parameters.put("appealNumber", appeal.getNumber());
-        parameters.put("conclusion", rejectCadastreDto.conclusion());
+        parameters.put("conclusion", rejectPassportDto.conclusion());
         parameters.put("executorWorkspace", workSpace[0]);
         parameters.put("executorFullWorkspace", workSpace[0] + " " + workSpace[1]);
         parameters.put("executorName", user.getName());
@@ -124,7 +113,7 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
 
     @Override
     @Transactional
-    public void confirm(User user, SignedReplyDto<ConfirmCadastreDto> replyDto, HttpServletRequest request) {
+    public void confirm(User user, SignedReplyDto<ConfirmPassportDto> replyDto, HttpServletRequest request) {
 
         Appeal appeal = findAppealByIdAndStatus(replyDto.getDto().appealId(), AppealStatus.NEW);
 
@@ -155,7 +144,7 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
 
     @Override
     @Transactional
-    public void reject(User user, SignedReplyDto<RejectCadastreDto> replyDto, HttpServletRequest request) {
+    public void reject(User user, SignedReplyDto<RejectPassportDto> replyDto, HttpServletRequest request) {
         Appeal appeal = findAppealByIdAndStatus(replyDto.getDto().appealId(), AppealStatus.NEW);
 
         // Create a reply document
