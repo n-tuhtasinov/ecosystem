@@ -23,52 +23,48 @@ public class AttestationRepositoryImpl implements CustomAttestationRepository {
 
     @Override
     public Page<UUID> findDistinctAppealIds(Specification<Attestation> spec, Pageable pageable) {
-        // 1. MA'LUMOTLAR UCHUN ASOSIY SO'ROV
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<UUID> query = cb.createQuery(UUID.class);
         Root<Attestation> root = query.from(Attestation.class);
 
-        query.select(root.get("appealId")).distinct(true);
+        // query.select(root.get("appealId")).distinct(true); // <--- BU QATOR O'ZGARTIRILADI
+        query.select(root.get("appealId")); // <-- distinct(true) OLIB TASHLANDI
 
-        // Specification'dan filterlarni (WHERE shartlarini) qo'llash
         Predicate predicate = spec.toPredicate(root, query, cb);
         query.where(predicate);
 
-        // Sorting (saralash)ni qo'llash
         Sort sort = pageable.getSort();
         if (sort.isSorted()) {
-            // Sort obyektidan Criteria API Order obyektlarini yaratamiz
             List<jakarta.persistence.criteria.Order> orders = sort.stream()
                     .map(order -> order.isAscending() ? cb.asc(root.get(order.getProperty())) : cb.desc(root.get(order.getProperty())))
                     .toList();
             query.orderBy(orders);
         }
 
-        // So'rovni yaratish va pagination'ni qo'llash
         TypedQuery<UUID> typedQuery = entityManager.createQuery(query);
-        typedQuery.setFirstResult((int) pageable.getOffset()); // Qaysi elementdan boshlab olish
-        typedQuery.setMaxResults(pageable.getPageSize());     // Nechta element olish
+        typedQuery.setFirstResult((int) pageable.getOffset());
+        typedQuery.setMaxResults(pageable.getPageSize());
 
         List<UUID> content = typedQuery.getResultList();
 
-        // 2. JAMI ELEMENTLAR SONINI OLISH UCHUN COUNT SO'ROVI
-        long total = executeCountQuery(spec);
+        // COUNT so'rovi ham o'zgarishi kerak!
+        long total = executeCountQueryForLatest(spec);
 
-        // 3. Page obyektini yaratish va qaytarish
         return new PageImpl<>(content, pageable, total);
     }
 
-    private long executeCountQuery(Specification<Attestation> spec) {
+    // Jami sonni hisoblash uchun ham yangi metod kerak
+    private long executeCountQueryForLatest(Specification<Attestation> spec) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        Root<Attestation> countRoot = countQuery.from(Attestation.class);
+        Root<Attestation> root = countQuery.from(Attestation.class);
 
-        // Filterlarni count so'roviga ham qo'llaymiz
-        Predicate predicate = spec.toPredicate(countRoot, countQuery, cb);
+        // Asosiy shart (Specification) va eng oxirgi yozuv shartini qo'llaymiz
+        Predicate predicate = spec.toPredicate(root, countQuery, cb);
         countQuery.where(predicate);
 
-        // COUNT(DISTINCT appealId) so'rovini yaratamiz
-        countQuery.select(cb.countDistinct(countRoot.get("appealId")));
+        // Endi appealId'lar sonini sanaymiz.
+        countQuery.select(cb.count(root)); // Bu yerda distinct kerak emas, chunki har bir appealId'dan faqat bittasi qolgan.
 
         return entityManager.createQuery(countQuery).getSingleResult();
     }
