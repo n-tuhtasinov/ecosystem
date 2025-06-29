@@ -129,7 +129,7 @@ public class AppealServiceImpl implements AppealService {
         Integer officeId = getProfile(user.getProfileId()).getOfficeId();
 
         Appeal appeal = switch (user.getRole()) {
-            case Role.MANAGER -> findByIdAndStatus(replyDto.getDto().getAppealId(), AppealStatus.NEW);
+            case Role.MANAGER -> findByIdAndStatusAndSetExecutorName(replyDto.getDto().getAppealId(), AppealStatus.NEW, user);
             case Role.REGIONAL -> findByIdStatusAndOffice(replyDto.getDto().getAppealId(), AppealStatus.NEW, officeId);
             default -> throw new CustomException("Sizda arizalarni rad qilish imkoniyati mavjud emas");
         };
@@ -307,10 +307,12 @@ public class AppealServiceImpl implements AppealService {
         appealDto.setHfTypeName(hfTypeName);
     }
 
-    @Override
-    public Appeal findByIdAndStatus(UUID appealId, AppealStatus appealStatus) {
-        return repository.findByIdAndStatus(appealId, appealStatus).orElseThrow(
+    private Appeal findByIdAndStatusAndSetExecutorName(UUID appealId, AppealStatus appealStatus, User user) {
+        Appeal appeal = repository.findByIdAndStatus(appealId, appealStatus).orElseThrow(
                 () -> new ResourceNotFoundException("Ariza topilmadi yoki ariza holati o'zgargan"));
+        appeal.setExecutorId(user.getId());
+        appeal.setExecutorName(user.getName());
+        return appeal;
     }
 
     @Override
