@@ -98,6 +98,7 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
         parameters.put("legalName", appeal.getLegalName());
         parameters.put("date", appealDate);
         parameters.put("appealNumber", appeal.getNumber());
+        parameters.put("conclusion", rejectCadastreDto.conclusion());
         parameters.put("executorWorkspace", workSpace[0]);
         parameters.put("executorFullWorkspace", workSpace[0] + " " + workSpace[1]);
         parameters.put("executorName", user.getName());
