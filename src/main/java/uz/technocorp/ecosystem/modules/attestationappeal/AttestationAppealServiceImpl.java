@@ -55,7 +55,7 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
         Specification<Attestation> spec = where(makeBaseSpecification(dto)).and(hasDirection);
 
         Page<UUID> appealIds = repository.findDistinctAppealIds(spec, getPageable(dto));
-        if (appealIds.getTotalElements() == 0) {
+        if (appealIds.getContent().isEmpty()) {
             return Page.empty();
         }
         List<AppealViewById> appeals = appealService.getByIds(appealIds.stream().toList());
@@ -75,7 +75,7 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
 
         Specification<Attestation> spec = where(makeBaseSpecification(dto)).and(hasDirection).and(hasInspector);
         Page<UUID> appealIds = repository.findDistinctAppealIds(spec, getPageable(dto));
-        if (appealIds.getTotalElements() == 0) {
+        if (appealIds.getContent().isEmpty()) {
             return Page.empty();
         }
         List<AppealViewById> appeals = appealService.getByIds(appealIds.stream().toList());
@@ -95,7 +95,7 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
 
         Specification<Attestation> spec = where(makeBaseSpecification(dto)).and(hasDirection).and(hasInspector);
         Page<UUID> appealIds = repository.findDistinctAppealIds(spec, getPageable(dto));
-        if (appealIds.getTotalElements() == 0) {
+        if (appealIds.getContent().isEmpty()) {
             return Page.empty();
         }
         List<AppealViewById> appeals = appealService.getByIds(appealIds.stream().toList());
@@ -114,7 +114,7 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
 
         Specification<Attestation> spec = where(hasLegalTin).and(hasStatus);
         Page<UUID> appealIds = repository.findDistinctAppealIds(spec, getPageable(dto));
-        if (appealIds.getTotalElements() == 0) {
+        if (appealIds.getContent().isEmpty()) {
             return Page.empty();
         }
 
