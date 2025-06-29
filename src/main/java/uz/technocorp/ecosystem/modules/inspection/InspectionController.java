@@ -10,6 +10,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.ReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
+import uz.technocorp.ecosystem.modules.document.view.DocumentViewByRequest;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionActDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
@@ -98,8 +99,8 @@ public class InspectionController {
 
     @GetMapping("/act/{id}")
     public ResponseEntity<ApiResponse> getAct(@PathVariable UUID id) {
-        documentService.getDocumentByBelongId(id, DocumentType.ACT);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+        DocumentViewByRequest document = documentService.getDocumentByBelongId(id, DocumentType.ACT);
+        return ResponseEntity.ok(new ApiResponse(document));
     }
     // TODO attachmentlarni delete qilish kerak Inspection modulida
 }
