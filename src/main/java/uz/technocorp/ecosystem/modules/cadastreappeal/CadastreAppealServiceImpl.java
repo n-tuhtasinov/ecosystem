@@ -150,6 +150,7 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
     }
 
     @Override
+    @Transactional
     public void reject(User user, SignedReplyDto<RejectCadastreDto> replyDto, HttpServletRequest request) {
         Appeal appeal = findAppealByIdAndStatus(replyDto.getDto().appealId(), AppealStatus.NEW);
 
