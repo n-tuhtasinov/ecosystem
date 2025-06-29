@@ -30,7 +30,7 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReAccreditationDto implements AppealDto {
+public class ReAccreditationAppealDto implements AppealDto {
 
     @SkipDb
     @Schema(hidden = true)

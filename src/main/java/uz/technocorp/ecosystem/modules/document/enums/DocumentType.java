@@ -15,8 +15,8 @@ public enum DocumentType {
     DECREE("Qaror"),
 //    NOTIFICATION("Xabarnoma"),
     APPEAL("Ariza"),
-    REPLY_LETTER("Javob xati");
-//    ACCREDITATION_CERTIFICATE("Akkreditatsiya attestati");
+    REPLY_LETTER("Javob xati"),
+    ACCREDITATION_CERTIFICATE("Akkreditatsiya attestati");
 
     public final String displayName;
 

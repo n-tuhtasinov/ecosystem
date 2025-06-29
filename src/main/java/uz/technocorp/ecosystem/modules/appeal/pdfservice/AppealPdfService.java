@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.appeal.pdfservice;
 
+import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.ReplyAttestationDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.ReplyDto;
@@ -23,4 +24,5 @@ public interface AppealPdfService {
     String prepareCommitteeAcceptPdfWithParam(User user, ReplyAttestationDto dto);
 
     String prepareRejectPdfWithParam(User user, ReplyDto replyDto);
+    String prepareAccreditationPdfWithParam(User user, AccreditationRejectionDto accreditationRejectionDto, boolean rejected);
 }

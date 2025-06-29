@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.appeal.pdfservice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
+import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
@@ -149,6 +150,14 @@ public class AppealPdfServiceImpl implements AppealPdfService {
 
         // Save to an attachment and folder & Return a file path
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reject", parameters, true);
+    }
+
+    @Override
+    public String prepareAccreditationPdfWithParam(User user, AccreditationRejectionDto accreditationRejectionDto, boolean rejected) {
+        //TODO rejected paramdan foydalanib arizani qaytarish va arizani rad etish holatlari uchun
+        // ikki xil pdf yaratish kerak
+
+        return "";
     }
 
     private AppealPdfProcessor findProcessor(AppealDto dto) {

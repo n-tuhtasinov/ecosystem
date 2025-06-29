@@ -5,6 +5,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccreditationDto implements AppealDto {
+public class ExpendAccreditationAppealDto implements AppealDto {
 
     @SkipDb
     @Schema(hidden = true)
@@ -55,7 +56,7 @@ public class AccreditationDto implements AppealDto {
 
     @Override
     public AppealType getAppealType() {
-        return AppealType.ACCREDIT_EXPERT_ORGANIZATION;
+        return AppealType.EXPEND_ACCREDITATION_SCOPE;
     }
 
     @Schema(hidden = true)
@@ -81,10 +82,24 @@ public class AccreditationDto implements AppealDto {
 
     @SkipDb
     private String propertyOwnerShipPath;
+
     @SkipDb
     private String qualityPerformanceInstructionPath;
+
     @SkipDb
     private String qualityManagementSystemPath;
+
+    @SkipDb
+    @NotBlank(message = "Akkreditatsiya attestatining ro'yxat raqami yuborilmadi!")
+    private String certificateNumber;
+
+    @SkipDb
+    @NotNull(message = "Akkreditatsiya attestati berilgan sana yuborilmadi!")
+    private LocalDate certificateDate;
+
+    @SkipDb
+    @NotNull(message = "Akkreditatsiya attestatining amal qilish muddati yuborilmadi!")
+    private LocalDate certificateValidityDate;
 
     public void buildFiles() {
         files.put("accreditationFieldPath", accreditationFieldPath);
