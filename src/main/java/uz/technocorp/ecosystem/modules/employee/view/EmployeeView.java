@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public class EmployeeView {
     private LocalDate certExpiryDate;
     private LocalDate ctcTrainingFromDate;
     private LocalDate ctcTrainingToDate;
-    private String level;
+    private EmployeeLevel level;
     private String hfName;
 
 
