@@ -40,6 +40,14 @@ public class CadastrePassportDto implements AppealDto {
     private String hfName;
 
     @SkipDb
+    @NotNull(message = "Xicho joylashgan viloyat jo'natilmadi")
+    private Integer regionId;
+
+    @SkipDb
+    @NotNull(message = "Xicho joylashgan tuman jo'natilmadi")
+    private Integer districtId;
+
+    @SkipDb
     @NotBlank(message = "XICHO manzili jo'natilmadi")
     private String address;
 
@@ -70,14 +78,6 @@ public class CadastrePassportDto implements AppealDto {
     public AppealType getAppealType() {
         return AppealType.REGISTER_CADASTRE_PASSPORT;
     }
-
-    @SkipDb
-    @NotNull(message = "Xicho joylashgan viloyat jo'natilmadi")
-    private Integer regionId;
-
-    @SkipDb
-    @NotNull(message = "Xicho joylashgan tuman jo'natilmadi")
-    private Integer districtId;
 
     @Override
     public LocalDate getDeadline() {

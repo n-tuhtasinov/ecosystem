@@ -15,6 +15,7 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.cadastrepassport.CadastrePassportService;
 import uz.technocorp.ecosystem.modules.cadastrepassportappeal.dto.ConfirmPassportDto;
 import uz.technocorp.ecosystem.modules.cadastrepassportappeal.dto.RejectPassportDto;
 import uz.technocorp.ecosystem.modules.department.DepartmentService;
@@ -57,6 +58,7 @@ public class CadastrePassportAppealServiceImpl implements CadastrePassportAppeal
     private final AppealRepository appealRepository;
     private final DocumentService documentService;
     private final AppealExecutionProcessService appealExecutionProcessService;
+    private final CadastrePassportService cadastrePassportService;
 
     @Override
     public String generateConfirmationPdf(User user, ConfirmPassportDto confirmPassportDto) {
@@ -135,9 +137,8 @@ public class CadastrePassportAppealServiceImpl implements CadastrePassportAppeal
         // Create an execution process by the appeal
         appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.COMPLETED, null));
 
-//        switch (appeal.getAppealType()) {
-//            case REGISTER_CADASTRE_PASSPORT ->
-//        }
+        //create cadastre passport appeal
+        cadastrePassportService.create(appeal, replyDto.getDto().registryNumber());
     }
 
     @Override

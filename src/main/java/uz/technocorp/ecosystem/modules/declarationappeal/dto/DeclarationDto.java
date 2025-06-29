@@ -39,6 +39,9 @@ public class DeclarationDto implements AppealDto {
     @NotBlank(message = "XICHO nomi jo'natilmadi")
     private String hfName;
 
+    @NotBlank(message = "XICHO ro'yhatga olingan raqami ko'natilmadi")
+    private String hfRegistryNumber;
+
     @SkipDb
     @NotBlank(message = "XICHO manzili jo'natilmadi")
     private String address;
@@ -67,7 +70,6 @@ public class DeclarationDto implements AppealDto {
     @NotNull(message = "Expertiza sanasi kiritilmadi")
     private LocalDate expertiseDate;
 
-    @NotBlank(message = "Deklaratsiya ro'yhatga olgan tashkilot nomi jo'natilmadi")
     private String registrationOrganizationName;
 
     @SkipDb

@@ -18,6 +18,7 @@ import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.cadastrepassportappeal.CadastrePassportAppealService;
 import uz.technocorp.ecosystem.modules.cadastrepassportappeal.dto.ConfirmPassportDto;
 import uz.technocorp.ecosystem.modules.cadastrepassportappeal.dto.RejectPassportDto;
+import uz.technocorp.ecosystem.modules.declaration.DeclarationService;
 import uz.technocorp.ecosystem.modules.department.DepartmentService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
@@ -58,6 +59,7 @@ public class DeclarationAppealServiceImpl implements DeclarationAppealService {
     private final AppealRepository appealRepository;
     private final DocumentService documentService;
     private final AppealExecutionProcessService appealExecutionProcessService;
+    private final DeclarationService declarationService;
 
     @Override
     public String generateConfirmationPdf(User user, ConfirmPassportDto confirmPassportDto) {
@@ -118,7 +120,7 @@ public class DeclarationAppealServiceImpl implements DeclarationAppealService {
         Appeal appeal = findAppealByIdAndStatus(replyDto.getDto().appealId(), AppealStatus.NEW);
 
         // Create a reply document
-        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
+//        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
 
         // update appeal
         String conclusion = new StringBuilder()
@@ -137,9 +139,8 @@ public class DeclarationAppealServiceImpl implements DeclarationAppealService {
         // Create an execution process by the appeal
         appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.COMPLETED, null));
 
-//        switch (appeal.getAppealType()) {
-//            case REGISTER_CADASTRE_PASSPORT ->
-//        }
+        // create declaration
+        declarationService.create(appeal, replyDto.getDto().registryNumber());
     }
 
     @Override
