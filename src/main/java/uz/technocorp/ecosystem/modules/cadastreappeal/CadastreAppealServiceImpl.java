@@ -1,15 +1,29 @@
 package uz.technocorp.ecosystem.modules.cadastreappeal;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.CustomException;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
+import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.ConfirmCadastreDto;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.RejectCadastreDto;
 import uz.technocorp.ecosystem.modules.department.DepartmentService;
+import uz.technocorp.ecosystem.modules.document.DocumentService;
+import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
+import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
+import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
+import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
@@ -22,9 +36,7 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -43,6 +55,9 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
     private final OfficeService officeService;
     private final DepartmentService departmentService;
     private final AttachmentService attachmentService;
+    private final AppealRepository appealRepository;
+    private final DocumentService documentService;
+    private final AppealExecutionProcessService appealExecutionProcessService;
 
     @Override
     public String generateConfirmationPdf(User user, ConfirmCadastreDto confirmCadastreDto) {
@@ -105,6 +120,51 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
 
         // Save to an attachment and folder & Return a file path
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reject", parameters, true);
+    }
+
+    @Override
+    @Transactional
+    public void confirm(User user, SignedReplyDto<ConfirmCadastreDto> replyDto, HttpServletRequest request) {
+
+        Appeal appeal = findAppealByIdAndStatus(replyDto.getDto().appealId(), AppealStatus.NEW);
+
+        // Create a reply document
+        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
+
+        // Change appealStatus and set conclusion
+        String conclusion = new StringBuilder()
+                .append("Restrga ")
+                .append(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
+                .append(" kuni ")
+                .append(replyDto.getDto().registryNumber())
+                .append("-son bilan ro'yxatga olindi")
+                .toString();
+        appealRepository.changeStatusAndSetConclusion(appeal.getId(), conclusion, AppealStatus.COMPLETED);
+
+        // Create an execution process by the appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.COMPLETED, null));
+
+//        switch (appeal.getAppealType()) {
+//            case REGISTER_CADASTRE_PASSPORT ->
+//        }
+    }
+
+    @Override
+    public void reject(User user, SignedReplyDto<RejectCadastreDto> replyDto, HttpServletRequest request) {
+        Appeal appeal = findAppealByIdAndStatus(replyDto.getDto().appealId(), AppealStatus.NEW);
+
+        // Create a reply document
+        documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
+
+        // Change appealStatus and set conclusion
+        appealRepository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().conclusion(), AppealStatus.REJECTED);
+
+        // Create an execution process by the appeal
+        appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.COMPLETED, replyDto.getDto().conclusion()));
+    }
+
+    private Appeal findAppealByIdAndStatus(UUID appealId, AppealStatus appealStatus) {
+        return appealRepository.findByIdAndStatus(appealId, appealStatus).orElseThrow(()->new ResourceNotFoundException("Ariza", "ID va status", appealId + ", "+ appealStatus));
     }
 
     private String[] getSplitDate(LocalDateTime date) {
