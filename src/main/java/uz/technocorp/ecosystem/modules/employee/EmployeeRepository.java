@@ -23,4 +23,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     @Transactional
     int deleteAllByHfIdAndPinIn(UUID hfId, List<String> pins);
+
 }

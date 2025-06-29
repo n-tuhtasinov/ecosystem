@@ -13,8 +13,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum EmployeeLevel {
 
-    LEADER(1, "Raxbar", 5),
-    TECHNICIAN(2, "Injener, Texnik xodim", 3),
+    LEADER(1, "Rahbar", 5),
+    TECHNICIAN(2, "Muhandis-texnik xodim", 3),
     EMPLOYEE(2, "Oddiy xodim", 1);
 
     private final Integer direction; // Committee - 1  | Regional - 2

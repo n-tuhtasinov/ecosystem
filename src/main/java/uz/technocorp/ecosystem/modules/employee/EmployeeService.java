@@ -3,6 +3,8 @@ package uz.technocorp.ecosystem.modules.employee;
 import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDeleteDto;
 import uz.technocorp.ecosystem.modules.employee.dto.EmployeeLevelDto;
 import uz.technocorp.ecosystem.modules.employee.dto.EmployeeListDto;
+import uz.technocorp.ecosystem.modules.employee.view.EmployeeSelectView;
+import uz.technocorp.ecosystem.modules.employee.view.EmployeeView;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.List;
@@ -24,5 +26,7 @@ public interface EmployeeService {
 
     Integer deleteByPinList(User user, EmployeeDeleteDto dto);
 
-    List<Employee> getEmployeesByHf(UUID hfId);
+    List<EmployeeSelectView> getEmployeesByHf(UUID hfId);
+
+    EmployeeView getById(UUID employeeId);
 }
