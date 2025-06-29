@@ -3,8 +3,14 @@ package uz.technocorp.ecosystem.modules.employee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uz.technocorp.ecosystem.modules.employee.dto.*;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.employee.dto.EmployeeAddDto;
+import uz.technocorp.ecosystem.modules.employee.dto.EmployeeDeleteDto;
+import uz.technocorp.ecosystem.modules.employee.dto.EmployeeLevelDto;
+import uz.technocorp.ecosystem.modules.employee.dto.EmployeeListDto;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
+import uz.technocorp.ecosystem.modules.employee.view.EmployeeSelectView;
+import uz.technocorp.ecosystem.modules.employee.view.EmployeeView;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -85,8 +91,32 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> getEmployeesByHf(UUID hfId) {
-        return repository.findAllByHfId(hfId);
+    public List<EmployeeSelectView> getEmployeesByHf(UUID hfId) {
+        return repository.findAllByHfId(hfId).stream().map(e -> new EmployeeSelectView(e.getId(), e.getPin(), e.getFullName())).toList();
+    }
+
+    @Override
+    public EmployeeView getById(UUID employeeId) {
+        return repository.findById(employeeId).map(this::map).orElseThrow(() -> new ResourceNotFoundException("Xodim", "ID", employeeId));
+    }
+
+    // MAPPER
+    private EmployeeView map(Employee employee) {
+        EmployeeView view = new EmployeeView();
+        view.setId(employee.getId());
+        view.setPin(employee.getPin());
+        view.setName(employee.getFullName());
+        view.setProfession(employee.getProfession());
+        view.setCertNumber(employee.getCertNumber());
+        view.setDateOfEmployment(employee.getDateOfEmployment());
+        view.setCertDate(employee.getCertDate());
+        view.setCertExpiryDate(employee.getCertExpiryDate());
+        view.setCtcTrainingFromDate(employee.getCtcTrainingFromDate());
+        view.setCtcTrainingToDate(employee.getCtcTrainingToDate());
+        view.setLevel(employee.getLevel().getValue());
+        view.setHfName(employee.getHfName());
+
+        return view;
     }
 
     private HazardousFacility checkAndGetHf(UUID profileId, UUID hfId) {
