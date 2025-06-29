@@ -24,6 +24,7 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -82,6 +83,13 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public List<DocumentViewByRequest> getRequestDocumentsByAppealId(UUID appealId) {
         return repository.getRequestDocumentsByAppealId(appealId, DocumentType.APPEAL.name());
+    }
+
+    @Override
+    public DocumentViewByRequest getDocumentByBelongId(UUID belongId, DocumentType documentType) {
+        return repository
+                .getByBelongId(belongId, documentType.name())
+                .orElseThrow(() -> new ResourceNotFoundException("Document", "Obyekt Id si", belongId));
     }
 
     @Override

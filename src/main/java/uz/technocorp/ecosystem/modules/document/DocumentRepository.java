@@ -52,4 +52,19 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
 
     Optional<Document> findByBelongId(UUID belongId);
     Optional<Document> findByBelongIdAndDocumentType(UUID belongId, DocumentType documentType);
+
+    @Query(nativeQuery = true, value = """
+            select id                as documentId,
+                   document_type     as documentType,
+                   is_fully_signed   as isFullySigned,
+                   path,
+                   agreement_status  as agreementStatus,
+                   description,
+                   signers,
+                   created_at as createdAt
+            from document
+            where belong_id = :belongId
+              and document_type = :documentType
+            """)
+    Optional<DocumentViewByRequest> getByBelongId(UUID belongId, String documentType);
 }
