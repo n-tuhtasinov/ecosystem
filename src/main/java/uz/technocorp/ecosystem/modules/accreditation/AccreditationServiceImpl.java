@@ -54,7 +54,7 @@ public class AccreditationServiceImpl implements AccreditationService {
                         .certificateNumber(accreditationDto.getDto().getCertificateNumber())
                         .certificateValidityDate(accreditationDto.getDto().getCertificateValidityDate())
                         .referencePath(accreditationDto.getDto().getReferencePath())
-
+                        .appealId(accreditationDto.getDto().getAppealId())
                         .build()
         );
         documentService.create(

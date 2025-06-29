@@ -2,11 +2,13 @@ package uz.technocorp.ecosystem.modules.document;
 
 import uz.technocorp.ecosystem.modules.appeal.dto.RejectDto;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
+import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByReply;
 import uz.technocorp.ecosystem.modules.document.view.DocumentViewByRequest;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -22,6 +24,7 @@ public interface DocumentService {
     void delete(UUID id);
 
     List<DocumentViewByRequest> getRequestDocumentsByAppealId(UUID appealId);
+    DocumentViewByRequest getDocumentByBelongId(UUID belongId, DocumentType documentType);
 
     List<DocumentViewByReply> getReplyDocumentsByAppealId(User user, UUID appealId);
 

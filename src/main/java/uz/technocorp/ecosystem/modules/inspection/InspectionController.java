@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.appeal.dto.ReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
+import uz.technocorp.ecosystem.modules.document.DocumentService;
+import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionActDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionDto;
 import uz.technocorp.ecosystem.modules.inspection.dto.InspectionUpdateDto;
@@ -37,6 +39,7 @@ import java.util.UUID;
 public class InspectionController {
 
     private final InspectionService service;
+    private final DocumentService documentService;
 
     @PutMapping("/set-inspector/{inspectionId}")
     public ResponseEntity<?> setInspectors(@PathVariable UUID inspectionId, @RequestBody InspectionDto dto) {
@@ -91,6 +94,12 @@ public class InspectionController {
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody InspectionActDto actDto, HttpServletRequest request) {
         String path = service.generatePdf(user, actDto, request);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @GetMapping("/act/{id}")
+    public ResponseEntity<ApiResponse> getAct(@PathVariable UUID id) {
+        documentService.getDocumentByBelongId(id, DocumentType.ACT);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
     // TODO attachmentlarni delete qilish kerak Inspection modulida
 }
