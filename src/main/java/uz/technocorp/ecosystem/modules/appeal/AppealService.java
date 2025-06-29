@@ -49,8 +49,6 @@ public interface AppealService {
 
     void setHfTypeName(HfAppealDto appealDto);
 
-    Appeal findByIdAndStatus(UUID appealId, AppealStatus appealStatus);
-
     Appeal findByIdStatusAndOffice(UUID appealId, AppealStatus appealStatus, Integer officeId);
 
     void setFilePath(User user, UploadFileDto dto);
