@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uz.technocorp.ecosystem.modules.accreditationappeal.dto.AccreditationDto;
-import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ExpendAccreditationDto;
-import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ReAccreditationDto;
+import uz.technocorp.ecosystem.modules.accreditationappeal.dto.AccreditationAppealDto;
+import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ExpendAccreditationAppealDto;
+import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ReAccreditationAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
@@ -34,37 +34,37 @@ public class AccreditationAppealController {
     private AppealService appealService;
 
     @PostMapping
-    public ResponseEntity<?> createAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<AccreditationDto> accreditationDto, HttpServletRequest request) {
+    public ResponseEntity<?> createAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<AccreditationAppealDto> accreditationDto, HttpServletRequest request) {
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/redo")
-    public ResponseEntity<?> createReAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ReAccreditationDto> accreditationDto, HttpServletRequest request) {
+    public ResponseEntity<?> createReAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ReAccreditationAppealDto> accreditationDto, HttpServletRequest request) {
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/expend")
-    public ResponseEntity<?> createExpendAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ExpendAccreditationDto> accreditationDto, HttpServletRequest request) {
+    public ResponseEntity<?> createExpendAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ExpendAccreditationAppealDto> accreditationDto, HttpServletRequest request) {
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/generate-pdf")
-    public ResponseEntity<ApiResponse> generatePdfFromAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
+    public ResponseEntity<ApiResponse> generatePdfFromAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationAppealDto dto) {
         String path = appealPdfService.preparePdfWithParam(dto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping("/redo/generate-pdf")
-    public ResponseEntity<ApiResponse> generatePdfFromReAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
+    public ResponseEntity<ApiResponse> generatePdfFromReAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationAppealDto dto) {
         String path = appealPdfService.preparePdfWithParam(dto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping("/expend/generate-pdf")
-    public ResponseEntity<ApiResponse> generatePdfFromExpendAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
+    public ResponseEntity<ApiResponse> generatePdfFromExpendAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationAppealDto dto) {
         String path = appealPdfService.preparePdfWithParam(dto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }

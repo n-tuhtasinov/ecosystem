@@ -138,6 +138,8 @@ public class InspectionServiceImpl implements InspectionService {
                 view.getStatus(),
                 view.getSpecialCode(),
                 view.getDecreePath(),
+                view.getDecreeNumber(),
+                view.getDecreeDate(),
                 view.getSchedulePath(),
                 view.getNotificationLetterPath(),
                 view.getNotificationLetterDate(),
