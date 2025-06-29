@@ -35,6 +35,10 @@ public interface InspectionView {
 
     String getDecreePath();
 
+    String getDecreeNumber();
+
+    LocalDate getDecreeDate();
+
     String getProgramPath();
 
     String getMeasuresPath();
