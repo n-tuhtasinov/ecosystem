@@ -12,8 +12,9 @@ import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.CadastrePassportDto;
+import uz.technocorp.ecosystem.modules.cadastreappeal.dto.ConfirmCadastreDto;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.DeclarationDto;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.cadastreappeal.dto.RejectCadastreDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -32,6 +33,7 @@ public class CadastreAppealController {
 
     private final AppealService appealService;
     private final AppealPdfService appealPdfService;
+    private final CadastreAppealService cadastreAppealService;
 
     @PostMapping("/passport/generate-pdf")
     public ResponseEntity<?> generatePassportPdf(@CurrentUser User user, @Valid @RequestBody CadastrePassportDto cadastrePassportDto) {
@@ -55,6 +57,18 @@ public class CadastreAppealController {
     public ResponseEntity<ApiResponse> createDeclaration(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<DeclarationDto> signedDto, HttpServletRequest request) {
         appealService.saveAndSign(user, signedDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+    @PostMapping("/confirmation/generate-pdf")
+    public ResponseEntity<ApiResponse> generateConfirmationPdf(@CurrentUser User user, @Valid @RequestBody ConfirmCadastreDto confirmCadastreDto) {
+        String path = cadastreAppealService.generateConfirmationPdf(user, confirmCadastreDto);
+        return ResponseEntity.ok(new ApiResponse("Pdf fayl yaratildi", path));
+    }
+
+    @PostMapping("/rejection/generate-pdf")
+    public ResponseEntity<ApiResponse> generateRejectionPdf(@CurrentUser User user, @Valid @RequestBody RejectCadastreDto rejectCadastreDto) {
+        String path = cadastreAppealService.generateRejectionPdf(user, rejectCadastreDto);
+        return ResponseEntity.ok(new ApiResponse("Pdf fayl yaratildi", path));
     }
 
 }
