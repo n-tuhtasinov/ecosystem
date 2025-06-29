@@ -417,6 +417,7 @@ public class AppealServiceImpl implements AppealService {
                     number = orderNumber + "-AKK-" + LocalDate.now().getYear();
             case "registerExpertiseConclusion" -> number = orderNumber + "-EXP-" + LocalDate.now().getYear();
             case "registerAttestation" -> number = orderNumber + "-ATT-" + LocalDate.now().getYear();
+            case "registerCadastrePassport" -> number = orderNumber + "-CAD-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
         }
         return new OrderNumberDto(orderNumber, number);
