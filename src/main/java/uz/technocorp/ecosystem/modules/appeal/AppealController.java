@@ -77,31 +77,6 @@ public class AppealController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    @PostMapping("/reply/regional-accept/generate-pdf")
-    public ResponseEntity<ApiResponse> generateRegionalAcceptPdf(@CurrentUser User user, @Valid @RequestBody SetInspectorDto inspectorDto) {
-        String path = appealPdfService.prepareRegionalAcceptPdfWithParam(user, inspectorDto);
-        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
-    }
-
-    @PostMapping("/reply/regional-accept")
-    public ResponseEntity<ApiResponse> replyAcceptRegional(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<SetInspectorDto> signedReplyDto, HttpServletRequest request) {
-        service.replyAccept(user, signedReplyDto, request);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
-
-    @PostMapping("/reply/committee-accept/generate-pdf")
-    public ResponseEntity<ApiResponse> generateCommitteeAcceptPdf(@CurrentUser User user, @Valid @RequestBody ReplyAttestationDto replyAttestationDto) {
-        String path = appealPdfService.prepareCommitteeAcceptPdfWithParam(user, replyAttestationDto);
-        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
-    }
-
-    @PostMapping("/reply/committee-accept")
-    public ResponseEntity<ApiResponse> replyAcceptByCommittee(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<ReplyAttestationDto> signedReplyDto, HttpServletRequest request) {
-        service.replyAccept(user, signedReplyDto, request);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
     @PostMapping("/reply/reject/generate-pdf")
     public ResponseEntity<ApiResponse> generateRejectPdf(@CurrentUser User user, @Valid @RequestBody ReplyDto replyDto) {
         String path = appealPdfService.prepareRejectPdfWithParam(user, replyDto);
