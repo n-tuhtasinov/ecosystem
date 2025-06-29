@@ -2,8 +2,7 @@ package uz.technocorp.ecosystem.modules.appeal.processor;
 
 import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.cadastreappeal.dto.CadastrePassportDto;
-import uz.technocorp.ecosystem.modules.cadastreappeal.dto.DeclarationDto;
+import uz.technocorp.ecosystem.modules.declarationappeal.dto.DeclarationDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 
