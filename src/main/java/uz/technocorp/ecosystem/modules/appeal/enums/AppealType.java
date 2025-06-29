@@ -120,7 +120,7 @@ public enum AppealType {
     DEREGISTER_CADASTRE_PASSPORT("", "", "", "CADASTRE"),
 
     // Sanoat xavfsizligi deklaratsiyasi
-    REGISTER_DECLARATION("", "", "", "CADASTRE"),
+    REGISTER_DECLARATION("", "registerDeclaration", "", "CADASTRE"),
     DEREGISTER_DECLARATION("", "", "", "CADASTRE"),
 
     //IRS (Ionizing Radiation Source ) - INM ro'yhatga olish, qabul qilib olish va berish

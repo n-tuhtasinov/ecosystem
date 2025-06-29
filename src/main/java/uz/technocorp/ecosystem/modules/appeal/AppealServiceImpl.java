@@ -418,7 +418,11 @@ public class AppealServiceImpl implements AppealService {
             case "registerExpertiseConclusion" -> number = orderNumber + "-EXP-" + LocalDate.now().getYear();
             case "registerAttestation" -> number = orderNumber + "-ATT-" + LocalDate.now().getYear();
             case "registerCadastrePassport" -> number = orderNumber + "-CAD-" + LocalDate.now().getYear();
+            case "registerDeclaration" -> number = orderNumber + "-DEC-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
+
+            default -> throw new RuntimeException("Ushbu ariza turi uchun ariza registratsiya raqami shakllantirish hali qilinmagan");
+
         }
         return new OrderNumberDto(orderNumber, number);
     }
