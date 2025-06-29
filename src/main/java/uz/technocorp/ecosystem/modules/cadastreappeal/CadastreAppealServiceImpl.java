@@ -131,7 +131,7 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
         // Create a reply document
         documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
 
-        // Change appealStatus and set conclusion
+        // update appeal
         String conclusion = new StringBuilder()
                 .append("Restrga ")
                 .append(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
@@ -139,7 +139,11 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
                 .append(replyDto.getDto().registryNumber())
                 .append("-son bilan ro'yxatga olindi")
                 .toString();
-        appealRepository.changeStatusAndSetConclusion(appeal.getId(), conclusion, AppealStatus.COMPLETED);
+        appeal.setExecutorId(user.getId());
+        appeal.setExecutorName(user.getName());
+        appeal.setConclusion(conclusion);
+        appeal.setStatus(AppealStatus.COMPLETED);
+        appealRepository.save(appeal);
 
         // Create an execution process by the appeal
         appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.COMPLETED, null));
@@ -157,8 +161,12 @@ public class CadastreAppealServiceImpl implements CadastreAppealService {
         // Create a reply document
         documentService.create(new DocumentDto(appeal.getId(), DocumentType.REPLY_LETTER, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), AgreementStatus.APPROVED));
 
-        // Change appealStatus and set conclusion
-        appealRepository.changeStatusAndSetConclusion(appeal.getId(), replyDto.getDto().conclusion(), AppealStatus.REJECTED);
+        // update appeal
+        appeal.setExecutorId(user.getId());
+        appeal.setExecutorName(user.getName());
+        appeal.setConclusion(replyDto.getDto().conclusion());
+        appeal.setStatus(AppealStatus.REJECTED);
+        appealRepository.save(appeal);
 
         // Create an execution process by the appeal
         appealExecutionProcessService.create(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.COMPLETED, replyDto.getDto().conclusion()));
