@@ -30,9 +30,14 @@ public class EmployeeController {
         return ResponseEntity.ok(new ApiResponse(service.getEmployeeLevels()));
     }
 
-    @GetMapping("/by-hf/{hfId}")
-    public ResponseEntity<ApiResponse> positions(@PathVariable("hfId") UUID hfId) {
+    @GetMapping("/select/by-hf/{hfId}")
+    public ResponseEntity<ApiResponse> getByHf(@PathVariable("hfId") UUID hfId) {
         return ResponseEntity.ok(new ApiResponse(service.getEmployeesByHf(hfId)));
+    }
+
+    @GetMapping("/{employeeId}")
+    public ResponseEntity<ApiResponse> getById(@PathVariable("employeeId") UUID employeeId) {
+        return ResponseEntity.ok(new ApiResponse(service.getById(employeeId)));
     }
 
     @PostMapping
