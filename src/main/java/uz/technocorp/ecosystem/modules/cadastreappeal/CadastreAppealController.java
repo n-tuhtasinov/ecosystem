@@ -14,6 +14,7 @@ import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.CadastrePassportDto;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.ConfirmCadastreDto;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.DeclarationDto;
+import uz.technocorp.ecosystem.modules.cadastreappeal.dto.RejectCadastreDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -64,6 +65,10 @@ public class CadastreAppealController {
         return ResponseEntity.ok(new ApiResponse("Pdf fayl yaratildi", path));
     }
 
-
+    @PostMapping("/rejection/generate-pdf")
+    public ResponseEntity<ApiResponse> generateRejectionPdf(@CurrentUser User user, @Valid @RequestBody RejectCadastreDto rejectCadastreDto) {
+        String path = cadastreAppealService.generateRejectionPdf(user, rejectCadastreDto);
+        return ResponseEntity.ok(new ApiResponse("Pdf fayl yaratildi", path));
+    }
 
 }
