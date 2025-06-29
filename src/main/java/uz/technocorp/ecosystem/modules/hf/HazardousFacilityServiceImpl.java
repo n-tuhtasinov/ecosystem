@@ -342,6 +342,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private HfViewById mapToView(HazardousFacility hf) {
         return new HfViewById(
                 hf.getLegalTin(),
+                hf.getLegalName(),
                 hf.getRegistrationDate(),
                 hf.getRegistryNumber(),
                 hf.getProfileId(),
