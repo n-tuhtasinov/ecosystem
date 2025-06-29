@@ -1,6 +1,9 @@
 package uz.technocorp.ecosystem.modules.attestationappeal.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -12,7 +15,6 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AttestationPendingParamsDto {
@@ -20,11 +22,6 @@ public class AttestationPendingParamsDto {
     private String search;
     private Integer regionId;
     private UUID inspectorId;
-
-    @Builder.Default
     private Integer page = 1;
-
-    @Builder.Default
     private Integer size = 10;
-
 }
