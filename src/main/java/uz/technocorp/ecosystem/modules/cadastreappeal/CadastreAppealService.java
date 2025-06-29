@@ -1,6 +1,8 @@
 package uz.technocorp.ecosystem.modules.cadastreappeal;
 
+import jakarta.validation.Valid;
 import uz.technocorp.ecosystem.modules.cadastreappeal.dto.ConfirmCadastreDto;
+import uz.technocorp.ecosystem.modules.cadastreappeal.dto.RejectCadastreDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 /**
@@ -11,4 +13,6 @@ import uz.technocorp.ecosystem.modules.user.User;
  */
 public interface CadastreAppealService {
     String generateConfirmationPdf(User user, ConfirmCadastreDto confirmCadastreDto);
+
+    String generateRejectionPdf(User user, RejectCadastreDto rejectCadastreDto);
 }
