@@ -113,7 +113,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         view.setCertExpiryDate(employee.getCertExpiryDate());
         view.setCtcTrainingFromDate(employee.getCtcTrainingFromDate());
         view.setCtcTrainingToDate(employee.getCtcTrainingToDate());
-        view.setLevel(employee.getLevel().getValue());
+        view.setLevel(employee.getLevel());
         view.setHfName(employee.getHfName());
 
         return view;

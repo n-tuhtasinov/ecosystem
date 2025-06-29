@@ -76,6 +76,7 @@ public class InspectionServiceImpl implements InspectionService {
         inspection.setDecreeDate(dto.decreeDate());
         inspection.setDecreeNumber(dto.decreeNumber());
         repository.save(inspection);
+        attachmentService.deleteByPath(dto.decreePath());
     }
 
     @Override
@@ -92,6 +93,13 @@ public class InspectionServiceImpl implements InspectionService {
         inspection.setResultPath(dto.resultPath());
         inspection.setOrderPath(dto.orderPath());
         repository.save(inspection);
+        attachmentService.deleteByPaths(List.of(
+                dto.measuresPath(),
+                dto.programPath(),
+                dto.resultPath(),
+                dto.orderPath(),
+                dto.schedulePath(),
+                dto.notificationLetterPath()));
     }
 
     @Override
@@ -171,7 +179,7 @@ public class InspectionServiceImpl implements InspectionService {
                         null)
 
         );
-        updateStatus(user.getId(), InspectionStatus.CONDUCTED);
+        updateStatus(actDto.getDto().getInspectionId(), InspectionStatus.CONDUCTED);
     }
 
     @Override
