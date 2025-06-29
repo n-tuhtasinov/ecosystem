@@ -434,7 +434,7 @@ public class AppealServiceImpl implements AppealService {
             case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> executorName = "INM ijrochi ismi";
             case ACCREDIT_EXPERT_ORGANIZATION, RE_ACCREDIT_EXPERT_ORGANIZATION, EXPEND_ACCREDITATION_SCOPE ->
                     executorName = "kimdir";
-            case REGISTER_DECLARATION -> executorName = "yana kimdir";
+            case REGISTER_DECLARATION, REGISTER_CADASTRE_PASSPORT -> executorName = "Axborot-tahlil, akkreditatsiyalash, kadastrni yuritish va ijro nazorati boshqarmasi bosh mutaxassisi";
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
         }
         return executorName;
