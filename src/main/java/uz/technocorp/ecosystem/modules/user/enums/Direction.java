@@ -12,7 +12,8 @@ public enum Direction {
     EQUIPMENT, // Qurilmalar
     IRS, // INM
     REGISTRY, //Reestr
-    ATTESTATION, // Attestatsiya
+    ATTESTATION_COMMITTEE, // Attestatsiya qo'mita
+    ATTESTATION_REGIONAL, // Attestatsiya viloyat
     ACCREDITATION, //Akkreditatsiya
     CADASTRE, // Kadastr
     PERMITS // Ruxsat beruvchi hujjatlar
