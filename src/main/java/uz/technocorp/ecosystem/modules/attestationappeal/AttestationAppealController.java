@@ -6,16 +6,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
+import uz.technocorp.ecosystem.modules.appeal.dto.ReplyAttestationDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SetInspectorDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
+import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
+import uz.technocorp.ecosystem.modules.attestation.enums.AttestationDirection;
 import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationDto;
 import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationPendingParamsDto;
-import uz.technocorp.ecosystem.modules.attestation.enums.AttestationDirection;
 import uz.technocorp.ecosystem.modules.attestationappeal.dto.EmployeeDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
+import uz.technocorp.ecosystem.shared.ResponseMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -57,6 +61,31 @@ public class AttestationAppealController {
         hfService.findByIdAndProfileId(signedDto.getDto().getHfId(), user.getProfileId());
         UUID appealId = appealService.saveAndSign(user, signedDto, request);
         return ResponseEntity.ok().body(new ApiResponse("Ariza yaratildi", appealId));
+    }
+
+    @PostMapping("/reply/regional-accept/generate-pdf")
+    public ResponseEntity<ApiResponse> generateRegionalAcceptPdf(@CurrentUser User user, @Valid @RequestBody SetInspectorDto inspectorDto) {
+        String path = appealPdfService.prepareRegionalAcceptPdfWithParam(user, inspectorDto);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @PostMapping("/reply/regional-accept")
+    public ResponseEntity<ApiResponse> replyAcceptRegional(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<SetInspectorDto> signedReplyDto, HttpServletRequest request) {
+        appealService.replyAccept(user, signedReplyDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
+
+    @PostMapping("/reply/committee-accept/generate-pdf")
+    public ResponseEntity<ApiResponse> generateCommitteeAcceptPdf(@CurrentUser User user, @Valid @RequestBody ReplyAttestationDto replyAttestationDto) {
+        String path = appealPdfService.prepareCommitteeAcceptPdfWithParam(user, replyAttestationDto);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @PostMapping("/reply/committee-accept")
+    public ResponseEntity<ApiResponse> replyAcceptByCommittee(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<ReplyAttestationDto> signedReplyDto, HttpServletRequest request) {
+        appealService.replyAccept(user, signedReplyDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     private void setDynamicRows(AttestationDto attestationDto) {

@@ -40,7 +40,7 @@ public class AttestationController {
         return ResponseEntity.ok().body(new ApiResponse(service.getByAppeal(user, appealId)));
     }
 
-    // TODO ROLE -> REGIONAL & COMMITTEE
+    // TODO ROLE -> REGIONAL - COMMITTEE
     @PostMapping("/conduct")
     public ResponseEntity<ApiResponse> conduct(@CurrentUser User user, @Valid @RequestBody AttestationConductDto conductDto) {
         service.conduct(user, conductDto);

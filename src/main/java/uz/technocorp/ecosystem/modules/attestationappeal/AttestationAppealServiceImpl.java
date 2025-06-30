@@ -10,8 +10,8 @@ import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.attestation.Attestation;
 import uz.technocorp.ecosystem.modules.attestation.AttestationRepository;
 import uz.technocorp.ecosystem.modules.attestation.AttestationSpecification;
-import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationPendingParamsDto;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationStatus;
+import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationPendingParamsDto;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
@@ -55,7 +55,9 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
         Specification<Attestation> spec = where(makeBaseSpecification(dto)).and(hasDirection);
 
         Page<UUID> appealIds = repository.findDistinctAppealIds(spec, getPageable(dto));
-
+        if (appealIds.getContent().isEmpty()) {
+            return Page.empty();
+        }
         List<AppealViewById> appeals = appealService.getByIds(appealIds.stream().toList());
 
         return new PageImpl<>(appeals, getPageable(dto), appealIds.getTotalElements());
@@ -73,7 +75,9 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
 
         Specification<Attestation> spec = where(makeBaseSpecification(dto)).and(hasDirection).and(hasInspector);
         Page<UUID> appealIds = repository.findDistinctAppealIds(spec, getPageable(dto));
-
+        if (appealIds.getContent().isEmpty()) {
+            return Page.empty();
+        }
         List<AppealViewById> appeals = appealService.getByIds(appealIds.stream().toList());
 
         return new PageImpl<>(appeals, getPageable(dto), appealIds.getTotalElements());
@@ -91,7 +95,9 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
 
         Specification<Attestation> spec = where(makeBaseSpecification(dto)).and(hasDirection).and(hasInspector);
         Page<UUID> appealIds = repository.findDistinctAppealIds(spec, getPageable(dto));
-
+        if (appealIds.getContent().isEmpty()) {
+            return Page.empty();
+        }
         List<AppealViewById> appeals = appealService.getByIds(appealIds.stream().toList());
 
         return new PageImpl<>(appeals, getPageable(dto), appealIds.getTotalElements());
@@ -108,6 +114,9 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
 
         Specification<Attestation> spec = where(hasLegalTin).and(hasStatus);
         Page<UUID> appealIds = repository.findDistinctAppealIds(spec, getPageable(dto));
+        if (appealIds.getContent().isEmpty()) {
+            return Page.empty();
+        }
 
         List<AppealViewById> appeals = appealService.getByIds(appealIds.stream().toList());
 
@@ -129,6 +138,6 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
     }
 
     private Pageable getPageable(AttestationPendingParamsDto dto) {
-        return PageRequest.of(dto.getPage(), dto.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+        return PageRequest.of(dto.getPage() - 1, dto.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 }

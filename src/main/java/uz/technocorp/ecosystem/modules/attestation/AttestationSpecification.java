@@ -1,10 +1,14 @@
 package uz.technocorp.ecosystem.modules.attestation;
 
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationStatus;
 import uz.technocorp.ecosystem.modules.employee.enums.EmployeeLevel;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +25,7 @@ public class AttestationSpecification {
     public Specification<Attestation> hasSearch(String search) {
         return (root, cq, cb) -> {
             if (search == null || search.isBlank()) {
-                return null;
+                return cb.conjunction();
             }
             Long pin = parsePin(search);
             return pin != null
@@ -34,7 +38,7 @@ public class AttestationSpecification {
     public Specification<Attestation> hasLegal(String search) {
         return (root, cq, cb) -> {
             if (search == null || search.isBlank()) {
-                return null;
+                return cb.conjunction();
             }
             Long pin = parseTin(search);
             return pin != null
@@ -76,6 +80,7 @@ public class AttestationSpecification {
             return null;
         }
     }
+
     private Long parseTin(String query) {
         try {
             return query.length() == 9 ? Long.parseLong(query) : null;

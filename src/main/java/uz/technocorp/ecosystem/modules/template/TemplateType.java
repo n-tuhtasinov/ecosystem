@@ -37,4 +37,12 @@ public enum TemplateType {
     // Attestatsiyaga Qo'mita va Huduiy bo'lim javob xati
     REPLY_COMMITTEE_TO_APPEAL,
     REPLY_REGIONAL_TO_APPEAL,
+
+    //Kadastrga qo'mita javob xati
+    REPLY_ACCEPT_CADASTRE_PASSPORT_APPEAL,
+    REPLY_ACCEPT_DECLARATION_APPEAL,
+    REPLY_REJECT_CADASTRE_PASSPORT_APPEAL,
+    REPLY_REJECT_DECLARATION_APPEAL,
+
+
 }
