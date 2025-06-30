@@ -4,10 +4,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
+import uz.technocorp.ecosystem.modules.accreditation.dto.ExpertiseConclusionDto;
+import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationType;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
@@ -16,6 +21,8 @@ import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -39,40 +46,113 @@ public class AccreditationServiceImpl implements AccreditationService {
 
     @Override
     @Transactional
-    public void createAccreditation(User user, SignedReplyDto<AccreditationDto> accreditationDto, HttpServletRequest request) {
-        Accreditation accreditation = accreditationRepository.save(
-                Accreditation
-                        .builder()
-                        .accreditationSpheres(accreditationDto.getDto().getAccreditationSpheres())
-                        .accreditationCommissionDecisionDate(accreditationDto.getDto().getAccreditationCommissionDecisionDate())
-                        .accreditationCommissionDecisionNumber(accreditationDto.getDto().getAccreditationCommissionDecisionNumber())
-                        .accreditationCommissionDecisionPath(accreditationDto.getDto().getAccreditationCommissionDecisionPath())
-                        .assessmentCommissionDecisionPath(accreditationDto.getDto().getAssessmentCommissionDecisionPath())
-                        .assessmentCommissionDecisionDate(accreditationDto.getDto().getAssessmentCommissionDecisionDate())
-                        .assessmentCommissionDecisionNumber(accreditationDto.getDto().getAssessmentCommissionDecisionNumber())
-                        .certificateDate(accreditationDto.getDto().getCertificateDate())
-                        .certificateNumber(accreditationDto.getDto().getCertificateNumber())
-                        .certificateValidityDate(accreditationDto.getDto().getCertificateValidityDate())
-                        .referencePath(accreditationDto.getDto().getReferencePath())
-                        .appealId(accreditationDto.getDto().getAppealId())
-                        .build()
-        );
+    public void createAccreditation(User user, SignedReplyDto<AccreditationDto> dto, HttpServletRequest request) {
+        Optional<Accreditation> optionalAccreditation = accreditationRepository
+                .findByCertificateNumber(dto.getDto().getCertificateNumber());
+        Appeal appeal = appealRepository
+                .findById(dto.getDto().getAppealId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Akkreditatsiya arizasi",
+                        "ID",
+                        dto.getDto().getAppealId()));
+        UUID accreditationId;
+        if (optionalAccreditation.isPresent()) {
+            Accreditation accreditation = optionalAccreditation.get();
+            if (!accreditation.getTin().equals(appeal.getLegalTin())) {
+                throw new RuntimeException("Ariza begona tashkilot tomonidan yuborilgan!");
+            }
+            accreditation.setCertificateNumber(dto.getDto().getCertificateNumber());
+            accreditation.setAccreditationSpheres(dto.getDto().getAccreditationSpheres());
+            accreditation.setAppealId(dto.getDto().getAppealId());
+            accreditation.setAccreditationCommissionDecisionNumber(dto.getDto().getAccreditationCommissionDecisionNumber());
+            accreditation.setAccreditationCommissionDecisionDate(dto.getDto().getAccreditationCommissionDecisionDate());
+            accreditation.setAccreditationCommissionDecisionPath(dto.getDto().getAccreditationCommissionDecisionPath());
+            accreditation.setCertificateDate(dto.getDto().getCertificateDate());
+            accreditation.setCertificateValidityDate(dto.getDto().getCertificateValidityDate());
+            accreditation.setAssessmentCommissionDecisionDate(dto.getDto().getAssessmentCommissionDecisionDate());
+            accreditation.setAssessmentCommissionDecisionPath(dto.getDto().getAssessmentCommissionDecisionPath());
+            accreditation.setAssessmentCommissionDecisionNumber(dto.getDto().getAssessmentCommissionDecisionNumber());
+            accreditation.setReferencePath(dto.getDto().getReferencePath());
+            accreditationId = accreditation.getId();
+        } else {
+            Accreditation accreditation = accreditationRepository.save(
+                    Accreditation
+                            .builder()
+                            .accreditationSpheres(dto.getDto().getAccreditationSpheres())
+                            .accreditationCommissionDecisionDate(dto.getDto().getAccreditationCommissionDecisionDate())
+                            .accreditationCommissionDecisionNumber(dto.getDto().getAccreditationCommissionDecisionNumber())
+                            .accreditationCommissionDecisionPath(dto.getDto().getAccreditationCommissionDecisionPath())
+                            .assessmentCommissionDecisionPath(dto.getDto().getAssessmentCommissionDecisionPath())
+                            .assessmentCommissionDecisionDate(dto.getDto().getAssessmentCommissionDecisionDate())
+                            .assessmentCommissionDecisionNumber(dto.getDto().getAssessmentCommissionDecisionNumber())
+                            .certificateDate(dto.getDto().getCertificateDate())
+                            .certificateNumber(dto.getDto().getCertificateNumber())
+                            .certificateValidityDate(dto.getDto().getCertificateValidityDate())
+                            .referencePath(dto.getDto().getReferencePath())
+                            .appealId(dto.getDto().getAppealId())
+                            .tin(appeal.getLegalTin())
+                            .type(AccreditationType.ACCREDITATION)
+                            .build()
+            );
+            accreditationId = accreditation.getId();
+        }
         documentService.create(
                 new DocumentDto(
-                        accreditation.getId(),
+                        accreditationId,
                         DocumentType.ACCREDITATION_CERTIFICATE,
-                        accreditationDto.getFilePath(),
-                        accreditationDto.getSign(),
+                        dto.getFilePath(),
+                        dto.getSign(),
                         Helper.getIp(request),
                         user.getId(),
                         List.of(user.getId()),
                         AgreementStatus.APPROVED
                 )
         );
+        appeal.setStatus(AppealStatus.COMPLETED);
+        appealRepository.save(appeal);
     }
 
     @Override
-    public void notConfirmed(User user, SignedReplyDto<AccreditationRejectionDto> dto, HttpServletRequest request, boolean rejected) {
+    public void createExpertiseConclusion(User user, SignedReplyDto<ExpertiseConclusionDto> conclusionDto, HttpServletRequest request) {
 
+    }
+
+    @Override
+    @Transactional
+    public void notConfirmed(User user, SignedReplyDto<AccreditationRejectionDto> dto, HttpServletRequest request, boolean rejected) {
+        Appeal appeal = appealRepository
+                .findById(dto.getDto().getAppealId())
+                .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya arizasi", "ID", dto.getDto().getAppealId()));
+
+        if (rejected) {
+            documentService.create(
+                    new DocumentDto(
+                            dto.getDto().getAppealId(),
+                            DocumentType.REPLY_LETTER,
+                            dto.getFilePath(),
+                            dto.getSign(),
+                            Helper.getIp(request),
+                            user.getId(),
+                            List.of(user.getId()),
+                            null
+                    )
+            );
+            appeal.setStatus(AppealStatus.REJECTED);
+        } else {
+            documentService.create(
+                    new DocumentDto(
+                            dto.getDto().getAppealId(),
+                            DocumentType.REPORT,
+                            dto.getFilePath(),
+                            dto.getSign(),
+                            Helper.getIp(request),
+                            user.getId(),
+                            List.of(user.getId()),
+                            null
+                    )
+            );
+            appeal.setStatus(AppealStatus.REJECTED);
+        }
+        appealRepository.save(appeal);
     }
 }
