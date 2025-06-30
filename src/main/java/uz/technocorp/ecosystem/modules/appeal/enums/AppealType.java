@@ -129,8 +129,8 @@ public enum AppealType {
     TRANSFER_IRS("", "irs", "", "IRS"),
 
     // Attestation
-    ATTESTATION_COMMITTEE("", "registerAttestation", "","ATTESTATION"),
-    ATTESTATION_REGIONAL("", "registerAttestation", "", "ATTESTATION");
+    ATTESTATION_COMMITTEE("", "registerAttestation", "","ATTESTATION_COMMITTEE"),
+    ATTESTATION_REGIONAL("", "registerAttestation", "", "ATTESTATION_REGIONAL");
 
     public final String label;
     public final String sort;
