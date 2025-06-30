@@ -446,7 +446,8 @@ public class AppealServiceImpl implements AppealService {
         switch (appealType) {
             case AppealType.ACCREDIT_EXPERT_ORGANIZATION,
                  AppealType.RE_ACCREDIT_EXPERT_ORGANIZATION,
-                 AppealType.EXPEND_ACCREDITATION_SCOPE -> {
+                 AppealType.EXPEND_ACCREDITATION_SCOPE,
+                 AppealType.REGISTER_EXPERTISE_CONCLUSION -> {
                 return AppealStatus.IN_APPROVAL;
             }
             default -> {
