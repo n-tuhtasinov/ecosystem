@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
+import uz.technocorp.ecosystem.modules.accreditation.dto.ExpertiseConclusionDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
@@ -17,7 +18,9 @@ import uz.technocorp.ecosystem.modules.user.User;
 public interface AccreditationService {
 
     String generateCertificate(User user, AccreditationDto accreditationDto);
-    void createAccreditation(User user, SignedReplyDto<AccreditationDto> accreditationDto, HttpServletRequest request);
 
     void notConfirmed(User user, @Valid SignedReplyDto<AccreditationRejectionDto> dto, HttpServletRequest request, boolean rejected);
+
+    void createAccreditation(User user, SignedReplyDto<AccreditationDto> accreditationDto, HttpServletRequest request);
+    void createExpertiseConclusion(User user, SignedReplyDto<ExpertiseConclusionDto> conclusionDto, HttpServletRequest request);
 }

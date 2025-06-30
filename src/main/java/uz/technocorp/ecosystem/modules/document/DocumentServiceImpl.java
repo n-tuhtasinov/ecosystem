@@ -24,7 +24,6 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -76,6 +75,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public void delete(UUID id) {
+        //TODO faylni papkadan ham o'chadigan qilish kerak
         repository.deleteById(id);
     }
 
