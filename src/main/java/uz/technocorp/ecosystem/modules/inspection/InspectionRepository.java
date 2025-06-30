@@ -48,8 +48,8 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
                 json_agg(json_build_object('id', u.id, 'name', p.full_name)) as inspectors
                 from inspection i
                 left join inspection_inspector ii on i.id = ii.inspection_id
-                join users u on ii.inspector_id = u.id
-                join profile p on u.profile_id = p.id
+                left join users u on ii.inspector_id = u.id
+                left join profile p on u.profile_id = p.id
                 where i.id = :id
                 group by i.id, start_date, end_date, program_path, special_code, status,
                         schedule_path, notification_letter_date, notification_letter_path,

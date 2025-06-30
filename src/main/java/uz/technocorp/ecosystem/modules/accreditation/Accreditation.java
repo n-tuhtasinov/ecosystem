@@ -33,7 +33,7 @@ public class Accreditation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private AccreditationType type;
 
-    private Long expertTin;
+    private Long customerTin;
 
     @Enumerated(EnumType.STRING)
     private List<AccreditationSphere> accreditationSpheres;
@@ -71,6 +71,10 @@ public class Accreditation extends BaseEntity {
     private String secondSymbolsGroup;
     private String thirdSymbolsGroup;
     private String objectAddress;
+    private String customerLegalName;
+    private String customerLegalAddress;
+    private String customerPhoneNumber;
+    private String customerFullName;
 
     @OneToOne(fetch = FetchType.LAZY, targetEntity = Region.class)
     @JoinColumn(name = "region_id", insertable = false, updatable = false)

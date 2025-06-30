@@ -13,12 +13,15 @@ import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
+import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +40,8 @@ public class AccreditationServiceImpl implements AccreditationService {
     private final AccreditationRepository accreditationRepository;
     private final AppealRepository appealRepository;
     private final DocumentService documentService;
+    private final IIPService iipService;
+    private final AttachmentService attachmentService;
 
     @Override
     public String generateCertificate(User user, AccreditationDto accreditationDto) {
@@ -114,7 +119,40 @@ public class AccreditationServiceImpl implements AccreditationService {
 
     @Override
     public void createExpertiseConclusion(User user, SignedReplyDto<ExpertiseConclusionDto> conclusionDto, HttpServletRequest request) {
+        Appeal appeal = appealRepository
+                .findById(conclusionDto.getDto().getAppealId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Ekspert xulosasi arizasi",
+                        "ID",
+                        conclusionDto.getDto().getAppealId()));
+        LegalUserDto gnkInfo = iipService.getGnkInfo(conclusionDto.getDto().getTin().toString());
+        accreditationRepository.save(
+                Accreditation
+                        .builder()
+                        .type(AccreditationType.CONCLUSION)
+                        .customerTin(conclusionDto.getDto().getTin())
+                        .customerFullName(gnkInfo.getFullName())
+                        .customerLegalAddress(gnkInfo.getLegalAddress())
+                        .customerLegalName(gnkInfo.getLegalName())
+                        .customerPhoneNumber(gnkInfo.getPhoneNumber())
+                        .appealId(conclusionDto.getDto().getAppealId())
+                        .submissionDate(conclusionDto.getDto().getSubmissionDate())
+                        .monitoringLetterDate(conclusionDto.getDto().getMonitoringLetterDate())
+                        .monitoringLetterNumber(conclusionDto.getDto().getMonitoringLetterNumber())
+                        .expertiseObjectName(conclusionDto.getDto().getExpertiseObjectName())
+                        .firstSymbolsGroup(conclusionDto.getDto().getFirstSymbolsGroup())
+                        .secondSymbolsGroup(conclusionDto.getDto().getSecondSymbolsGroup())
+                        .thirdSymbolsGroup(conclusionDto.getDto().getThirdSymbolsGroup())
+                        .objectAddress(conclusionDto.getDto().getObjectAddress())
+                        .regionId(conclusionDto.getDto().getRegionId())
+                        .districtId(conclusionDto.getDto().getDistrictId())
+                        .expertiseConclusionPath(conclusionDto.getDto().getExpertiseConclusionPath())
+                        .expertiseConclusionNumber(conclusionDto.getDto().getExpertiseConclusionNumber())
+                        .tin(appeal.getLegalTin())
+                        .build()
+        );
 
+        attachmentService.deleteByPath(conclusionDto.getDto().getExpertiseConclusionPath());
     }
 
     @Override
