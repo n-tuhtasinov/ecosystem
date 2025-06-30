@@ -114,7 +114,33 @@ public class AccreditationServiceImpl implements AccreditationService {
 
     @Override
     public void createExpertiseConclusion(User user, SignedReplyDto<ExpertiseConclusionDto> conclusionDto, HttpServletRequest request) {
-
+        Appeal appeal = appealRepository
+                .findById(conclusionDto.getDto().getAppealId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Ekspert xulosasi arizasi",
+                        "ID",
+                        conclusionDto.getDto().getAppealId()));
+        accreditationRepository.save(
+                Accreditation
+                        .builder()
+                        .type(AccreditationType.CONCLUSION)
+                        .tin(conclusionDto.getDto().getTin())
+                        .appealId(conclusionDto.getDto().getAppealId())
+                        .submissionDate(conclusionDto.getDto().getSubmissionDate())
+                        .monitoringLetterDate(conclusionDto.getDto().getMonitoringLetterDate())
+                        .monitoringLetterNumber(conclusionDto.getDto().getMonitoringLetterNumber())
+                        .expertiseObjectName(conclusionDto.getDto().getExpertiseObjectName())
+                        .firstSymbolsGroup(conclusionDto.getDto().getFirstSymbolsGroup())
+                        .secondSymbolsGroup(conclusionDto.getDto().getSecondSymbolsGroup())
+                        .thirdSymbolsGroup(conclusionDto.getDto().getThirdSymbolsGroup())
+                        .objectAddress(conclusionDto.getDto().getObjectAddress())
+                        .regionId(conclusionDto.getDto().getRegionId())
+                        .districtId(conclusionDto.getDto().getDistrictId())
+                        .expertiseConclusionPath(conclusionDto.getDto().getExpertiseConclusionPath())
+                        .expertiseConclusionNumber(conclusionDto.getDto().getExpertiseConclusionNumber())
+                        .expertTin(appeal.getLegalTin())
+                        .build()
+        );
     }
 
     @Override

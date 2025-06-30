@@ -87,9 +87,12 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentViewByRequest getDocumentByBelongId(UUID belongId, DocumentType documentType) {
+//        return repository
+//                .getByBelongId(belongId, documentType.name())
+//                .orElseThrow(() -> new ResourceNotFoundException("Document", "Obyekt Id si", belongId));
         return repository
                 .getByBelongId(belongId, documentType.name())
-                .orElseThrow(() -> new ResourceNotFoundException("Document", "Obyekt Id si", belongId));
+                .orElse(null);
     }
 
     @Override

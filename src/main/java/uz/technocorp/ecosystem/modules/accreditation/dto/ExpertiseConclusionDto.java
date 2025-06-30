@@ -6,10 +6,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.region.Region;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * @author Rasulov Komil
@@ -17,6 +22,10 @@ import java.time.LocalDate;
  * @created 30.06.2025
  * @since v1.0
  */
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ExpertiseConclusionDto {
 
     @NotNull(message = "Buyurtamachi STIRi yuborilmadi!")
@@ -45,4 +54,6 @@ public class ExpertiseConclusionDto {
     private String expertiseConclusionPath;
     @NotBlank(message = "Ekspertiza xulosasi raqami yuborilmadi!")
     private String expertiseConclusionNumber;
+    @NotNull(message = "Ariza yuborilmadi!")
+    private UUID appealId;
 }
