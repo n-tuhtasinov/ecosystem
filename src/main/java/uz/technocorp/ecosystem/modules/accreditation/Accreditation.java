@@ -3,7 +3,10 @@ package uz.technocorp.ecosystem.modules.accreditation;
 import jakarta.persistence.*;
 import lombok.*;
 import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationSphere;
+import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationType;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.district.District;
+import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.time.LocalDate;
@@ -24,6 +27,13 @@ import java.util.UUID;
 @Builder
 public class Accreditation extends BaseEntity {
 
+    @Column(nullable = false)
+    private Long tin;
+
+    @Enumerated(EnumType.STRING)
+    private AccreditationType type;
+
+    private Long expertTin;
 
     @Enumerated(EnumType.STRING)
     private List<AccreditationSphere> accreditationSpheres;
@@ -51,5 +61,32 @@ public class Accreditation extends BaseEntity {
 
     @Column(name = "appeal_id")
     private UUID appealId;
+
+
+    private LocalDate submissionDate;
+    private LocalDate monitoringLetterDate;
+    private String monitoringLetterNumber;
+    private String expertiseObjectName;
+    private String firstSymbolsGroup;
+    private String secondSymbolsGroup;
+    private String thirdSymbolsGroup;
+    private String objectAddress;
+
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Region.class)
+    @JoinColumn(name = "region_id", insertable = false, updatable = false)
+    private Region region;
+
+    @Column(name = "region_id")
+    private Integer regionId;
+
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = District.class)
+    @JoinColumn(name = "district_id", insertable = false, updatable = false)
+    private District district;
+
+    @Column(name = "district_id")
+    private Integer districtId;
+
+    private String expertiseConclusionPath;
+    private String expertiseConclusionNumber;
 
 }

@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.accreditation;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -11,4 +12,6 @@ import java.util.UUID;
  * @since v1.0
  */
 public interface AccreditationRepository extends JpaRepository<Accreditation, UUID> {
+
+    Optional<Accreditation> findByCertificateNumber(String certificateNumber);
 }

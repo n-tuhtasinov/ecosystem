@@ -47,7 +47,7 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
                 decree_number as decreeNumber,
                 json_agg(json_build_object('id', u.id, 'name', p.full_name)) as inspectors
                 from inspection i
-                join inspection_inspector ii on i.id = ii.inspection_id
+                left join inspection_inspector ii on i.id = ii.inspection_id
                 join users u on ii.inspector_id = u.id
                 join profile p on u.profile_id = p.id
                 where i.id = :id
@@ -73,7 +73,7 @@ public interface InspectionRepository extends JpaRepository<Inspection, UUID>, I
                 union all
                 select i.*
                 from inspection i
-                join inspection_inspector ii on i.id = ii.inspection_id
+                left join inspection_inspector ii on i.id = ii.inspection_id
                 and i.status = :status and ii.inspector_id = :inspectorId
                 where i.start_date between :startDate and :endDate) i
                 join profile p on i.tin = p.tin
