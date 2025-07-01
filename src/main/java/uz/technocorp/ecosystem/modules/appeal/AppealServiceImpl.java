@@ -94,15 +94,13 @@ public class AppealServiceImpl implements AppealService {
         // Check appeal by (appealId, status, inspectorId)
         Appeal appeal = repository.findByIdAndStatusAndExecutorId(replyDto.getDto().getAppealId(), AppealStatus.IN_PROCESS, user.getId())
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Bu ariza sizga biriktirilmagan yoki ariza holati o'zgargan")
-                );
+                        () -> new ResourceNotFoundException("Bu ariza sizga biriktirilmagan yoki ariza holati o'zgargan"));
 
         //change appeal's isRejected, if it is true
         if (appeal.getIsRejected()) {
             appeal.setIsRejected(false);
             repository.save(appeal);
         }
-
         // Create a reply document
         createDocument(new DocumentDto(appeal.getId(), DocumentType.REPORT, replyDto.getFilePath(), replyDto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
 
@@ -129,7 +127,8 @@ public class AppealServiceImpl implements AppealService {
         Integer officeId = getProfile(user.getProfileId()).getOfficeId();
 
         Appeal appeal = switch (user.getRole()) {
-            case Role.MANAGER -> findByIdAndStatusAndSetExecutorName(replyDto.getDto().getAppealId(), AppealStatus.NEW, user);
+            case Role.MANAGER ->
+                    findByIdAndStatusAndSetExecutorName(replyDto.getDto().getAppealId(), AppealStatus.NEW, user);
             case Role.REGIONAL -> findByIdStatusAndOffice(replyDto.getDto().getAppealId(), AppealStatus.NEW, officeId);
             default -> throw new CustomException("Sizda arizalarni rad qilish imkoniyati mavjud emas");
         };
@@ -406,54 +405,44 @@ public class AppealServiceImpl implements AppealService {
     private OrderNumberDto makeNumber(AppealType appealType) {
         Long orderNumber = repository.getMax().orElse(0L) + 1;
 
-        String number = null;
-
-        switch (appealType.sort) {
-            case "registerIrs" -> number = orderNumber + "-INM-" + LocalDate.now().getYear();
-            case "registerHf" -> number = orderNumber + "-XIC-" + LocalDate.now().getYear();
-            case "registerEquipment", "reRegisterEquipment" ->
-                    number = orderNumber + "-QUR-" + LocalDate.now().getYear();
+        String number = switch (appealType.sort) {
+            case "registerIrs" -> orderNumber + "-INM-" + LocalDate.now().getYear();
+            case "registerHf" -> orderNumber + "-XIC-" + LocalDate.now().getYear();
+            case "registerEquipment", "reRegisterEquipment" -> orderNumber + "-QUR-" + LocalDate.now().getYear();
             case "registerAttractionPassport", "reRegisterAttractionPassport" ->
-                    number = orderNumber + "-ATP-" + LocalDate.now().getYear();
+                    orderNumber + "-ATP-" + LocalDate.now().getYear();
             case "accreditExpertOrganization", "reAccreditExpertOrganization", "expendAccreditExpertOrganization" ->
-                    number = orderNumber + "-AKK-" + LocalDate.now().getYear();
-            case "registerExpertiseConclusion" -> number = orderNumber + "-EXP-" + LocalDate.now().getYear();
-            case "registerAttestation" -> number = orderNumber + "-ATT-" + LocalDate.now().getYear();
-            case "registerCadastrePassport" -> number = orderNumber + "-CAD-" + LocalDate.now().getYear();
-            case "registerDeclaration" -> number = orderNumber + "-DEC-" + LocalDate.now().getYear();
+                    orderNumber + "-AKK-" + LocalDate.now().getYear();
+            case "registerExpertiseConclusion" -> orderNumber + "-EXP-" + LocalDate.now().getYear();
+            case "registerAttestation" -> orderNumber + "-ATT-" + LocalDate.now().getYear();
+            case "registerCadastrePassport" -> orderNumber + "-CAD-" + LocalDate.now().getYear();
+            case "registerDeclaration" -> orderNumber + "-DEC-" + LocalDate.now().getYear();
             // TODO: Ariza turiga qarab ariza raqamini shakllantirishni davom ettirish kerak
-
-            default -> throw new RuntimeException("Ushbu ariza turi uchun ariza registratsiya raqami shakllantirish hali qilinmagan");
-
-        }
+            default ->
+                    throw new RuntimeException("Ushbu ariza turi uchun ariza registratsiya raqami shakllantirish hali qilinmagan");
+        };
         return new OrderNumberDto(orderNumber, number);
     }
 
     private String getExecutorName(AppealType appealType) {
-        String executorName = null;
-
-        switch (appealType) {
-            case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> executorName = "INM ijrochi ismi";
-            case ACCREDIT_EXPERT_ORGANIZATION, RE_ACCREDIT_EXPERT_ORGANIZATION, EXPEND_ACCREDITATION_SCOPE ->
-                    executorName = "kimdir";
-            case REGISTER_DECLARATION, REGISTER_CADASTRE_PASSPORT -> executorName = "Axborot-tahlil, akkreditatsiyalash, kadastrni yuritish va ijro nazorati boshqarmasi bosh mutaxassisi";
+        return switch (appealType) {
+            case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> "INM ijrochi ismi";
+            case ACCREDIT_EXPERT_ORGANIZATION, RE_ACCREDIT_EXPERT_ORGANIZATION, EXPEND_ACCREDITATION_SCOPE -> "kimdir";
+            case REGISTER_DECLARATION, REGISTER_CADASTRE_PASSPORT ->
+                    "Axborot-tahlil, akkreditatsiyalash, kadastrni yuritish va ijro nazorati boshqarmasi bosh mutaxassisi";
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
-        }
-        return executorName;
+            default -> null;
+        };
     }
 
     private AppealStatus getAppealStatus(AppealType appealType) {
-        switch (appealType) {
+        return switch (appealType) {
             case AppealType.ACCREDIT_EXPERT_ORGANIZATION,
                  AppealType.RE_ACCREDIT_EXPERT_ORGANIZATION,
                  AppealType.EXPEND_ACCREDITATION_SCOPE,
-                 AppealType.REGISTER_EXPERTISE_CONCLUSION -> {
-                return AppealStatus.IN_APPROVAL;
-            }
-            default -> {
-                return AppealStatus.NEW;
-            }
-        }
+                 AppealType.REGISTER_EXPERTISE_CONCLUSION -> AppealStatus.IN_APPROVAL;
+            default -> AppealStatus.NEW;
+        };
     }
 
     private void acceptByCommittee(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
