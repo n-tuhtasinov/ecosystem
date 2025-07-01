@@ -1,9 +1,9 @@
 package uz.technocorp.ecosystem.modules.eimzo;
 
-import feign.Param;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import uz.technocorp.ecosystem.modules.eimzo.dto.SignedDocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.json.eimzo.EImzoAuthJson;
 import uz.technocorp.ecosystem.modules.eimzo.json.eimzo.EImzoChallengeJson;
 import uz.technocorp.ecosystem.modules.eimzo.json.eimzo.EImzoPingJson;
@@ -72,8 +72,7 @@ public interface EImzoProxy {
     Object signDocument();
 
     @PostMapping(path = "/backend/mobile/verify", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    Object verifyDocument(@Param("documentId") String documentId,
-                          @Param("document") String document,
+    Object verifyDocument(@RequestBody SignedDocumentDto dto,
                           @RequestHeader("X-Real-IP") String realIp,
                           @RequestHeader("Host") String host);
 }

@@ -168,7 +168,7 @@ public class EImzoController {
     @PostMapping("/mobile/verify")
     public ResponseEntity<?> verifyDocument(@Valid @RequestBody SignedDocumentDto dto, HttpServletRequest request) {
         try {
-            return ResponseEntity.ok(eImzoProxy.verifyDocument(dto.getDocumentId(), dto.getDocument(), Helper.getIp(request), host));
+            return ResponseEntity.ok(eImzoProxy.verifyDocument(dto, Helper.getIp(request), host));
         } catch (Exception ex) {
             throw new CustomException(ex.getMessage());
         }
