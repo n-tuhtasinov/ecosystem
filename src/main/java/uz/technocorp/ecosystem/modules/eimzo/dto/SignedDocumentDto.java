@@ -1,6 +1,5 @@
 package uz.technocorp.ecosystem.modules.eimzo.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +17,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SignedDocumentDto {
 
-    @NotBlank(message = "DocId jo'natilmadi")
     private String documentId;
-
-
-    @NotBlank(message = "Imzolangan ma'lumot jo'natilmadi")
     private String document;
 }
