@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.eimzo.dto.SignDto;
+import uz.technocorp.ecosystem.modules.eimzo.dto.SignedDocumentDto;
 import uz.technocorp.ecosystem.modules.eimzo.dto.StatusDto;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.eimzo.json.eimzo.EImzoAuthJson;
@@ -127,7 +128,7 @@ public class EImzoController {
         }
     }
 
-    // Frontend
+    // Mobile
     @PostMapping("/mobile/auth")
     public ResponseEntity<?> mobileAuth() {
         try {
@@ -165,9 +166,9 @@ public class EImzoController {
     }
 
     @PostMapping("/mobile/verify")
-    public ResponseEntity<?> verifyDocument(@RequestParam("documentId") String documentId, @RequestParam("document") String document, HttpServletRequest request) {
+    public ResponseEntity<?> verifyDocument(@Valid @RequestBody SignedDocumentDto dto, HttpServletRequest request) {
         try {
-            return ResponseEntity.ok(eImzoProxy.verifyDocument(documentId, document, Helper.getIp(request), host));
+            return ResponseEntity.ok(eImzoProxy.verifyDocument(dto, Helper.getIp(request), host));
         } catch (Exception ex) {
             throw new CustomException(ex.getMessage());
         }
