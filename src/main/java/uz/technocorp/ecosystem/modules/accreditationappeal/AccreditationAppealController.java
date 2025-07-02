@@ -35,6 +35,7 @@ public class AccreditationAppealController {
 
     @PostMapping
     public ResponseEntity<?> createAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<AccreditationAppealDto> accreditationDto, HttpServletRequest request) {
+        // TODO DTOGA 3 TA FIELD SET
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
