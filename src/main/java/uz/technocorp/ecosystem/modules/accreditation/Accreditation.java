@@ -72,6 +72,7 @@ public class Accreditation extends BaseEntity {
     private String thirdSymbolsGroup;
     private String objectAddress;
     private String customerLegalName;
+    private String customerLegalForm;
     private String customerLegalAddress;
     private String customerPhoneNumber;
     private String customerFullName;
@@ -92,5 +93,6 @@ public class Accreditation extends BaseEntity {
 
     private String expertiseConclusionPath;
     private String expertiseConclusionNumber;
+    private LocalDate expertiseConclusionDate;
 
 }

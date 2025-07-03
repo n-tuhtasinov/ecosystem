@@ -32,6 +32,7 @@ import java.util.Map;
 public class AccreditationAppealDto implements AppealDto {
 
     @SkipDb
+    @Schema(hidden = true)
     private String phoneNumber;
 
     @SkipDb

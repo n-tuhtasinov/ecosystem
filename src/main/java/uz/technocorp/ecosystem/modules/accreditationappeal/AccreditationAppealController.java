@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uz.technocorp.ecosystem.modules.accreditation.AccreditationService;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.AccreditationAppealDto;
+import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ExpConclusionAppealDto;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ExpendAccreditationAppealDto;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ReAccreditationAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
@@ -31,23 +33,29 @@ import uz.technocorp.ecosystem.shared.ResponseMessage;
 public class AccreditationAppealController {
 
     private final AppealPdfService appealPdfService;
-    private AppealService appealService;
+    private final AppealService appealService;
+    private final AccreditationService accreditationService;
 
     @PostMapping
     public ResponseEntity<?> createAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<AccreditationAppealDto> accreditationDto, HttpServletRequest request) {
-        // TODO DTOGA 3 TA FIELD SET
+        AccreditationAppealDto accreditationAppealDto = accreditationService.setProfileInfos(user.getProfileId(), accreditationDto.getDto());
+        accreditationDto.setDto(accreditationAppealDto);
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/redo")
     public ResponseEntity<?> createReAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ReAccreditationAppealDto> accreditationDto, HttpServletRequest request) {
+        ReAccreditationAppealDto reAccreditationAppealDto = accreditationService.setProfileInfos(user.getProfileId(), accreditationDto.getDto());
+        accreditationDto.setDto(reAccreditationAppealDto);
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/expend")
     public ResponseEntity<?> createExpendAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ExpendAccreditationAppealDto> accreditationDto, HttpServletRequest request) {
+        ExpendAccreditationAppealDto expendAccreditationAppealDto = accreditationService.setProfileInfos(user.getProfileId(), accreditationDto.getDto());
+        accreditationDto.setDto(expendAccreditationAppealDto);
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
@@ -70,5 +78,17 @@ public class AccreditationAppealController {
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
+    @PostMapping("/conclusion")
+    public ResponseEntity<?> createExpertiseConclusionAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ExpConclusionAppealDto> accreditationDto, HttpServletRequest request) {
+        ExpConclusionAppealDto expConclusionAppealDto = accreditationService.setProfileInfos(user.getProfileId(), accreditationDto.getDto());
+        accreditationDto.setDto(expConclusionAppealDto);
+        appealService.saveAndSign(user, accreditationDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
 
+    @PostMapping("/conclusion/generate-pdf")
+    public ResponseEntity<ApiResponse> generatePdfFromExpertiseConclusion(@CurrentUser User user, @Valid @RequestBody AccreditationAppealDto dto) {
+        String path = appealPdfService.preparePdfWithParam(dto, user);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
 }

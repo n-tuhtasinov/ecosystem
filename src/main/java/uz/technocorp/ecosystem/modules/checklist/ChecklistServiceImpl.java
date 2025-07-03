@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.Attachment;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
@@ -36,6 +37,7 @@ public class ChecklistServiceImpl implements ChecklistService {
     private final AttachmentService attachmentService;
 
     @Override
+    @Transactional
     public void create(User user, ChecklistDto checklistDto) {
         Profile profile = profileRepository
                 .findById(user.getProfileId())

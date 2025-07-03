@@ -29,7 +29,7 @@ import java.util.UUID;
 public class ExpertiseConclusionDto {
 
     @NotNull(message = "Buyurtamachi STIRi yuborilmadi!")
-    private Long tin;
+    private Long customerTin;
     @NotNull(message = "Ekspertiza xulosasini hisobga olish uchun topshirgan sana yuborilmadi!")
     private LocalDate submissionDate;
     @NotNull(message = "Kuzatuv xati sanasi yuborilmadi!")
