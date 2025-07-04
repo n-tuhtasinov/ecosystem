@@ -157,7 +157,7 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         //TODO rejected paramdan foydalanib arizani qaytarish va arizani rad etish holatlari uchun
         // ikki xil pdf yaratish kerak
 
-        return "";
+        return "/files/appeals/reply/2025/june/2/1748849551879.pdf";
     }
 
     private AppealPdfProcessor findProcessor(AppealDto dto) {
