@@ -39,6 +39,7 @@ public class ChecklistTemplateServiceImpl implements ChecklistTemplateService {
     private final AttachmentService attachmentService;
 
     @Override
+    @Transactional
     public void create(ChecklistTemplateDto dto) {
         Attachment attachment = attachmentRepository
                 .findByPath(dto.path())

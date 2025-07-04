@@ -62,6 +62,7 @@ public class InspectionServiceImpl implements InspectionService {
 
 
     @Override
+    @Transactional
     public void update(UUID id, InspectionDto dto) {
         Inspection inspection = repository
                 .findById(id)
@@ -84,22 +85,34 @@ public class InspectionServiceImpl implements InspectionService {
         Inspection inspection = repository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv", "Id", id));
-        inspection.setMeasuresPath(dto.measuresPath());
+        List<String> paths = new ArrayList<>();
+        if (!inspection.getMeasuresPath().equals(dto.measuresPath())) {
+            inspection.setMeasuresPath(dto.measuresPath());
+            paths.add(dto.measuresPath());
+        }
         inspection.setNotificationLetterDate(dto.notificationLetterDate());
-        inspection.setNotificationLetterPath(dto.notificationLetterPath());
-        inspection.setSchedulePath(dto.schedulePath());
+        if (!inspection.getNotificationLetterPath().equals(dto.notificationLetterPath())) {
+            paths.add(dto.notificationLetterPath());
+            inspection.setNotificationLetterPath(dto.notificationLetterPath());
+        }
+        if (!inspection.getSchedulePath().equals(dto.schedulePath())) {
+            inspection.setSchedulePath(dto.schedulePath());
+            paths.add(dto.schedulePath());
+        }
         inspection.setSpecialCode(dto.specialCode());
-        inspection.setProgramPath(dto.programPath());
-        inspection.setResultPath(dto.resultPath());
-        inspection.setOrderPath(dto.orderPath());
+        if (!inspection.getProgramPath().equals(dto.programPath())) {
+            inspection.setProgramPath(dto.programPath());
+        }
+        if (!inspection.getResultPath().equals(dto.resultPath())){
+            inspection.setResultPath(dto.resultPath());
+            paths.add(dto.resultPath());
+        }
+        if (!inspection.getOrderPath().equals(dto.orderPath())){
+            inspection.setOrderPath(dto.orderPath());
+            paths.add(dto.orderPath());
+        }
         repository.save(inspection);
-        attachmentService.deleteByPaths(List.of(
-                dto.measuresPath(),
-                dto.programPath(),
-                dto.resultPath(),
-                dto.orderPath(),
-                dto.schedulePath(),
-                dto.notificationLetterPath()));
+        attachmentService.deleteByPaths(paths);
     }
 
     @Override
