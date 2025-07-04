@@ -7,14 +7,17 @@ package uz.technocorp.ecosystem.modules.user.enums;
  * @since v1.0
  */
 public enum Direction {
-    APPEAL, //Ariza
+    APPEAL, // Ariza
     HF, // XICHO
     EQUIPMENT, // Qurilmalar
     IRS, // INM
     REGISTRY, //Reestr
     ATTESTATION_COMMITTEE, // Attestatsiya qo'mita
     ATTESTATION_REGIONAL, // Attestatsiya viloyat
-    ACCREDITATION, //Akkreditatsiya
+    RISK_ANALYSIS, // Havf tahlili
+    INSPECTION, // Tekshiruvlar
+    PREVENTION, // Profilaktika
+    ACCREDITATION, // Akkreditatsiya
     CADASTRE, // Kadastr
     PERMITS // Ruxsat beruvchi hujjatlar
 }
