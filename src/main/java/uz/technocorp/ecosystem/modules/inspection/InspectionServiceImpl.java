@@ -112,7 +112,10 @@ public class InspectionServiceImpl implements InspectionService {
             paths.add(dto.orderPath());
         }
         repository.save(inspection);
-        attachmentService.deleteByPaths(paths);
+        if (!paths.isEmpty()) {
+            attachmentService.deleteByPaths(paths);
+        }
+
     }
 
     @Override
