@@ -33,15 +33,19 @@ import java.util.Map;
 public class ExpendAccreditationAppealDto implements AppealDto {
 
     @SkipDb
+    @Schema(hidden = true)
     private String phoneNumber;
 
     @SkipDb
+    @Schema(hidden = true)
     private String address;
 
     @SkipDb
+    @Schema(hidden = true)
     private Integer regionId;
 
     @SkipDb
+    @Schema(hidden = true)
     private Integer districtId;
 
     @Enumerated(EnumType.STRING)

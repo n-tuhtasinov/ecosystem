@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.inspection.InspectionService;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
 import uz.technocorp.ecosystem.modules.inspectionreport.InspectionReport;
@@ -35,8 +37,10 @@ public class InspectionReportExecutionServiceImpl implements InspectionReportExe
     private final InspectionReportExecutionRepository repository;
     private final InspectionReportRepository inspectionReportRepository;
     private final InspectionService inspectionService;
+    private final AttachmentService attachmentService;
 
     @Override
+    @Transactional
     public void create(UUID reportId, IRExecutionDto dto) {
         repository.save(
                 InspectionReportExecution
@@ -47,6 +51,7 @@ public class InspectionReportExecutionServiceImpl implements InspectionReportExe
                         .executionFilePath(dto.paramValue())
                         .build()
         );
+        attachmentService.deleteByPath(dto.paramValue());
     }
 
     @Override
