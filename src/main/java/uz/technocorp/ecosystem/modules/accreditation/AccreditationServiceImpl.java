@@ -67,7 +67,7 @@ public class AccreditationServiceImpl implements AccreditationService {
     @Override
     public String generateCertificate(User user, AccreditationDto accreditationDto) {
         //TODO PDF generate qilish kerak.
-        return "";
+        return "/files/registry-files/2025/july/4/1751621730971.pdf";
     }
 
     @Override
