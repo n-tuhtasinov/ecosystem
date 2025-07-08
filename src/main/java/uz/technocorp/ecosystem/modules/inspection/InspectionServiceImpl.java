@@ -86,33 +86,36 @@ public class InspectionServiceImpl implements InspectionService {
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tekshiruv", "Id", id));
         List<String> paths = new ArrayList<>();
-        if (!inspection.getMeasuresPath().equals(dto.measuresPath())) {
+        if (!Objects.equals(inspection.getMeasuresPath(), dto.measuresPath())) {
             inspection.setMeasuresPath(dto.measuresPath());
             paths.add(dto.measuresPath());
         }
         inspection.setNotificationLetterDate(dto.notificationLetterDate());
-        if (!inspection.getNotificationLetterPath().equals(dto.notificationLetterPath())) {
+        if (!Objects.equals(inspection.getNotificationLetterPath(), dto.notificationLetterPath())) {
             paths.add(dto.notificationLetterPath());
             inspection.setNotificationLetterPath(dto.notificationLetterPath());
         }
-        if (!inspection.getSchedulePath().equals(dto.schedulePath())) {
+        if (!Objects.equals(inspection.getSchedulePath(), dto.schedulePath())) {
             inspection.setSchedulePath(dto.schedulePath());
             paths.add(dto.schedulePath());
         }
         inspection.setSpecialCode(dto.specialCode());
-        if (!inspection.getProgramPath().equals(dto.programPath())) {
+        if (!Objects.equals(inspection.getProgramPath(), dto.programPath())) {
             inspection.setProgramPath(dto.programPath());
         }
-        if (!inspection.getResultPath().equals(dto.resultPath())){
+        if (!Objects.equals(inspection.getResultPath(), dto.resultPath())){
             inspection.setResultPath(dto.resultPath());
             paths.add(dto.resultPath());
         }
-        if (!inspection.getOrderPath().equals(dto.orderPath())){
+        if (!Objects.equals(inspection.getOrderPath(), dto.orderPath())){
             inspection.setOrderPath(dto.orderPath());
             paths.add(dto.orderPath());
         }
         repository.save(inspection);
-        attachmentService.deleteByPaths(paths);
+        if (!paths.isEmpty()) {
+            attachmentService.deleteByPaths(paths);
+        }
+
     }
 
     @Override
