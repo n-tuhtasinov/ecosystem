@@ -155,9 +155,6 @@ public class AppealServiceImpl implements AppealService {
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
         JsonNode data = JsonMaker.makeJsonSkipFields(dto);
 
-        // Ariza statusini ariza turiga qarab belgilash;
-        AppealStatus appealStatus = getAppealStatus(dto.getAppealType());
-
         Appeal appeal = Appeal
                 .builder()
                 .appealType(dto.getAppealType())
@@ -172,7 +169,7 @@ public class AppealServiceImpl implements AppealService {
                 .districtId(dto.getDistrictId())
                 .officeId(office.getId())
                 .officeName(office.getName())
-                .status(appealStatus)
+                .status(AppealStatus.NEW)
                 .address(region.getName() + ", " + district.getName() + ", " + dto.getAddress())
                 .legalAddress(profile.getLegalAddress())
                 .phoneNumber(dto.getPhoneNumber())
@@ -184,7 +181,7 @@ public class AppealServiceImpl implements AppealService {
         repository.save(appeal);
 
         //create appeal execution process
-        createExecutionProcess(new AppealExecutionProcessDto(appeal.getId(), appealStatus, null));
+        createExecutionProcess(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.NEW, null));
 
         return appeal.getId();
     }
@@ -432,16 +429,6 @@ public class AppealServiceImpl implements AppealService {
                     "Axborot-tahlil, akkreditatsiyalash, kadastrni yuritish va ijro nazorati boshqarmasi bosh mutaxassisi";
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
             default -> null;
-        };
-    }
-
-    private AppealStatus getAppealStatus(AppealType appealType) {
-        return switch (appealType) {
-            case AppealType.ACCREDIT_EXPERT_ORGANIZATION,
-                 AppealType.RE_ACCREDIT_EXPERT_ORGANIZATION,
-                 AppealType.EXPEND_ACCREDITATION_SCOPE,
-                 AppealType.REGISTER_EXPERTISE_CONCLUSION -> AppealStatus.IN_APPROVAL;
-            default -> AppealStatus.NEW;
         };
     }
 
