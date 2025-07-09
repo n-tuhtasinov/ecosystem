@@ -5,6 +5,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,7 +49,7 @@ public class ReAccreditationAppealDto implements AppealDto {
     @Schema(hidden = true)
     private Integer districtId;
 
-    @Enumerated(EnumType.STRING)
+    @NotEmpty(message = "Akkriditatsiya sohasi tanlanmadi")
     private List<AccreditationSphere> accreditationSpheres;
 
     @NotBlank(message = "Mas'ul vakilning ism sharifi yuborilmadi!")
@@ -63,6 +64,7 @@ public class ReAccreditationAppealDto implements AppealDto {
     private Map<String, String> files = new HashMap<>();
 
     @SkipDb
+    @NotBlank(message = "")
     private String accreditationFieldPath;
 
     @SkipDb
