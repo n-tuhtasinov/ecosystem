@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
+import uz.technocorp.ecosystem.modules.accreditation.dto.ConclusionReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -51,6 +52,7 @@ public class AccreditationController {
         accreditationService.notConfirmed(user, dto, request, false);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
+
     @PostMapping("/certificate/generate-pdf")
     public ResponseEntity<ApiResponse> generateCertificatePdfFromAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
         String path = accreditationService.generateCertificate(user, dto);
@@ -62,5 +64,18 @@ public class AccreditationController {
         accreditationService.createAccreditation(user, dto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
+
+    @PostMapping("/conclusion/generate-pdf")
+    public ResponseEntity<ApiResponse> generateConclusionPdf(@CurrentUser User user, @Valid @RequestBody ConclusionReplyDto dto) {
+        String path = accreditationService.generateConclusionPdf(user, dto);
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
+    }
+
+    @PostMapping("/conclusion")
+    public ResponseEntity<ApiResponse> createConclusion(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<ConclusionReplyDto> signDto, HttpServletRequest request) {
+        accreditationService.createConclusion(user, signDto, request);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
 
 }

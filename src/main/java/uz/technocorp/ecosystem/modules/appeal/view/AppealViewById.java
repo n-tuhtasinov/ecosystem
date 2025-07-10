@@ -26,6 +26,7 @@ public interface AppealViewById {
     String getLegalName();
     String getResolution();
     String getConclusion();
+    String getDepartmentName();
     JsonNode getData();
 
 

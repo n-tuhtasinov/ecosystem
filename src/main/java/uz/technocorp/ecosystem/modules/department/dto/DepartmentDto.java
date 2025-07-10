@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.department.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -10,6 +11,9 @@ import jakarta.validation.constraints.NotBlank;
  */
 public record DepartmentDto(
         @NotBlank(message = "Departament yoki bo'lim nomi kiritilmadi")
-        String name
+        String name,
+
+        @NotNull(message = "Departament yoki bo'lim klassifikator raqami kiritilmadi")
+        Integer classifier
 ) {
 }
