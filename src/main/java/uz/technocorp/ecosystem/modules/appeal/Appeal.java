@@ -91,6 +91,10 @@ public class Appeal extends BaseEntity {
 
     private String officeName;
 
+    private Integer departmentId;
+
+    private String departmentName;
+
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "executor_id", insertable = false, updatable = false)
     private User executor;

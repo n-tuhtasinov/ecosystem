@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
+import uz.technocorp.ecosystem.modules.accreditation.dto.ConclusionReplyDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.ExpertiseConclusionDto;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationPageView;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationView;
@@ -33,8 +34,6 @@ public interface AccreditationService {
 
     void createAccreditation(User user, SignedReplyDto<AccreditationDto> accreditationDto, HttpServletRequest request);
 
-    void createExpertiseConclusion(User user, SignedReplyDto<ExpertiseConclusionDto> conclusionDto, HttpServletRequest request);
-
     Page<AccreditationPageView> getAccreditations(User user, int page, int size);
 
     AccreditationView getAccreditation(UUID id);
@@ -50,4 +49,8 @@ public interface AccreditationService {
     ExpendAccreditationAppealDto setProfileInfo(UUID profileId, ExpendAccreditationAppealDto appealDto);
 
     void setProfileInfo(UUID profileId, ExpConclusionAppealDto appealDto);
+
+    String generateConclusionPdf(User user, ConclusionReplyDto dto);
+
+    void createConclusion(User user, SignedReplyDto<ConclusionReplyDto> signDto, HttpServletRequest request);
 }

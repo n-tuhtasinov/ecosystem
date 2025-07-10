@@ -83,6 +83,7 @@ public class ExpConclusionAppealDto implements AppealDto {
     @NotBlank(message = "Obyekt joylashgan manzil yuborilmadi")
     private String address;
 
+    @SkipDb
     @NotBlank(message = "Ekspertiza xulosasi fayli yuborilmadi!")
     private String expertiseConclusionPath;
 
