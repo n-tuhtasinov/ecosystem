@@ -38,14 +38,14 @@ public class AccreditationAppealController {
 
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationAppealDto dto) {
-        AccreditationAppealDto accreditationAppealDto = accreditationService.setProfileInfos(user.getProfileId(), dto);
+        AccreditationAppealDto accreditationAppealDto = accreditationService.setProfileInfo(user.getProfileId(), dto);
         String path = appealPdfService.preparePdfWithParam(accreditationAppealDto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping
     public ResponseEntity<?> createAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<AccreditationAppealDto> accreditationDto, HttpServletRequest request) {
-        AccreditationAppealDto accreditationAppealDto = accreditationService.setProfileInfos(user.getProfileId(), accreditationDto.getDto());
+        AccreditationAppealDto accreditationAppealDto = accreditationService.setProfileInfo(user.getProfileId(), accreditationDto.getDto());
         accreditationDto.setDto(accreditationAppealDto);
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
@@ -53,14 +53,14 @@ public class AccreditationAppealController {
 
     @PostMapping("/redo/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromReAccreditation(@CurrentUser User user, @Valid @RequestBody ReAccreditationAppealDto dto) {
-        ReAccreditationAppealDto reAccreditationAppealDto = accreditationService.setProfileInfos(user.getProfileId(), dto);
+        ReAccreditationAppealDto reAccreditationAppealDto = accreditationService.setProfileInfo(user.getProfileId(), dto);
         String path = appealPdfService.preparePdfWithParam(reAccreditationAppealDto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping("/redo")
     public ResponseEntity<?> createReAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ReAccreditationAppealDto> accreditationDto, HttpServletRequest request) {
-        ReAccreditationAppealDto reAccreditationAppealDto = accreditationService.setProfileInfos(user.getProfileId(), accreditationDto.getDto());
+        ReAccreditationAppealDto reAccreditationAppealDto = accreditationService.setProfileInfo(user.getProfileId(), accreditationDto.getDto());
         accreditationDto.setDto(reAccreditationAppealDto);
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
@@ -68,14 +68,14 @@ public class AccreditationAppealController {
 
     @PostMapping("/expend/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromExpendAccreditation(@CurrentUser User user, @Valid @RequestBody ExpendAccreditationAppealDto dto) {
-        ExpendAccreditationAppealDto expendAccreditationAppealDto = accreditationService.setProfileInfos(user.getProfileId(), dto);
+        ExpendAccreditationAppealDto expendAccreditationAppealDto = accreditationService.setProfileInfo(user.getProfileId(), dto);
         String path = appealPdfService.preparePdfWithParam(expendAccreditationAppealDto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping("/expend")
     public ResponseEntity<?> createExpendAccreditationAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ExpendAccreditationAppealDto> accreditationDto, HttpServletRequest request) {
-        ExpendAccreditationAppealDto expendAccreditationAppealDto = accreditationService.setProfileInfos(user.getProfileId(), accreditationDto.getDto());
+        ExpendAccreditationAppealDto expendAccreditationAppealDto = accreditationService.setProfileInfo(user.getProfileId(), accreditationDto.getDto());
         accreditationDto.setDto(expendAccreditationAppealDto);
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
@@ -83,15 +83,14 @@ public class AccreditationAppealController {
 
     @PostMapping("/conclusion/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromExpertiseConclusion(@CurrentUser User user, @Valid @RequestBody ExpConclusionAppealDto dto) {
-        ExpConclusionAppealDto expConclusionAppealDto = accreditationService.setProfileInfos(user.getProfileId(), dto);
-        String path = appealPdfService.preparePdfWithParam(expConclusionAppealDto, user);
+        accreditationService.setProfileInfo(user.getProfileId(), dto);
+        String path = appealPdfService.preparePdfWithParam(dto, user);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping("/conclusion")
     public ResponseEntity<?> createExpertiseConclusionAppeal(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ExpConclusionAppealDto> accreditationDto, HttpServletRequest request) {
-        ExpConclusionAppealDto expConclusionAppealDto = accreditationService.setProfileInfos(user.getProfileId(), accreditationDto.getDto());
-        accreditationDto.setDto(expConclusionAppealDto);
+        accreditationService.setProfileInfo(user.getProfileId(), accreditationDto.getDto());
         appealService.saveAndSign(user, accreditationDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }

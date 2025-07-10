@@ -29,101 +29,95 @@ import java.util.Map;
 public class ExpConclusionAppealDto implements AppealDto {
 
     @SkipDb
-    @Schema(hidden = true)
+    @NotBlank(message = "Telefon nomer yuborilmadi")
     private String phoneNumber;
 
-    @SkipDb
-    @Schema(hidden = true)
-    private String address;
-
-    @SkipDb
-    @NotNull(message = "Buyurtamachi STIRi yuborilmadi!")
+    @NotNull(message = "Buyurtamachi tashkilot STIRi jo'natilmadi")
     private Long customerTin;
-    @SkipDb
+
+    @NotBlank(message = "Buyurtamachi tashkilot nomi jo'natilmadi")
+    private String customerLegalName;
+
+    @NotBlank(message = "Buyurtamachi tashkilot tashkiliy-huquqiy shakli jo'natilmadi")
+    private String customerLegalForm;
+
+    @NotBlank(message = "Buyurtamachi tashkilot manzili jo'natilmadi")
+    private String customerLegalAddress;
+
+    @NotBlank(message = "Buyurtamachi tashkilot telefon raqami jo'natilmadi")
+    private String customerPhoneNumber;
+
+    @NotBlank(message = "Buyurtamachi tashkilot rahbarining FIOsi jo'natilmadi")
+    private String customerFullName;
+
     @NotNull(message = "Ekspertiza xulosasini hisobga olish uchun topshirgan sana yuborilmadi!")
     private LocalDate submissionDate;
-    @SkipDb
+
     @NotNull(message = "Kuzatuv xati sanasi yuborilmadi!")
     private LocalDate monitoringLetterDate;
-    @SkipDb
+
     @NotBlank(message = "Kuzatuv xati raqami yuborilmadi!")
     private String monitoringLetterNumber;
-    @SkipDb
+
     @NotBlank(message = "Ekspertiza obyekti nomi yuborilmadi!")
-    private String expertiseObjectName;
-    @SkipDb
+    private String objectName;
+
     @NotBlank(message = "Birinchi belgilar guruhi yuborilmadi!")
     private String firstSymbolsGroup;
-    @SkipDb
+
     @NotBlank(message = "Ikkinchi belgilar guruhi yuborilmadi!")
     private String secondSymbolsGroup;
-    @SkipDb
+
     @NotBlank(message = "Uchinchi belgilar guruhi yuborilmadi!")
     private String thirdSymbolsGroup;
+
     @SkipDb
-    @NotBlank(message = "Obyekt manzili yuborilmadi!")
-    private String objectAddress;
-    @SkipDb
-    @NotNull(message = "Viloyat yuborilmadi!")
+    @NotNull(message = "Obyekt joylashgan viloyat yuborilmadi!")
     private Integer regionId;
 
     @SkipDb
-    @Schema(hidden = true)
-    private String regionName;
-    @SkipDb
-    @NotNull(message = "Tuman yuborilmadi!")
+    @NotNull(message = "Obyekt joylashgant tuman yuborilmadi!")
     private Integer districtId;
+
     @SkipDb
-    @Schema(hidden = true)
-    private String districtName;
-    @SkipDb
+    @NotBlank(message = "Obyekt joylashgan manzil yuborilmadi")
+    private String address;
+
     @NotBlank(message = "Ekspertiza xulosasi fayli yuborilmadi!")
     private String expertiseConclusionPath;
-    @SkipDb
+
     @NotBlank(message = "Ekspertiza xulosasi raqami yuborilmadi!")
     private String expertiseConclusionNumber;
-    @SkipDb
-    @NotBlank(message = "Mas'ul vakilning ism sharifi yuborilmadi!")
-    private String responsiblePersonName;
 
-    @SkipDb
-    private String customerLegalName;
-    @SkipDb
-    private String customerLegalForm;
-    @SkipDb
-    private String customerLegalAddress;
-    @SkipDb
-    private String customerPhoneNumber;
-    @SkipDb
-    private String customerFullName;
-
-    @SkipDb
+    @Schema(hidden = true)
     private String certificateNumber;
 
-    @SkipDb
+    @Schema(hidden = true)
     private LocalDate certificateDate;
 
-    @SkipDb
+    @Schema(hidden = true)
     private LocalDate certificateValidityDate;
 
-    @Override
-    public AppealType getAppealType() {
-        return AppealType.REGISTER_EXPERTISE_CONCLUSION;
-    }
+    @Schema(hidden = true)
+    private String accreditationSpheres;
 
     @Schema(hidden = true)
     private Map<String, String> files = new HashMap<>();
-
-
 
     public void buildFiles() {
         files.put("expertiseConclusionPath", expertiseConclusionPath);
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isFilesBuilt() {
         buildFiles();
         return true;
+    }
+
+    @Override
+    public AppealType getAppealType() {
+        return AppealType.REGISTER_EXPERTISE_CONCLUSION;
     }
 
     @Override
