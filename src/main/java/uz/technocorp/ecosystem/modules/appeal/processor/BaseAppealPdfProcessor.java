@@ -16,6 +16,8 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,6 +38,8 @@ public abstract class BaseAppealPdfProcessor implements AppealPdfProcessor {
 
     @Autowired
     protected AttachmentService attachmentService;
+
+    protected static final String DATE_FORMATTER = "dd-MM-yyyy";
 
     // Abstract methods
     protected abstract TemplateType getTemplateType();
@@ -73,5 +77,9 @@ public abstract class BaseAppealPdfProcessor implements AppealPdfProcessor {
             throw new ResourceNotFoundException("Shablon", type.name(), "");
         }
         return template;
+    }
+
+    protected String getFormattedDateAsString (LocalDate localDate) {
+        return localDate.format(DateTimeFormatter.ofPattern(DATE_FORMATTER));
     }
 }

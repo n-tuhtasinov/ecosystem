@@ -43,11 +43,11 @@ public interface AccreditationService {
 
     ExpConclusionsView getExpConclusion(UUID id);
 
-    AccreditationAppealDto setProfileInfos(UUID profileId, AccreditationAppealDto appealDto);
+    AccreditationAppealDto setProfileInfo(UUID profileId, AccreditationAppealDto appealDto);
 
-    ReAccreditationAppealDto setProfileInfos(UUID profileId, ReAccreditationAppealDto appealDto);
+    ReAccreditationAppealDto setProfileInfo(UUID profileId, ReAccreditationAppealDto appealDto);
 
-    ExpendAccreditationAppealDto setProfileInfos(UUID profileId, ExpendAccreditationAppealDto appealDto);
+    ExpendAccreditationAppealDto setProfileInfo(UUID profileId, ExpendAccreditationAppealDto appealDto);
 
-    ExpConclusionAppealDto setProfileInfos(UUID profileId, ExpConclusionAppealDto appealDto);
+    void setProfileInfo(UUID profileId, ExpConclusionAppealDto appealDto);
 }

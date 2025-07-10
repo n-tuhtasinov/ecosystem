@@ -1,7 +1,6 @@
 package uz.technocorp.ecosystem.modules.appeal.processor;
 
 import org.springframework.stereotype.Component;
-import uz.technocorp.ecosystem.modules.accreditationappeal.dto.AccreditationAppealDto;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ExpConclusionAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -34,21 +33,26 @@ public class ExpertiseConclusionPdfProcessor extends BaseAppealPdfProcessor {
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("legalName", profile.getLegalName());
-        parameters.put("phoneNumber", dto.getPhoneNumber());
-        parameters.put("legalAddress", profile.getLegalAddress());
-        parameters.put("fullName", profile.getFullName());
-        parameters.put("certificateDate", dto.getCertificateDate().toString());
-        parameters.put("certificateNumber", dto.getCertificateNumber());
-        parameters.put("certificateValidityDate", dto.getCertificateValidityDate().toString());
-        parameters.put("responsiblePersonName", dto.getResponsiblePersonName());
+        parameters.put("customerLegalAddress", dto.getCustomerLegalAddress());
+        parameters.put("customerLegalName", dto.getCustomerLegalName());
+        parameters.put("customerTin", dto.getCustomerTin().toString());
 
+        parameters.put("director", profile.getFullName());
+        parameters.put("legalAddress", profile.getLegalAddress());
+        parameters.put("phoneNumber", dto.getPhoneNumber());
+
+        parameters.put("certificateDate", getFormattedDateAsString(dto.getCertificateDate()));
+        parameters.put("accreditationSpheres", dto.getAccreditationSpheres());
+        parameters.put("certificateValidityDate", getFormattedDateAsString(dto.getCertificateValidityDate()));
+        parameters.put("certificateNumber", dto.getCertificateNumber());
+
+        parameters.put("objectName", dto.getObjectName());
         parameters.put("firstSymbolsGroup", dto.getFirstSymbolsGroup());
         parameters.put("secondSymbolsGroup", dto.getSecondSymbolsGroup());
         parameters.put("thirdSymbolsGroup", dto.getThirdSymbolsGroup());
-        parameters.put("regionName", dto.getRegionName());
-        parameters.put("districtName", dto.getDistrictName());
-        parameters.put("objectAddress", dto.getObjectAddress());
-        parameters.put("expertiseObjectName", dto.getExpertiseObjectName());
+        parameters.put("regionName", getRegion(dto.getRegionId()).getName());
+        parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
+        parameters.put("objectAddress", dto.getAddress());
 
         return parameters;
     }

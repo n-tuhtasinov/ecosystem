@@ -11,6 +11,7 @@ import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.ExpertiseConclusionDto;
+import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationSphere;
 import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationType;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationPageView;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationView;
@@ -25,7 +26,6 @@ import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
-import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
@@ -35,7 +35,6 @@ import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
-import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
@@ -44,6 +43,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Rasulov Komil
@@ -206,7 +206,7 @@ public class AccreditationServiceImpl implements AccreditationService {
     }
 
     @Override
-    public AccreditationAppealDto setProfileInfos(UUID profileId, AccreditationAppealDto appealDto) {
+    public AccreditationAppealDto setProfileInfo(UUID profileId, AccreditationAppealDto appealDto) {
         Profile profile = profileService.getProfile(profileId);
         appealDto.setPhoneNumber(profile.getPhoneNumber());
         appealDto.setRegionId(profile.getRegionId());
@@ -215,7 +215,7 @@ public class AccreditationServiceImpl implements AccreditationService {
     }
 
     @Override
-    public ReAccreditationAppealDto setProfileInfos(UUID profileId, ReAccreditationAppealDto appealDto) {
+    public ReAccreditationAppealDto setProfileInfo(UUID profileId, ReAccreditationAppealDto appealDto) {
         Profile profile = profileService.getProfile(profileId);
         appealDto.setPhoneNumber(profile.getPhoneNumber());
         appealDto.setRegionId(profile.getRegionId());
@@ -224,7 +224,7 @@ public class AccreditationServiceImpl implements AccreditationService {
     }
 
     @Override
-    public ExpendAccreditationAppealDto setProfileInfos(UUID profileId, ExpendAccreditationAppealDto appealDto) {
+    public ExpendAccreditationAppealDto setProfileInfo(UUID profileId, ExpendAccreditationAppealDto appealDto) {
         Profile profile = profileService.getProfile(profileId);
         appealDto.setPhoneNumber(profile.getPhoneNumber());
         appealDto.setRegionId(profile.getRegionId());
@@ -233,29 +233,22 @@ public class AccreditationServiceImpl implements AccreditationService {
     }
 
     @Override
-    public ExpConclusionAppealDto setProfileInfos(UUID profileId, ExpConclusionAppealDto appealDto) {
-        Region region = regionService.findById(appealDto.getRegionId());
-        District district = districtService.findById(appealDto.getDistrictId());
+    public void setProfileInfo(UUID profileId, ExpConclusionAppealDto appealDto) {
+
         Profile profile = profileService.getProfile(profileId);
-        Accreditation accreditation = accreditationRepository
-                .findByTinAndType(profile.getTin(), AccreditationType.ACCREDITATION)
-                .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya tashkiloti", "TIN", profile.getTin()));
-        LegalUserDto gnkInfo = iipService.getGnkInfo(appealDto.getCustomerTin().toString());
-        appealDto.setCustomerLegalAddress(gnkInfo.getLegalAddress());
-        appealDto.setCustomerLegalForm(gnkInfo.getLegalForm());
-        appealDto.setCustomerFullName(gnkInfo.getFullName());
-        appealDto.setCustomerLegalName(gnkInfo.getLegalName());
-        appealDto.setCustomerPhoneNumber(gnkInfo.getPhoneNumber());
-
-        appealDto.setPhoneNumber(profile.getPhoneNumber());
-
-        appealDto.setRegionName(region.getName());
-        appealDto.setDistrictName(district.getName());
+        Accreditation accreditation = findAccreditationByTinAndType(profile, AccreditationType.ACCREDITATION);
+        String spheres = accreditation.getAccreditationSpheres().stream().map(AccreditationSphere::name).collect(Collectors.joining(", "));
 
         appealDto.setCertificateDate(accreditation.getCertificateDate());
         appealDto.setCertificateNumber(accreditation.getCertificateNumber());
         appealDto.setCertificateValidityDate(accreditation.getCertificateValidityDate());
-        return appealDto;
+        appealDto.setAccreditationSpheres(spheres);
+    }
+
+    private Accreditation findAccreditationByTinAndType(Profile profile, AccreditationType type) {
+        return accreditationRepository
+                .findByTinAndType(profile.getTin(), type)
+                .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya tashkiloti", "STIR va tur", profile.getTin() + ", " + type));
     }
 
     @Override
