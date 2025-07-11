@@ -3,8 +3,9 @@ package uz.technocorp.ecosystem.modules.accreditation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +16,7 @@ import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationParamsDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.ConclusionReplyDto;
 import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationType;
-import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationPageView;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationView;
-import uz.technocorp.ecosystem.modules.accreditation.view.ExpConclusionPageView;
 import uz.technocorp.ecosystem.modules.accreditation.view.ExpConclusionsView;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.AccreditationAppealDto;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ExpConclusionAppealDto;
@@ -45,8 +44,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.springframework.data.jpa.domain.Specification.where;
+
 /**
- * @author Rasulov Komil
+ * @author Sukhrob
  * @version 1.0
  * @created 28.06.2025
  * @since v1.0
@@ -55,6 +56,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AccreditationServiceImpl implements AccreditationService {
 
+    private final AccreditationSpecification specification;
     private final AttachmentService attachmentService;
     private final AccreditationRepository repository;
     private final AppealRepository appealRepository;
@@ -63,27 +65,43 @@ public class AccreditationServiceImpl implements AccreditationService {
     private final AppealService appealService;
 
     @Override
-    public Page<AccreditationPageView> getAccreditations(User user, AccreditationParamsDto dto) {
+    public Page<AccreditationView> getAccreditations(User user, AccreditationParamsDto params) {
         if (!List.of(Role.HEAD, Role.CHAIRMAN, Role.MANAGER).contains(user.getRole())) {
             throw new CustomException("Sizda Akkreditatsiyani ko'rish huquqi yo'q");
         }
-        Long tin = parseTin(dto.getSearch());
+        // Search
+        Specification<Accreditation> search = specification.search(params.getSearch());
 
-        String legalName = null;
-        if (tin == null) legalName = dto.getSearch();
+        // Type
+        Specification<Accreditation> type = specification.type(AccreditationType.ACCREDITATION);
 
-        /*Specification<Accreditation> search = (root, cq, cb) -> {
-            return
-        }*/
+        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
 
+        // Get all
+        Page<Accreditation> accreditations = repository.findAll(where(search).and(type), pageRequest);
 
-        Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
-        return repository.getAllAccreditations(pageable, AccreditationType.ACCREDITATION, tin, legalName);
+        // Create PageImpl
+        return new PageImpl<>(accreditations.stream().map(this::map).toList(), pageRequest, accreditations.getTotalElements());
     }
 
     @Override
-    public Page<?> getConclusions(User user, AccreditationParamsDto dto) {
-        return null;
+    public Page<ExpConclusionsView> getConclusions(User user, AccreditationParamsDto params) {
+        if (!List.of(Role.HEAD, Role.CHAIRMAN, Role.MANAGER).contains(user.getRole())) {
+            throw new CustomException("Sizda Akkreditatsiya ekspertizasini ko'rish huquqi yo'q");
+        }
+        // Search
+        Specification<Accreditation> search = specification.search(params.getSearch());
+
+        // Type
+        Specification<Accreditation> type = specification.type(AccreditationType.CONCLUSION);
+
+        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        // Get all
+        Page<Accreditation> accreditations = repository.findAll(where(search).and(type), pageRequest);
+
+        // Create PageImpl
+        return new PageImpl<>(accreditations.stream().map(this::mapConclusion).toList(), pageRequest, accreditations.getTotalElements());
     }
 
     @Override
@@ -95,17 +113,14 @@ public class AccreditationServiceImpl implements AccreditationService {
     @Override
     @Transactional
     public void createAccreditation(User user, SignedReplyDto<AccreditationDto> dto, HttpServletRequest request) {
-        Optional<Accreditation> optionalAccreditation = repository
-                .findByCertificateNumber(dto.getDto().getCertificateNumber());
-        Appeal appeal = appealRepository
-                .findById(dto.getDto().getAppealId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Akkreditatsiya arizasi",
-                        "ID",
-                        dto.getDto().getAppealId()));
+        Optional<Accreditation> accreditationOpl = repository.findByCertificateNumber(dto.getDto().getCertificateNumber());
+
+        Appeal appeal = appealRepository.findById(dto.getDto().getAppealId()).orElseThrow(() -> new ResourceNotFoundException(
+                "Akkreditatsiya arizasi", "ID", dto.getDto().getAppealId()));
+
         UUID accreditationId;
-        if (optionalAccreditation.isPresent()) {
-            Accreditation accreditation = optionalAccreditation.get();
+        if (accreditationOpl.isPresent()) {
+            Accreditation accreditation = accreditationOpl.get();
             if (!accreditation.getTin().equals(appeal.getLegalTin())) {
                 throw new RuntimeException("Ariza begona tashkilot tomonidan yuborilgan!");
             }
@@ -123,6 +138,8 @@ public class AccreditationServiceImpl implements AccreditationService {
             accreditation.setReferencePath(dto.getDto().getReferencePath());
             accreditationId = accreditation.getId();
         } else {
+            Profile profile = profileService.findByTin(appeal.getLegalTin());
+
             Accreditation accreditation = repository.save(
                     Accreditation
                             .builder()
@@ -138,7 +155,11 @@ public class AccreditationServiceImpl implements AccreditationService {
                             .certificateValidityDate(dto.getDto().getCertificateValidityDate())
                             .referencePath(dto.getDto().getReferencePath())
                             .appealId(dto.getDto().getAppealId())
-                            .tin(appeal.getLegalTin())
+                            .tin(profile.getTin())
+                            .legalName(profile.getLegalName())
+                            .legalAddress(profile.getLegalAddress())
+                            .legalFullName(profile.getFullName())
+                            .legalPhoneNumber(profile.getPhoneNumber())
                             .type(AccreditationType.ACCREDITATION)
                             .build()
             );
@@ -161,24 +182,13 @@ public class AccreditationServiceImpl implements AccreditationService {
     }
 
     @Override
-    public AccreditationView getAccreditation(UUID id) {
-        return repository
-                .getAccreditation(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya ma'lumoti", "ID", id));
+    public AccreditationView getAccreditation(User user, UUID id) {
+        return repository.findById(id).map(this::map).orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya" + "ID" + id));
     }
 
     @Override
-    public Page<ExpConclusionPageView> getConclusions(User user, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        return repository.getAllExpertiseConclusions(pageable, AccreditationType.CONCLUSION.name());
-
-    }
-
-    @Override
-    public ExpConclusionsView getExpConclusion(UUID id) {
-        return repository
-                .getExpertiseConclusion(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ekspertiza xulosasi ma'lumoti", "ID", id));
+    public ExpConclusionsView getExpConclusion(User user, UUID id) {
+        return repository.findById(id).map(this::mapConclusion).orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya" + "ID" + id));
     }
 
     @Override
@@ -232,6 +242,7 @@ public class AccreditationServiceImpl implements AccreditationService {
 
         ConclusionReplyDto replyDto = signDto.getDto();
         Appeal appeal = appealService.findById(replyDto.appealId());
+        Profile profile = profileService.findByTin(appeal.getLegalTin());
         ExpConclusionAppealDto dto = JsonParser.parseJsonData(appeal.getData(), ExpConclusionAppealDto.class);
 
         Long orderNumber = repository.getMaxNumber(AccreditationType.CONCLUSION).orElse(0L) + 1;
@@ -261,7 +272,11 @@ public class AccreditationServiceImpl implements AccreditationService {
                         .expertiseConclusionPath(dto.getFiles().getOrDefault("expertiseConclusionPath", ""))
                         .expertiseConclusionNumber(dto.getExpertiseConclusionNumber())
                         .expertiseConclusionDate(LocalDate.now())
-                        .tin(appeal.getLegalTin())
+                        .tin(profile.getTin())
+                        .legalName(profile.getLegalName())
+                        .legalAddress(profile.getLegalAddress())
+                        .legalFullName(profile.getFullName())
+                        .legalPhoneNumber(profile.getPhoneNumber())
                         .orderNumber(orderNumber)
                         .registryNumber(registryNumber)
                         .build()
@@ -319,11 +334,47 @@ public class AccreditationServiceImpl implements AccreditationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya tashkiloti", "STIR va tur", profile.getTin() + ", " + type));
     }
 
-    private Long parseTin(String search) {
-        try {
-            return search.length() == 9 ? Long.parseLong(search) : null;
-        } catch (RuntimeException ex) {
-            return null;
-        }
+    // MAPPER
+    private AccreditationView map(Accreditation acc) {
+        AccreditationView view = new AccreditationView();
+
+        view.setId(acc.getId());
+        view.setTin(acc.getTin());
+        view.setLegalAddress(acc.getLegalAddress());
+        view.setLegalName(acc.getLegalName());
+        view.setPhoneNumber(acc.getLegalPhoneNumber());
+        view.setFullName(acc.getLegalFullName());
+        view.setAccreditationSpheres(acc.getAccreditationSpheres());
+        view.setCertificateNumber(acc.getCertificateNumber());
+        view.setCertificateDate(acc.getCertificateDate());
+        view.setCertificateValidityDate(acc.getCertificateValidityDate());
+        view.setAccreditationCommissionDecisionPath(acc.getAccreditationCommissionDecisionPath());
+        view.setAssessmentCommissionDecisionPath(acc.getAssessmentCommissionDecisionPath());
+        view.setReferencePath(acc.getReferencePath());
+
+        return view;
+    }
+
+    private ExpConclusionsView mapConclusion(Accreditation acc) {
+        ExpConclusionsView view = new ExpConclusionsView();
+
+        view.setId(acc.getId());
+        view.setCustomerLegalAddress(acc.getCustomerLegalAddress());
+        view.setCustomerLegalName(acc.getCustomerLegalName());
+        view.setCustomerFullName(acc.getCustomerFullName());
+        view.setCustomerTin(acc.getCustomerTin());
+        view.setSpheres(acc.getAccreditationSpheres());
+        view.setExpertOrganizationName(acc.getLegalName());
+        view.setExpertiseConclusionDate(acc.getExpertiseConclusionDate());
+        view.setExpertiseConclusionNumber(acc.getExpertiseConclusionNumber());
+        view.setExpertiseObjectName(acc.getExpertiseObjectName());
+        view.setCustomerLegalForm(acc.getCustomerLegalForm());
+        view.setExpertiseConclusionPath(acc.getExpertiseConclusionPath());
+        view.setFirstSymbolsGroup(acc.getFirstSymbolsGroup());
+        view.setSecondSymbolsGroup(acc.getSecondSymbolsGroup());
+        view.setThirdSymbolsGroup(acc.getThirdSymbolsGroup());
+        view.setObjectAddress(acc.getObjectAddress());
+
+        return view;
     }
 }

@@ -16,6 +16,8 @@ import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
 
+import java.util.UUID;
+
 /**
  * @author Rasulov Komil
  * @version 1.0
@@ -30,14 +32,24 @@ public class AccreditationController {
     private final AppealPdfService appealPdfService;
     private final AccreditationService service;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<ApiResponse> getAllAccreditation(@CurrentUser User user, AccreditationParamsDto dto) {
         return ResponseEntity.ok(new ApiResponse(service.getAccreditations(user, dto)));
     }
 
-    @GetMapping("/conclusion")
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse> getAccreditationById(@CurrentUser User user, @PathVariable UUID id) {
+        return ResponseEntity.ok(new ApiResponse(service.getAccreditation(user, id)));
+    }
+
+    @GetMapping("/conclusions")
     public ResponseEntity<ApiResponse> getAllConclusion(@CurrentUser User user, AccreditationParamsDto dto) {
         return ResponseEntity.ok(new ApiResponse(service.getConclusions(user, dto)));
+    }
+
+    @GetMapping("/conclusions/{id}")
+    public ResponseEntity<ApiResponse> getConclusionById(@CurrentUser User user, @PathVariable UUID id) {
+        return ResponseEntity.ok(new ApiResponse(service.getExpConclusion(user, id)));
     }
 
     @PostMapping("/reject/generate-pdf")
