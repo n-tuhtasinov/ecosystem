@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationDto;
+import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationParamsDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.ConclusionReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
@@ -26,8 +27,18 @@ import uz.technocorp.ecosystem.shared.ResponseMessage;
 @RequiredArgsConstructor
 public class AccreditationController {
 
-    private final AccreditationService accreditationService;
     private final AppealPdfService appealPdfService;
+    private final AccreditationService service;
+
+    @GetMapping()
+    public ResponseEntity<ApiResponse> getAllAccreditation(@CurrentUser User user, AccreditationParamsDto dto) {
+        return ResponseEntity.ok(new ApiResponse(service.getAccreditations(user, dto)));
+    }
+
+    @GetMapping("/conclusion")
+    public ResponseEntity<ApiResponse> getAllConclusion(@CurrentUser User user, AccreditationParamsDto dto) {
+        return ResponseEntity.ok(new ApiResponse(service.getConclusions(user, dto)));
+    }
 
     @PostMapping("/reject/generate-pdf")
     public ResponseEntity<ApiResponse> generateRejectionPdf(@CurrentUser User user, @Valid @RequestBody AccreditationRejectionDto dto) {
@@ -37,7 +48,7 @@ public class AccreditationController {
 
     @PostMapping("/reject")
     public ResponseEntity<ApiResponse> createRejectionLetter(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<AccreditationRejectionDto> dto, HttpServletRequest request) {
-        accreditationService.notConfirmed(user, dto, request, true);
+        service.notConfirmed(user, dto, request, true);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
@@ -49,31 +60,31 @@ public class AccreditationController {
 
     @PostMapping("/cancel")
     public ResponseEntity<ApiResponse> cancelledAppeal(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<AccreditationRejectionDto> dto, HttpServletRequest request) {
-        accreditationService.notConfirmed(user, dto, request, false);
+        service.notConfirmed(user, dto, request, false);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/certificate/generate-pdf")
     public ResponseEntity<ApiResponse> generateCertificatePdfFromAccreditation(@CurrentUser User user, @Valid @RequestBody AccreditationDto dto) {
-        String path = accreditationService.generateCertificate(user, dto);
+        String path = service.generateCertificate(user, dto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping("/certificate")
     public ResponseEntity<ApiResponse> createAccreditation(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<AccreditationDto> dto, HttpServletRequest request) {
-        accreditationService.createAccreditation(user, dto, request);
+        service.createAccreditation(user, dto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/conclusion/generate-pdf")
     public ResponseEntity<ApiResponse> generateConclusionPdf(@CurrentUser User user, @Valid @RequestBody ConclusionReplyDto dto) {
-        String path = accreditationService.generateConclusionPdf(user, dto);
+        String path = service.generateConclusionPdf(user, dto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", path));
     }
 
     @PostMapping("/conclusion")
     public ResponseEntity<ApiResponse> createConclusion(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<ConclusionReplyDto> signDto, HttpServletRequest request) {
-        accreditationService.createConclusion(user, signDto, request);
+        service.createConclusion(user, signDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 

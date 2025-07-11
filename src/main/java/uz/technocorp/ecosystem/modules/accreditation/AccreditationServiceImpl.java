@@ -5,14 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationDto;
+import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationParamsDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.ConclusionReplyDto;
-import uz.technocorp.ecosystem.modules.accreditation.dto.ExpertiseConclusionDto;
-import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationSphere;
 import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationType;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationPageView;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationView;
@@ -28,25 +29,21 @@ import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
-import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
-import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
-import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.User;
-import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
+import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * @author Rasulov Komil
@@ -58,15 +55,36 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccreditationServiceImpl implements AccreditationService {
 
-    private final AccreditationRepository accreditationRepository;
+    private final AttachmentService attachmentService;
+    private final AccreditationRepository repository;
     private final AppealRepository appealRepository;
     private final DocumentService documentService;
-    private final IIPService iipService;
-    private final AttachmentService attachmentService;
     private final ProfileService profileService;
-    private final RegionService regionService;
-    private final DistrictService districtService;
     private final AppealService appealService;
+
+    @Override
+    public Page<AccreditationPageView> getAccreditations(User user, AccreditationParamsDto dto) {
+        if (!List.of(Role.HEAD, Role.CHAIRMAN, Role.MANAGER).contains(user.getRole())) {
+            throw new CustomException("Sizda Akkreditatsiyani ko'rish huquqi yo'q");
+        }
+        Long tin = parseTin(dto.getSearch());
+
+        String legalName = null;
+        if (tin == null) legalName = dto.getSearch();
+
+        /*Specification<Accreditation> search = (root, cq, cb) -> {
+            return
+        }*/
+
+
+        Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
+        return repository.getAllAccreditations(pageable, AccreditationType.ACCREDITATION, tin, legalName);
+    }
+
+    @Override
+    public Page<?> getConclusions(User user, AccreditationParamsDto dto) {
+        return null;
+    }
 
     @Override
     public String generateCertificate(User user, AccreditationDto accreditationDto) {
@@ -77,7 +95,7 @@ public class AccreditationServiceImpl implements AccreditationService {
     @Override
     @Transactional
     public void createAccreditation(User user, SignedReplyDto<AccreditationDto> dto, HttpServletRequest request) {
-        Optional<Accreditation> optionalAccreditation = accreditationRepository
+        Optional<Accreditation> optionalAccreditation = repository
                 .findByCertificateNumber(dto.getDto().getCertificateNumber());
         Appeal appeal = appealRepository
                 .findById(dto.getDto().getAppealId())
@@ -105,7 +123,7 @@ public class AccreditationServiceImpl implements AccreditationService {
             accreditation.setReferencePath(dto.getDto().getReferencePath());
             accreditationId = accreditation.getId();
         } else {
-            Accreditation accreditation = accreditationRepository.save(
+            Accreditation accreditation = repository.save(
                     Accreditation
                             .builder()
                             .accreditationSpheres(dto.getDto().getAccreditationSpheres())
@@ -142,16 +160,9 @@ public class AccreditationServiceImpl implements AccreditationService {
         appealRepository.save(appeal);
     }
 
-
-    @Override
-    public Page<AccreditationPageView> getAccreditations(User user, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        return accreditationRepository.getAllAccreditations(pageable, AccreditationType.ACCREDITATION.name());
-    }
-
     @Override
     public AccreditationView getAccreditation(UUID id) {
-        return accreditationRepository
+        return repository
                 .getAccreditation(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya ma'lumoti", "ID", id));
     }
@@ -159,13 +170,13 @@ public class AccreditationServiceImpl implements AccreditationService {
     @Override
     public Page<ExpConclusionPageView> getConclusions(User user, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        return accreditationRepository.getAllExpertiseConclusions(pageable, AccreditationType.CONCLUSION.name());
+        return repository.getAllExpertiseConclusions(pageable, AccreditationType.CONCLUSION.name());
 
     }
 
     @Override
     public ExpConclusionsView getExpConclusion(UUID id) {
-        return accreditationRepository
+        return repository
                 .getExpertiseConclusion(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ekspertiza xulosasi ma'lumoti", "ID", id));
     }
@@ -204,12 +215,11 @@ public class AccreditationServiceImpl implements AccreditationService {
 
         Profile profile = profileService.getProfile(profileId);
         Accreditation accreditation = findAccreditationByTinAndType(profile, AccreditationType.ACCREDITATION);
-        String spheres = accreditation.getAccreditationSpheres().stream().map(AccreditationSphere::name).collect(Collectors.joining(", "));
 
         appealDto.setCertificateDate(accreditation.getCertificateDate());
         appealDto.setCertificateNumber(accreditation.getCertificateNumber());
         appealDto.setCertificateValidityDate(accreditation.getCertificateValidityDate());
-        appealDto.setAccreditationSpheres(spheres);
+        appealDto.setAccreditationSpheres(accreditation.getAccreditationSpheres());
     }
 
     @Override
@@ -224,10 +234,10 @@ public class AccreditationServiceImpl implements AccreditationService {
         Appeal appeal = appealService.findById(replyDto.appealId());
         ExpConclusionAppealDto dto = JsonParser.parseJsonData(appeal.getData(), ExpConclusionAppealDto.class);
 
-        Long orderNumber = accreditationRepository.getMaxNumber(AccreditationType.CONCLUSION).orElse(0L)+1;
-        String registryNumber = String.format("%03d", orderNumber)+"-EXP-"+LocalDate.now().getYear();
+        Long orderNumber = repository.getMaxNumber(AccreditationType.CONCLUSION).orElse(0L) + 1;
+        String registryNumber = String.format("%03d", orderNumber) + "-EXP-" + LocalDate.now().getYear();
 
-        accreditationRepository.save(
+        repository.save(
                 Accreditation
                         .builder()
                         .type(AccreditationType.CONCLUSION)
@@ -248,7 +258,7 @@ public class AccreditationServiceImpl implements AccreditationService {
                         .objectAddress(dto.getAddress())
                         .regionId(dto.getRegionId())
                         .districtId(dto.getDistrictId())
-                        .expertiseConclusionPath(dto.getFiles().getOrDefault("expertiseConclusionPath",""))
+                        .expertiseConclusionPath(dto.getFiles().getOrDefault("expertiseConclusionPath", ""))
                         .expertiseConclusionNumber(dto.getExpertiseConclusionNumber())
                         .expertiseConclusionDate(LocalDate.now())
                         .tin(appeal.getLegalTin())
@@ -304,8 +314,16 @@ public class AccreditationServiceImpl implements AccreditationService {
     }
 
     private Accreditation findAccreditationByTinAndType(Profile profile, AccreditationType type) {
-        return accreditationRepository
+        return repository
                 .findByTinAndType(profile.getTin(), type)
                 .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya tashkiloti", "STIR va tur", profile.getTin() + ", " + type));
+    }
+
+    private Long parseTin(String search) {
+        try {
+            return search.length() == 9 ? Long.parseLong(search) : null;
+        } catch (RuntimeException ex) {
+            return null;
+        }
     }
 }

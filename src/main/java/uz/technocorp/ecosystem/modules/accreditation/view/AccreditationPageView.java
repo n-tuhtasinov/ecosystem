@@ -15,13 +15,13 @@ import java.util.UUID;
 public interface AccreditationPageView {
 
     UUID getId();
+    Long getTin();
     String getLegalAddress();
     String getLegalName();
-    Long getLegalTin();
-    String getFullName();
     String getPhoneNumber();
-    List<AccreditationSphere> getSpheres();
-    LocalDate getCertificateDate();
+    String getFullName();
+    List<AccreditationSphere> getAccreditationSpheres();
     String getCertificateNumber();
+    LocalDate getCertificateDate();
     LocalDate getCertificateValidityDate();
 }
