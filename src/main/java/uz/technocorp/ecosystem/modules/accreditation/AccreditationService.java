@@ -7,9 +7,7 @@ import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationParamsDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.ConclusionReplyDto;
-import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationPageView;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationView;
-import uz.technocorp.ecosystem.modules.accreditation.view.ExpConclusionPageView;
 import uz.technocorp.ecosystem.modules.accreditation.view.ExpConclusionsView;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.AccreditationAppealDto;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ExpConclusionAppealDto;
@@ -28,9 +26,9 @@ import java.util.UUID;
  */
 public interface AccreditationService {
 
-    Page<AccreditationPageView> getAccreditations(User user, AccreditationParamsDto dto);
+    Page<AccreditationView> getAccreditations(User user, AccreditationParamsDto dto);
 
-    Page<?> getConclusions(User user, AccreditationParamsDto dto);
+    Page<ExpConclusionsView> getConclusions(User user, AccreditationParamsDto dto);
 
     String generateCertificate(User user, AccreditationDto accreditationDto);
 
@@ -38,11 +36,9 @@ public interface AccreditationService {
 
     void createAccreditation(User user, SignedReplyDto<AccreditationDto> accreditationDto, HttpServletRequest request);
 
-    AccreditationView getAccreditation(UUID id);
+    AccreditationView getAccreditation(User user, UUID id);
 
-    Page<ExpConclusionPageView> getConclusions(User user, int page, int size);
-
-    ExpConclusionsView getExpConclusion(UUID id);
+    ExpConclusionsView getExpConclusion(User user, UUID id);
 
     AccreditationAppealDto setProfileInfo(UUID profileId, AccreditationAppealDto appealDto);
 

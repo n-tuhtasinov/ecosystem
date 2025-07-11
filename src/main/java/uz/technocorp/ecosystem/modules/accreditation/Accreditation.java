@@ -27,15 +27,27 @@ import java.util.UUID;
 @Builder
 public class Accreditation extends BaseEntity {
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private Long orderNumber;
 
-//    @Column(nullable = false, unique = true)
+    //    @Column(nullable = false, unique = true)
     @Column(unique = true)
     private String registryNumber;
 
     @Column(nullable = false)
     private Long tin;
+
+//    @Column(nullable = false)
+    private String legalName;
+
+//    @Column(nullable = false)
+    private String legalAddress;
+
+//    @Column(nullable = false)
+    private String legalFullName;
+
+//    @Column(nullable = false)
+    private String legalPhoneNumber;
 
     @Enumerated(EnumType.STRING)
     private AccreditationType type;
