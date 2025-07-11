@@ -22,4 +22,7 @@ public class Department {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false, unique = true)
+    private Integer classifier;
 }

@@ -101,4 +101,7 @@ public interface AccreditationRepository extends JpaRepository<Accreditation, UU
     Optional<ExpConclusionsView> getExpertiseConclusion(UUID id);
 
     Optional<Accreditation> findByTinAndType(Long tin, AccreditationType type);
+
+    @Query(nativeQuery = true, value = "select a.order_number from accreditation a where a.type = :accreditationType order by a.order_number desc limit 1")
+    Optional<Long> getMaxNumber(AccreditationType accreditationType);
 }

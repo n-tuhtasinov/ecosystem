@@ -19,6 +19,8 @@ import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionPro
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.attestation.AttestationService;
+import uz.technocorp.ecosystem.modules.department.Department;
+import uz.technocorp.ecosystem.modules.department.DepartmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
@@ -72,6 +74,7 @@ public class AppealServiceImpl implements AppealService {
     private final OfficeService officeService;
     private final AppealRepository repository;
     private final UserService userService;
+    private final DepartmentService departmentService;
 
     @Override
     @Transactional
@@ -150,8 +153,9 @@ public class AppealServiceImpl implements AppealService {
         Profile profile = getProfile(user.getProfileId());
         Region region = regionService.findById(dto.getRegionId());
         District district = districtService.findById(dto.getDistrictId());
-        Office office = officeService.findByRegionId(region.getId());
-        String executorName = getExecutorName(dto.getAppealType());
+        Office office = getOffice(dto.getAppealType(), region.getId());
+        Department department = getDepartment(dto.getAppealType());
+        String executorName = getExecutorName(dto.getAppealType(), region.getId());
         OrderNumberDto numberDto = makeNumber(dto.getAppealType());
         JsonNode data = JsonMaker.makeJsonSkipFields(dto);
 
@@ -167,8 +171,10 @@ public class AppealServiceImpl implements AppealService {
                 .regionId(dto.getRegionId())
                 .legalDistrictId(profile.getDistrictId())
                 .districtId(dto.getDistrictId())
-                .officeId(office.getId())
-                .officeName(office.getName())
+                .officeId(office!=null? office.getId() : null)
+                .officeName(office!=null? office.getName() : null)
+                .departmentId(department!=null? department.getId() : null)
+                .departmentName(department!=null? department.getName() : null)
                 .status(AppealStatus.NEW)
                 .address(region.getName() + ", " + district.getName() + ", " + dto.getAddress())
                 .legalAddress(profile.getLegalAddress())
@@ -184,6 +190,22 @@ public class AppealServiceImpl implements AppealService {
         createExecutionProcess(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.NEW, null));
 
         return appeal.getId();
+    }
+
+    private Department getDepartment(AppealType appealType) {
+        return switch (appealType.direction){
+            case "HF", "ATTESTATION_COMMITTEE", "ACCREDITATION", "CADASTRE" -> departmentService.findByClassifier(13);
+            case "EQUIPMENT" -> departmentService.findByClassifier(14);
+            case "IRS" -> departmentService.findByClassifier(12);
+            default -> null;
+        };
+    }
+
+    private Office getOffice(AppealType appealType, Integer regionId) {
+        return switch (appealType.direction){
+            case "HF","EQUIPMENT", "ATTESTATION_REGIONAL", "PERMITS" -> officeService.findByRegionId(regionId);
+            default -> null;
+        };
     }
 
     @Override
@@ -291,7 +313,7 @@ public class AppealServiceImpl implements AppealService {
                 case "registerHf" -> hfService.create(appeal);
                 case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
                 case "registerEquipment", "registerAttractionPassport" -> equipmentService.create(appeal);
-                // akkreditatsiyani yaratish -> accreditationService.create(appeal);
+//                 akkreditatsiyani yaratish -> accreditationService.create(appeal);
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }
         }
@@ -421,12 +443,11 @@ public class AppealServiceImpl implements AppealService {
         return new OrderNumberDto(orderNumber, number);
     }
 
-    private String getExecutorName(AppealType appealType) {
-        return switch (appealType) {
-            case REGISTER_IRS, ACCEPT_IRS, TRANSFER_IRS -> "INM ijrochi ismi";
-            case ACCREDIT_EXPERT_ORGANIZATION, RE_ACCREDIT_EXPERT_ORGANIZATION, EXPEND_ACCREDITATION_SCOPE -> "kimdir";
-            case REGISTER_DECLARATION, REGISTER_CADASTRE_PASSPORT ->
-                    "Axborot-tahlil, akkreditatsiyalash, kadastrni yuritish va ijro nazorati boshqarmasi bosh mutaxassisi";
+    private String getExecutorName(AppealType appealType, Integer regionId) {
+        return switch (appealType.direction) {
+            case "IRS" -> departmentService.findByClassifier(12).getName() + " bosh mutaxassisi";
+            case "ACCREDITATION", "CADASTRE", "ATTESTATION_COMMITTEE" -> departmentService.findByClassifier(13).getName() + " bosh mutaxassisi";
+            case "HF", "EQUIPMENT", "ATTESTATION_REGIONAL" -> officeService.findByRegionId(regionId).getName() + " inspektori";
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
             default -> null;
         };

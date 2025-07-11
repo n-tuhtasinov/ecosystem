@@ -26,4 +26,6 @@ public interface DepartmentService {
     List<Department> getAllBySelect();
 
     Department getById(Integer departmentId);
+
+    Department findByClassifier(Integer classifier);
 }

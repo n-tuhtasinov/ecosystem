@@ -27,6 +27,13 @@ import java.util.UUID;
 @Builder
 public class Accreditation extends BaseEntity {
 
+//    @Column(nullable = false)
+    private Long orderNumber;
+
+//    @Column(nullable = false, unique = true)
+    @Column(unique = true)
+    private String registryNumber;
+
     @Column(nullable = false)
     private Long tin;
 
@@ -91,7 +98,9 @@ public class Accreditation extends BaseEntity {
     @Column(name = "district_id")
     private Integer districtId;
 
+    @Column(nullable = false)
     private String expertiseConclusionPath;
+
     private String expertiseConclusionNumber;
     private LocalDate expertiseConclusionDate;
 

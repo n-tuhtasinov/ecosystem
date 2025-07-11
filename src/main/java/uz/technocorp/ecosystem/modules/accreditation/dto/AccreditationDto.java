@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,29 +31,33 @@ public class AccreditationDto {
     @NotNull(message = "Ariza yuborilmadi!")
     private UUID appealId;
 
-    @Enumerated(EnumType.STRING)
+    @NotEmpty(message = "Akkridatsiya sohasi tanlanmadi")
     private List<AccreditationSphere> accreditationSpheres;
 
     @NotBlank(message = "Akkreditatsiya attestati raqami yuborilmadi!")
     private String certificateNumber;
 
-    @NotBlank(message = "Akkreditatsiya attestati amal qilish muddati yuborilmadi!")
+    @NotNull(message = "Akkreditatsiya attestati amal qilish muddati yuborilmadi!")
     private LocalDate certificateValidityDate;
 
-    @NotBlank(message = "Akkreditatsiya attestati sanasi yuborilmadi!")
+    @NotNull(message = "Akkreditatsiya attestati sanasi yuborilmadi!")
     private LocalDate certificateDate;
 
     @NotBlank(message = "Baholash komissiyasi qarori fayli yuklanmadi!")
     private String assessmentCommissionDecisionPath;
-    @NotBlank(message = "Baholash komissiyasi qarori sanasi yuborilmadi!")
+
+    @NotNull(message = "Baholash komissiyasi qarori sanasi yuborilmadi!")
     private LocalDate assessmentCommissionDecisionDate;
+
     @NotBlank(message = "Baholash komissiyasi qarori raqami yuborilmadi!")
     private String assessmentCommissionDecisionNumber;
 
     @NotBlank(message = "Akkreditatsiya komissiyasi qarori fayli yuklanmadi!")
     private String accreditationCommissionDecisionPath;
-    @NotBlank(message = "Akkreditatsiya komissiyasi qarori sanasi yuborilmadi!")
+
+    @NotNull(message = "Akkreditatsiya komissiyasi qarori sanasi yuborilmadi!")
     private LocalDate accreditationCommissionDecisionDate;
+
     @NotBlank(message = "Akkreditatsiya komissiyasi qarori raqami yuborilmadi!")
     private String accreditationCommissionDecisionNumber;
 

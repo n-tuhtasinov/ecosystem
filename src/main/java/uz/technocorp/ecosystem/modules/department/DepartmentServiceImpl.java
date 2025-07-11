@@ -27,13 +27,14 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public void create(DepartmentDto dto) {
-        departmentRepository.save(Department.builder().name(dto.name()).build());
+        departmentRepository.save(Department.builder().name(dto.name()).classifier(dto.classifier()).build());
     }
 
     @Override
     public void update(Integer departmentId, DepartmentDto dto) {
         Department department = departmentRepository.findById(departmentId).orElseThrow(() -> new ResourceNotFoundException("Department yoki bo'lim", "ID", departmentId));
         department.setName(dto.name());
+        department.setClassifier(dto.classifier());
         departmentRepository.save(department);
     }
 
@@ -61,5 +62,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department getById(Integer departmentId) {
         return departmentRepository.findById(departmentId).orElseThrow(()-> new ResourceNotFoundException("Bo'lim yoki departament", "ID", departmentId));
+    }
+
+    @Override
+    public Department findByClassifier(Integer classifier) {
+        return departmentRepository.findByClassifier(classifier).orElseThrow(()->new ResourceNotFoundException("Bo'lim yoki departament", "klassifikator raqami", classifier));
     }
 }

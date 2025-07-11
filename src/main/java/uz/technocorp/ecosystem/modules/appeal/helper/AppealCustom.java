@@ -31,8 +31,9 @@ public class AppealCustom {
     private LocalDate deadline;
     private String officeName;
     private Boolean isRejected;
+    private String departmentName;
 
-    public AppealCustom(UUID id, LocalDateTime createdAt, AppealStatus status, Long legalTin, String number, String legalName, String address, String phoneNumber, AppealType appealType, String executorName, LocalDate deadline, String officeName, Boolean isRejected) {
+    public AppealCustom(UUID id, LocalDateTime createdAt, AppealStatus status, Long legalTin, String number, String legalName, String address, String phoneNumber, AppealType appealType, String executorName, LocalDate deadline, String officeName, Boolean isRejected, String departmentName) {
         this.id = id;
         this.createdAt = createdAt.toLocalDate();
         this.status = status;
@@ -46,5 +47,6 @@ public class AppealCustom {
         this.deadline = deadline;
         this.officeName = officeName;
         this.isRejected = isRejected;
+        this.departmentName = departmentName;
     }
 }
