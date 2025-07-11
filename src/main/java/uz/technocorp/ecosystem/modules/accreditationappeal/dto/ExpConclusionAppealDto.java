@@ -1,6 +1,8 @@
 package uz.technocorp.ecosystem.modules.accreditationappeal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,12 +10,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationSphere;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -100,7 +104,8 @@ public class ExpConclusionAppealDto implements AppealDto {
     private LocalDate certificateValidityDate;
 
     @Schema(hidden = true)
-    private String accreditationSpheres;
+    @Enumerated(EnumType.STRING)
+    private List<AccreditationSphere> accreditationSpheres;
 
     @Schema(hidden = true)
     private Map<String, String> files = new HashMap<>();

@@ -18,7 +18,7 @@ import uz.technocorp.ecosystem.modules.document.view.DocumentViewByRequest;
 import uz.technocorp.ecosystem.modules.eimzo.EImzoProxy;
 import uz.technocorp.ecosystem.modules.eimzo.json.pcks7.Pkcs7VerifyAttachedJson;
 import uz.technocorp.ecosystem.modules.user.User;
-import uz.technocorp.ecosystem.modules.user.UserRepository;
+import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
 import java.time.LocalDateTime;
@@ -36,14 +36,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DocumentServiceImpl implements DocumentService {
 
-    private final ObjectMapper objectMapper;
-    private final UserRepository userRepository;
     @Value("${app.e-imzo.host}")
     private String host;
 
-    private final EImzoProxy eImzoProxy;
-    private final DocumentRepository repository;
     private final AttachmentService attachmentService;
+    private final DocumentRepository repository;
+    private final ObjectMapper objectMapper;
+    private final UserService userService;
+    private final EImzoProxy eImzoProxy;
 
     @Override
     public void create(DocumentDto dto) {
@@ -59,7 +59,7 @@ public class DocumentServiceImpl implements DocumentService {
                 continue;
             }
 
-            User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "ID", id));
+            User user = userService.findById(id);
             Signer signer = new Signer(user.getName(), id, null, false);
             signers.add(signer);
         }

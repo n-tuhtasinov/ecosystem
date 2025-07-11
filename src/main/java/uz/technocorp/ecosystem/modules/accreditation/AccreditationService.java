@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationDto;
+import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationParamsDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.AccreditationRejectionDto;
 import uz.technocorp.ecosystem.modules.accreditation.dto.ConclusionReplyDto;
-import uz.technocorp.ecosystem.modules.accreditation.dto.ExpertiseConclusionDto;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationPageView;
 import uz.technocorp.ecosystem.modules.accreditation.view.AccreditationView;
 import uz.technocorp.ecosystem.modules.accreditation.view.ExpConclusionPageView;
@@ -28,13 +28,15 @@ import java.util.UUID;
  */
 public interface AccreditationService {
 
+    Page<AccreditationPageView> getAccreditations(User user, AccreditationParamsDto dto);
+
+    Page<?> getConclusions(User user, AccreditationParamsDto dto);
+
     String generateCertificate(User user, AccreditationDto accreditationDto);
 
     void notConfirmed(User user, @Valid SignedReplyDto<AccreditationRejectionDto> dto, HttpServletRequest request, boolean rejected);
 
     void createAccreditation(User user, SignedReplyDto<AccreditationDto> accreditationDto, HttpServletRequest request);
-
-    Page<AccreditationPageView> getAccreditations(User user, int page, int size);
 
     AccreditationView getAccreditation(UUID id);
 

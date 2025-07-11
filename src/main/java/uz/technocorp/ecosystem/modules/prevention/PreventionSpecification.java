@@ -72,7 +72,7 @@ public class PreventionSpecification {
     private Long parseTin(String query) {
         try {
             return query.length() == 9 ? Long.parseLong(query) : null;
-        } catch (NumberFormatException ex) {
+        } catch (RuntimeException ex) {
             return null;
         }
     }

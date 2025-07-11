@@ -24,39 +24,40 @@ public interface AccreditationRepository extends JpaRepository<Accreditation, UU
     Optional<Accreditation> findByCertificateNumber(String certificateNumber);
 
     @Query(value = """
-            select a.id as id,
-            a.tin as legalTin,
-            p.legal_address as legalAddress,
-            p.legal_name as legalName,
-            p.phone_number as phoneNumber,
-            p.full_name as fullName,
-            a.accreditation_spheres as spheres,
-            a.certificate_number as certificateNumber,
-            a.certificate_date as certificateDate,
-            a.certificate_validity_date as certificateValidityDate
-            from accreditation as a
-            join profile p on p.tin = a.tin and a.type = :type
-            """, nativeQuery = true)
-    Page<AccreditationPageView> getAllAccreditations(Pageable pageable, String type);
+            select a.id,
+            a.tin,
+            p.legalAddress,
+            p.legalName,
+            p.phoneNumber,
+            p.fullName,
+            a.accreditationSpheres,
+            a.certificateNumber,
+            a.certificateDate,
+            a.certificateValidityDate
+            from Accreditation as a
+            join Profile p on p.tin = a.tin
+            where a.type = :type and (:tin is null or :tin = a.tin) and (:legalName is null or :legalName = p.legalName)
+            """)
+    Page<AccreditationPageView> getAllAccreditations(Pageable pageable, AccreditationType type, Long tin, String legalName);
 
     @Query(value = """
-            select a.id as id,
-            a.tin as legalTin,
-            p.legal_address as legalAddress,
-            p.legal_name as legalName,
-            p.phone_number as phoneNumber,
-            p.full_name as fullName,
-            a.accreditation_spheres as spheres,
-            a.certificate_number as certificateNumber,
-            a.certificate_date as certificateDate,
-            a.certificate_validity_date as certificateValidityDate,
-            a.accreditation_commission_decision_path as accreditationCommissionDecisionPath,
-            a.assessment_commission_decision_path as assessmentCommissionDecisionPath,
-            a.reference_path as referencePath
-            from accreditation as a
-            join profile p on p.tin = a.tin
+            select a.id,
+            a.tin,
+            p.legalAddress,
+            p.legalName,
+            p.phoneNumber,
+            p.fullName,
+            a.accreditationSpheres,
+            a.certificateNumber,
+            a.certificateDate,
+            a.certificateValidityDate,
+            a.accreditationCommissionDecisionPath,
+            a.assessmentCommissionDecisionPath,
+            a.referencePath
+            from Accreditation as a
+            join Profile p on p.tin = a.tin
             where a.id = :id
-            """, nativeQuery = true)
+            """)
     Optional<AccreditationView> getAccreditation(UUID id);
 
     @Query(value = """
@@ -64,7 +65,7 @@ public interface AccreditationRepository extends JpaRepository<Accreditation, UU
             a.customer_tin as customerTin,
             a.customer_legal_address as customerLegalAddress,
             p.legal_name as expertOrganizationName,
-            a.customer_phone_number as costumerPhoneNumber,
+            a.customer_phone_number as customerPhoneNumber,
             a.customer_legal_name as customerLegalName,
             a.customer_full_name as customerFullName,
             a.accreditation_spheres as spheres,

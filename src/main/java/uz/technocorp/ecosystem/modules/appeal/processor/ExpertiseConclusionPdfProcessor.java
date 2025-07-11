@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal.processor;
 
 import org.springframework.stereotype.Component;
+import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationSphere;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.ExpConclusionAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -8,6 +9,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ExpertiseConclusionPdfProcessor extends BaseAppealPdfProcessor {
@@ -42,7 +44,7 @@ public class ExpertiseConclusionPdfProcessor extends BaseAppealPdfProcessor {
         parameters.put("phoneNumber", dto.getPhoneNumber());
 
         parameters.put("certificateDate", getFormattedDateAsString(dto.getCertificateDate()));
-        parameters.put("accreditationSpheres", dto.getAccreditationSpheres());
+        parameters.put("accreditationSpheres", dto.getAccreditationSpheres().stream().map(AccreditationSphere::name).collect(Collectors.joining(", ")));
         parameters.put("certificateValidityDate", getFormattedDateAsString(dto.getCertificateValidityDate()));
         parameters.put("certificateNumber", dto.getCertificateNumber());
 
