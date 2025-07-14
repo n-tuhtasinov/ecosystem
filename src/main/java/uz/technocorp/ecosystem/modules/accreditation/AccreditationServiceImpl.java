@@ -47,7 +47,7 @@ import java.util.UUID;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 /**
- * @author Sukhrob
+ * @author Rasulov Komil
  * @version 1.0
  * @created 28.06.2025
  * @since v1.0
@@ -75,7 +75,8 @@ public class AccreditationServiceImpl implements AccreditationService {
         // Type
         Specification<Accreditation> type = specification.type(AccreditationType.ACCREDITATION);
 
-        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+        // Get pageRequest with sort (createdAt)
+        PageRequest pageRequest = getPageRequest(params);
 
         // Get all
         Page<Accreditation> accreditations = repository.findAll(where(search).and(type), pageRequest);
@@ -95,7 +96,8 @@ public class AccreditationServiceImpl implements AccreditationService {
         // Type
         Specification<Accreditation> type = specification.type(AccreditationType.CONCLUSION);
 
-        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+        // Get pageRequest with sort (createdAt)
+        PageRequest pageRequest = getPageRequest(params);
 
         // Get all
         Page<Accreditation> accreditations = repository.findAll(where(search).and(type), pageRequest);
@@ -112,49 +114,53 @@ public class AccreditationServiceImpl implements AccreditationService {
 
     @Override
     @Transactional
-    public void createAccreditation(User user, SignedReplyDto<AccreditationDto> dto, HttpServletRequest request) {
-        Optional<Accreditation> accreditationOpl = repository.findByCertificateNumber(dto.getDto().getCertificateNumber());
+    public void createAccreditation(User user, SignedReplyDto<AccreditationDto> replyDto, HttpServletRequest request) {
+        AccreditationDto dto = replyDto.getDto();
 
-        Appeal appeal = appealRepository.findById(dto.getDto().getAppealId()).orElseThrow(() -> new ResourceNotFoundException(
-                "Akkreditatsiya arizasi", "ID", dto.getDto().getAppealId()));
+        Optional<Accreditation> accreditationOpl = repository.findByCertificateNumber(dto.getCertificateNumber());
+
+        Appeal appeal = appealService.findById(dto.getAppealId());
 
         UUID accreditationId;
         if (accreditationOpl.isPresent()) {
-            Accreditation accreditation = accreditationOpl.get();
-            if (!accreditation.getTin().equals(appeal.getLegalTin())) {
-                throw new RuntimeException("Ariza begona tashkilot tomonidan yuborilgan!");
+            Accreditation acc = accreditationOpl.get();
+            if (!acc.getTin().equals(appeal.getLegalTin())) {
+                throw new RuntimeException("Ariza boshqa tashkilot tomonidan yuborilgan!");
             }
-            accreditation.setCertificateNumber(dto.getDto().getCertificateNumber());
-            accreditation.setAccreditationSpheres(dto.getDto().getAccreditationSpheres());
-            accreditation.setAppealId(dto.getDto().getAppealId());
-            accreditation.setAccreditationCommissionDecisionNumber(dto.getDto().getAccreditationCommissionDecisionNumber());
-            accreditation.setAccreditationCommissionDecisionDate(dto.getDto().getAccreditationCommissionDecisionDate());
-            accreditation.setAccreditationCommissionDecisionPath(dto.getDto().getAccreditationCommissionDecisionPath());
-            accreditation.setCertificateDate(dto.getDto().getCertificateDate());
-            accreditation.setCertificateValidityDate(dto.getDto().getCertificateValidityDate());
-            accreditation.setAssessmentCommissionDecisionDate(dto.getDto().getAssessmentCommissionDecisionDate());
-            accreditation.setAssessmentCommissionDecisionPath(dto.getDto().getAssessmentCommissionDecisionPath());
-            accreditation.setAssessmentCommissionDecisionNumber(dto.getDto().getAssessmentCommissionDecisionNumber());
-            accreditation.setReferencePath(dto.getDto().getReferencePath());
-            accreditationId = accreditation.getId();
+            acc.setCertificateNumber(dto.getCertificateNumber());
+            acc.setAccreditationSpheres(dto.getAccreditationSpheres());
+            acc.setAppealId(dto.getAppealId());
+            acc.setAccreditationCommissionDecisionNumber(dto.getAccreditationCommissionDecisionNumber());
+            acc.setAccreditationCommissionDecisionDate(dto.getAccreditationCommissionDecisionDate());
+            acc.setAccreditationCommissionDecisionPath(dto.getAccreditationCommissionDecisionPath());
+            acc.setCertificateDate(dto.getCertificateDate());
+            acc.setCertificateValidityDate(dto.getCertificateValidityDate());
+            acc.setAssessmentCommissionDecisionDate(dto.getAssessmentCommissionDecisionDate());
+            acc.setAssessmentCommissionDecisionPath(dto.getAssessmentCommissionDecisionPath());
+            acc.setAssessmentCommissionDecisionNumber(dto.getAssessmentCommissionDecisionNumber());
+            acc.setReferencePath(dto.getReferencePath());
+            acc.setAccreditationAttestationPath(dto.getAccreditationAttestationPath());
+
+            accreditationId = repository.save(acc).getId();
         } else {
             Profile profile = profileService.findByTin(appeal.getLegalTin());
 
-            Accreditation accreditation = repository.save(
+            accreditationId = repository.save(
                     Accreditation
                             .builder()
-                            .accreditationSpheres(dto.getDto().getAccreditationSpheres())
-                            .accreditationCommissionDecisionDate(dto.getDto().getAccreditationCommissionDecisionDate())
-                            .accreditationCommissionDecisionNumber(dto.getDto().getAccreditationCommissionDecisionNumber())
-                            .accreditationCommissionDecisionPath(dto.getDto().getAccreditationCommissionDecisionPath())
-                            .assessmentCommissionDecisionPath(dto.getDto().getAssessmentCommissionDecisionPath())
-                            .assessmentCommissionDecisionDate(dto.getDto().getAssessmentCommissionDecisionDate())
-                            .assessmentCommissionDecisionNumber(dto.getDto().getAssessmentCommissionDecisionNumber())
-                            .certificateDate(dto.getDto().getCertificateDate())
-                            .certificateNumber(dto.getDto().getCertificateNumber())
-                            .certificateValidityDate(dto.getDto().getCertificateValidityDate())
-                            .referencePath(dto.getDto().getReferencePath())
-                            .appealId(dto.getDto().getAppealId())
+                            .accreditationSpheres(dto.getAccreditationSpheres())
+                            .accreditationCommissionDecisionDate(dto.getAccreditationCommissionDecisionDate())
+                            .accreditationCommissionDecisionNumber(dto.getAccreditationCommissionDecisionNumber())
+                            .accreditationCommissionDecisionPath(dto.getAccreditationCommissionDecisionPath())
+                            .assessmentCommissionDecisionPath(dto.getAssessmentCommissionDecisionPath())
+                            .assessmentCommissionDecisionDate(dto.getAssessmentCommissionDecisionDate())
+                            .assessmentCommissionDecisionNumber(dto.getAssessmentCommissionDecisionNumber())
+                            .certificateDate(dto.getCertificateDate())
+                            .certificateNumber(dto.getCertificateNumber())
+                            .certificateValidityDate(dto.getCertificateValidityDate())
+                            .referencePath(dto.getReferencePath())
+                            .accreditationAttestationPath(dto.getAccreditationAttestationPath())
+                            .appealId(dto.getAppealId())
                             .tin(profile.getTin())
                             .legalName(profile.getLegalName())
                             .legalAddress(profile.getLegalAddress())
@@ -162,15 +168,14 @@ public class AccreditationServiceImpl implements AccreditationService {
                             .legalPhoneNumber(profile.getPhoneNumber())
                             .type(AccreditationType.ACCREDITATION)
                             .build()
-            );
-            accreditationId = accreditation.getId();
+            ).getId();
         }
         documentService.create(
                 new DocumentDto(
                         accreditationId,
                         DocumentType.ACCREDITATION_CERTIFICATE,
-                        dto.getFilePath(),
-                        dto.getSign(),
+                        replyDto.getFilePath(),
+                        replyDto.getSign(),
                         Helper.getIp(request),
                         user.getId(),
                         List.of(user.getId()),
@@ -292,9 +297,7 @@ public class AccreditationServiceImpl implements AccreditationService {
     @Override
     @Transactional
     public void notConfirmed(User user, SignedReplyDto<AccreditationRejectionDto> dto, HttpServletRequest request, boolean rejected) {
-        Appeal appeal = appealRepository
-                .findById(dto.getDto().getAppealId())
-                .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya arizasi", "ID", dto.getDto().getAppealId()));
+        Appeal appeal = appealService.findById(dto.getDto().getAppealId());
 
         if (rejected) {
             documentService.create(
@@ -334,6 +337,10 @@ public class AccreditationServiceImpl implements AccreditationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya tashkiloti", "STIR va tur", profile.getTin() + ", " + type));
     }
 
+    private PageRequest getPageRequest(AccreditationParamsDto params) {
+        return PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
+
     // MAPPER
     private AccreditationView map(Accreditation acc) {
         AccreditationView view = new AccreditationView();
@@ -351,6 +358,7 @@ public class AccreditationServiceImpl implements AccreditationService {
         view.setAccreditationCommissionDecisionPath(acc.getAccreditationCommissionDecisionPath());
         view.setAssessmentCommissionDecisionPath(acc.getAssessmentCommissionDecisionPath());
         view.setReferencePath(acc.getReferencePath());
+        view.setAccreditationAttestationPath(acc.getAccreditationAttestationPath());
 
         return view;
     }

@@ -35,4 +35,5 @@ public class AccreditationView {
     private String accreditationCommissionDecisionPath;
     private String assessmentCommissionDecisionPath;
     private String referencePath;
+    private String accreditationAttestationPath;
 }
