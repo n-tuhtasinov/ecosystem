@@ -63,4 +63,7 @@ public class AccreditationDto {
 
     @NotBlank(message = "Ma'lumotnoma fayli yuklanmadi!")
     private String referencePath;
+
+    @NotBlank(message = "Akkreditatsiya attestati ilova fayli yuklanmadi!")
+    private String accreditationAttestationPath;
 }

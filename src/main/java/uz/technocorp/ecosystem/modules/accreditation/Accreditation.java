@@ -37,16 +37,16 @@ public class Accreditation extends BaseEntity {
     @Column(nullable = false)
     private Long tin;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String legalName;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String legalAddress;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String legalFullName;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String legalPhoneNumber;
 
     @Enumerated(EnumType.STRING)
@@ -73,6 +73,7 @@ public class Accreditation extends BaseEntity {
     private String accreditationCommissionDecisionNumber;
 
     private String referencePath;
+    private String accreditationAttestationPath;
 
     @OneToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
     @JoinColumn(name = "appeal_id", insertable = false, updatable = false)
