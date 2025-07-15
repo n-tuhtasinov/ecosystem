@@ -35,14 +35,16 @@ import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.template.Template;
+import uz.technocorp.ecosystem.modules.template.TemplateService;
+import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 
@@ -61,6 +63,7 @@ public class AccreditationServiceImpl implements AccreditationService {
     private final AccreditationRepository repository;
     private final AppealRepository appealRepository;
     private final DocumentService documentService;
+    private final TemplateService templateService;
     private final ProfileService profileService;
     private final AppealService appealService;
 
@@ -107,9 +110,30 @@ public class AccreditationServiceImpl implements AccreditationService {
     }
 
     @Override
-    public String generateCertificate(User user, AccreditationDto accreditationDto) {
-        //TODO PDF generate qilish kerak.
-        return "/files/registry-files/2025/july/4/1751621730971.pdf";
+    public String generateCertificate(User user, AccreditationDto dto) {
+        Appeal appeal = appealService.findById(dto.getAppealId());
+        Profile profile = profileService.getProfile(appeal.getProfileId());
+
+        Template template = templateService.getByType(TemplateType.ACCREDITATION_CERTIFICATE.name());
+
+        // Certificate date
+        String[] certArr = dto.getCertificateDate().format(DateTimeFormatter.ofPattern("yyyy MMMM dd", Locale.of("uz"))).split(" ");
+        String certDate = certArr[0] + " yilning " + certArr[2] + " " + certArr[1];
+
+        // Certificate validity date
+        String[] certValidityArr = dto.getCertificateValidityDate().format(DateTimeFormatter.ofPattern("yyyy MMMM dd", Locale.of("uz"))).split(" ");
+        String certValidDate = certValidityArr[0] + " yil " + certValidityArr[2] + " " + certValidityArr[1];
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("certificateDate", certDate);
+        parameters.put("certificateNumber", dto.getCertificateNumber());
+        parameters.put("certificateValidityDate", certValidDate);
+        parameters.put("legalAddress", profile.getLegalAddress());
+        parameters.put("legalName", profile.getLegalName());
+        parameters.put("fullName", user.getName());
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "reestr/accreditation/certificate", parameters, true);
     }
 
     @Override
@@ -139,7 +163,7 @@ public class AccreditationServiceImpl implements AccreditationService {
             acc.setAssessmentCommissionDecisionPath(dto.getAssessmentCommissionDecisionPath());
             acc.setAssessmentCommissionDecisionNumber(dto.getAssessmentCommissionDecisionNumber());
             acc.setReferencePath(dto.getReferencePath());
-            acc.setAccreditationAttestationPath(dto.getAccreditationAttestationPath());
+            acc.setAccreditationCertificatePath(dto.getAccreditationCertificatePath());
 
             accreditationId = repository.save(acc).getId();
         } else {
@@ -159,7 +183,7 @@ public class AccreditationServiceImpl implements AccreditationService {
                             .certificateNumber(dto.getCertificateNumber())
                             .certificateValidityDate(dto.getCertificateValidityDate())
                             .referencePath(dto.getReferencePath())
-                            .accreditationAttestationPath(dto.getAccreditationAttestationPath())
+                            .accreditationCertificatePath(dto.getAccreditationCertificatePath())
                             .appealId(dto.getAppealId())
                             .tin(profile.getTin())
                             .legalName(profile.getLegalName())
@@ -358,7 +382,7 @@ public class AccreditationServiceImpl implements AccreditationService {
         view.setAccreditationCommissionDecisionPath(acc.getAccreditationCommissionDecisionPath());
         view.setAssessmentCommissionDecisionPath(acc.getAssessmentCommissionDecisionPath());
         view.setReferencePath(acc.getReferencePath());
-        view.setAccreditationAttestationPath(acc.getAccreditationAttestationPath());
+        view.setAccreditationCertificatePath(acc.getAccreditationCertificatePath());
 
         return view;
     }

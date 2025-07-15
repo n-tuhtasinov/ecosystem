@@ -242,7 +242,7 @@ public class AppealServiceImpl implements AppealService {
         switch (user.getRole()) {
             case LEGAL -> params.put("legalTin", profile.getTin().toString());
             case INSPECTOR -> params.put("executorId", user.getId().toString());
-            case REGIONAL -> putRegionIdSafely(params, profile);
+            case REGIONAL -> putOfficeIdSafely(params, profile);
             case MANAGER, HEAD, CHAIRMAN -> appealTypes = getAppealTypes(user);
             //TODO: Qolgan roli uchun ko'rinishni qilish kerak
             default -> throw new RuntimeException("Ushbu role uchun logika ishlab chiqilmagan!");
@@ -257,10 +257,10 @@ public class AppealServiceImpl implements AppealService {
                 .collect(Collectors.toList());
     }
 
-    private static void putRegionIdSafely(Map<String, String> params, Profile profile) {
-        if (profile.getRegionId() == null)
-            throw new RuntimeException(String.format("IDsi %s bo'lgan profile uchun regionId biriktirilmagan", profile.getId()));
-        params.put("regionId", profile.getRegionId().toString());
+    private static void putOfficeIdSafely(Map<String, String> params, Profile profile) {
+        if (profile.getOfficeId() == null)
+            throw new RuntimeException(String.format("IDsi %s bo'lgan profile uchun officeId biriktirilmagan", profile.getId()));
+        params.put("officeId", profile.getOfficeId().toString());
     }
 
     @Override
