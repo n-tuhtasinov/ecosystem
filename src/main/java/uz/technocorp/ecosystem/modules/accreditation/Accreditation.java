@@ -73,7 +73,7 @@ public class Accreditation extends BaseEntity {
     private String accreditationCommissionDecisionNumber;
 
     private String referencePath;
-    private String accreditationAttestationPath;
+    private String accreditationCertificatePath;
 
     @OneToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
     @JoinColumn(name = "appeal_id", insertable = false, updatable = false)

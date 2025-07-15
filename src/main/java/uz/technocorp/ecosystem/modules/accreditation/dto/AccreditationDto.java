@@ -1,8 +1,5 @@
 package uz.technocorp.ecosystem.modules.accreditation.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -65,5 +62,5 @@ public class AccreditationDto {
     private String referencePath;
 
     @NotBlank(message = "Akkreditatsiya attestati ilova fayli yuklanmadi!")
-    private String accreditationAttestationPath;
+    private String accreditationCertificatePath;
 }
