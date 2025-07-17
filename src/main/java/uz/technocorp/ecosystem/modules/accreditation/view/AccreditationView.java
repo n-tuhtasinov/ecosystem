@@ -23,6 +23,7 @@ import java.util.UUID;
 public class AccreditationView {
 
     private UUID id;
+    private UUID appealId;
     private Long tin;
     private String legalAddress;
     private String legalName;

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
@@ -34,6 +35,14 @@ public class Declaration extends BaseEntity {
 
     @Column(nullable = false)
     private String legalAddress;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
+    @JoinColumn(name = "appeal_id", insertable = false, updatable = false)
+    private Appeal appeal;
+
+    @Column(name = "appeal_id")
+    private UUID appealId;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = HazardousFacility.class, optional = false)
