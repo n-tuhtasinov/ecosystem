@@ -28,6 +28,7 @@ import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
 import uz.technocorp.ecosystem.modules.document.dto.DocumentDto;
 import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
@@ -35,6 +36,7 @@ import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.template.Template;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
@@ -66,6 +68,8 @@ public class AccreditationServiceImpl implements AccreditationService {
     private final TemplateService templateService;
     private final ProfileService profileService;
     private final AppealService appealService;
+    private final RegionService regionService;
+    private final DistrictService districtService;
 
     @Override
     public Page<AccreditationView> getAccreditations(User user, AccreditationParamsDto params) {
@@ -262,8 +266,25 @@ public class AccreditationServiceImpl implements AccreditationService {
     }
 
     @Override
-    public String generateConclusionPdf(User user, ConclusionReplyDto dto) {
-        return "/files/registry-files/2025/july/4/1751621730971.pdf";
+    public String generateConclusionPdf(User user, ConclusionReplyDto replyDto) {
+        Appeal appeal = appealService.findById(replyDto.appealId());
+        Template template = templateService.getByType(TemplateType.ACCREDITATION_CONCLUSION.name());
+
+        // Certificate date
+        String[] formatDate = appeal.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy MMMM dd", Locale.of("uz"))).split(" ");
+        String date = formatDate[0] + " yil " + formatDate[2] + "-" + formatDate[1];
+
+        String[] currentFormatDate = appeal.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy MMMM dd", Locale.of("uz"))).split(" ");
+        String currentDate = currentFormatDate[0] + " yil " + currentFormatDate[2] + "-" + currentFormatDate[1];
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("date", date);
+        parameters.put("registrationDate", currentDate);
+        parameters.put("fullName", user.getName());
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "reestr/accreditation/conclusion", parameters, true);
     }
 
     @Override
@@ -370,6 +391,7 @@ public class AccreditationServiceImpl implements AccreditationService {
         AccreditationView view = new AccreditationView();
 
         view.setId(acc.getId());
+        view.setAppealId(acc.getAppealId());
         view.setTin(acc.getTin());
         view.setLegalAddress(acc.getLegalAddress());
         view.setLegalName(acc.getLegalName());
@@ -391,6 +413,7 @@ public class AccreditationServiceImpl implements AccreditationService {
         ExpConclusionsView view = new ExpConclusionsView();
 
         view.setId(acc.getId());
+        view.setAppealId(acc.getAppealId());
         view.setCustomerLegalAddress(acc.getCustomerLegalAddress());
         view.setCustomerLegalName(acc.getCustomerLegalName());
         view.setCustomerFullName(acc.getCustomerFullName());

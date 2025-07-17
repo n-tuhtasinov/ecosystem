@@ -37,6 +37,7 @@ public class DeclarationServiceImpl implements DeclarationService {
                 .legalTin(appeal.getLegalTin())
                 .legalName(appeal.getLegalName())
                 .legalAddress(appeal.getLegalAddress())
+                .appealId(appeal.getId())
                 .hfId(dto.getHfId())
                 .hfName(dto.getHfName())
                 .hfRegistryNumber(dto.getHfRegistryNumber())
@@ -73,7 +74,7 @@ public class DeclarationServiceImpl implements DeclarationService {
 
     @Override
     public Declaration getById(UUID declarationId) {
-        return repository.findById(declarationId).orElseThrow(()-> new ResourceNotFoundException("Sanoat deklaratsiyasi", "ID", declarationId));
+        return repository.findById(declarationId).orElseThrow(() -> new ResourceNotFoundException("Sanoat deklaratsiyasi", "ID", declarationId));
     }
 
     private void changeParams(DeclarationParams params, Long legalTin) {
@@ -82,7 +83,7 @@ public class DeclarationServiceImpl implements DeclarationService {
             return;
         }
 
-        if (isTin(params.getSearch())){
+        if (isTin(params.getSearch())) {
             params.setLegalTin(Long.valueOf(params.getSearch()));
             params.setSearch(null);
         }

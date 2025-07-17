@@ -23,6 +23,7 @@ import java.util.UUID;
 public class ExpConclusionsView {
 
     private UUID id;
+    private UUID appealId;
     private String customerLegalAddress;
     private String customerLegalName;
     private String customerFullName;

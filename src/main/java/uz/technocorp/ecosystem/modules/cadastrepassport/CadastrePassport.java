@@ -2,12 +2,11 @@ package uz.technocorp.ecosystem.modules.cadastrepassport;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
-import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.shared.BaseEntity;
 
 import java.util.Map;
@@ -44,6 +43,14 @@ public class CadastrePassport extends BaseEntity {
     @Column(name = "hf_id", nullable = false)
     private UUID hfId;
 
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
+    @JoinColumn(name = "appeal_id", insertable = false, updatable = false)
+    private Appeal appeal;
+
+    @Column(name = "appeal_id")
+    private UUID appealId;
+
     @Column(nullable = false)
     private String hfName;
 
@@ -73,5 +80,5 @@ public class CadastrePassport extends BaseEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "jsonb")
-    private Map<String , String> files;
+    private Map<String, String> files;
 }

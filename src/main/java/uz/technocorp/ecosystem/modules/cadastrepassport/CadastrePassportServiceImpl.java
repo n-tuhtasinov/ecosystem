@@ -8,7 +8,6 @@ import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.cadastrepassport.dto.CadastrePassportParams;
 import uz.technocorp.ecosystem.modules.cadastrepassport.view.CadastrePassportView;
 import uz.technocorp.ecosystem.modules.cadastrepassportappeal.dto.CadastrePassportDto;
-import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -27,7 +26,6 @@ import java.util.UUID;
 public class CadastrePassportServiceImpl implements CadastrePassportService {
 
     private final CadastrePassportRepository repository;
-    private final HazardousFacilityService hazardousFacilityService;
     private final ProfileService profileService;
 
     @Override
@@ -41,6 +39,7 @@ public class CadastrePassportServiceImpl implements CadastrePassportService {
                 .legalAddress(appeal.getLegalAddress())
                 .hfId(dto.getHfId())
                 .hfName(dto.getHfName())
+                .appealId(appeal.getId())
                 .hfRegionId(appeal.getRegionId())
                 .hfDistrictId(appeal.getDistrictId())
                 .hfAddress(appeal.getAddress())
@@ -71,7 +70,7 @@ public class CadastrePassportServiceImpl implements CadastrePassportService {
 
     @Override
     public CadastrePassport getById(UUID passportId) {
-        return repository.findById(passportId).orElseThrow(()-> new ResourceNotFoundException("Kadastr passporti", "ID", passportId));
+        return repository.findById(passportId).orElseThrow(() -> new ResourceNotFoundException("Kadastr passporti", "ID", passportId));
     }
 
     private void changeParams(CadastrePassportParams params, Long legalTin) {
@@ -80,7 +79,7 @@ public class CadastrePassportServiceImpl implements CadastrePassportService {
             return;
         }
 
-        if (isTin(params.getSearch())){
+        if (isTin(params.getSearch())) {
             params.setLegalTin(Long.valueOf(params.getSearch()));
             params.setSearch(null);
         }
