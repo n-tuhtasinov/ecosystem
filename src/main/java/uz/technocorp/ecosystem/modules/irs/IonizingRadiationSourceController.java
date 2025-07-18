@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsParams;
+import uz.technocorp.ecosystem.modules.irs.view.IrsRiskView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsViewById;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -53,7 +53,7 @@ public class IonizingRadiationSourceController {
                                                      @RequestParam(value = "intervalId") Integer intervalId,
                                                      @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
-        Page<HfPageView> all = service.getAllForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
+        Page<IrsRiskView> all = service.getAllForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
     }
 
@@ -84,8 +84,6 @@ public class IonizingRadiationSourceController {
         Long count = service.getCount(user);
         return ResponseEntity.ok(new ApiResponse(count));
     }
-
-
 
 
 }

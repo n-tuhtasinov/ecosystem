@@ -16,9 +16,9 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentParameter;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
-import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -130,7 +130,40 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
-    public Page<HfPageView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
+    public EquipmentViewById getById(UUID equipmentId) {
+        Equipment equipment = equipmentRepository.getEquipmentById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
+        return mapToView(equipment);
+    }
+
+    @Override
+    public Equipment findById(UUID equipmentId) {
+        return equipmentRepository.findById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
+    }
+
+    @Override
+    public AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber) {
+        Equipment equipment = equipmentRepository.findFetchedEquipmentByRegistryNumber(registryNumber).orElse(null);
+        if (equipment == null) return null;
+        return mapToAttractionPassportView(equipment);
+    }
+
+    @Override
+    public Equipment findByRegistryNumber(String oldEquipmentRegistryNumber) {
+        return equipmentRepository.findByRegistryNumber(oldEquipmentRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", oldEquipmentRegistryNumber));
+    }
+
+    @Override
+    public Long getCount(User user) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+        return switch (user.getRole()) {
+            case LEGAL -> equipmentRepository.countByParams(profile.getTin(), null);
+            case REGIONAL, INSPECTOR -> equipmentRepository.countByParams(null, profile.getRegionId());
+            default -> equipmentRepository.countByParams(null, null);
+        };
+    }
+
+    @Override
+    public Page<EquipmentRiskView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
@@ -167,57 +200,10 @@ public class EquipmentServiceImpl implements EquipmentService {
             Profile profile = profileService.getProfile(user.getProfileId());
             return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ATTRACTION.name());
         }
-
     }
 
     @Override
-    public EquipmentViewById getById(UUID equipmentId) {
-        Equipment equipment = equipmentRepository.getEquipmentById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
-        return mapToView(equipment);
-    }
-
-    @Override
-    public Equipment findById(UUID equipmentId) {
-        return equipmentRepository.findById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
-    }
-
-    @Override
-    public AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber) {
-        Equipment equipment = equipmentRepository.findFetchedEquipmentByRegistryNumber(registryNumber).orElse(null);
-        if (equipment == null) return null;
-        return mapToAttractionPassportView(equipment);
-    }
-
-    @Override
-    public Equipment findByRegistryNumber(String oldEquipmentRegistryNumber) {
-        return equipmentRepository.findByRegistryNumber(oldEquipmentRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", oldEquipmentRegistryNumber));
-    }
-
-    @Override
-    public Long getCount(User user) {
-        Profile profile = profileService.getProfile(user.getProfileId());
-        return switch (user.getRole()) {
-            case LEGAL -> equipmentRepository.countByParams(profile.getTin(), null);
-            case REGIONAL, INSPECTOR -> equipmentRepository.countByParams(null, profile.getRegionId());
-            default -> equipmentRepository.countByParams(null, null);
-        };
-    }
-
-    private AttractionPassportView mapToAttractionPassportView(Equipment equipment) {
-        return new AttractionPassportView(
-                equipment.getId(),
-                equipment.getAttractionName(),
-                equipment.getChildEquipment() != null ? equipment.getChildEquipment().getName() : null,
-                equipment.getChildEquipmentSort() != null ? equipment.getChildEquipmentSort().getName() : null,
-                equipment.getManufacturedAt(),
-                equipment.getAcceptedAt(),
-                equipment.getFactoryNumber(),
-                equipment.getCountry(),
-                equipment.getRiskLevel());
-    }
-
-    @Override
-    public Page<HfPageView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
+    public Page<EquipmentRiskView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
@@ -387,5 +373,18 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getIsActive(),
                 equipment.getFiles(),
                 equipment.getRegistryFilePath());
+    }
+
+    private AttractionPassportView mapToAttractionPassportView(Equipment equipment) {
+        return new AttractionPassportView(
+                equipment.getId(),
+                equipment.getAttractionName(),
+                equipment.getChildEquipment() != null ? equipment.getChildEquipment().getName() : null,
+                equipment.getChildEquipmentSort() != null ? equipment.getChildEquipmentSort().getName() : null,
+                equipment.getManufacturedAt(),
+                equipment.getAcceptedAt(),
+                equipment.getFactoryNumber(),
+                equipment.getCountry(),
+                equipment.getRiskLevel());
     }
 }
