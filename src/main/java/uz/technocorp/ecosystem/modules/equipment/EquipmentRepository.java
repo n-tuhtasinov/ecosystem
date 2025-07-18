@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
-import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 
 import java.util.Optional;
 import java.util.Set;
@@ -42,165 +42,326 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Optional<Equipment> getEquipmentById(UUID equipmentId);
 
     @Query(value = """
-            select e.id as id,
-            registry_number as registryNumber,
-            e.type as name,
-            legal_tin as legalTin,
-            address,
-            e.legal_name as legalName,
-            p.full_name as inspectorName,
-            aia.id as assignId
+            select e.id           as id,
+                   e.registry_number as factoryNumber, -- To'g'rilandi: registry_number ishlatilmoqda
+                   e.type         as name, -- To'g'rilandi: e.type ishlatilmoqda
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   p.full_name    as inspectorName,
+                   aie.id         as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
+                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
+                       else 0
+                   end as score
             from equipment e
-            inner join assign_inspector_equipment aia on e.id = aia.equipment_id
-            join users u on aia.inspector_id = u.id
-            join profile p on u.profile_id = p.id
+                     inner join assign_inspector_equipment aie on e.id = aie.equipment_id
+                     join users u on u.id = aie.inspector_id
+                     join profile p on p.id = u.profile_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
             where e.region_id = :regionId
-            and aia.interval_id = :intervalId
-            and e.type = :equipmentType
+              and aie.interval_id = :intervalId
+              and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId, String equipmentType);
+    Page<EquipmentRiskView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId, String equipmentType);
 
     @Query(value = """
-            select e.id as id,
-            registry_number as registryNumber,
-            e.type as name,
-            legal_tin as legalTin,
-            address,
-            e.legal_name as legalName,
-            p.full_name as inspectorName,
-            aia.id as assignId
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   p.full_name    as inspectorName,
+                   aie.id         as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
+                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
+                       else 0
+                   end as score
             from equipment e
-            inner join assign_inspector_equipment aia on e.id = aia.equipment_id
-            join users u on aia.inspector_id = u.id
-            join profile p on u.profile_id = p.id
-            where aia.inspector_id = :inspectorId
-            and aia.interval_id = :intervalId
-            and e.type = :equipmentType
+                     inner join assign_inspector_equipment aie on e.id = aie.equipment_id
+                     join users u on u.id = aie.inspector_id
+                     join profile p on p.id = u.profile_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
+            where aie.inspector_id = :inspectorId
+              and aie.interval_id = :intervalId
+              and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByInspectorIdAndInterval(Pageable pageable, UUID inspectorId, Integer intervalId, String equipmentType);
+    Page<EquipmentRiskView> getAllByInspectorIdAndInterval(Pageable pageable, UUID inspectorId, Integer intervalId, String equipmentType);
 
     @Query(value = """
-            select e.id as id,
-            registry_number as registryNumber,
-            e.type as name,
-            legal_tin as legalTin,
-            address,
-            e.legal_name as legalName,
-            p.full_name as inspectorName,
-            aia.id as assignId
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   p.full_name    as inspectorName,
+                   aie.id         as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
+                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
+                       else 0
+                   end as score
             from equipment e
-            inner join assign_inspector_equipment aia on e.id = aia.equipment_id
-            join users u on aia.inspector_id = u.id
-            join profile p on u.profile_id = p.id
+                     inner join assign_inspector_equipment aie on e.id = aie.equipment_id
+                     join users u on u.id = aie.inspector_id
+                     join profile p on p.id = u.profile_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
             where e.legal_tin = :legalTin
-            and aia.interval_id = :intervalId
-            and e.type = :equipmentType
+              and aie.interval_id = :intervalId
+              and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTinAndInterval(Pageable pageable, Long legalTin, Integer intervalId, String equipmentType);
+    Page<EquipmentRiskView> getAllByLegalTinAndInterval(Pageable pageable, Long legalTin, Integer intervalId, String equipmentType);
 
     @Query(value = """
-            select e.id as id,
-            registry_number as registryNumber,
-            e.type as name,
-            legal_tin as legalTin,
-            address,
-            e.legal_name as legalName,
-            p.full_name as inspectorName,
-            aia.id as assignId
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   p.full_name    as inspectorName,
+                   aie.id         as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
+                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
+                       else 0
+                   end as score
             from equipment e
-            inner join assign_inspector_equipment aia on e.id = aia.equipment_id
-            join users u on aia.inspector_id = u.id
-            join profile p on u.profile_id = p.id
+                     inner join assign_inspector_equipment aie on e.id = aie.equipment_id
+                     join users u on u.id = aie.inspector_id
+                     join profile p on p.id = u.profile_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
             where e.legal_tin = :legalTin
-            and aia.interval_id = :intervalId
-            and e.type = :equipmentType
-            and aia.inspector_id = :inspectorId
+              and aie.interval_id = :intervalId
+              and e.type = :equipmentType
+              and aie.inspector_id = :inspectorId
             """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTinAndIntervalAndInspectorId(Pageable pageable, Long legalTin, Integer intervalId, String equipmentType, UUID inspectorId);
+    Page<EquipmentRiskView> getAllByLegalTinAndIntervalAndInspectorId(Pageable pageable, Long legalTin, Integer intervalId, String equipmentType, UUID inspectorId);
 
     @Query(value = """
-            select e.id as id,
-            registry_number as registryNumber,
-            e.type as name,
-            legal_tin as legalTin,
-            address,
-            e.legal_name as legalName,
-            p.full_name as inspectorName,
-            aia.id as assignId
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   p.full_name    as inspectorName,
+                   aie.id         as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
+                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
+                       else 0
+                   end as score
             from equipment e
-            inner join assign_inspector_equipment aia on e.id = aia.equipment_id
-            join users u on aia.inspector_id = u.id
-            join profile p on u.profile_id = p.id
+                     inner join assign_inspector_equipment aie on e.id = aie.equipment_id
+                     join users u on u.id = aie.inspector_id
+                     join profile p on p.id = u.profile_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
             where e.registry_number = :registryNumber
-            and aia.interval_id = :intervalId
-            and e.type = :equipmentType
+              and aie.interval_id = :intervalId
+              and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId, String equipmentType);
+    Page<EquipmentRiskView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId, String equipmentType);
 
     @Query(value = """
-            select e.id as id,
-            registry_number as registryNumber,
-            e.type as name,
-            legal_tin as legalTin,
-            address,
-            e.legal_name as legalName,
-            p.full_name as inspectorName,
-            aia.id as assignId
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   p.full_name    as inspectorName,
+                   aie.id         as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
+                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
+                       else 0
+                   end as score
             from equipment e
-            inner join assign_inspector_equipment aia on e.id = aia.equipment_id
-            join users u on aia.inspector_id = u.id
-            join profile p on u.profile_id = p.id
+                     inner join assign_inspector_equipment aie on e.id = aie.equipment_id
+                     join users u on u.id = aie.inspector_id
+                     join profile p on p.id = u.profile_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
             where e.registry_number = :registryNumber
-            and aia.interval_id = :intervalId
-            and e.type = :equipmentType
-            and aia.inspector_id = :inspectorId
+              and aie.interval_id = :intervalId
+              and e.type = :equipmentType
+              and aie.inspector_id = :inspectorId
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumberAndIntervalAndInspectorId(Pageable pageable, String registryNumber, Integer intervalId, String equipmentType, UUID inspectorId);
+    Page<EquipmentRiskView> getAllByRegistryNumberAndIntervalAndInspectorId(Pageable pageable, String registryNumber, Integer intervalId, String equipmentType, UUID inspectorId);
 
     @Query(value = """
-            select e.id as id,
-            registry_number as registryNumber,
-            e.type as name,
-            legal_tin as legalTin,
-            address,
-            e.legal_name as legalName
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   null           as inspectorName,
+                   null           as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
+                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
+                       else 0
+                   end as score
             from equipment e
-            left join assign_inspector_equipment aia on e.id = aia.equipment_id and aia.interval_id = :intervalId
+                     left join assign_inspector_equipment aie on e.id = aie.equipment_id and aie.interval_id = :intervalId
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
             where e.region_id = :regionId
-            and aia.id is null
-            and e.type = :equipmentType
+              and aie.id is null
+              and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId, String equipmentType, Integer intervalId);
+    Page<EquipmentRiskView> getAllByRegion(Pageable pageable, Integer regionId, String equipmentType, Integer intervalId);
 
     @Query(value = """
-            select e.id as id,
-            registry_number as registryNumber,
-            e.type as name,
-            legal_tin as legalTin,
-            address,
-            e.legal_name as legalName
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   null           as inspectorName,
+                   null           as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
+                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
+                       else 0
+                   end as score
             from equipment e
-            left join assign_inspector_equipment aia on e.id = aia.equipment_id and aia.interval_id = :intervalId
+                     left join assign_inspector_equipment aie on e.id = aie.equipment_id and aie.interval_id = :intervalId
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
             where e.legal_tin = :legalTin
-            and aia.id is null
-            and e.type = :equipmentType
+              and aie.id is null
+              and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin, String equipmentType, Integer intervalId);
+    Page<EquipmentRiskView> getAllByLegalTin(Pageable pageable, Long legalTin, String equipmentType, Integer intervalId);
 
     @Query(value = """
-            select e.id as id,
-            registry_number as registryNumber,
-            e.type as name,
-            legal_tin as legalTin,
-            address,
-            e.legal_name as legalName
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   null           as inspectorName,
+                   null           as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
+                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
+                       else 0
+                   end as score
             from equipment e
-            left join assign_inspector_equipment aia on e.id = aia.equipment_id and aia.interval_id = :intervalId
+                     left join assign_inspector_equipment aie on e.id = aie.equipment_id and aie.interval_id = :intervalId
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
             where e.registry_number = :registryNumber
-            and aia.id is null
-            and e.type = :equipmentType
+              and aie.id is null
+              and e.type = :equipmentType
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, String equipmentType, Integer intervalId);
+    Page<EquipmentRiskView> getAllByRegistryNumber(Pageable pageable, String registryNumber, String equipmentType, Integer intervalId);
+
+
 
     Optional<Equipment> findByRegistryNumber(String registryNumber);
 

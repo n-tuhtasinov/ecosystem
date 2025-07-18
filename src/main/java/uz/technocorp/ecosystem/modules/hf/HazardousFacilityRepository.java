@@ -65,7 +65,7 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
 //            where profile_id = :profileId
 //            """, nativeQuery = true)
 //    Page<HfPageView> getAllByProfileId(UUID profileId, Pageable pageable);
-    @Query(value = """
+@Query(value = """
             select hf.id as id,
             registry_number as registryNumber,
             hf.name as name,
@@ -73,15 +73,22 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             address,
             hf.legal_name as legalName,
             p.full_name as inspectorName,
-            aih.id as assignId
+            aih.id as assignId,
+            coalesce(scores.total_score, 0) as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
             where hf.region_id = :regionId
             and aih.interval_id = :intervalId
             """, nativeQuery = true)
-    Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId);
+Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId);
 
     @Query(value = """
             select hf.id as id,
@@ -91,11 +98,18 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             address,
             hf.legal_name as legalName,
             p.full_name as inspectorName,
-            aih.id as assignId
+            aih.id as assignId,
+            coalesce(scores.total_score, 0) as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
             where aih.inspector_id = :inspectorId
             and aih.interval_id = :intervalId
             """, nativeQuery = true)
@@ -109,11 +123,18 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             address,
             hf.legal_name as legalName,
             p.full_name as inspectorName,
-            aih.id as assignId
+            aih.id as assignId,
+            coalesce(scores.total_score, 0) as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
             where hf.legal_tin = :legalTin
             and aih.interval_id = :intervalId
             """, nativeQuery = true)
@@ -127,11 +148,18 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             address,
             hf.legal_name as legalName,
             p.full_name as inspectorName,
-            aih.id as assignId
+            aih.id as assignId,
+            coalesce(scores.total_score, 0) as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
             where hf.legal_tin = :legalTin
             and aih.interval_id = :intervalId
             and aih.inspector_id = :inspectorId
@@ -146,11 +174,18 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             address,
             hf.legal_name as legalName,
             p.full_name as inspectorName,
-            aih.id as assignId
+            aih.id as assignId,
+            coalesce(scores.total_score, 0) as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
             where hf.registry_number = :registryNumber
             and aih.interval_id = :intervalId
             """, nativeQuery = true)
@@ -164,11 +199,18 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             address,
             hf.legal_name as legalName,
             p.full_name as inspectorName,
-            aih.id as assignId
+            aih.id as assignId,
+            coalesce(scores.total_score, 0) as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
             join profile p on u.profile_id = p.id
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
             where hf.registry_number = :registryNumber
             and aih.interval_id = :intervalId
             and aih.inspector_id = :inspectorId
@@ -181,9 +223,18 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             hf.name as name,
             legal_tin as legalTin,
             address,
-            hf.legal_name as legalName
+            hf.legal_name as legalName,
+            null as inspectorName,
+            null as assignId,
+            coalesce(scores.total_score, 0) as score
             from hazardous_facility hf
             left join assign_inspector_hf aih on hf.id = aih.hf_id and aih.interval_id = :intervalId
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
             where hf.region_id = :regionId
             and aih.id is null
             """, nativeQuery = true)
@@ -195,9 +246,18 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             hf.name as name,
             legal_tin as legalTin,
             address,
-            hf.legal_name as legalName
+            hf.legal_name as legalName,
+            null as inspectorName,
+            null as assignId,
+            coalesce(scores.total_score, 0) as score
             from hazardous_facility hf
             left join assign_inspector_hf aih on hf.id = aih.hf_id and aih.interval_id = :intervalId
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
             where hf.legal_tin = :legalTin
             and aih.id is null
             """, nativeQuery = true)
@@ -209,13 +269,23 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             hf.name as name,
             legal_tin as legalTin,
             address,
-            hf.legal_name as legalName
+            hf.legal_name as legalName,
+            null as inspectorName,
+            null as assignId,
+            coalesce(scores.total_score, 0) as score
             from hazardous_facility hf
             left join assign_inspector_hf aih on hf.id = aih.hf_id and aih.interval_id = :intervalId
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
             where hf.registry_number = :registryNumber
             and aih.id is null
             """, nativeQuery = true)
     Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, Integer intervalId);
+
 
     @Query(value = """
             select distinct(region_id)

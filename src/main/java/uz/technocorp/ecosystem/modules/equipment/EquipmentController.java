@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
@@ -64,7 +65,7 @@ public class EquipmentController {
                                                      @RequestParam(value = "intervalId") Integer intervalId,
                                                      @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
-        Page<HfPageView> all = equipmentService.getAllAttractionForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
+        Page<EquipmentRiskView> all = equipmentService.getAllAttractionForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
     }
 
@@ -77,7 +78,7 @@ public class EquipmentController {
                                                      @RequestParam(value = "intervalId") Integer intervalId,
                                                      @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
-        Page<HfPageView> all = equipmentService.getAllElevatorForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
+        Page<EquipmentRiskView> all = equipmentService.getAllElevatorForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
     }
 

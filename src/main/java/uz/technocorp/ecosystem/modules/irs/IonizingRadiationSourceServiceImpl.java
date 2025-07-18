@@ -7,13 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDeregisterDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsParams;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
+import uz.technocorp.ecosystem.modules.irs.view.IrsRiskView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsViewById;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
@@ -22,7 +22,6 @@ import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
-import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
@@ -205,7 +204,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
     }
 
     @Override
-    public Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
+    public Page<IrsRiskView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Role role = user.getRole();
         if (role == Role.REGIONAL) {
@@ -214,26 +213,27 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
             Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (registryNumber != null)
-                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+                    return repository.getAllByFactoryNumberAndInterval(pageable, registryNumber, intervalId);
                 if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
                 else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
             } else {
-                if (registryNumber != null) return repository.getAllByRegistryNumber(pageable, registryNumber, intervalId);
+                if (registryNumber != null)
+                    return repository.getAllByFactoryNumber(pageable, registryNumber, intervalId);
                 if (tin != null) return repository.getAllByLegalTin(pageable, tin, intervalId);
                 else return repository.getAllByRegion(pageable, regionId, intervalId);
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
-            if (tin != null) return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
+                return repository.getAllByFactoryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
+            if (tin != null)
+                return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
             else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
         } else {
             Profile profile = profileService.getProfile(user.getProfileId());
             Long profileTin = profile.getTin();
-            if (registryNumber != null) return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            if (registryNumber != null)
+                return repository.getAllByFactoryNumberAndInterval(pageable, registryNumber, intervalId);
             return repository.getAllByLegalTinAndInterval(pageable, profileTin, intervalId);
         }
-
-
     }
 }

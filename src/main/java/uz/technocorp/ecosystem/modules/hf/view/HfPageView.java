@@ -18,4 +18,5 @@ public interface HfPageView extends HfSelectView{
     Long getLegalTin();
     UUID getId();
     UUID getAssignId();
+    Integer getScore();
 }
