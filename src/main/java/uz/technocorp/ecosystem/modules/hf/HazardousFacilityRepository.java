@@ -74,7 +74,7 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             hf.legal_name as legalName,
             p.full_name as inspectorName,
             aih.id as assignId,
-            coalesce(scores.total_score, 0) as score
+            scores.total_score as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -99,7 +99,7 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
             hf.legal_name as legalName,
             p.full_name as inspectorName,
             aih.id as assignId,
-            coalesce(scores.total_score, 0) as score
+            scores.total_score as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -124,7 +124,7 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
             hf.legal_name as legalName,
             p.full_name as inspectorName,
             aih.id as assignId,
-            coalesce(scores.total_score, 0) as score
+            scores.total_score as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -149,7 +149,7 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
             hf.legal_name as legalName,
             p.full_name as inspectorName,
             aih.id as assignId,
-            coalesce(scores.total_score, 0) as score
+            scores.total_score as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -175,7 +175,7 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
             hf.legal_name as legalName,
             p.full_name as inspectorName,
             aih.id as assignId,
-            coalesce(scores.total_score, 0) as score
+            scores.total_score as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -200,7 +200,7 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
             hf.legal_name as legalName,
             p.full_name as inspectorName,
             aih.id as assignId,
-            coalesce(scores.total_score, 0) as score
+            scores.total_score as score
             from hazardous_facility hf
             inner join assign_inspector_hf aih on hf.id = aih.hf_id
             join users u on aih.inspector_id = u.id
@@ -226,7 +226,7 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
             hf.legal_name as legalName,
             null as inspectorName,
             null as assignId,
-            coalesce(scores.total_score, 0) as score
+            scores.total_score as score
             from hazardous_facility hf
             left join assign_inspector_hf aih on hf.id = aih.hf_id and aih.interval_id = :intervalId
             left join (
@@ -249,7 +249,7 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
             hf.legal_name as legalName,
             null as inspectorName,
             null as assignId,
-            coalesce(scores.total_score, 0) as score
+            scores.total_score as score
             from hazardous_facility hf
             left join assign_inspector_hf aih on hf.id = aih.hf_id and aih.interval_id = :intervalId
             left join (
@@ -272,7 +272,7 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
             hf.legal_name as legalName,
             null as inspectorName,
             null as assignId,
-            coalesce(scores.total_score, 0) as score
+            scores.total_score as score
             from hazardous_facility hf
             left join assign_inspector_hf aih on hf.id = aih.hf_id and aih.interval_id = :intervalId
             left join (
