@@ -20,7 +20,7 @@ import uz.technocorp.ecosystem.modules.integration.equipment.dto.InfoDto;
 @RestController
 @RequestMapping("/api/v1/integration")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('INTEGRATOR')")
+//@PreAuthorize("hasRole('INTEGRATOR')")
 public class EquipmentIntegrationController {
 
     private final EquipmentIntegrationService service;
