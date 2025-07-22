@@ -33,6 +33,12 @@ public class IrsRiskIndicatorController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
+    @PostMapping("/success-all")
+    public ResponseEntity<?> success(@RequestBody List<IrsRiskIndicatorDto> dtoList) {
+        service.success(dtoList);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody IrsRiskIndicatorDto dto) {
         service.update(id, dto);
