@@ -14,5 +14,7 @@ public enum Role {
     HEAD, // ma'sul bo'lim boshlig'i
     MANAGER, // mas'ul hodim
     REGIONAL, // hududiy bo'lim boshlig'i
-    INSPECTOR
+    INSPECTOR,
+    INTEGRATOR // Integratsiya orqali ma'lumot oluvchi
+
 }
