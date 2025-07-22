@@ -14,29 +14,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.auth.dto.AccessDataDto;
+import uz.technocorp.ecosystem.modules.auth.dto.LoginDto;
+import uz.technocorp.ecosystem.modules.auth.dto.OneIdDto;
+import uz.technocorp.ecosystem.modules.auth.dto.UserInfoFromOneIdDto;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
-import uz.technocorp.ecosystem.shared.AppConstants;
-import uz.technocorp.ecosystem.shared.TokenResponse;
-import uz.technocorp.ecosystem.modules.auth.dto.AccessDataDto;
-import uz.technocorp.ecosystem.modules.auth.dto.LoginDto;
-import uz.technocorp.ecosystem.modules.auth.dto.OneIdDto;
-import uz.technocorp.ecosystem.modules.auth.dto.UserInfoFromOneIdDto;
-import uz.technocorp.ecosystem.modules.district.District;
-import uz.technocorp.ecosystem.modules.district.DistrictRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.UserService;
-import uz.technocorp.ecosystem.modules.user.dto.IndividualUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.security.JwtService;
+import uz.technocorp.ecosystem.shared.AppConstants;
+import uz.technocorp.ecosystem.shared.TokenResponse;
 import uz.technocorp.ecosystem.utils.ApiIntegrator;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -53,15 +49,14 @@ import java.util.Random;
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final JwtService jwtService;
-    private final UserService userService;
-    private final DistrictRepository districtRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final IIPService iipService;
-    private final ProfileService profileService;
     private final RiskAnalysisIntervalRepository intervalRepository;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final ProfileService profileService;
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final IIPService iipService;
 
     @Value("${app.one-id.client_id}")
     private String oneIdClientId;
@@ -90,12 +85,12 @@ public class AuthServiceImpl implements AuthService {
         UserInfoFromOneIdDto userInfoFromOneIdDto = getUserInfoByAccessData(accessData);
 
         //check whether the user is legal or not
-        if (userInfoFromOneIdDto.getAuth_method().name().equals("LEPKCSMETHOD")){
+        if (userInfoFromOneIdDto.getAuth_method().name().equals("LEPKCSMETHOD")) {
             String legalTin = userInfoFromOneIdDto.getPkcs_legal_tin();
 
             //find user by username, if there is not, should create a new one
             Optional<User> optional = userRepository.findByUsername(legalTin);
-            if (optional.isPresent()){
+            if (optional.isPresent()) {
                 User user = optional.get();
                 return getUserMeWithToken(user, accessData.getAccess_token(), response);
             }
@@ -111,7 +106,7 @@ public class AuthServiceImpl implements AuthService {
         //find user by username, if there is not, should create a new one
         String pin = userInfoFromOneIdDto.getPin();
         Optional<User> optional = userRepository.findByUsername(pin);
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             profileService.addPhoneNumber(optional.get().getProfileId(), userInfoFromOneIdDto.getMob_phone_no()); // update the profile with phoneNumber
             return getUserMeWithToken(optional.get(), accessData.getAccess_token(), response);
         }
@@ -149,14 +144,14 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Token yaratilmadi");
         }
         setCookie(response, tokenResponse.accessToken(), AppConstants.ACCESS_TOKEN, 60 * 60 * 24); // 24 hours
-        setCookie(response, tokenResponse.refreshToken(), AppConstants.REFRESH_TOKEN, 60*60*24*7); // 7 days
+        setCookie(response, tokenResponse.refreshToken(), AppConstants.REFRESH_TOKEN, 60 * 60 * 24 * 7); // 7 days
 
     }
 
     @Override
     public void logout(HttpServletResponse response) {
-        setCookie(response, "", AppConstants.ACCESS_TOKEN, 0 );
-        setCookie(response, "", AppConstants.REFRESH_TOKEN, 0 );
+        setCookie(response, "", AppConstants.ACCESS_TOKEN, 0);
+        setCookie(response, "", AppConstants.REFRESH_TOKEN, 0);
     }
 
 
@@ -184,6 +179,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      * generate a random range between 8 and 12 to substring from the last index
      * of access token String in order to set it as password of the user
+     *
      * @param tokenFromOneId accessToken taken from OneId
      * @return String for password
      */
@@ -195,11 +191,12 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * to get full user info from OneId by access data which was taken earlier
+     *
      * @param dto Map in which there are access data
      * @return UserInfoDto
      */
     private UserInfoFromOneIdDto getUserInfoByAccessData(AccessDataDto dto) {
-        Map<String, String> params= new HashMap<>();
+        Map<String, String> params = new HashMap<>();
         params.put("grant_type", "one_access_token_identify");
         params.put("client_id", oneIdClientId);
         params.put("client_secret", oneIdClientSecret);
@@ -211,11 +208,12 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * to get access data from OneId by an one_authorization_code which was taken by frontend
+     *
      * @param dto OneIdDto
      * @return AccessDataDto included access data from OneId
      */
     private AccessDataDto getAccessData(OneIdDto dto) {
-        Map<String, String> params= new HashMap<>();
+        Map<String, String> params = new HashMap<>();
 
         params.put("grant_type", "one_authorization_code");
         params.put("client_id", oneIdClientId); // oneIdClientId was given to us by OneID

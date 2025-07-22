@@ -26,6 +26,8 @@ public interface ProfileService {
 
     Profile findByTin(Long tin);
 
+    Profile findByPin(Long pin);
+
     Profile getProfile(UUID profileId);
 
     Page<ProfileView> getProfilesForPrevention(PreventionParamsDto params);

@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import uz.technocorp.ecosystem.exceptions.ExcelParsingException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
@@ -25,8 +23,6 @@ import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
-import uz.technocorp.ecosystem.modules.region.Region;
-import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.uploadexcel.equipment.UploadEquipmentExcelService;
 import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
@@ -52,7 +48,6 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
     private final ProfileService profileService;
     private final UserService userService;
     private final DistrictService districtService;
-    private final RegionService regionService;
     private final HazardousFacilityService hazardousFacilityService;
     private final ChildEquipmentService childEquipmentService;
     private final EquipmentService equipmentService;
@@ -62,7 +57,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
     private final ObjectMapper objectMapper;
 
 
-//    @Transactional(rollbackFor = ExcelParsingException.class)
+    //    @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
     public void upload(MultipartFile file) {
 
@@ -137,7 +132,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
 //                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
                 }
             }
-            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum+1);
+            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum + 1);
 //        } catch (ExcelParsingException e) {
 //            throw e; // to rollback transaction
         } catch (Exception e) {
@@ -232,7 +227,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
 
     private void getOldEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, String identityLetter, int cellIndex) throws Exception {
         String oldEquipmentRegistryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
-        if (oldEquipmentRegistryNumber !=null && !oldEquipmentRegistryNumber.isBlank()) {
+        if (oldEquipmentRegistryNumber != null && !oldEquipmentRegistryNumber.isBlank()) {
             Equipment oldEquipment = equipmentService.findByRegistryNumber(identityLetter + oldEquipmentRegistryNumber);
             equipment.setOldEquipmentId(oldEquipment.getId());
         }
@@ -287,7 +282,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
         }
     }
 
-    private void getLegal (DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+    private void getLegal(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
         String legalTin = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(legalTin, "legalTin(b)");
 
@@ -305,7 +300,7 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
 
     private static void isValid(String fieldValue, String fieldName) throws Exception {
         if (fieldValue == null || fieldValue.isBlank()) {
-            throw new Exception(fieldName +" bo'sh bo'lishi mumkin emas");
+            throw new Exception(fieldName + " bo'sh bo'lishi mumkin emas");
         }
     }
 
@@ -315,12 +310,12 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
             throw new Exception(fieldName + " bo'sh bo'lishi mumkin emas");
         }
         LocalDate manufacturedAt;
-        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell) ) {
+        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
             manufacturedAt = cell.getLocalDateTimeCellValue().toLocalDate();
-        }else if (cell.getCellType() == CellType.STRING){
+        } else if (cell.getCellType() == CellType.STRING) {
             String dateStr = cell.getStringCellValue();
             manufacturedAt = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(DATE_FORMAT));
-        }else {
+        } else {
             throw new Exception(fieldName + " format yacheykasi date bo'lishi kerak");
         }
         return manufacturedAt;

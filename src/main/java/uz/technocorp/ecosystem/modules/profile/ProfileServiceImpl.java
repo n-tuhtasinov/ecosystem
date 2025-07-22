@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.district.District;
-import uz.technocorp.ecosystem.modules.district.DistrictRepository;
+import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
 import uz.technocorp.ecosystem.modules.prevention.Prevention;
@@ -19,7 +19,6 @@ import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
 import uz.technocorp.ecosystem.modules.region.Region;
-import uz.technocorp.ecosystem.modules.region.RegionRepository;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 
@@ -38,9 +37,8 @@ import static org.springframework.data.jpa.domain.Specification.where;
 @RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
-    private final ProfileRepository profileRepository;
-    private final RegionRepository regionRepository;
-    private final DistrictRepository districtRepository;
+    private final DistrictService districtService;
+    private final ProfileRepository repository;
     private final RegionService regionService;
     private final OfficeService officeService;
 
@@ -49,11 +47,11 @@ public class ProfileServiceImpl implements ProfileService {
 
         //get region and region name
         Region region = getRegion(dto.getRegionId());
-        String regionName = region != null? region.getName() : null;
+        String regionName = region != null ? region.getName() : null;
 
         //set region id and region name if the user has office id
         Integer regionId = dto.getRegionId();
-        if (dto.getOfficeId()!=null){
+        if (dto.getOfficeId() != null) {
             OfficeViewById byId = officeService.getById(dto.getOfficeId());
             Region innerRegion = regionService.findById(byId.getRegionId());
             regionId = innerRegion.getId();
@@ -63,7 +61,7 @@ public class ProfileServiceImpl implements ProfileService {
         //get district
         District district = getDistrict(dto.getDistrictId());
 
-        Profile saved = profileRepository.save(Profile.builder()
+        Profile saved = repository.save(Profile.builder()
 
                 .tin(dto.getTin())
                 .legalName(dto.getLegalName())
@@ -87,7 +85,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void update(UUID profileId, UserDto dto) {
-        Profile profile = profileRepository
+        Profile profile = repository
                 .findById(profileId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", profileId));
 
@@ -100,28 +98,34 @@ public class ProfileServiceImpl implements ProfileService {
         setRegion(dto.getRegionId(), profile); //set region
         setDistrict(dto.getDistrictId(), profile); //set district
         profile.setPosition(dto.getPosition());
-        profileRepository.save(profile);
+        repository.save(profile);
     }
 
     @Override
     public Integer getOfficeId(UUID profileId) {
-        return profileRepository.findById(profileId).map(Profile::getOfficeId).orElseThrow(() -> new ResourceNotFoundException("OfficeID topilmadi"));
+        return repository.findById(profileId).map(Profile::getOfficeId).orElseThrow(() -> new ResourceNotFoundException("OfficeID topilmadi"));
     }
 
     @Override
     public Long getProfileTin(UUID profileId) {
-        return profileRepository.findById(profileId).map(Profile::getTin).orElseThrow(
+        return repository.findById(profileId).map(Profile::getTin).orElseThrow(
                 () -> new ResourceNotFoundException("Siz tashkilot sifatida tizimda mavjud emassiz (INN biriktirilmagan)"));
     }
 
     @Override
     public Profile findByTin(Long tin) {
-        return profileRepository.findByTin(tin).orElseThrow(() -> new ResourceNotFoundException("Tashkilot", "STIR", tin));
+        return repository.findByTin(tin).orElseThrow(() -> new ResourceNotFoundException("Tashkilot", "STIR", tin));
+    }
+
+    @Override
+    public Profile findByPin(Long pin) {
+        return repository.findByPin(pin).orElseThrow(() -> new ResourceNotFoundException("Jismoniy shaxs", "Pinfl", pin));
+
     }
 
     @Override
     public Profile getProfile(UUID profileId) {
-        return profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", profileId));
+        return repository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profil", "ID", profileId));
     }
 
     @Override
@@ -162,7 +166,7 @@ public class ProfileServiceImpl implements ProfileService {
         PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.ASC, "legalName"));
 
         // Get Profiles
-        Page<Profile> profiles = profileRepository.findAll(where(baseQuery).and(hasSearch).and(hasRegion).and(hasDistrict), pageRequest);
+        Page<Profile> profiles = repository.findAll(where(baseQuery).and(hasSearch).and(hasRegion).and(hasDistrict), pageRequest);
 
         // Create PageImpl
         return new PageImpl<>(profiles.stream().map(this::map).toList(), pageRequest, profiles.getTotalElements());
@@ -170,23 +174,23 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void addPhoneNumber(UUID profileId, String phoneNumber) {
-        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", profileId));
+        Profile profile = repository.findById(profileId).orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", profileId));
         if (profile.getPhoneNumber() == null) {
             profile.setPhoneNumber(phoneNumber);
-            profileRepository.save(profile);
+            repository.save(profile);
         }
     }
 
     @Override
     public ProfileInfoView getProfileInfo(Long tin) {
-        return profileRepository
+        return repository
                 .getProfileByTin(tin)
                 .orElseThrow(() -> new ResourceNotFoundException("Tashkilot haqida ma'lumot", "STIR", tin));
     }
 
     @Override
     public boolean existsProfileByTin(Long tin) {
-        return profileRepository.existsByTin(tin);
+        return repository.existsByTin(tin);
     }
 
     private void setRegion(Integer regionId, Profile profile) {
@@ -197,7 +201,7 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         if (!regionId.equals(profile.getRegionId())) {
-            Region region = regionRepository.findById(regionId).orElseThrow(() -> new ResourceNotFoundException("Viloyat", "ID", regionId));
+            Region region = regionService.findById(regionId);
             profile.setRegionId(regionId);
             profile.setRegionName(region.getName());
         }
@@ -211,28 +215,18 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         if (!districtId.equals(profile.getDistrictId())) {
-            District district = districtRepository.findById(districtId).orElseThrow(() -> new ResourceNotFoundException("Tuman", "ID", districtId));
+            District district = districtService.findById(districtId);
             profile.setDistrictId(districtId);
             profile.setDistrictName(district.getName());
         }
     }
 
     private Region getRegion(Integer regionId) {
-        if (regionId != null) {
-            return regionRepository
-                    .findById(regionId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", regionId));
-        }
-        return null;
+        return regionId != null ? regionService.findById(regionId) : null;
     }
 
     private District getDistrict(Integer districtId) {
-        if (districtId != null) {
-            return districtRepository
-                    .findById(districtId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", districtId));
-        }
-        return null;
+        return districtId != null ? districtService.findById(districtId) : null;
     }
 
     private Long parseTin(String query) {

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -43,17 +44,16 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
 
     @Query(value = """
             select e.id           as id,
-                   e.registry_number as factoryNumber, -- To'g'rilandi: registry_number ishlatilmoqda
-                   e.type         as name, -- To'g'rilandi: e.type ishlatilmoqda
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
                    e.legal_tin    as legalTin,
                    address,
                    e.legal_name   as legalName,
                    p.full_name    as inspectorName,
                    aie.id         as assignId,
                    case
-                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
-                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
-                       else 0
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
                    end as score
             from equipment e
                      inner join assign_inspector_equipment aie on e.id = aie.equipment_id
@@ -87,9 +87,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    p.full_name    as inspectorName,
                    aie.id         as assignId,
                    case
-                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
-                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
-                       else 0
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
                    end as score
             from equipment e
                      inner join assign_inspector_equipment aie on e.id = aie.equipment_id
@@ -123,9 +122,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    p.full_name    as inspectorName,
                    aie.id         as assignId,
                    case
-                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
-                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
-                       else 0
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
                    end as score
             from equipment e
                      inner join assign_inspector_equipment aie on e.id = aie.equipment_id
@@ -159,9 +157,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    p.full_name    as inspectorName,
                    aie.id         as assignId,
                    case
-                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
-                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
-                       else 0
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
                    end as score
             from equipment e
                      inner join assign_inspector_equipment aie on e.id = aie.equipment_id
@@ -196,9 +193,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    p.full_name    as inspectorName,
                    aie.id         as assignId,
                    case
-                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
-                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
-                       else 0
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
                    end as score
             from equipment e
                      inner join assign_inspector_equipment aie on e.id = aie.equipment_id
@@ -232,9 +228,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    p.full_name    as inspectorName,
                    aie.id         as assignId,
                    case
-                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
-                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
-                       else 0
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
                    end as score
             from equipment e
                      inner join assign_inspector_equipment aie on e.id = aie.equipment_id
@@ -269,9 +264,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    null           as inspectorName,
                    null           as assignId,
                    case
-                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
-                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
-                       else 0
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
                    end as score
             from equipment e
                      left join assign_inspector_equipment aie on e.id = aie.equipment_id and aie.interval_id = :intervalId
@@ -303,10 +297,9 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    null           as inspectorName,
                    null           as assignId,
                    case
-                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
-                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
-                       else 0
-                   end as score
+                       when e.type = 'ELEVATOR' then elev_scores.total_score
+                       when e.type = 'ATTRACTION' then attr_scores.total_score
+                       end as score
             from equipment e
                      left join assign_inspector_equipment aie on e.id = aie.equipment_id and aie.interval_id = :intervalId
                      left join (
@@ -337,9 +330,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    null           as inspectorName,
                    null           as assignId,
                    case
-                       when e.type = 'ELEVATOR' then coalesce(elev_scores.total_score, 0)
-                       when e.type = 'ATTRACTION' then coalesce(attr_scores.total_score, 0)
-                       else 0
+                   when e.type = 'ELEVATOR' then elev_scores.total_score
+                   when e.type = 'ATTRACTION' then attr_scores.total_score
                    end as score
             from equipment e
                      left join assign_inspector_equipment aie on e.id = aie.equipment_id and aie.interval_id = :intervalId
@@ -361,10 +353,10 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             """, nativeQuery = true)
     Page<EquipmentRiskView> getAllByRegistryNumber(Pageable pageable, String registryNumber, String equipmentType, Integer intervalId);
 
-
-
     Optional<Equipment> findByRegistryNumber(String registryNumber);
 
     @Query("select e from Equipment e join fetch e.childEquipment join fetch e.childEquipmentSort where e.registryNumber = :registryNumber")
     Optional<Equipment> findFetchedEquipmentByRegistryNumber(String registryNumber);
+
+    List<Equipment> findAllByLegalTinAndType(Long tin, EquipmentType type);
 }

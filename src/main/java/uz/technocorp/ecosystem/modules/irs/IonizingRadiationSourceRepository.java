@@ -39,7 +39,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    irs.legal_name as legalName,
                    p.full_name    as inspectorName,
                    ai.id          as assignId,
-                   coalesce(scores.total_score, 0) as score
+                   scores.total_score as score
             from ionizing_radiation_source irs
                      inner join assign_inspector_irs ai on irs.id = ai.irs_id
                      join users u on u.id = ai.inspector_id
@@ -64,7 +64,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    irs.legal_name as legalName,
                    p.full_name    as inspectorName,
                    ai.id          as assignId,
-                   coalesce(scores.total_score, 0) as score
+                   scores.total_score as score
             from ionizing_radiation_source irs
                      inner join assign_inspector_irs ai on irs.id = ai.irs_id
                      join users u on u.id = ai.inspector_id
@@ -88,7 +88,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    irs.legal_name as legalName,
                    p.full_name    as inspectorName,
                    ai.id          as assignId,
-                   coalesce(scores.total_score, 0) as score
+                   scores.total_score as score
             from ionizing_radiation_source irs
                      inner join assign_inspector_irs ai on irs.id = ai.irs_id
                      join users u on u.id = ai.inspector_id
@@ -112,7 +112,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    irs.legal_name as legalName,
                    p.full_name as inspectorName,
                    aii.id as assignId,
-                   coalesce(scores.total_score, 0) as score
+                   scores.total_score as score
             from ionizing_radiation_source irs
                      inner join assign_inspector_irs aii on irs.id = aii.irs_id
                      join users u on aii.inspector_id = u.id
@@ -138,7 +138,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    irs.legal_name as legalName,
                    p.full_name as inspectorName,
                    aii.id as assignId,
-                   coalesce(scores.total_score, 0) as score
+                   scores.total_score as score
             from ionizing_radiation_source irs
                      inner join assign_inspector_irs aii on irs.id = aii.irs_id
                      join users u on aii.inspector_id = u.id
@@ -163,7 +163,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    irs.legal_name as legalName,
                    p.full_name as inspectorName,
                    aii.id as assignId,
-                   coalesce(scores.total_score, 0) as score
+                   scores.total_score as score
             from ionizing_radiation_source irs
                      inner join assign_inspector_irs aii on irs.id = aii.irs_id
                      join users u on aii.inspector_id = u.id
@@ -189,7 +189,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    irs.legal_name as legalName,
                    null as inspectorName,
                    null as assignId,
-                   coalesce(scores.total_score, 0) as score
+                   scores.total_score as score
             from ionizing_radiation_source irs
                      left join assign_inspector_irs aii on irs.id = aii.irs_id and aii.interval_id = :intervalId
                      left join (
@@ -212,7 +212,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    irs.legal_name as legalName,
                    null as inspectorName,
                    null as assignId,
-                   coalesce(scores.total_score, 0) as score
+                   scores.total_score as score
             from ionizing_radiation_source irs
                      left join assign_inspector_irs aii on irs.id = aii.irs_id and aii.interval_id = :intervalId
                      left join (
@@ -235,7 +235,7 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    irs.legal_name as legalName,
                    null as inspectorName,
                    null as assignId,
-                   coalesce(scores.total_score, 0) as score
+                   scores.total_score as score
             from ionizing_radiation_source irs
                      left join assign_inspector_irs aii on irs.id = aii.irs_id and aii.interval_id = :intervalId
                      left join (
@@ -248,177 +248,4 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
               and aii.id is null
             """, nativeQuery = true)
     Page<IrsRiskView> getAllByFactoryNumber(Pageable pageable, String factoryNumber, Integer intervalId);
-
-
-
-    /*@Query(value = """
-            select irs.id         as id,
-                   factory_number as factoryNumber,
-                   irs.name       as name,
-                   irs.legal_tin  as legalTin,
-                   address,
-                   irs.legal_name as legalName,
-                   p.full_name    as inspectorName,
-                   ai.id          as assignId,
-                   coalesce(scores.total_score, 0) as score
-            from ionizing_radiation_source irs
-                     inner join assign_inspector_irs ai on irs.id = ai.irs_id
-                     join users u on u.id = ai.inspector_id
-                     join profile p on p.id = u.profile_id
-                     left join (
-                        select ionizing_radiation_source_id, sum(score) as total_score
-                        from irs_risk_indicator
-                        where risk_analysis_interval_id = :intervalId
-                        group by ionizing_radiation_source_id
-                     ) as scores on irs.id = scores.ionizing_radiation_source_id
-            where irs.region_id = :regionId and ai.interval_id = :intervalId
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId);
-
-
-    @Query(value = """
-            select irs.id         as id,
-                   factory_number as factoryNumber,
-                   irs.name       as name,
-                   irs.legal_tin  as legalTin,
-                   address,
-                   irs.legal_name as legalName,
-                   p.full_name    as inspectorName,
-                   ai.id          as assignId,
-                   coalesce(scores.total_score, 0) as score
-            from ionizing_radiation_source irs
-                     inner join assign_inspector_irs ai on irs.id = ai.irs_id
-                     join users u on u.id = ai.inspector_id
-                     join profile p on p.id = u.profile_id
-                     left join (
-                        select ionizing_radiation_source_id, sum(score) as total_score
-                        from irs_risk_indicator
-                        where risk_analysis_interval_id = :intervalId
-                        group by ionizing_radiation_source_id
-                     ) as scores on irs.id = scores.ionizing_radiation_source_id
-            where ai.inspector_id = :inspectorId and ai.interval_id = :intervalId
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByInspectorIdAndInterval(Pageable pageable, UUID inspectorId, Integer intervalId);
-
-    @Query(value = """
-            select irs.id         as id,
-                   factory_number as factoryNumber,
-                   irs.name       as name,
-                   irs.legal_tin  as legalTin,
-                   address,
-                   irs.legal_name as legalName,
-                   p.full_name    as inspectorName,
-                   ai.id          as assignId,
-                   coalesce(scores.total_score, 0) as score
-            from ionizing_radiation_source irs
-                     inner join assign_inspector_irs ai on irs.id = ai.irs_id
-                     join users u on u.id = ai.inspector_id
-                     join profile p on p.id = u.profile_id
-                     left join (
-                        select ionizing_radiation_source_id, sum(score) as total_score
-                        from irs_risk_indicator
-                        where risk_analysis_interval_id = :intervalId
-                        group by ionizing_radiation_source_id
-                     ) as scores on irs.id = scores.ionizing_radiation_source_id
-            where irs.legal_tin = :legalTin and ai.interval_id = :intervalId
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTinAndInterval(Pageable pageable, Long legalTin, Integer intervalId);
-
-    @Query(value = """
-            select irs.id as id,
-            registry_number as registryNumber,
-            'INM' as name,
-            legal_tin as legalTin,
-            address,
-            irs.legal_name as legalName,
-            p.full_name as inspectorName,
-            aii.id as assignId
-            from ionizing_radiation_source irs
-            inner join assign_inspector_irs aii on irs.id = aii.irs_id
-            join users u on aii.inspector_id = u.id
-            join profile p on u.profile_id = p.id
-            where irs.legal_tin = :legalTin
-            and aii.interval_id = :intervalId
-            and aii.inspector_id = :inspectorId
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTinAndIntervalAndInspectorId(Pageable pageable, Long legalTin, Integer intervalId, UUID inspectorId);
-
-    @Query(value = """
-            select irs.id as id,
-            registry_number as registryNumber,
-            'INM' as name,
-            legal_tin as legalTin,
-            address,
-            irs.legal_name as legalName,
-            p.full_name as inspectorName,
-            aii.id as assignId
-            from ionizing_radiation_source irs
-            inner join assign_inspector_irs aii on irs.id = aii.irs_id
-            join users u on aii.inspector_id = u.id
-            join profile p on u.profile_id = p.id
-            where irs.registry_number = :registryNumber
-            and aii.interval_id = :intervalId
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId);
-
-    @Query(value = """
-            select irs.id as id,
-            registry_number as registryNumber,
-            'INM' as name,
-            legal_tin as legalTin,
-            address,
-            irs.legal_name as legalName,
-            p.full_name as inspectorName,
-            aii.id as assignId
-            from ionizing_radiation_source irs
-            inner join assign_inspector_irs aii on irs.id = aii.irs_id
-            join users u on aii.inspector_id = u.id
-            join profile p on u.profile_id = p.id
-            where irs.registry_number = :registryNumber
-            and aii.interval_id = :intervalId
-            and aii.inspector_id = :inspectorId
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumberAndIntervalAndInspectorId(Pageable pageable, String registryNumber, Integer intervalId, UUID inspectorId);
-
-    @Query(value = """
-            select irs.id as id,
-            registry_number as registryNumber,
-            'INM' as name,
-            legal_tin as legalTin,
-            address,
-            irs.legal_name as legalName
-            from ionizing_radiation_source irs
-            left join assign_inspector_irs aii on irs.id = aii.irs_id and aii.interval_id = :intervalId
-            where irs.region_id = :regionId
-            and aii.id is null
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByRegion(Pageable pageable, Integer regionId, Integer intervalId);
-
-    @Query(value = """
-            select irs.id as id,
-            registry_number as registryNumber,
-            'INM' as name,
-            legal_tin as legalTin,
-            address,
-            irs.legal_name as legalName
-            from ionizing_radiation_source irs
-            left join assign_inspector_irs aii on irs.id = aii.irs_id and aii.interval_id = :intervalId
-            where irs.legal_tin = :legalTin
-            and aii.id is null
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByLegalTin(Pageable pageable, Long legalTin, Integer intervalId);
-
-    @Query(value = """
-            select irs.id as id,
-            registry_number as registryNumber,
-            'INM' as name,
-            legal_tin as legalTin,
-            address,
-            irs.legal_name as legalName
-            from ionizing_radiation_source irs
-            left join assign_inspector_irs aii on irs.id = aii.irs_id and aii.interval_id = :intervalId
-            where irs.registry_number = :registryNumber
-            and aii.id is null
-            """, nativeQuery = true)
-    Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, Integer intervalId);*/
 }

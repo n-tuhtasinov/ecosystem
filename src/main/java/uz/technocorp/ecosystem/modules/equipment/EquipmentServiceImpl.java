@@ -33,6 +33,7 @@ import uz.technocorp.ecosystem.utils.JsonParser;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,13 +47,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EquipmentServiceImpl implements EquipmentService {
 
-    private final RegionService regionService;
-    private final ProfileService profileService;
+    private final AttachmentService attachmentService;
     private final TemplateService templateService;
     private final DistrictService districtService;
-    private final AttachmentService attachmentService;
+    private final EquipmentRepository repository;
+    private final ProfileService profileService;
+    private final RegionService regionService;
     private final OfficeService officeService;
-    private final EquipmentRepository equipmentRepository;
 
     @Override
     public void create(Appeal appeal) {
@@ -103,7 +104,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .isActive(true)
                 .build();
 
-        equipmentRepository.save(equipment);
+        repository.save(equipment);
     }
 
     @Override
@@ -126,39 +127,39 @@ public class EquipmentServiceImpl implements EquipmentService {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
 
-        return equipmentRepository.getAllByParams(user, params);
+        return repository.getAllByParams(user, params);
     }
 
     @Override
     public EquipmentViewById getById(UUID equipmentId) {
-        Equipment equipment = equipmentRepository.getEquipmentById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
+        Equipment equipment = repository.getEquipmentById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
         return mapToView(equipment);
     }
 
     @Override
     public Equipment findById(UUID equipmentId) {
-        return equipmentRepository.findById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
+        return repository.findById(equipmentId).orElseThrow(() -> new ResourceNotFoundException("Equipment", "ID", equipmentId));
     }
 
     @Override
     public AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber) {
-        Equipment equipment = equipmentRepository.findFetchedEquipmentByRegistryNumber(registryNumber).orElse(null);
+        Equipment equipment = repository.findFetchedEquipmentByRegistryNumber(registryNumber).orElse(null);
         if (equipment == null) return null;
         return mapToAttractionPassportView(equipment);
     }
 
     @Override
     public Equipment findByRegistryNumber(String oldEquipmentRegistryNumber) {
-        return equipmentRepository.findByRegistryNumber(oldEquipmentRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", oldEquipmentRegistryNumber));
+        return repository.findByRegistryNumber(oldEquipmentRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", oldEquipmentRegistryNumber));
     }
 
     @Override
     public Long getCount(User user) {
         Profile profile = profileService.getProfile(user.getProfileId());
         return switch (user.getRole()) {
-            case LEGAL -> equipmentRepository.countByParams(profile.getTin(), null);
-            case REGIONAL, INSPECTOR -> equipmentRepository.countByParams(null, profile.getRegionId());
-            default -> equipmentRepository.countByParams(null, null);
+            case LEGAL -> repository.countByParams(profile.getTin(), null);
+            case REGIONAL, INSPECTOR -> repository.countByParams(null, profile.getRegionId());
+            default -> repository.countByParams(null, null);
         };
     }
 
@@ -172,33 +173,33 @@ public class EquipmentServiceImpl implements EquipmentService {
             Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
+                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
                 if (tin != null)
-                    return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION.name());
+                    return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION.name());
                 else
-                    return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION.name());
+                    return repository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION.name());
             } else {
                 if (tin != null)
-                    return equipmentRepository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION.name(), intervalId);
+                    return repository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION.name(), intervalId);
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION.name(), intervalId);
+                    return repository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION.name(), intervalId);
                 else
-                    return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION.name(), intervalId);
+                    return repository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION.name(), intervalId);
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name(), user.getId());
+                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name(), user.getId());
             if (tin != null)
-                return equipmentRepository
+                return repository
                         .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ATTRACTION.name(), user.getId());
             else
-                return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ATTRACTION.name());
+                return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ATTRACTION.name());
 
         } else {
             if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
+                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
             Profile profile = profileService.getProfile(user.getProfileId());
-            return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ATTRACTION.name());
+            return repository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ATTRACTION.name());
         }
     }
 
@@ -212,33 +213,33 @@ public class EquipmentServiceImpl implements EquipmentService {
             Integer regionId = office.getRegionId();
             if (isAssigned) {
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
+                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
                 if (tin != null)
-                    return equipmentRepository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR.name());
+                    return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR.name());
                 else
-                    return equipmentRepository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR.name());
+                    return repository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR.name());
             } else {
-                if (tin != null) return equipmentRepository
+                if (tin != null) return repository
                         .getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR.name(), intervalId);
                 if (registryNumber != null)
-                    return equipmentRepository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR.name(), intervalId);
+                    return repository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR.name(), intervalId);
                 else
-                    return equipmentRepository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR.name(), intervalId);
+                    return repository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR.name(), intervalId);
             }
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name(), user.getId());
+                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name(), user.getId());
             if (tin != null)
-                return equipmentRepository
+                return repository
                         .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ELEVATOR.name(), user.getId());
             else
-                return equipmentRepository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ELEVATOR.name());
+                return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ELEVATOR.name());
 
         } else {
             if (registryNumber != null)
-                return equipmentRepository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
+                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
             Profile profile = profileService.getProfile(user.getProfileId());
-            return equipmentRepository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ELEVATOR.name());
+            return repository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ELEVATOR.name());
         }
     }
 
@@ -248,6 +249,16 @@ public class EquipmentServiceImpl implements EquipmentService {
         return EquipmentType.ATTRACTION_PASSPORT.equals(info.equipmentType())
                 ? createAttractionPassportPdf(appeal, dto, info, registrationDate) // Attraction Passport
                 : createEquipmentPdf(appeal, dto, info, registrationDate); // All Equipments
+    }
+
+    @Override
+    public List<Equipment> getAllEquipmentByTypeAndTin(Long tin, EquipmentType type) {
+        return repository.findAllByLegalTinAndType(tin, type);
+    }
+
+    @Override
+    public List<Equipment> getAllEquipmentByTypeAndPin(Long pin, EquipmentType type) {
+        return List.of();
     }
 
     protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
@@ -272,7 +283,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     private EquipmentInfoDto getInfo(EquipmentType equipmentType, String label) {
-        long orderNumber = equipmentRepository.getMax(equipmentType).orElse(0L) + 1;
+        long orderNumber = repository.getMax(equipmentType).orElse(0L) + 1;
         return new EquipmentInfoDto(equipmentType, label + orderNumber, orderNumber);
     }
 

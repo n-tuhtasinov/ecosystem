@@ -7,19 +7,24 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import uz.technocorp.ecosystem.modules.auth.AuthService;
+import uz.technocorp.ecosystem.modules.auth.dto.AuthBasicDto;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.shared.TokenResponse;
-import uz.technocorp.ecosystem.modules.auth.AuthService;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,8 +38,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Autowired
     AuthService authService;
@@ -45,6 +51,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader != null && authHeader.startsWith("Basic ")) {
+            AuthBasicDto basic = getBasic(authHeader);
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(basic.getUsername());
+
+            // Check password
+            if (!passwordEncoder.matches(basic.getPassword(), userDetails.getPassword())) {
+                throw new BadCredentialsException("Password is wrong");
+            }
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         Map<String, String> map = getJwtFromCookie(request);
         if (map == null || map.isEmpty()) {
@@ -52,11 +75,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (map.containsKey(AppConstants.ACCESS_TOKEN)){
+        if (map.containsKey(AppConstants.ACCESS_TOKEN)) {
             String accessToken = map.get(AppConstants.ACCESS_TOKEN);
             setAuthentication(request, accessToken);
-        }else {
-            if (map.containsKey(AppConstants.REFRESH_TOKEN)){
+        } else {
+            if (map.containsKey(AppConstants.REFRESH_TOKEN)) {
                 String refreshToken = map.get(AppConstants.REFRESH_TOKEN);
                 setAuthentication(request, refreshToken);
 
@@ -105,5 +128,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         return map;
+    }
+
+    private AuthBasicDto getBasic(String authHeader) {
+        AuthBasicDto basic = new AuthBasicDto("", "");
+        if (authHeader != null && !authHeader.isBlank()) {
+            String decodedStr = new String((Base64.getDecoder().decode(authHeader.replace("Basic ", "").trim())));
+
+            if (!decodedStr.isBlank()) {
+                final String[] credentialsArray = decodedStr.split(":", 2);
+                if (credentialsArray.length > 1) {
+                    String username = credentialsArray[0];
+                    String password = credentialsArray[1];
+
+                    if (username != null && !username.isBlank()) {
+                        basic.setUsername(username);
+                    }
+                    if (password != null && !password.isBlank()) {
+                        basic.setPassword(password);
+                    }
+                }
+            }
+        }
+        return basic;
     }
 }
