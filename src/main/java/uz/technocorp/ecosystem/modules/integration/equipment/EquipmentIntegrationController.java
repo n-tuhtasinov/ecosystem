@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.integration.equipment;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import uz.technocorp.ecosystem.modules.integration.equipment.dto.InfoDto;
 @RestController
 @RequestMapping("/api/v1/integration")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('INTEGRATOR')")
 public class EquipmentIntegrationController {
 
     private final EquipmentIntegrationService service;
