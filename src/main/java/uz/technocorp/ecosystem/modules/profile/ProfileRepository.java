@@ -18,6 +18,8 @@ import java.util.UUID;
 public interface ProfileRepository extends JpaRepository<Profile, UUID>, JpaSpecificationExecutor<Profile> {
     Optional<Profile> findByTin(Long tin);
 
+    Optional<Profile> findByPin(Long pin);
+
     @Query(value = """
             select id,
                 legal_name as legalName,
@@ -36,5 +38,4 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, JpaSpec
     Optional<ProfileInfoView> getProfileByTin(Long tin);
 
     boolean existsByTin(Long tin);
-
 }

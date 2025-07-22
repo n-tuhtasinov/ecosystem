@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -287,36 +288,36 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Page<EquipmentRiskView> getAllByRegion(Pageable pageable, Integer regionId, String equipmentType, Integer intervalId);
 
     @Query(value = """
-        select e.id           as id,
-               e.registry_number as factoryNumber,
-               e.type         as name,
-               e.legal_tin    as legalTin,
-               address,
-               e.legal_name   as legalName,
-               null           as inspectorName,
-               null           as assignId,
-               case
-                   when e.type = 'ELEVATOR' then elev_scores.total_score
-                   when e.type = 'ATTRACTION' then attr_scores.total_score
-                   end as score
-        from equipment e
-                 left join assign_inspector_equipment aie on e.id = aie.equipment_id and aie.interval_id = :intervalId
-                 left join (
-                    select equipment_id, sum(score) as total_score
-                    from elevator_risk_indicator
-                    where risk_analysis_interval_id = :intervalId
-                    group by equipment_id
-                 ) as elev_scores on e.id = elev_scores.equipment_id
-                 left join (
-                    select equipment_id, sum(score) as total_score
-                    from attraction_risk_indicator
-                    where risk_analysis_interval_id = :intervalId
-                    group by equipment_id
-                 ) as attr_scores on e.id = attr_scores.equipment_id
-        where e.legal_tin = :legalTin
-          and aie.id is null
-          and e.type = :equipmentType
-        """, nativeQuery = true)
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.legal_tin    as legalTin,
+                   address,
+                   e.legal_name   as legalName,
+                   null           as inspectorName,
+                   null           as assignId,
+                   case
+                       when e.type = 'ELEVATOR' then elev_scores.total_score
+                       when e.type = 'ATTRACTION' then attr_scores.total_score
+                       end as score
+            from equipment e
+                     left join assign_inspector_equipment aie on e.id = aie.equipment_id and aie.interval_id = :intervalId
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
+            where e.legal_tin = :legalTin
+              and aie.id is null
+              and e.type = :equipmentType
+            """, nativeQuery = true)
     Page<EquipmentRiskView> getAllByLegalTin(Pageable pageable, Long legalTin, String equipmentType, Integer intervalId);
 
     @Query(value = """
@@ -352,10 +353,10 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             """, nativeQuery = true)
     Page<EquipmentRiskView> getAllByRegistryNumber(Pageable pageable, String registryNumber, String equipmentType, Integer intervalId);
 
-
-
     Optional<Equipment> findByRegistryNumber(String registryNumber);
 
     @Query("select e from Equipment e join fetch e.childEquipment join fetch e.childEquipmentSort where e.registryNumber = :registryNumber")
     Optional<Equipment> findFetchedEquipmentByRegistryNumber(String registryNumber);
+
+    List<Equipment> findAllByLegalTinAndType(Long tin, EquipmentType type);
 }
