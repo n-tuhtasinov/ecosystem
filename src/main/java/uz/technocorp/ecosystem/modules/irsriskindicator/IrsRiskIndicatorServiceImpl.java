@@ -73,6 +73,28 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
     }
 
     @Override
+    public void success(List<IrsRiskIndicatorDto> dtoList) {
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
+                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
+
+        List<IrsRiskIndicator> list = new ArrayList<>(dtoList.size());
+        for (IrsRiskIndicatorDto dto : dtoList) {
+            list.add(IrsRiskIndicator
+                    .builder()
+                    .ionizingRadiationSourceId(dto.irsId())
+                    .indicatorType(dto.indicatorType())
+                    .score(0)
+                    .description(dto.description())
+                    .tin(dto.tin())
+                    .scoreValue(dto.indicatorType().getScore())
+                    .riskAnalysisInterval(riskAnalysisInterval)
+                    .build());
+        }
+        repository.saveAll(list);
+    }
+
+    @Override
     public void update(UUID id, IrsRiskIndicatorDto dto) {
         IrsRiskIndicator irsRiskIndicator = repository
                 .findById(id)

@@ -17,11 +17,13 @@ import java.util.UUID;
 public interface HfRiskIndicatorService {
 
     void create(List<HFRIndicatorDto> dtoList);
+    void success(List<HFRIndicatorDto> dtoList);
     void update(UUID id, HFRIndicatorDto dto);
     void delete(UUID id);
     void attachFile(UUID id, FilePathDto dto);
     void cancelRiskIndicator(UUID id);
     List<RiskIndicatorView> findAllByHFIdAndTin(UUID id, Long tin, Integer intervalId);
     List<RiskIndicatorView> findAllByTin(Long tin, Integer intervalId);
+
     List<RiskIndicatorView> findAllToFixByTin(Long tin, UUID hfId, Integer intervalId);
 }

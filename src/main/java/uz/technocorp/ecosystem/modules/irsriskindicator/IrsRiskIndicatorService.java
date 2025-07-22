@@ -17,11 +17,13 @@ import java.util.UUID;
 public interface IrsRiskIndicatorService {
 
     void create(List<IrsRiskIndicatorDto> dtos);
+    void success(List<IrsRiskIndicatorDto> dtoList);
     void update(UUID id, IrsRiskIndicatorDto dto);
     void delete(UUID id);
     void attachFile(UUID id, FilePathDto dto);
     void cancelRiskIndicator(UUID id);
     List<RiskIndicatorView> findAllByIrsIdAndTin(UUID id, Long tin, Integer intervalId);
     List<RiskIndicatorView> findAllByTin(Long tin, Integer intervalId);
+
     List<RiskIndicatorView> findAllToFixByTin(Long tin, UUID IrsId, Integer intervalId);
 }

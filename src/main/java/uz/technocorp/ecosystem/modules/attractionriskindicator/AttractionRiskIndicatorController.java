@@ -33,6 +33,12 @@ public class AttractionRiskIndicatorController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
+    @PostMapping("/success-all")
+    public ResponseEntity<ApiResponse> success(@RequestBody List<EquipmentRiskIndicatorDto> dtos) {
+        service.success(dtos);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody EquipmentRiskIndicatorDto dto) {
         service.update(id, dto);

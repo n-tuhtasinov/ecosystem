@@ -81,6 +81,28 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
     }
 
     @Override
+    public void success(List<EquipmentRiskIndicatorDto> dtoList) {
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
+                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
+
+        List<AttractionRiskIndicator> list = new ArrayList<>(dtoList.size());
+        for (EquipmentRiskIndicatorDto dto : dtoList) {
+            list.add(AttractionRiskIndicator
+                    .builder()
+                    .equipmentId(dto.equipmentId())
+                    .indicatorType(dto.indicatorType())
+                    .score(0)
+                    .description(dto.description())
+                    .tin(dto.tin())
+                    .scoreValue(dto.indicatorType().getScore())
+                    .riskAnalysisInterval(riskAnalysisInterval)
+                    .build());
+        }
+        repository.saveAll(list);
+    }
+
+    @Override
     public void update(UUID id, EquipmentRiskIndicatorDto dto) {
         AttractionRiskIndicator riskIndicator = repository
                 .findById(id)

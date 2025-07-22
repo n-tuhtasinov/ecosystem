@@ -1,18 +1,15 @@
 package uz.technocorp.ecosystem.modules.hfriskindicator;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.Attachment;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentRepository;
-import uz.technocorp.ecosystem.modules.equipment.Equipment;
-import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityRepository;
 import uz.technocorp.ecosystem.modules.hfriskindicator.dto.FilePathDto;
+import uz.technocorp.ecosystem.modules.hfriskindicator.dto.HFRIndicatorDto;
+import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 import uz.technocorp.ecosystem.modules.inspection.Inspection;
 import uz.technocorp.ecosystem.modules.inspection.InspectionRepository;
 import uz.technocorp.ecosystem.modules.inspection.enums.InspectionStatus;
@@ -23,13 +20,9 @@ import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIn
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessment;
 import uz.technocorp.ecosystem.modules.riskassessment.RiskAssessmentRepository;
 import uz.technocorp.ecosystem.modules.riskassessment.dto.RiskAssessmentDto;
-import uz.technocorp.ecosystem.modules.hfriskindicator.dto.HFRIndicatorDto;
-import uz.technocorp.ecosystem.modules.riskassessment.enums.RiskAssessmentIndicator;
-import uz.technocorp.ecosystem.modules.hfriskindicator.view.RiskIndicatorView;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -118,6 +111,28 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
 //            }
 
 //        }
+    }
+
+    @Override
+    public void success(List<HFRIndicatorDto> dtoList) {
+        RiskAnalysisInterval riskAnalysisInterval = intervalRepository
+                .findByStatus(RiskAnalysisIntervalStatus.CURRENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Oraliq", "qiymat", RiskAnalysisIntervalStatus.CURRENT));
+
+        List<HfRiskIndicator> list = new ArrayList<>(dtoList.size());
+        for (HFRIndicatorDto dto : dtoList) {
+            list.add(HfRiskIndicator
+                    .builder()
+                    .hazardousFacilityId(dto.hazardousFacilityId())
+                    .indicatorType(dto.indicatorType())
+                    .score(0)
+                    .description(dto.description())
+                    .tin(dto.tin())
+                    .scoreValue(dto.indicatorType().getScore())
+                    .riskAnalysisInterval(riskAnalysisInterval)
+                    .build());
+        }
+        repository.saveAll(list);
     }
 
     @Override

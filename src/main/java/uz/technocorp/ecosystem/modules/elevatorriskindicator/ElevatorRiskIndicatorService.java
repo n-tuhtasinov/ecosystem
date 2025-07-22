@@ -17,11 +17,13 @@ import java.util.UUID;
 public interface ElevatorRiskIndicatorService {
 
     void create(List<EquipmentRiskIndicatorDto> dto);
+    void success(List<EquipmentRiskIndicatorDto> dtoList);
     void update(UUID id, EquipmentRiskIndicatorDto dto);
     void delete(UUID id);
     void attachFile(UUID id, FilePathDto dto);
     void cancelRiskIndicator(UUID id);
     List<RiskIndicatorView> findAllByEquipmentIdAndTin(UUID id, Long tin, Integer intervalId);
     List<RiskIndicatorView> findAllByTin(Long tin, Integer intervalId);
+
     List<RiskIndicatorView> findAllToFixByTin(Long tin, UUID elevatorId, Integer intervalId);
 }

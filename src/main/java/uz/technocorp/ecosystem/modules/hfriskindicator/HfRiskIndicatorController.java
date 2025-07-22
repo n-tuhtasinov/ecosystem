@@ -33,6 +33,12 @@ public class HfRiskIndicatorController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
+    @PostMapping("/success-all")
+    public ResponseEntity<?> success(@RequestBody List<HFRIndicatorDto> dtoList) {
+        service.success(dtoList);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody HFRIndicatorDto dto) {
         service.update(id, dto);

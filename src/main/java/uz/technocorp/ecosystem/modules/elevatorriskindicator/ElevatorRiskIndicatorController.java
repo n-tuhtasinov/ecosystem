@@ -33,6 +33,12 @@ public class ElevatorRiskIndicatorController {
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
+    @PostMapping("/success-all")
+    public ResponseEntity<ApiResponse> success(@RequestBody List<EquipmentRiskIndicatorDto> dtoList) {
+        service.success(dtoList);
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody EquipmentRiskIndicatorDto dto) {
         service.update(id, dto);
