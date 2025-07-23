@@ -35,7 +35,6 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                         select e from Equipment e
                          left join fetch e.hazardousFacility
                          left join fetch e.childEquipment
-                         left join fetch e.oldEquipment
                          left join fetch e.childEquipmentSort
                          left join fetch e.attractionPassport
                          where e.id = :equipmentId
