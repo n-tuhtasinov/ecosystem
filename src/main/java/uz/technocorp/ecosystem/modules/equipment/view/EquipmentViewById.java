@@ -33,9 +33,7 @@ public record EquipmentViewById(
         String factory,
         String location,
         LocalDate manufacturedAt,
-
-        UUID oldEquipmentId,
-        String oldEquipmentRegistryNumber,
+        String oldRegistryNumber,
 
         Map<String, String> parameters,
         Sphere sphere,

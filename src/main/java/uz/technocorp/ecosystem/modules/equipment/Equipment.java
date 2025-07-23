@@ -113,17 +113,18 @@ public class Equipment extends BaseEntity {
 //    private String oldNumber;
 
     //previous registration, it is used when the device is re-registered
-    @OneToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
-    @JoinColumn(name = "old_equipment_id", insertable = false, updatable = false)
-    private Equipment oldEquipment;
+//    @OneToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
+//    @JoinColumn(name = "old_equipment_id", insertable = false, updatable = false)
+//    private Equipment oldEquipment;
+//
+//    @Column(name = "old_equipment_id")
+//    private UUID oldEquipmentId;
 
-    @Column(name = "old_equipment_id")
-    private UUID oldEquipmentId;
+    private String oldRegistryNumber;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private Map<String, String> parameters;
-
 
 //    private String boomLength; //strelasining uzunligi (kran)
 //

@@ -149,8 +149,8 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
-    public Equipment findByRegistryNumber(String oldEquipmentRegistryNumber) {
-        return repository.findByRegistryNumber(oldEquipmentRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", oldEquipmentRegistryNumber));
+    public Equipment findByRegistryNumber(String registryNumber) {
+        return repository.findByRegistryNumber(registryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", registryNumber));
     }
 
     @Override
@@ -364,8 +364,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getFactory(),
                 equipment.getLocation(),
                 equipment.getManufacturedAt(),
-                equipment.getOldEquipmentId(),
-                equipment.getOldEquipment() == null ? null : equipment.getOldEquipment().getRegistryNumber(),
+                equipment.getOldRegistryNumber(),
                 equipment.getParameters(),
                 equipment.getSphere(),
                 equipment.getAttractionName(),

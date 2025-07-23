@@ -96,7 +96,8 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
                     getRegionAndAddress(dataFormatter, row, district, equipment, 10); // h) address
                     String childEquipmentName = getChildEquipment(dataFormatter, row, equipment, equipmentType, 11);// k) child equipment
                     getFactoryNumber(dataFormatter, row, equipment, 12); // l) factoryNumber
-                    getOldEquipment(dataFormatter, row, equipment, identityLetter, 14); // n) old equipment
+//                    getOldEquipment(dataFormatter, row, equipment, identityLetter, 14); // n) old equipment
+                    getOldRegistryNumber(dataFormatter, row, equipment, identityLetter, 14);
                     getFactory(dataFormatter, row, equipment, 15);
                     getModel(dataFormatter, row, equipment, 16);
                     getManufacturedAt(row, equipment, 17); // q) manufacturedAt
@@ -185,6 +186,11 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
         equipment.setModel(model);
     }
 
+    private void getOldRegistryNumber(DataFormatter dataFormatter, Row row, Equipment equipment, String identityLetter, int cellIndex) {
+        String oldRegNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
+        equipment.setOldRegistryNumber(identityLetter + oldRegNumber);
+    }
+
     private void getFactory(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
         String factory = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(factory, "factory(o)");
@@ -227,13 +233,13 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
         equipment.setManufacturedAt(manufacturedAt);
     }
 
-    private void getOldEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, String identityLetter, int cellIndex) throws Exception {
-        String oldEquipmentRegistryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
-        if (oldEquipmentRegistryNumber !=null && !oldEquipmentRegistryNumber.isBlank()) {
-            Equipment oldEquipment = equipmentService.findByRegistryNumber(identityLetter + oldEquipmentRegistryNumber);
-            equipment.setOldEquipmentId(oldEquipment.getId());
-        }
-    }
+//    private void getOldEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, String identityLetter, int cellIndex) throws Exception {
+//        String oldEquipmentRegistryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
+//        if (oldEquipmentRegistryNumber !=null && !oldEquipmentRegistryNumber.isBlank()) {
+//            Equipment oldEquipment = equipmentService.findByRegistryNumber(identityLetter + oldEquipmentRegistryNumber);
+//            equipment.setOldEquipmentId(oldEquipment.getId());
+//        }
+//    }
 
     private String getRegistryNumber(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
         String registryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
