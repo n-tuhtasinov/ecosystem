@@ -87,6 +87,8 @@ public class IIPServiceImpl implements IIPService {
 
         if (node == null) throw new RuntimeException("MIP dan STIR bo'yicha so'rovga bo'sh javob qaytdi");
 
+        log.info(node.toPrettyString());
+
         //make legalUserDto
         Integer districtSoato = node.get("companyBillingAddress").get("soato").asInt();
         //except two district soato (1714401365 - Namangan shahar, Davlatobod tumani, 1714401367- Namangan shahar, Yangi Namangan tumani)
