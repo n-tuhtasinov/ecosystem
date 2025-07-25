@@ -87,10 +87,9 @@ public class IIPServiceImpl implements IIPService {
 
         if (node == null) throw new RuntimeException("MIP dan STIR bo'yicha so'rovga bo'sh javob qaytdi");
 
-        log.info(node.toPrettyString());
-
         //make legalUserDto
         Integer districtSoato = node.get("companyBillingAddress").get("soato").asInt();
+
         //except two district soato (1714401365 - Namangan shahar, Davlatobod tumani, 1714401367- Namangan shahar, Yangi Namangan tumani)
         if (districtSoato.toString().length() > 7 && !districtSoato.equals(1714401365) && !districtSoato.equals(1714401367)) {
             String substring = districtSoato.toString().substring(0, 7);
@@ -101,19 +100,20 @@ public class IIPServiceImpl implements IIPService {
         Region region = regionService.findById(district.getRegionId());
         Office office = officeService.findByRegionId(region.getId());
 
-        LegalUserDto dto = new LegalUserDto(
+        return new LegalUserDto(
                 Long.valueOf(tin),
-                (node.get("company").get("shortName").asText() != null && !node.get("company").get("shortName").asText().trim().isEmpty()) ? node.get("company").get("shortName").asText() : node.get("company").get("name").asText(),
-                node.get("companyBillingAddress").get("streetName").asText(),
-                node.get("director").get("lastName").asText() + " " + node.get("director").get("firstName").asText() + " " + node.get("director").get("middleName").asText(),
+                (!node.get("company").get("shortName").isNull() && !node.get("company").get("shortName").textValue().isBlank())
+                        ? node.get("company").get("shortName").textValue()
+                        : node.get("company").get("name").textValue(),
+                node.get("companyBillingAddress").get("streetName").textValue(),
+                node.get("director").get("lastName").textValue() + " " + node.get("director").get("firstName").textValue() + " " + node.get("director").get("middleName").textValue(),
                 district.getRegionId(),
                 district.getId(),
-                node.get("directorContact").get("phone").asText(),
+                node.get("directorContact").isNull() ? null : node.get("directorContact").get("phone").textValue(),
                 node.get("company").get("kfs").asText(),
                 node.get("company").get("opf").asText(),
                 office.getId());
 
-        return dto;
     }
 
     @Override
@@ -141,7 +141,7 @@ public class IIPServiceImpl implements IIPService {
                 .retrieve()
                 .body(JsonNode.class);
 
-        if (node == null || node.get("data") == null)
+        if (node == null || node.get("data").isNull())
             throw new RuntimeException("MIP dan JSHSHIR bo'yicha so'rovga bo'sh javob qaytdi");
 
         //make individual user dto
