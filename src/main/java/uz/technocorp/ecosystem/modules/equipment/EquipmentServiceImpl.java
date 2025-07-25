@@ -149,8 +149,8 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
-    public Equipment findByRegistryNumber(String registryNumber) {
-        return repository.findByRegistryNumber(registryNumber).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", registryNumber));
+    public EquipmentViewById findByRegistryNumber(String registryNumber) {
+        return repository.findByRegistryNumber(registryNumber).map(this::mapToView).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", registryNumber));
     }
 
     @Override

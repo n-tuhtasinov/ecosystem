@@ -38,7 +38,7 @@ public interface EquipmentService {
 
     AttractionPassportView getAttractionPassportByRegistryNumber(String registryNumber);
 
-    Equipment findByRegistryNumber(String registryNumber);
+    EquipmentViewById findByRegistryNumber(String registryNumber);
 
     Long getCount(User user);
 

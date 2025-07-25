@@ -10,7 +10,6 @@ import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
-import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -55,15 +54,21 @@ public class EquipmentController {
         return ResponseEntity.ok(new ApiResponse(byId));
     }
 
+    @GetMapping("/registry-number/{oldRegistryNumber}")
+    public ResponseEntity<?> getByRegistryNumber(@PathVariable String oldRegistryNumber) {
+        EquipmentViewById byId = equipmentService.findByRegistryNumber(oldRegistryNumber);
+        return ResponseEntity.ok(new ApiResponse(byId));
+    }
+
 
     @GetMapping("/attractions/risk-assessment")
     public ResponseEntity<?> getAllAttractionsForRiskAssessment(@CurrentUser User user,
-                                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-                                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-                                                     @RequestParam(value = "legalTin", required = false) Long legalTin,
-                                                     @RequestParam(value = "registryNumber", required = false) String registryNumber,
-                                                     @RequestParam(value = "intervalId") Integer intervalId,
-                                                     @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
+                                                                @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                                                @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                                                @RequestParam(value = "legalTin", required = false) Long legalTin,
+                                                                @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                                                @RequestParam(value = "intervalId") Integer intervalId,
+                                                                @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
         Page<EquipmentRiskView> all = equipmentService.getAllAttractionForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
@@ -71,12 +76,12 @@ public class EquipmentController {
 
     @GetMapping("/elevators/risk-assessment")
     public ResponseEntity<?> getAllElevatorsForRiskAssessment(@CurrentUser User user,
-                                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-                                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-                                                     @RequestParam(value = "legalTin", required = false) Long legalTin,
-                                                     @RequestParam(value = "registryNumber", required = false) String registryNumber,
-                                                     @RequestParam(value = "intervalId") Integer intervalId,
-                                                     @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
+                                                              @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                                              @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                                              @RequestParam(value = "legalTin", required = false) Long legalTin,
+                                                              @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                                              @RequestParam(value = "intervalId") Integer intervalId,
+                                                              @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
         Page<EquipmentRiskView> all = equipmentService.getAllElevatorForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));
