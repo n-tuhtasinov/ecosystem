@@ -284,7 +284,14 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     private EquipmentInfoDto getInfo(EquipmentType equipmentType, String label) {
         long orderNumber = repository.getMax(equipmentType).orElse(0L) + 1;
-        return new EquipmentInfoDto(equipmentType, label + orderNumber, orderNumber);
+        String formatted = String.format("%06d%s", orderNumber, "S"); // 'S' means that the number was given by system
+        return new EquipmentInfoDto(equipmentType, label + formatted, orderNumber);
+    }
+
+    public static void main(String[] args) {
+        long s=1;
+        String format = String.format("%06d%s", s, "S");
+        System.out.println(format);
     }
 
     private String createAttractionPassportPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate) {
