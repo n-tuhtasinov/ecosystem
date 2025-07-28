@@ -20,7 +20,7 @@ import java.util.UUID;
  */
 public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, EquipmentRepo {
 
-    @Query("select coalesce(e.orderNumber,0) from Equipment e where e.type = :equipmentType order by e.orderNumber desc limit 1")
+    @Query("select e.orderNumber from Equipment e where e.type = :equipmentType and e.orderNumber is not null order by e.orderNumber desc limit 1")
     Optional<Long> getMax(EquipmentType equipmentType);
 
     @Query(value = """

@@ -20,7 +20,7 @@ import java.util.UUID;
  */
 public interface HazardousFacilityRepository extends JpaRepository<HazardousFacility, UUID>, HfRepo {
 
-    @Query("SELECT h.orderNumber FROM HazardousFacility h ORDER BY h.orderNumber DESC LIMIT 1")
+    @Query("SELECT h.orderNumber FROM HazardousFacility h where h.orderNumber is not null ORDER BY h.orderNumber DESC LIMIT 1")
     Optional<Long> findMaxOrderNumber();
 
     @Query(value = """
