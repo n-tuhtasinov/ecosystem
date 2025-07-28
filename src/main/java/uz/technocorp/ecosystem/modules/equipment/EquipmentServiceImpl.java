@@ -288,12 +288,6 @@ public class EquipmentServiceImpl implements EquipmentService {
         return new EquipmentInfoDto(equipmentType, label + formatted, orderNumber);
     }
 
-    public static void main(String[] args) {
-        long s=1;
-        String format = String.format("%06d%s", s, "S");
-        System.out.println(format);
-    }
-
     private String createAttractionPassportPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate) {
         Map<String, String> parameters = new HashMap<>();
 
