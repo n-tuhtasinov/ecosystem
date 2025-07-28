@@ -26,6 +26,7 @@ import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIn
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.UserService;
+import uz.technocorp.ecosystem.modules.user.dto.IndividualUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.security.JwtService;
@@ -111,10 +112,9 @@ public class AuthServiceImpl implements AuthService {
             return getUserMeWithToken(optional.get(), accessData.getAccess_token(), response);
         }
 
-        throw new RuntimeException("Tizimda tashqi jismoniy shaxslar uchun hali ruxsat berilmagan"); //TODO keyinchalik exceptionni olib tashlash kerak
         //create a new individual user
-//        User user = userService.create(new IndividualUserDto(userInfoFromOneIdDto.getFull_name(), Long.valueOf(userInfoFromOneIdDto.getPin()), userInfoFromOneIdDto.getMob_phone_no()));
-//        return getUserMeWithToken(user, accessData.getAccess_token(), response);
+        User user = userService.create(new IndividualUserDto(userInfoFromOneIdDto.getFull_name(), Long.valueOf(userInfoFromOneIdDto.getPin()), userInfoFromOneIdDto.getMob_phone_no()));
+        return getUserMeWithToken(user, accessData.getAccess_token(), response);
     }
 
     private UserMeDto getUserMeWithToken(User user, String tokenFromOneId, HttpServletResponse response) {
