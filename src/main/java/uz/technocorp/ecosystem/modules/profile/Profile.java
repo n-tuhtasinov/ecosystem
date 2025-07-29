@@ -30,6 +30,8 @@ public class Profile extends BaseEntity {
     private String address;
     private String directorName;
 
+    @Column
+    @Enumerated(EnumType.STRING)
     private ProfileType type;
 
     @ManyToOne(targetEntity = Department.class, fetch = FetchType.LAZY)

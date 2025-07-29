@@ -64,9 +64,9 @@ public class AppealRepoImpl implements AppealRepo {
             predicates.add(cb.equal(appealRoot.get("appealType"), AppealType.valueOf(params.get("params"))));
             countPredicates.add(cb.equal(countRoot.get("appealType"), AppealType.valueOf(params.get("params"))));
         }
-        if (params.get("legalTin") != null && !params.get("legalTin").isEmpty()) {
-            predicates.add(cb.equal(appealRoot.get("legalTin"), params.get("legalTin")));
-            countPredicates.add(cb.equal(countRoot.get("legalTin"), params.get("legalTin")));
+        if (params.get("ownerIdentity") != null && !params.get("ownerIdentity").isEmpty()) {
+            predicates.add(cb.equal(appealRoot.get("ownerIdentity"), params.get("ownerIdentity")));
+            countPredicates.add(cb.equal(countRoot.get("ownerIdentity"), params.get("ownerIdentity")));
         }
 
         if (params.get("startDate") != null && !params.get("startDate").isEmpty()) {
@@ -118,9 +118,9 @@ public class AppealRepoImpl implements AppealRepo {
                         appealRoot.get("id"),
                         appealRoot.get("createdAt"),
                         appealRoot.get("status"),
-                        appealRoot.get("legalTin"),
+                        appealRoot.get("ownerIdentity"),
                         appealRoot.get("number"),
-                        appealRoot.get("legalName"),
+                        appealRoot.get("ownerName"),
                         appealRoot.get("address"),
                         appealRoot.get("phoneNumber"),
                         appealRoot.get("appealType"),
@@ -128,7 +128,8 @@ public class AppealRepoImpl implements AppealRepo {
                         appealRoot.get("deadline"),
                         appealRoot.get("officeName"),
                         appealRoot.get("isRejected"),
-                        appealRoot.get("departmentName")
+                        appealRoot.get("departmentName"),
+                        appealRoot.get("ownerType")
                 ));
 
         // Qidiruvni amalga oshirish

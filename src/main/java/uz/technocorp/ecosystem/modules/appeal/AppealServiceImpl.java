@@ -242,7 +242,7 @@ public class AppealServiceImpl implements AppealService {
 
         //to display data by user role
         switch (user.getRole()) {
-            case LEGAL -> params.put("legalTin", profile.getIdentity().toString());
+            case LEGAL, INDIVIDUAL -> params.put("ownerIdentity", profile.getIdentity().toString());
             case INSPECTOR -> params.put("executorId", user.getId().toString());
             case REGIONAL -> putOfficeIdSafely(params, profile);
             case MANAGER, HEAD, CHAIRMAN -> appealTypes = getAppealTypes(user);

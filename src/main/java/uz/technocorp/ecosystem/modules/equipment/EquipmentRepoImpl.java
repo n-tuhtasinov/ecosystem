@@ -54,8 +54,8 @@ public class EquipmentRepoImpl implements EquipmentRepo{
             cPredicates.add(cb.equal(cRoot.get("type"), params.getType()));
         }
         if (params.getLegalTin() != null) {
-            ePredicates.add(cb.equal(eRoot.get("legalTin"), params.getLegalTin()));
-            cPredicates.add(cb.equal(cRoot.get("legalTin"), params.getLegalTin()));
+            ePredicates.add(cb.equal(eRoot.get("ownerIdentity"), params.getLegalTin()));
+            cPredicates.add(cb.equal(cRoot.get("ownerIdentity"), params.getLegalTin()));
         }
         if (params.getRegistryNumber() != null) {
             ePredicates.add(cb.equal(eRoot.get("registryNumber"), params.getRegistryNumber()));
@@ -86,9 +86,9 @@ public class EquipmentRepoImpl implements EquipmentRepo{
                         eRoot.get("registrationDate"),
                         eRoot.get("registryNumber"),
                         eRoot.get("type"),
-                        eRoot.get("legalName"),
-                        eRoot.get("legalTin"),
-                        eRoot.get("legalAddress"),
+                        eRoot.get("ownerName"),
+                        eRoot.get("ownerIdentity"),
+                        eRoot.get("ownerAddress"),
                         hfJoin.get("name"),
                         eRoot.get("address"),
                         eRoot.get("factoryNumber")

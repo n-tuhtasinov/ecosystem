@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,9 +22,9 @@ public class AppealCustom {
     private UUID id;
     private LocalDate createdAt;
     private AppealStatus status;
-    private Long legalTin;
+    private Long ownerIdentity;
     private String number;
-    private String legalName;
+    private String ownerName;
     private String address;
     private String phoneNumber;
     private AppealType appealType;
@@ -32,14 +33,15 @@ public class AppealCustom {
     private String officeName;
     private Boolean isRejected;
     private String departmentName;
+    private OwnerType ownerType;
 
-    public AppealCustom(UUID id, LocalDateTime createdAt, AppealStatus status, Long legalTin, String number, String legalName, String address, String phoneNumber, AppealType appealType, String executorName, LocalDate deadline, String officeName, Boolean isRejected, String departmentName) {
+    public AppealCustom(UUID id, LocalDateTime createdAt, AppealStatus status, Long ownerIdentity, String number, String ownerName, String address, String phoneNumber, AppealType appealType, String executorName, LocalDate deadline, String officeName, Boolean isRejected, String departmentName, OwnerType ownerType) {
         this.id = id;
         this.createdAt = createdAt.toLocalDate();
         this.status = status;
-        this.legalTin = legalTin;
+        this.ownerIdentity = ownerIdentity;
         this.number = number;
-        this.legalName = legalName;
+        this.ownerName = ownerName;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.appealType = appealType;
@@ -48,5 +50,6 @@ public class AppealCustom {
         this.officeName = officeName;
         this.isRejected = isRejected;
         this.departmentName = departmentName;
+        this.ownerType = ownerType;
     }
 }
