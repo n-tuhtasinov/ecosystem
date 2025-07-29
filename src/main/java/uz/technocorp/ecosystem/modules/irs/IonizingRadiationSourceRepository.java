@@ -17,7 +17,7 @@ import java.util.UUID;
  * @since v1.0
  */
 public interface IonizingRadiationSourceRepository extends JpaRepository<IonizingRadiationSource, UUID>, IonizingRadiationSourceRepo {
-    @Query("SELECT i.orderNumber FROM IonizingRadiationSource i ORDER BY i.orderNumber DESC LIMIT 1")
+    @Query("SELECT i.orderNumber FROM IonizingRadiationSource i where i.orderNumber is not null ORDER BY i.orderNumber DESC LIMIT 1")
     Optional<Long> findMaxOrderNumber();
 
     @Query(value = """
