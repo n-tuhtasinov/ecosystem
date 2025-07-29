@@ -12,6 +12,7 @@ import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
@@ -166,6 +167,7 @@ public class AppealServiceImpl implements AppealService {
                 .orderNumber(numberDto.orderNumber())
                 .ownerIdentity(profile.getIdentity())
                 .ownerName(profile.getName())
+                .ownerType(OwnerType.find(profile.getIdentity().toString().length()))
                 .ownerRegionId(profile.getRegionId())
                 .profileId(profile.getId())
                 .regionId(dto.getRegionId())

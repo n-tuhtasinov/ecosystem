@@ -56,7 +56,7 @@ public class Appeal extends BaseEntity {
     @JoinColumn(name = "owner_region_id", insertable = false, updatable = false)
     private Region ownerRegion;
 
-    @Column(name = "owner_region_id", nullable = false)
+    @Column(name = "owner_region_id")
     private Integer ownerRegionId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class)
@@ -70,7 +70,7 @@ public class Appeal extends BaseEntity {
     @JoinColumn(name = "owner_district_id", insertable = false, updatable = false)
     private District ownerDistrict;
 
-    @Column(name = "owner_district_id", nullable = false)
+    @Column(name = "owner_district_id")
     private Integer ownerDistrictId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class)
