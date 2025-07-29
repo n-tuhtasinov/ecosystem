@@ -54,11 +54,6 @@ public class ChairmanUserDto implements UserDto {
     }
 
     @Override
-    public String getLegalName() {
-        return null;
-    }
-
-    @Override
     public String getLegalAddress() {
         return null;
     }

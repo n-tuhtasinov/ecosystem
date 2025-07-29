@@ -64,7 +64,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         Profile saved = repository.save(Profile.builder()
                 .identity(dto.getIdentity())
-                .name(dto.getLegalName())
+                .name(dto.getName())
                 .address((region != null ? region.getName() + ", " : "") + (district != null ? district.getName() + ", " : "") + dto.getLegalAddress())
                 .name(dto.getFullName())
                 .departmentId(dto.getDepartmentId())
@@ -89,7 +89,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .findById(profileId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", profileId));
 
-        profile.setName(dto.getLegalName());
+        profile.setName(dto.getName());
         profile.setAddress(dto.getLegalAddress());
         profile.setDirectorName(dto.getFullName());
         profile.setDepartmentId(dto.getDepartmentId());

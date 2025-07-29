@@ -153,12 +153,11 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private String getSigner(String sign, String ip) {
-        /*Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, ip, sign);
+        Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, ip, sign);
         if (!"1".equals(pkcs7VerifyAttached.getStatus())) {
             throw new ResourceNotFoundException("Document verification failed");
         }
         String subjectName = pkcs7VerifyAttached.getPkcs7Info().getSigners().getLast().getCertificate().getFirst().getSubjectName();
-        return subjectName.split(",")[0].replace("CN=", "").trim();*/
-        return "Hello World";
+        return subjectName.split(",")[0].replace("CN=", "").trim();
     }
 }

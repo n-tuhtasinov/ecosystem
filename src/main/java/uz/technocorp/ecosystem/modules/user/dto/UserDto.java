@@ -16,7 +16,6 @@ public interface UserDto {
     List<String> getDirections();
     String getName();
     Long getIdentity();
-    String getLegalName();
     String getLegalAddress();
     String getFullName();
     ProfileType getType();
