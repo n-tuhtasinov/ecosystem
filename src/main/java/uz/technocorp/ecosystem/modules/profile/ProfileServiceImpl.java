@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
@@ -62,13 +63,12 @@ public class ProfileServiceImpl implements ProfileService {
         District district = getDistrict(dto.getDistrictId());
 
         Profile saved = repository.save(Profile.builder()
-
-                .tin(dto.getTin())
-                .legalName(dto.getLegalName())
-                .legalAddress((region != null ? region.getName() + ", " : "") + (district != null ? district.getName() + ", " : "") + dto.getLegalAddress())
-                .fullName(dto.getFullName())
-                .pin(dto.getPin())
+                .identity(dto.getIdentity())
+                .name(dto.getLegalName())
+                .address((region != null ? region.getName() + ", " : "") + (district != null ? district.getName() + ", " : "") + dto.getLegalAddress())
+                .name(dto.getFullName())
                 .departmentId(dto.getDepartmentId())
+                .type(dto.getType())
                 .officeId(dto.getOfficeId())
                 .regionId(regionId)
                 .regionName(regionName)
@@ -89,10 +89,9 @@ public class ProfileServiceImpl implements ProfileService {
                 .findById(profileId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile", "ID", profileId));
 
-        profile.setLegalName(dto.getLegalName());
-        profile.setLegalAddress(dto.getLegalAddress());
-        profile.setFullName(dto.getFullName());
-        profile.setPin(dto.getPin());
+        profile.setName(dto.getLegalName());
+        profile.setAddress(dto.getLegalAddress());
+        profile.setDirectorName(dto.getFullName());
         profile.setDepartmentId(dto.getDepartmentId());
         profile.setOfficeId(dto.getOfficeId());
         setRegion(dto.getRegionId(), profile); //set region
@@ -108,19 +107,13 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Long getProfileTin(UUID profileId) {
-        return repository.findById(profileId).map(Profile::getTin).orElseThrow(
+        return repository.findById(profileId).map(Profile::getIdentity).orElseThrow(
                 () -> new ResourceNotFoundException("Siz tashkilot sifatida tizimda mavjud emassiz (INN biriktirilmagan)"));
     }
 
     @Override
-    public Profile findByTin(Long tin) {
-        return repository.findByTin(tin).orElseThrow(() -> new ResourceNotFoundException("Tashkilot", "STIR", tin));
-    }
-
-    @Override
-    public Profile findByPin(Long pin) {
-        return repository.findByPin(pin).orElseThrow(() -> new ResourceNotFoundException("Jismoniy shaxs", "Pinfl", pin));
-
+    public Profile findByIdentity(Long identity) {
+        return repository.findByIdentity(identity).orElseThrow(() -> new CustomException("Tizimda bunday STIR topilmadi: " + identity));
     }
 
     @Override
@@ -138,8 +131,9 @@ public class ProfileServiceImpl implements ProfileService {
             subquery.select(preventionRoot.get("profileTin"))
                     .where(cb.equal(preventionRoot.get("year"), params.getYear()));
             return cb.and(
-                    cb.isNotNull(root.get("tin")),
-                    cb.not(root.get("tin").in(subquery))
+                    cb.isNotNull(root.get("identity")),
+                    cb.not(root.get("identity").in(subquery)),
+                    cb.equal(cb.length(root.get("identity")), 9)
             );
         };
 
@@ -148,10 +142,10 @@ public class ProfileServiceImpl implements ProfileService {
             if (params.getSearch() == null || params.getSearch().isBlank()) {
                 return cb.conjunction();
             }
-            Long tin = parseTin(params.getSearch());
-            return tin != null
-                    ? cb.equal(root.get("tin"), tin)
-                    : cb.like(cb.lower(root.get("legalName")), "%" + params.getSearch().toLowerCase() + "%");
+            Long identity = parseTin(params.getSearch());
+            return identity != null
+                    ? cb.equal(root.get("identity"), identity)
+                    : cb.like(cb.lower(root.get("name")), "%" + params.getSearch().toLowerCase() + "%");
         };
 
         // Region
@@ -163,7 +157,7 @@ public class ProfileServiceImpl implements ProfileService {
                 -> params.getDistrictId() == null ? cb.conjunction() : cb.equal(root.get("districtId"), params.getDistrictId());
 
         // Create pageRequest with sort by legalName asc
-        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.ASC, "legalName"));
+        PageRequest pageRequest = PageRequest.of(params.getPage() - 1, params.getSize(), Sort.by(Sort.Direction.ASC, "name"));
 
         // Get Profiles
         Page<Profile> profiles = repository.findAll(where(baseQuery).and(hasSearch).and(hasRegion).and(hasDistrict), pageRequest);
@@ -182,15 +176,15 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileInfoView getProfileInfo(Long tin) {
+    public ProfileInfoView getProfileInfo(Long identity) {
         return repository
-                .getProfileByTin(tin)
-                .orElseThrow(() -> new ResourceNotFoundException("Tashkilot haqida ma'lumot", "STIR", tin));
+                .getProfileByTin(identity)
+                .orElseThrow(() -> new ResourceNotFoundException("Tashkilot haqida ma'lumot", "STIR", identity));
     }
 
     @Override
-    public boolean existsProfileByTin(Long tin) {
-        return repository.existsByTin(tin);
+    public boolean existsProfileByTin(Long identity) {
+        return repository.existsByIdentity(identity);
     }
 
     private void setRegion(Integer regionId, Profile profile) {
@@ -242,9 +236,9 @@ public class ProfileServiceImpl implements ProfileService {
         ProfileView view = new ProfileView();
 
         view.setId(profile.getId().toString());
-        view.setTin(profile.getTin());
-        view.setLegalName(profile.getLegalName());
-        view.setLegalAddress(profile.getLegalAddress());
+        view.setTin(profile.getIdentity());
+        view.setLegalName(profile.getName());
+        view.setLegalAddress(profile.getAddress());
         view.setRegionName(profile.getRegionName());
 
         return view;

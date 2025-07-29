@@ -32,9 +32,9 @@ public class HfAppealPdfProcessor extends BaseAppealPdfProcessor {
         HfAppealDto dto = (HfAppealDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", profile.getFullName());
-        parameters.put("legalName", profile.getLegalName());
-        parameters.put("tin", profile.getTin().toString());
+        parameters.put("name", profile.getDirectorName());
+        parameters.put("legalName", profile.getName());
+        parameters.put("tin", profile.getIdentity().toString());
         parameters.put("regionName", getRegion(dto.getRegionId()).getName());
         parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
         parameters.put("hfName", dto.getName());

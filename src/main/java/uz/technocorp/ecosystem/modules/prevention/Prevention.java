@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "prevention", uniqueConstraints = @UniqueConstraint(columnNames = {"year", "profile_tin"}))
 public class Prevention extends BaseEntity {
 
     @Column(nullable = false)
@@ -52,7 +51,7 @@ public class Prevention extends BaseEntity {
     private String inspectorName;
 
     @ManyToOne(targetEntity = Profile.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_tin", referencedColumnName = "tin", insertable = false, updatable = false)
+    @JoinColumn(name = "profile_tin", referencedColumnName = "identity", insertable = false, updatable = false)
     private Profile profile;
 
     @Column(name = "profile_tin")

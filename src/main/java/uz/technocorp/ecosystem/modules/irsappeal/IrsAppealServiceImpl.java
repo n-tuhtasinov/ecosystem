@@ -56,7 +56,7 @@
 //                .appealType(AppealType.REGISTER_IRS)
 //                .number(number)
 //                .orderNumber(orderNumber)
-//                .legalTin(profile.getTin())
+//                .legalTin(profile.getIdentity())
 //                .status(AppealStatus.NEW)
 //                .deadline(LocalDate.now().plusDays(15))
 //                .data(data)

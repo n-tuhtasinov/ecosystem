@@ -17,17 +17,14 @@ import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.UserRepository;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
  * @created 29.01.2025
- * @since v1.0
  * @description any commands based on initial mode's value. It is usually needed to run the project at the first time
+ * @since v1.0
  */
 @Component
 @RequiredArgsConstructor
@@ -42,8 +39,6 @@ public class DataLoader implements CommandLineRunner {
 
     @Value("${spring.sql.init.mode}")
     private String initialMode;
-
-
 
     @Override
     public void run(String... args) throws Exception {
@@ -62,7 +57,7 @@ public class DataLoader implements CommandLineRunner {
             Office office = officeRepository.save(Office.builder().name("Toshkent shahri bo'linmasi").regionId(region1.getId()).build());
 
             // save a legal
-            Profile legal1 = profileRepository.save(Profile.builder().tin(123654987L).legalName("Shaffof mchj").fullName("Shahzod Namazbayev").regionId(region1.getId()).districtId(district1.getId()).regionName(region1.getName()).districtName(district1.getName()).legalAddress("Ibn sino ko'chasi 48").build());
+            Profile legal1 = profileRepository.save(Profile.builder().identity(123654987L).name("Shaffof mchj").directorName("Shahzod Namazbayev").regionId(region1.getId()).districtId(district1.getId()).regionName(region1.getName()).districtName(district1.getName()).address("Ibn sino ko'chasi 48").build());
             userRepository.save(User.builder().username("tashkilot").password(passwordEncoder.encode("root1234")).role(Role.LEGAL).directions(List.of("APPEAL")).profileId(legal1.getId()).name("Shaffof mchj").enabled(true).build());
 
         }

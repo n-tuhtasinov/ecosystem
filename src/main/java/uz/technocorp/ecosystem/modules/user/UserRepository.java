@@ -26,17 +26,17 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
     @Query("select u from User u where u.role in :roles")
     Page<User> findAllByRoles(Pageable pageable, Set<Role> roles);
 
-    @Query("select u.id as id, p.fullName as fullName, p.pin as pin, p.id as profileId from User u join Profile p")
+    @Query("select u.id as id, p.directorName as fullName, p.identity as pin, p.id as profileId from User u join Profile p")
     Optional<UserViewByInspectorPin> getInspectorByPin(long pin, Role inspector);
 
     @Query(nativeQuery = true, value = """
             select u.id                   as id,
-                   p.tin                  as tin,
-                   p.legal_name           as legalName,
+                   p.identity             as tin,
+                   p.name                 as legalName,
                    p.legal_form           as legalForm,
                    p.legal_ownership_type as legalOwnershipType,
-                   p.full_name            as fullName,
-                   p.legal_address        as legalAddress,
+                   p.director_name        as fullName,
+                   p.address              as legalAddress,
                    p.phone_number         as phoneNumber,
                    u.enabled              as isActive
             from users u

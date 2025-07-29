@@ -91,7 +91,7 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         String appealDate = splitAppealDate[0] + " yil " + splitAppealDate[2] + " " + splitAppealDate[1];
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalName", appeal.getOwnerName());
         parameters.put("date", appealDate);
         parameters.put("officeName", appeal.getOfficeName());
         parameters.put("inspectorName", inspector.getName());
@@ -116,7 +116,7 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         String appealDate = splitAppealDate[0] + " yil " + splitAppealDate[2] + " " + splitAppealDate[1];
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalName", appeal.getOwnerName());
         parameters.put("date", appealDate);
         parameters.put("officeName", appeal.getOfficeName());
         parameters.put("dateOfAttestation", dateOfAttestation);
@@ -140,7 +140,7 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         String[] workSpace = getExecutorWorkspace(user);
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalName", appeal.getOwnerName());
         parameters.put("date", appealDate);
         parameters.put("appealNumber", appeal.getNumber());
         parameters.put("executorWorkspace", workSpace[0]);
@@ -184,8 +184,8 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         parameters.put("year", formattedDate[0]);
         parameters.put("officeName", appeal.getOfficeName());
         parameters.put("inspectorName", userName);
-        parameters.put("legalName", appeal.getLegalName());
-        parameters.put("legalTin", appeal.getLegalTin().toString());
+        parameters.put("legalName", appeal.getOwnerName());
+        parameters.put("legalTin", appeal.getOwnerIdentity().toString());
         parameters.put("conclusion", replyDto.getConclusion());
 
         return parameters;

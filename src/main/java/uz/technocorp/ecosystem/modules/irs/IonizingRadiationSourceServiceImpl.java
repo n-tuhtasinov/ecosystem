@@ -57,9 +57,9 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                 IonizingRadiationSource
                         .builder()
                         .profileId(appeal.getProfileId())
-                        .legalTin(appeal.getLegalTin())
-                        .legalName(appeal.getLegalName())
-                        .legalAddress(appeal.getLegalAddress())
+                        .legalTin(appeal.getOwnerIdentity())
+                        .legalName(appeal.getOwnerName())
+                        .legalAddress(appeal.getOwnerAddress())
                         .address(appeal.getAddress())
                         .parentOrganization(irsAppealDto.getParentOrganization())
                         .supervisorName(irsAppealDto.getSupervisorName())
@@ -146,7 +146,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
             }
             params.setRegionId(office.getRegionId());
         } else if (user.getRole() == Role.LEGAL) {
-            params.setLegalTin(profile.getTin());
+            params.setLegalTin(profile.getIdentity());
         } else {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
@@ -164,7 +164,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
     public Long getCount(User user) {
         Profile profile = profileService.getProfile(user.getProfileId());
         return switch (user.getRole()) {
-            case LEGAL -> repository.countByParams(profile.getTin(), null);
+            case LEGAL -> repository.countByParams(profile.getIdentity(), null);
             case REGIONAL, INSPECTOR -> repository.countByParams(null, profile.getRegionId());
             default -> repository.countByParams(null, null);
         };
@@ -230,7 +230,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
             else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
         } else {
             Profile profile = profileService.getProfile(user.getProfileId());
-            Long profileTin = profile.getTin();
+            Long profileTin = profile.getIdentity();
             if (registryNumber != null)
                 return repository.getAllByFactoryNumberAndInterval(pageable, registryNumber, intervalId);
             return repository.getAllByLegalTinAndInterval(pageable, profileTin, intervalId);

@@ -164,20 +164,20 @@ public class AppealServiceImpl implements AppealService {
                 .appealType(dto.getAppealType())
                 .number(numberDto.number())
                 .orderNumber(numberDto.orderNumber())
-                .legalTin(profile.getTin())
-                .legalName(profile.getLegalName())
-                .legalRegionId(profile.getRegionId())
+                .ownerIdentity(profile.getIdentity())
+                .ownerName(profile.getName())
+                .ownerRegionId(profile.getRegionId())
                 .profileId(profile.getId())
                 .regionId(dto.getRegionId())
-                .legalDistrictId(profile.getDistrictId())
+                .ownerDistrictId(profile.getDistrictId())
                 .districtId(dto.getDistrictId())
-                .officeId(office!=null? office.getId() : null)
-                .officeName(office!=null? office.getName() : null)
-                .departmentId(department!=null? department.getId() : null)
-                .departmentName(department!=null? department.getName() : null)
+                .officeId(office != null ? office.getId() : null)
+                .officeName(office != null ? office.getName() : null)
+                .departmentId(department != null ? department.getId() : null)
+                .departmentName(department != null ? department.getName() : null)
                 .status(AppealStatus.NEW)
+                .ownerAddress(profile.getAddress())
                 .address(region.getName() + ", " + district.getName() + ", " + dto.getAddress())
-                .legalAddress(profile.getLegalAddress())
                 .phoneNumber(dto.getPhoneNumber())
                 .deadline(dto.getDeadline())
                 .executorName(executorName)
@@ -193,7 +193,7 @@ public class AppealServiceImpl implements AppealService {
     }
 
     private Department getDepartment(AppealType appealType) {
-        return switch (appealType.direction){
+        return switch (appealType.direction) {
             case "HF", "ATTESTATION_COMMITTEE", "ACCREDITATION", "CADASTRE" -> departmentService.findByClassifier(13);
             case "EQUIPMENT" -> departmentService.findByClassifier(14);
             case "IRS" -> departmentService.findByClassifier(12);
@@ -202,8 +202,8 @@ public class AppealServiceImpl implements AppealService {
     }
 
     private Office getOffice(AppealType appealType, Integer regionId) {
-        return switch (appealType.direction){
-            case "HF","EQUIPMENT", "ATTESTATION_REGIONAL", "PERMITS" -> officeService.findByRegionId(regionId);
+        return switch (appealType.direction) {
+            case "HF", "EQUIPMENT", "ATTESTATION_REGIONAL", "PERMITS" -> officeService.findByRegionId(regionId);
             default -> null;
         };
     }
@@ -240,7 +240,7 @@ public class AppealServiceImpl implements AppealService {
 
         //to display data by user role
         switch (user.getRole()) {
-            case LEGAL -> params.put("legalTin", profile.getTin().toString());
+            case LEGAL -> params.put("legalTin", profile.getIdentity().toString());
             case INSPECTOR -> params.put("executorId", user.getId().toString());
             case REGIONAL -> putOfficeIdSafely(params, profile);
             case MANAGER, HEAD, CHAIRMAN -> appealTypes = getAppealTypes(user);
@@ -376,7 +376,8 @@ public class AppealServiceImpl implements AppealService {
         Profile profile = getProfile(user.getProfileId());
         return switch (user.getRole()) {
             case HEAD, MANAGER, CHAIRMAN -> repository.countByParams(makeAppealCountParamsByDirections(user, status));
-            case LEGAL -> repository.countByParams(new AppealCountParams(status, profile.getTin(), null, null, null));
+            case LEGAL ->
+                    repository.countByParams(new AppealCountParams(status, profile.getIdentity(), null, null, null));
             case INSPECTOR -> repository.countByParams(new AppealCountParams(status, null, user.getId(), null, null));
             case REGIONAL ->
                     repository.countByParams(new AppealCountParams(status, null, null, profile.getOfficeId(), null));
@@ -446,8 +447,10 @@ public class AppealServiceImpl implements AppealService {
     private String getExecutorName(AppealType appealType, Integer regionId) {
         return switch (appealType.direction) {
             case "IRS" -> departmentService.findByClassifier(12).getName() + " bosh mutaxassisi";
-            case "ACCREDITATION", "CADASTRE", "ATTESTATION_COMMITTEE" -> departmentService.findByClassifier(13).getName() + " bosh mutaxassisi";
-            case "HF", "EQUIPMENT", "ATTESTATION_REGIONAL" -> officeService.findByRegionId(regionId).getName() + " inspektori";
+            case "ACCREDITATION", "CADASTRE", "ATTESTATION_COMMITTEE" ->
+                    departmentService.findByClassifier(13).getName() + " bosh mutaxassisi";
+            case "HF", "EQUIPMENT", "ATTESTATION_REGIONAL" ->
+                    officeService.findByRegionId(regionId).getName() + " inspektori";
             //TODO: Ariza turiga qarab ariza ijrochi shaxs kimligini shakllantirishni davom ettirish kerak
             default -> null;
         };

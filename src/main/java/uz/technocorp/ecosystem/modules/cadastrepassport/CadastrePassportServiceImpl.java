@@ -34,9 +34,9 @@ public class CadastrePassportServiceImpl implements CadastrePassportService {
         CadastrePassportDto dto = JsonParser.parseJsonData(appeal.getData(), CadastrePassportDto.class);
 
         CadastrePassport passport = CadastrePassport.builder()
-                .legalTin(appeal.getLegalTin())
-                .legalName(appeal.getLegalName())
-                .legalAddress(appeal.getLegalAddress())
+                .legalTin(appeal.getOwnerIdentity())
+                .legalName(appeal.getOwnerName())
+                .legalAddress(appeal.getOwnerAddress())
                 .hfId(dto.getHfId())
                 .hfName(dto.getHfName())
                 .appealId(appeal.getId())
@@ -61,7 +61,7 @@ public class CadastrePassportServiceImpl implements CadastrePassportService {
 
         switch (user.getRole()) {
             case MANAGER, HEAD -> changeParams(params, null);
-            case LEGAL -> changeParams(params, profile.getTin());
+            case LEGAL -> changeParams(params, profile.getIdentity());
             default -> throw new RuntimeException("Sizda kadastrni ko'rish ruxsati yo'q");
         }
 

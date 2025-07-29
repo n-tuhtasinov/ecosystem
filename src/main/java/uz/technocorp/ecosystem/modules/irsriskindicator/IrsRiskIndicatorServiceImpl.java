@@ -194,7 +194,7 @@ public class IrsRiskIndicatorServiceImpl implements IrsRiskIndicatorService {
                                     .findAllByTinAndIntervalId(tin, riskAnalysisInterval.getId());
                             if (inspectionOptional.isEmpty()) {
                                 profileRepository
-                                        .findByTin(tin)
+                                        .findByIdentity(tin)
                                         .ifPresent(profile -> inspectionRepository.save(
                                                 Inspection
                                                         .builder()

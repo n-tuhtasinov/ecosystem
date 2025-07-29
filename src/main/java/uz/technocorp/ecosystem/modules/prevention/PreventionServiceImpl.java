@@ -169,9 +169,9 @@ public class PreventionServiceImpl implements PreventionService {
         String preventionFile = checkPreventionFile(currentYear, profile.getRegionId());
 
         // Check prevention
-        Prevention oldPrevention = getPreventionByProfileTinAndYear(profile.getTin(), currentYear);
+        Prevention oldPrevention = getPreventionByProfileTinAndYear(profile.getIdentity(), currentYear);
         if (oldPrevention != null) {
-            throw new ResourceNotFoundException("Bu tashkilotga (STIR : " + profile.getTin() + ") "
+            throw new ResourceNotFoundException("Bu tashkilotga (STIR : " + profile.getIdentity() + ") "
                     + currentYear + " yil hisobi bo'yicha profilaktika o'tilgan");
         }
 
@@ -186,9 +186,9 @@ public class PreventionServiceImpl implements PreventionService {
         prevention.setViewed(false);
         prevention.setViewDate(null);
         prevention.setInspectorName(user.getName());
-        prevention.setProfileTin(profile.getTin());
-        prevention.setLegalName(profile.getLegalName());
-        prevention.setLegalAddress(profile.getLegalAddress());
+        prevention.setProfileTin(profile.getIdentity());
+        prevention.setLegalName(profile.getName());
+        prevention.setLegalAddress(profile.getAddress());
         prevention.setRegionId(profile.getRegionId());
         prevention.setDistrictId(profile.getDistrictId());
 
@@ -268,7 +268,7 @@ public class PreventionServiceImpl implements PreventionService {
     }
 
     private Profile getProfileByTin(Long tin) {
-        return profileService.findByTin(tin);
+        return profileService.findByIdentity(tin);
     }
 
     private Prevention getPreventionByProfileTinAndYear(Long tin, Integer year) {

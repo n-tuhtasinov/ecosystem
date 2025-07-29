@@ -32,9 +32,9 @@ public class DeclarationAppealPdfProcessor extends BaseAppealPdfProcessor {
         DeclarationDto dto = (DeclarationDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("directorName", profile.getFullName());
-        parameters.put("legalName", profile.getLegalName());
-        parameters.put("legalTin", profile.getTin().toString());
+        parameters.put("directorName", profile.getDirectorName());
+        parameters.put("legalName", profile.getName());
+        parameters.put("legalTin", profile.getIdentity().toString());
         parameters.put("hfName", dto.getHfName());
 
         return parameters;

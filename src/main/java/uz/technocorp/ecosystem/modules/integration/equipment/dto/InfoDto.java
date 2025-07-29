@@ -20,10 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 public class InfoDto<T> {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Long tin;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Long pin;
+    private Long tinOrPin;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String legalName;
     @JsonInclude(JsonInclude.Include.NON_NULL)

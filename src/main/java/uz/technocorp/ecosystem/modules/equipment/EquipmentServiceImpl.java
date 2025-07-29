@@ -57,7 +57,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public void create(Appeal appeal) {
-        Profile profile = profileService.findByTin(appeal.getLegalTin());
+        Profile profile = profileService.findByIdentity(appeal.getOwnerIdentity());
 
         EquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), EquipmentDto.class);
         EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
@@ -70,13 +70,14 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .appealId(appeal.getId())
                 .registryNumber(info.registryNumber())
                 .orderNumber(info.orderNumber())
-                .legalTin(appeal.getLegalTin())
-                .legalName(profile.getLegalName())
+                .ownerIdentity(appeal.getOwnerIdentity())
+                .ownerName(profile.getName())
                 .hazardousFacilityId(dto.hazardousFacilityId())
                 .childEquipmentId(dto.childEquipmentId())
                 .factoryNumber(dto.factoryNumber())
                 .regionId(appeal.getRegionId())
                 .districtId(appeal.getDistrictId())
+                .ownerAddress(appeal.getOwnerAddress())
                 .address(appeal.getAddress())
                 .model(dto.model())
                 .factory(dto.factory())
@@ -100,7 +101,6 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .registryFilePath(registryFilepath)
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(dto.attractionPassportId())
-                .legalAddress(appeal.getLegalAddress())
                 .isActive(true)
                 .build();
 
@@ -122,7 +122,7 @@ public class EquipmentServiceImpl implements EquipmentService {
             }
             params.setRegionId(office.getRegionId());
         } else if (user.getRole() == Role.LEGAL) {
-            params.setLegalTin(profile.getTin());
+            params.setLegalTin(profile.getIdentity());
         } else {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
@@ -157,7 +157,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     public Long getCount(User user) {
         Profile profile = profileService.getProfile(user.getProfileId());
         return switch (user.getRole()) {
-            case LEGAL -> repository.countByParams(profile.getTin(), null);
+            case LEGAL -> repository.countByParams(profile.getIdentity(), null);
             case REGIONAL, INSPECTOR -> repository.countByParams(null, profile.getRegionId());
             default -> repository.countByParams(null, null);
         };
@@ -199,7 +199,7 @@ public class EquipmentServiceImpl implements EquipmentService {
             if (registryNumber != null)
                 return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
             Profile profile = profileService.getProfile(user.getProfileId());
-            return repository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ATTRACTION.name());
+            return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), intervalId, EquipmentType.ATTRACTION.name());
         }
     }
 
@@ -239,7 +239,7 @@ public class EquipmentServiceImpl implements EquipmentService {
             if (registryNumber != null)
                 return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
             Profile profile = profileService.getProfile(user.getProfileId());
-            return repository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId, EquipmentType.ELEVATOR.name());
+            return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), intervalId, EquipmentType.ELEVATOR.name());
         }
     }
 
@@ -252,13 +252,8 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
-    public List<Equipment> getAllEquipmentByTypeAndTin(Long tin, EquipmentType type) {
-        return repository.findAllByLegalTinAndType(tin, type);
-    }
-
-    @Override
-    public List<Equipment> getAllEquipmentByTypeAndPin(Long pin, EquipmentType type) {
-        return List.of();
+    public List<Equipment> getAllEquipmentByTypeAndTinOrPin(Long tin, EquipmentType type) {
+        return repository.findAllByOwnerIdentityAndType(tin, type);
     }
 
     protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
@@ -294,9 +289,9 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("attractionType", appeal.getData().get("childEquipmentName").asText());
         parameters.put("childEquipmentSortName", appeal.getData().get("childEquipmentSortName").asText());
         parameters.put("manufacturedAt", dto.manufacturedAt().toString());
-        parameters.put("legalName", appeal.getLegalName());
-        parameters.put("legalTin", appeal.getLegalTin().toString());
-        parameters.put("legalAddress", appeal.getLegalAddress());
+        parameters.put("legalName", appeal.getOwnerName());
+        parameters.put("legalTin", appeal.getOwnerIdentity().toString());
+        parameters.put("legalAddress", appeal.getOwnerAddress());
         parameters.put("registryNumber", info.registryNumber());
         parameters.put("factoryNumber", dto.factoryNumber());
         parameters.put("regionName", regionService.findById(appeal.getRegionId()).getName());
@@ -313,11 +308,11 @@ public class EquipmentServiceImpl implements EquipmentService {
     private String createEquipmentPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate) {
         Map<String, String> parameters = new HashMap<>();
 
-        parameters.put("legalAddress", appeal.getLegalAddress());
+        parameters.put("legalAddress", appeal.getOwnerAddress());
         parameters.put("equipmentType", info.equipmentType().value);
         parameters.put("childEquipmentName", appeal.getData().get("childEquipmentName").asText());
-        parameters.put("legalTin", appeal.getLegalTin().toString());
-        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalTin", appeal.getOwnerIdentity().toString());
+        parameters.put("legalName", appeal.getOwnerName());
         parameters.put("factoryNumber", dto.factoryNumber());
         parameters.put("factory", dto.factory());
         parameters.put("model", dto.model());
@@ -353,7 +348,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getType(),
                 equipment.getAppealId(),
                 equipment.getRegistryNumber(),
-                equipment.getLegalTin(),
+                equipment.getOwnerIdentity(),
                 equipment.getHazardousFacilityId(),
                 equipment.getHazardousFacility() == null ? null : equipment.getHazardousFacility().getName(),
                 equipment.getChildEquipmentId(),

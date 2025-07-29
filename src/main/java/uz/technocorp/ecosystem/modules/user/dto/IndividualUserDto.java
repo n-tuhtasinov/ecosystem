@@ -1,7 +1,7 @@
 package uz.technocorp.ecosystem.modules.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import uz.technocorp.ecosystem.modules.profile.enums.ProfileType;
 import uz.technocorp.ecosystem.modules.user.enums.Direction;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class IndividualUserDto implements UserDto{
+public class IndividualUserDto implements UserDto {
 
     private String fullName;
     private Long pin;
@@ -45,8 +45,8 @@ public class IndividualUserDto implements UserDto{
     }
 
     @Override
-    public Long getTin() {
-        return null;
+    public Long getIdentity() {
+        return this.pin;
     }
 
     @Override
@@ -57,6 +57,11 @@ public class IndividualUserDto implements UserDto{
     @Override
     public String getLegalAddress() {
         return null;
+    }
+
+    @Override
+    public ProfileType getType() {
+        return ProfileType.INDIVIDUAL;
     }
 
     @Override

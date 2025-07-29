@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 import uz.technocorp.ecosystem.modules.childequipmentsort.ChildEquipmentSort;
 import uz.technocorp.ecosystem.modules.district.District;
@@ -51,10 +52,14 @@ public class Equipment extends BaseEntity {
     private Long orderNumber;
 
     @Column(nullable = false)
-    private Long legalTin;
+    private Long ownerIdentity;
 
     @Column(nullable = false)
-    private String legalName;
+    private String ownerName;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private OwnerType ownerType;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = HazardousFacility.class)
     @JoinColumn(name = "hazardous_facility_id", insertable = false, updatable = false)
@@ -86,6 +91,9 @@ public class Equipment extends BaseEntity {
 
     @Column(name = "district_id", nullable = false)
     private Integer districtId;
+
+    @Column(nullable = false)
+    private String ownerAddress;
 
     @Column(nullable = false)
     private String address;
@@ -190,9 +198,6 @@ public class Equipment extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate registrationDate;
-
-    @Column(nullable = false)
-    private String legalAddress;
 
     //    @Column(nullable = false)
     private Boolean isActive;

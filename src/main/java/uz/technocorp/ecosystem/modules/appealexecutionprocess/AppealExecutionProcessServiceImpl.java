@@ -58,7 +58,7 @@ public class AppealExecutionProcessServiceImpl implements AppealExecutionProcess
         }
 
         log.info("Bajaruvchi FIO: {}, Bajaruvchi Pinfl: {}, Hududiy bo'limi: {}, Departamenti yoki boshqarmasi: {}, Vaqti: {}, Amaliyoti: {}"
-                , user.getName(), profile.getPin(), officeName, departmentName, process.getCreatedAt(), process.getAppealStatus().getLabel());
+                , user.getName(), profile.getIdentity(), officeName, departmentName, process.getCreatedAt(), process.getAppealStatus().getLabel());
     }
 
     @Override

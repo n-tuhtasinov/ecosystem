@@ -26,9 +26,9 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     @Query(value = """
             select distinct(region_id)
                 from equipment
-                where legal_tin = :tin
+                where owner_identity = :ownerIdentity
             """, nativeQuery = true)
-    Set<Integer> getAllRegionIdByLegalTin(Long tin);
+    Set<Integer> getAllRegionIdByLegalTin(Long ownerIdentity);
 
 
     @Query("""
@@ -42,14 +42,14 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Optional<Equipment> getEquipmentById(UUID equipmentId);
 
     @Query(value = """
-            select e.id           as id,
+            select e.id              as id,
                    e.registry_number as factoryNumber,
-                   e.type         as name,
-                   e.legal_tin    as legalTin,
-                   address,
-                   e.legal_name   as legalName,
-                   p.full_name    as inspectorName,
-                   aie.id         as assignId,
+                   e.type            as name,
+                   e.owner_identity  as legalTin,
+                   e.owner_address,
+                   e.owner_name      as legalName,
+                   p.director_name   as inspectorName,
+                   aie.id            as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
                         when e.type = 'ATTRACTION' then attr_scores.total_score
@@ -80,10 +80,10 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             select e.id           as id,
                    e.registry_number as factoryNumber,
                    e.type         as name,
-                   e.legal_tin    as legalTin,
-                   address,
-                   e.legal_name   as legalName,
-                   p.full_name    as inspectorName,
+                   e.owner_identity    as legalTin,
+                   e.owner_address,
+                   e.owner_name   as legalName,
+                   p.director_name    as inspectorName,
                    aie.id         as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
@@ -115,10 +115,10 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
             select e.id           as id,
                    e.registry_number as factoryNumber,
                    e.type         as name,
-                   e.legal_tin    as legalTin,
-                   address,
-                   e.legal_name   as legalName,
-                   p.full_name    as inspectorName,
+                   e.owner_identity    as legalTin,
+                   e.owner_address,
+                   e.owner_name   as legalName,
+                   p.director_name    as inspectorName,
                    aie.id         as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
@@ -147,14 +147,14 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Page<EquipmentRiskView> getAllByLegalTinAndInterval(Pageable pageable, Long legalTin, Integer intervalId, String equipmentType);
 
     @Query(value = """
-            select e.id           as id,
-                   e.registry_number as factoryNumber,
-                   e.type         as name,
-                   e.legal_tin    as legalTin,
-                   address,
-                   e.legal_name   as legalName,
-                   p.full_name    as inspectorName,
-                   aie.id         as assignId,
+            select e.id                 as id,
+                   e.registry_number    as factoryNumber,
+                   e.type               as name,
+                   e.owner_identity     as legalTin,
+                   e.owner_address,
+                   e.owner_name         as legalName,
+                   p.director_name      as inspectorName,
+                   aie.id               as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
                         when e.type = 'ATTRACTION' then attr_scores.total_score
@@ -183,14 +183,14 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Page<EquipmentRiskView> getAllByLegalTinAndIntervalAndInspectorId(Pageable pageable, Long legalTin, Integer intervalId, String equipmentType, UUID inspectorId);
 
     @Query(value = """
-            select e.id           as id,
-                   e.registry_number as factoryNumber,
-                   e.type         as name,
-                   e.legal_tin    as legalTin,
-                   address,
-                   e.legal_name   as legalName,
-                   p.full_name    as inspectorName,
-                   aie.id         as assignId,
+            select e.id                 as id,
+                   e.registry_number    as factoryNumber,
+                   e.type               as name,
+                   e.owner_identity     as legalTin,
+                   e.owner_address,
+                   e.owner_name         as legalName,
+                   p.director_name      as inspectorName,
+                   aie.id               as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
                         when e.type = 'ATTRACTION' then attr_scores.total_score
@@ -218,14 +218,14 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Page<EquipmentRiskView> getAllByRegistryNumberAndInterval(Pageable pageable, String registryNumber, Integer intervalId, String equipmentType);
 
     @Query(value = """
-            select e.id           as id,
-                   e.registry_number as factoryNumber,
-                   e.type         as name,
-                   e.legal_tin    as legalTin,
-                   address,
-                   e.legal_name   as legalName,
-                   p.full_name    as inspectorName,
-                   aie.id         as assignId,
+            select e.id                 as id,
+                   e.registry_number    as factoryNumber,
+                   e.type               as name,
+                   e.owner_identity     as legalTin,
+                   e.owner_address,
+                   e.owner_name         as legalName,
+                   p.director_name      as inspectorName,
+                   aie.id               as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
                         when e.type = 'ATTRACTION' then attr_scores.total_score
@@ -254,14 +254,14 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Page<EquipmentRiskView> getAllByRegistryNumberAndIntervalAndInspectorId(Pageable pageable, String registryNumber, Integer intervalId, String equipmentType, UUID inspectorId);
 
     @Query(value = """
-            select e.id           as id,
-                   e.registry_number as factoryNumber,
-                   e.type         as name,
-                   e.legal_tin    as legalTin,
-                   address,
-                   e.legal_name   as legalName,
-                   null           as inspectorName,
-                   null           as assignId,
+            select e.id                 as id,
+                   e.registry_number    as factoryNumber,
+                   e.type               as name,
+                   e.owner_identity     as legalTin,
+                   e.owner_address,
+                   e.owner_name         as legalName,
+                   null                 as inspectorName,
+                   null                 as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
                         when e.type = 'ATTRACTION' then attr_scores.total_score
@@ -287,14 +287,14 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Page<EquipmentRiskView> getAllByRegion(Pageable pageable, Integer regionId, String equipmentType, Integer intervalId);
 
     @Query(value = """
-            select e.id           as id,
-                   e.registry_number as factoryNumber,
-                   e.type         as name,
-                   e.legal_tin    as legalTin,
-                   address,
-                   e.legal_name   as legalName,
-                   null           as inspectorName,
-                   null           as assignId,
+            select e.id                   as id,
+                   e.registry_number      as factoryNumber,
+                   e.type                 as name,
+                   e.owner_identity       as legalTin,
+                   e.owner_address,
+                   e.owner_name           as legalName,
+                   null                   as inspectorName,
+                   null                   as assignId,
                    case
                        when e.type = 'ELEVATOR' then elev_scores.total_score
                        when e.type = 'ATTRACTION' then attr_scores.total_score
@@ -320,14 +320,14 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Page<EquipmentRiskView> getAllByLegalTin(Pageable pageable, Long legalTin, String equipmentType, Integer intervalId);
 
     @Query(value = """
-            select e.id           as id,
-                   e.registry_number as factoryNumber,
-                   e.type         as name,
-                   e.legal_tin    as legalTin,
-                   address,
-                   e.legal_name   as legalName,
-                   null           as inspectorName,
-                   null           as assignId,
+            select e.id                 as id,
+                   e.registry_number    as factoryNumber,
+                   e.type               as name,
+                   e.owner_identity     as legalTin,
+                   e.owner_address,
+                   e.owner_name         as legalName,
+                   null                 as inspectorName,
+                   null                 as assignId,
                    case
                    when e.type = 'ELEVATOR' then elev_scores.total_score
                    when e.type = 'ATTRACTION' then attr_scores.total_score
@@ -357,5 +357,5 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     @Query("select e from Equipment e join fetch e.childEquipment join fetch e.childEquipmentSort where e.registryNumber = :registryNumber")
     Optional<Equipment> findFetchedEquipmentByRegistryNumber(String registryNumber);
 
-    List<Equipment> findAllByLegalTinAndType(Long tin, EquipmentType type);
+    List<Equipment> findAllByOwnerIdentityAndType(Long tinOrPin, EquipmentType type);
 }

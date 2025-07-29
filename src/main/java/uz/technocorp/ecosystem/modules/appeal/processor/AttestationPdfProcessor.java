@@ -36,8 +36,8 @@ public class AttestationPdfProcessor extends BaseAppealPdfProcessor {
         AttestationDto dto = (AttestationDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", profile.getLegalName());
-        parameters.put("directorName", profile.getFullName());
+        parameters.put("legalName", profile.getName());
+        parameters.put("directorName", profile.getDirectorName());
 
         if (AttestationDirection.COMMITTEE.equals(dto.getDirection())) {
             parameters.put("employees", dto.getDynamicRows());

@@ -34,13 +34,13 @@ public class ExpertiseConclusionPdfProcessor extends BaseAppealPdfProcessor {
         ExpConclusionAppealDto dto = (ExpConclusionAppealDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", profile.getLegalName());
+        parameters.put("legalName", profile.getName());
         parameters.put("customerLegalAddress", dto.getCustomerLegalAddress());
         parameters.put("customerLegalName", dto.getCustomerLegalName());
         parameters.put("customerTin", dto.getCustomerTin().toString());
 
-        parameters.put("director", profile.getFullName());
-        parameters.put("legalAddress", profile.getLegalAddress());
+        parameters.put("director", profile.getDirectorName());
+        parameters.put("legalAddress", profile.getAddress());
         parameters.put("phoneNumber", dto.getPhoneNumber());
 
         parameters.put("certificateDate", getFormattedDateAsString(dto.getCertificateDate()));
