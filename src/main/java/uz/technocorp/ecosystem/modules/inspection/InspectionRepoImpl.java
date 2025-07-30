@@ -106,8 +106,8 @@ public class InspectionRepoImpl implements InspectionRepo {
                         inspectionRoot.get("tin"),
                         regionJoin.get("name"),
                         districtJoin.get("name"),
-                        profileJoin.get("legalName"),
-                        profileJoin.get("legalAddress")
+                        profileJoin.get("name"),
+                        profileJoin.get("address")
                 ));
 
         // Qidiruvni amalga oshirish

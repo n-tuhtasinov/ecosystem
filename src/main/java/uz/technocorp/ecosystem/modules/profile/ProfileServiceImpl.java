@@ -1,7 +1,5 @@
 package uz.technocorp.ecosystem.modules.profile;
 
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,7 +13,6 @@ import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.office.projection.OfficeViewById;
-import uz.technocorp.ecosystem.modules.prevention.Prevention;
 import uz.technocorp.ecosystem.modules.prevention.dto.PreventionParamsDto;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileView;
@@ -23,7 +20,6 @@ import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 
-import java.util.Objects;
 import java.util.UUID;
 
 import static org.springframework.data.jpa.domain.Specification.where;
@@ -123,19 +119,9 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Page<ProfileView> getProfilesForPrevention(PreventionParamsDto params) {
-
         // Base condition
-        Specification<Profile> baseQuery = (root, query, cb) -> {
-            Subquery<Long> subquery = Objects.requireNonNull(query).subquery(Long.class);
-            Root<Prevention> preventionRoot = subquery.from(Prevention.class);
-            subquery.select(preventionRoot.get("profileTin"))
-                    .where(cb.equal(preventionRoot.get("year"), params.getYear()));
-            return cb.and(
-                    cb.isNotNull(root.get("identity")),
-                    cb.not(root.get("identity").in(subquery)),
-                    cb.equal(cb.length(root.get("identity")), 9)
-            );
-        };
+        Specification<Profile> baseQuery = (root, query, cb) ->
+                cb.between(root.get("identity"), 100000000L, 999999999L);
 
         // Search
         Specification<Profile> hasSearch = (root, cq, cb) -> {

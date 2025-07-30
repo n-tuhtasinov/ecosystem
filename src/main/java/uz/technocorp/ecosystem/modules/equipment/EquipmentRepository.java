@@ -48,7 +48,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    e.owner_identity  as legalTin,
                    e.owner_address,
                    e.owner_name      as legalName,
-                   p.director_name   as inspectorName,
+                   p.name   as inspectorName,
                    aie.id            as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
@@ -83,7 +83,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    e.owner_identity    as legalTin,
                    e.owner_address,
                    e.owner_name   as legalName,
-                   p.director_name    as inspectorName,
+                   p.name    as inspectorName,
                    aie.id         as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
@@ -118,7 +118,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    e.owner_identity    as legalTin,
                    e.owner_address,
                    e.owner_name   as legalName,
-                   p.director_name    as inspectorName,
+                   p.name    as inspectorName,
                    aie.id         as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
@@ -153,7 +153,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    e.owner_identity     as legalTin,
                    e.owner_address,
                    e.owner_name         as legalName,
-                   p.director_name      as inspectorName,
+                   p.name      as inspectorName,
                    aie.id               as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
@@ -189,7 +189,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    e.owner_identity     as legalTin,
                    e.owner_address,
                    e.owner_name         as legalName,
-                   p.director_name      as inspectorName,
+                   p.name      as inspectorName,
                    aie.id               as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
@@ -224,7 +224,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                    e.owner_identity     as legalTin,
                    e.owner_address,
                    e.owner_name         as legalName,
-                   p.director_name      as inspectorName,
+                   p.name      as inspectorName,
                    aie.id               as assignId,
                    case
                         when e.type = 'ELEVATOR' then elev_scores.total_score
