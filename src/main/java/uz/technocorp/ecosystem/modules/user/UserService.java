@@ -40,7 +40,7 @@ public interface UserService {
 
     UserViewByInspectorPin getInspectorByPin(long pin);
 
-    UserViewByLegal getLegalUserByTin(Long tin);
+    UserViewByProfile getLegalOrIndividualUserByIdentity(Long identity);
 
     User findById(UUID id);
 }

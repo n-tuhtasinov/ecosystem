@@ -18,7 +18,7 @@ import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
 import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
-import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByProfile;
 import uz.technocorp.ecosystem.shared.AppConstants;
 import uz.technocorp.ecosystem.modules.department.Department;
 import uz.technocorp.ecosystem.modules.department.DepartmentRepository;
@@ -216,8 +216,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserViewByLegal getLegalUserByTin(Long tin) {
-        return userRepository.findLegalUserByTin(tin).orElseThrow(()-> new ResourceNotFoundException("User (roli legal)", "tin", tin));
+    public UserViewByProfile getLegalOrIndividualUserByIdentity(Long identity) {
+        return userRepository.findLegalAndIndividualUserByIdentity(identity).orElseThrow(()-> new ResourceNotFoundException("User (roli legal yoki individual)", "tin yoki pin", identity));
     }
 
     @Override
