@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal.view;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public interface AppealViewById {
     String getStatus();
     Long getOwnerIdentity();
     String getOwnerName();
+    String getOwnerType();
     String getResolution();
     String getConclusion();
     String getDepartmentName();

@@ -111,14 +111,14 @@ public class EquipmentRepoImpl implements EquipmentRepo{
     }
 
     @Override
-    public Long countByParams(Long legalTin, Integer regionId) {
+    public Long countByParams(Long ownerIdentity, Integer regionId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Equipment> countRoot = countQuery.from(Equipment.class);
         List<Predicate> countPredicates = new ArrayList<>();
 
-        if (legalTin != null) {
-            countPredicates.add(cb.equal(countRoot.get("legalTin"), legalTin));
+        if (ownerIdentity != null) {
+            countPredicates.add(cb.equal(countRoot.get("ownerIdentity"), ownerIdentity));
         }
         if (regionId != null) {
             countPredicates.add(cb.equal(countRoot.get("regionId"), regionId));

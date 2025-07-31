@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.modules.user.view.UserViewByInspectorPin;
-import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByProfile;
 
 import java.util.Optional;
 import java.util.Set;
@@ -31,17 +31,17 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
 
     @Query(nativeQuery = true, value = """
             select u.id                   as id,
-                   p.identity             as tin,
-                   p.name                 as legalName,
+                   p.identity             as identity,
+                   p.name                 as name,
                    p.legal_form           as legalForm,
                    p.legal_ownership_type as legalOwnershipType,
-                   p.director_name        as fullName,
-                   p.address              as legalAddress,
+                   p.director_name        as directorName,
+                   p.address              as address,
                    p.phone_number         as phoneNumber,
                    u.enabled              as isActive
             from users u
                      join profile p on u.profile_id = p.id
-            where p.tin = :tin
+            where p.identity = :identity
             """)
-    Optional<UserViewByLegal> findLegalUserByTin(Long tin);
+    Optional<UserViewByProfile> findLegalAndIndividualUserByIdentity(Long identity);
 }

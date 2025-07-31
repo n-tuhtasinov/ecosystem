@@ -15,5 +15,5 @@ public interface EquipmentRepo {
 
     Page<EquipmentView> getAllByParams(User user, EquipmentParams params);
 
-    Long countByParams(Long legalTin, Integer regionId);
+    Long countByParams(Long ownerIdentity, Integer regionId);
 }

@@ -15,7 +15,7 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.modules.user.view.CommitteeUserView;
 import uz.technocorp.ecosystem.modules.user.view.OfficeUserView;
 import uz.technocorp.ecosystem.modules.user.view.UserViewById;
-import uz.technocorp.ecosystem.modules.user.view.UserViewByLegal;
+import uz.technocorp.ecosystem.modules.user.view.UserViewByProfile;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 
@@ -127,7 +127,7 @@ public class UserController {
 
     @GetMapping("/legal/{tin}")
     ResponseEntity<?> getLegalUser(@PathVariable Long tin) {
-        UserViewByLegal user = userService.getLegalUserByTin(tin);
+        UserViewByProfile user = userService.getLegalOrIndividualUserByIdentity(tin);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(user));
     }
 
