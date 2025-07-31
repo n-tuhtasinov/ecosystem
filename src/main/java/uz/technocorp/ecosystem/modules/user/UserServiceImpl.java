@@ -165,7 +165,7 @@ public class UserServiceImpl implements UserService {
     public UserViewById getById(UUID userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
-        return new UserViewById(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), profile.getDepartmentId(), profile.getOfficeId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
+        return new UserViewById(user.getId(), profile.getDirectorName(), profile.getIdentity(), user.getRole().name(), user.getDirections(), profile.getDepartmentId(), profile.getOfficeId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
     }
 
     private List<InspectorDto> getInspectorList(Map<String, String> params) {
@@ -201,13 +201,13 @@ public class UserServiceImpl implements UserService {
     private CommitteeUserView convertToCommitteeView(User user) {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
         Department department = departmentRepository.findById(profile.getDepartmentId()).orElseThrow(() -> new ResourceNotFoundException("Department", "id", profile.getDepartmentId()));
-        return new CommitteeUserView(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), department.getName(), profile.getDepartmentId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
+        return new CommitteeUserView(user.getId(), profile.getDirectorName(), profile.getIdentity(), user.getRole().name(), user.getDirections(), department.getName(), profile.getDepartmentId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
     }
 
     private OfficeUserView convertToOfficeView(User user) {
         Profile profile = profileRepository.findById(user.getProfileId()).orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
         Office office = officeRepository.findById(profile.getOfficeId()).orElseThrow(() -> new ResourceNotFoundException("Office", "id", profile.getOfficeId()));
-        return new OfficeUserView(user.getId(), profile.getFullName(), profile.getPin(), user.getRole().name(), user.getDirections(), office.getName(), office.getId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
+        return new OfficeUserView(user.getId(), profile.getDirectorName(), profile.getIdentity(), user.getRole().name(), user.getDirections(), office.getName(), office.getId(), profile.getPosition(), profile.getPhoneNumber(), user.isEnabled());
     }
 
     @Override

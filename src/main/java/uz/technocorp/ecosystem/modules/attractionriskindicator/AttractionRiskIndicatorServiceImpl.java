@@ -205,7 +205,7 @@ public class AttractionRiskIndicatorServiceImpl implements AttractionRiskIndicat
                                 inspectionRepository.save(inspection);
                             } else {
                                 profileRepository
-                                        .findByTin(tin)
+                                        .findByIdentity(tin)
                                         .ifPresent(profile -> {
                                             inspectionRepository.save(
                                                     Inspection

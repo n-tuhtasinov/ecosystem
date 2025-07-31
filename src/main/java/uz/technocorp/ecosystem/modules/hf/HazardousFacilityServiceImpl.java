@@ -74,13 +74,13 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
         repository.save(
                 HazardousFacility.builder()
-                        .legalTin(appeal.getLegalTin())
-                        .legalName(appeal.getLegalName())
+                        .legalTin(appeal.getOwnerIdentity())
+                        .legalName(appeal.getOwnerName())
                         .regionId(appeal.getRegionId())
                         .districtId(appeal.getDistrictId())
                         .orderNumber(maxOrderNumber)
                         .profileId(appeal.getProfileId())
-                        .legalAddress(appeal.getLegalAddress())
+                        .legalAddress(appeal.getOwnerAddress())
                         .upperOrganization(hfAppealDto.getUpperOrganization())
                         .name(hfAppealDto.getName())
                         .address(appeal.getAddress())
@@ -115,11 +115,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 //        repository.save(
 //                HazardousFacility.builder()
 //                        .legalTin(dto.legalTin())
-//                        .legalName(profile.getLegalName())
+//                        .legalName(profile.getName())
 //                        .regionId(dto.regionId())
 //                        .districtId(dto.districtId())
 //                        .profileId(profile.getId())
-//                        .legalAddress(profile.getLegalAddress())
+//                        .legalAddress(profile.getAddress())
 //                        .phoneNumber(dto.phoneNumber())
 //                        .email(dto.email())
 //                        .upperOrganization(dto.upperOrganization())
@@ -156,13 +156,13 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     public void update(UUID id, HfDto dto) {
         HazardousFacility hazardousFacility = findById(id);
 
-        Profile profile = profileService.findByTin(dto.legalTin());
+        Profile profile = profileService.findByIdentity(dto.legalTin());
 
         hazardousFacility.setLegalTin(dto.legalTin());
-        hazardousFacility.setLegalName(profile.getLegalName());
+        hazardousFacility.setLegalName(profile.getName());
         hazardousFacility.setRegionId(dto.regionId());
         hazardousFacility.setDistrictId(dto.districtId());
-        hazardousFacility.setLegalAddress(profile.getLegalAddress());
+        hazardousFacility.setLegalAddress(profile.getAddress());
         hazardousFacility.setUpperOrganization(dto.upperOrganization());
         hazardousFacility.setName(dto.name());
         hazardousFacility.setAddress(dto.address());
@@ -219,7 +219,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     @Override
     public List<HfSelectView> findAllByUser(User user, String registryNumber) {
         Profile profile = profileService.getProfile(user.getProfileId());
-        return repository.findAllByTinAndRegistryNumber(profile.getTin(), registryNumber.trim());
+        return repository.findAllByTinAndRegistryNumber(profile.getIdentity(), registryNumber.trim());
     }
 
     @Override
@@ -238,7 +238,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
             }
             params.setRegionId(office.getRegionId());
         } else if (user.getRole() == Role.LEGAL) {
-            params.setLegalTin(profile.getTin());
+            params.setLegalTin(profile.getIdentity());
         } else {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
@@ -286,7 +286,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
             Profile profile = profileRepository
                     .findById(profileId)
                     .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));
-            return repository.getAllByLegalTinAndInterval(pageable, profile.getTin(), intervalId);
+            return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), intervalId);
         }
 
     }
@@ -311,7 +311,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     public Long getCount(User user) {
         Profile profile = profileService.getProfile(user.getProfileId());
         return switch (user.getRole()) {
-            case LEGAL -> repository.countByParams(profile.getTin(), null);
+            case LEGAL -> repository.countByParams(profile.getIdentity(), null);
             case REGIONAL, INSPECTOR -> repository.countByParams(null, profile.getRegionId());
             default -> repository.countByParams(null, null);
         };
@@ -322,8 +322,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         // Make parameters
         Map<String, String> parameters = new HashMap<>();
         parameters.put("upperOrganization", hfAppealDto.getUpperOrganization() != null ? hfAppealDto.getUpperOrganization() : "-");
-        parameters.put("legalName", appeal.getLegalName());
-        parameters.put("legalTin", appeal.getLegalTin().toString());
+        parameters.put("legalName", appeal.getOwnerName());
+        parameters.put("legalTin", appeal.getOwnerIdentity().toString());
         parameters.put("name", hfAppealDto.getName());
         parameters.put("address", appeal.getAddress());
         parameters.put("hfTypeName", hfAppealDto.getHfTypeName());

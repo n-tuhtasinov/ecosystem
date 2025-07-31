@@ -3,7 +3,6 @@ package uz.technocorp.ecosystem.modules.appeal.processor;
 import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.accreditationappeal.dto.AccreditationAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.attestationappeal.dto.AttestationDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 
@@ -33,10 +32,10 @@ public class AccreditationPdfProcessor extends BaseAppealPdfProcessor {
         AccreditationAppealDto dto = (AccreditationAppealDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", profile.getLegalName());
+        parameters.put("legalName", profile.getName());
         parameters.put("phoneNumber", dto.getPhoneNumber());
-        parameters.put("legalAddress", profile.getLegalAddress());
-        parameters.put("fullName", profile.getFullName());
+        parameters.put("legalAddress", profile.getAddress());
+        parameters.put("fullName", profile.getDirectorName());
         parameters.put("responsiblePersonName", dto.getResponsiblePersonName());
 
         return parameters;

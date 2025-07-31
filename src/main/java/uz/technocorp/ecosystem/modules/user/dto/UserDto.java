@@ -1,5 +1,7 @@
 package uz.technocorp.ecosystem.modules.user.dto;
 
+import uz.technocorp.ecosystem.modules.profile.enums.ProfileType;
+
 import java.util.List;
 
 /**
@@ -13,11 +15,10 @@ public interface UserDto {
     String getRole();
     List<String> getDirections();
     String getName();
-    Long getTin();
-    String getLegalName();
+    Long getIdentity();
     String getLegalAddress();
     String getFullName();
-    Long getPin();
+    ProfileType getType();
     Integer getDepartmentId();
     Integer getOfficeId();
     Integer getRegionId();

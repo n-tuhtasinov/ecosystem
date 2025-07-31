@@ -2,11 +2,12 @@ package uz.technocorp.ecosystem.modules.profile;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.department.Department;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.office.Office;
+import uz.technocorp.ecosystem.modules.profile.enums.ProfileType;
 import uz.technocorp.ecosystem.modules.region.Region;
+import uz.technocorp.ecosystem.shared.BaseEntity;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -23,30 +24,31 @@ import uz.technocorp.ecosystem.modules.region.Region;
 public class Profile extends BaseEntity {
 
     @Column(unique = true)
-    private Long tin;
+    private Long identity;
 
-    private String legalName;
-    private String legalAddress;
-    private String fullName;
+    private String name;
+    private String address;
+    private String directorName;
 
-    @Column(unique = true)
-    private Long pin;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ProfileType type;
 
-    @ManyToOne(targetEntity = Department.class, fetch = FetchType.LAZY )
+    @ManyToOne(targetEntity = Department.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", insertable = false, updatable = false)
     private Department department;
 
     @Column(name = "department_id")
     private Integer departmentId;
 
-    @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY )
+    @ManyToOne(targetEntity = Office.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id", insertable = false, updatable = false)
     private Office office;
 
     @Column(name = "office_id")
     private Integer officeId;
 
-    @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY )
+    @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", insertable = false, updatable = false)
     private Region region;
 
@@ -55,7 +57,7 @@ public class Profile extends BaseEntity {
 
     private String regionName;
 
-    @ManyToOne(targetEntity = District.class, fetch = FetchType.LAZY )
+    @ManyToOne(targetEntity = District.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id", insertable = false, updatable = false)
     private District district;
 

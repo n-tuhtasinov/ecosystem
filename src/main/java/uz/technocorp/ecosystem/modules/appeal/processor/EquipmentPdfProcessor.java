@@ -32,8 +32,8 @@ public class EquipmentPdfProcessor extends BaseAppealPdfProcessor {
         EquipmentAppealDto dto = (EquipmentAppealDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", profile.getLegalName());
-        parameters.put("legalTin", profile.getTin().toString());
+        parameters.put("legalName", profile.getName());
+        parameters.put("legalTin", profile.getIdentity().toString());
         parameters.put("facilityName", dto.getHazardousFacilityName() != null ? dto.getHazardousFacilityName() : "-");
         parameters.put("regionName", getRegion(dto.getRegionId()).getName());
         parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
@@ -42,7 +42,7 @@ public class EquipmentPdfProcessor extends BaseAppealPdfProcessor {
         parameters.put("model", dto.getModel());
         parameters.put("factory", dto.getFactory());
         parameters.put("equipmentType", dto.getType().value);
-        parameters.put("fullName", profile.getFullName());
+        parameters.put("fullName", profile.getDirectorName());
 
         return parameters;
     }

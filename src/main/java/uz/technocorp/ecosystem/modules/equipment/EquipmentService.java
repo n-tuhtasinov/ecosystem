@@ -44,8 +44,6 @@ public interface EquipmentService {
 
     String createEquipmentRegistryPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate);
 
-    List<Equipment> getAllEquipmentByTypeAndTin(Long tin, EquipmentType type);
-
-    List<Equipment> getAllEquipmentByTypeAndPin(Long pin, EquipmentType type);
+    List<Equipment> getAllEquipmentByTypeAndTinOrPin(Long tin, EquipmentType type);
 
 }

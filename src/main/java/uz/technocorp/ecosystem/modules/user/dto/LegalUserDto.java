@@ -1,7 +1,10 @@
 package uz.technocorp.ecosystem.modules.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import uz.technocorp.ecosystem.modules.profile.enums.ProfileType;
 import uz.technocorp.ecosystem.modules.user.enums.Direction;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 
@@ -10,15 +13,15 @@ import java.util.List;
 /**
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
- * @since v1.0
  * @created 15.02.2025
  * @description The legal user has only "appeal" in the direction list when it is first created
+ * @since v1.0
  */
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LegalUserDto implements UserDto{
+public class LegalUserDto implements UserDto {
 
     private Long tin;
 
@@ -61,8 +64,13 @@ public class LegalUserDto implements UserDto{
     }
 
     @Override
-    public Long getPin() {
-        return null;
+    public Long getIdentity() {
+        return this.tin;
+    }
+
+    @Override
+    public ProfileType getType() {
+        return ProfileType.LEGAL;
     }
 
     @Override

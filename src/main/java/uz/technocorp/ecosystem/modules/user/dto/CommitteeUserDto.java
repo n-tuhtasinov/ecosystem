@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uz.technocorp.ecosystem.modules.profile.enums.ProfileType;
 
 import java.util.List;
 
@@ -19,73 +20,73 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommitteeUserDto implements UserDto {
-        @NotBlank(message = "Hodim FIOsi jo'natilmadi")
-        private String fullName;
+    @NotBlank(message = "Hodim FIOsi jo'natilmadi")
+    private String fullName;
 
-        @NotNull(message = "Hodim JSHIRi jo'natilmadi")
-        private Long pin;
+    @NotNull(message = "Hodim JSHIRi jo'natilmadi")
+    private Long pin;
 
-        @NotBlank(message = "Hodim roli tanlanmadi")
-        private String role;
+    @NotBlank(message = "Hodim roli tanlanmadi")
+    private String role;
 
-        @NotEmpty(message = "Hodim bajaradigan ishlar tanlanmadi")
-        private List<@NotBlank(message = "Directionga bo'sh String qo'shish mumkin emas") String> directions;
+    @NotEmpty(message = "Hodim bajaradigan ishlar tanlanmadi")
+    private List<@NotBlank(message = "Directionga bo'sh String qo'shish mumkin emas") String> directions;
 
-        private Integer departmentId;
+    private Integer departmentId;
 
-        @NotBlank(message = "Hodim lavozimi jo'natilmadi")
-        private String position;
+    @NotBlank(message = "Hodim lavozimi jo'natilmadi")
+    private String position;
 
-        @NotBlank(message = "Hodim telefon raqami jo'natilmadi")
-        private String phoneNumber;
+    @NotBlank(message = "Hodim telefon raqami jo'natilmadi")
+    private String phoneNumber;
 
-        @Override
-        public String getUsername() {
-                return this.pin.toString();
-        }
+    @Override
+    public String getUsername() {
+        return this.pin.toString();
+    }
 
-        @Override
-        public String getName() {
-                return this.fullName;
-        }
+    @Override
+    public String getName() {
+        return this.fullName;
+    }
 
-        @Override
-        public Long getTin() {
-                return null;
-        }
+    @Override
+    public Long getIdentity() {
+        return this.pin;
+    }
 
-        @Override
-        public String getLegalName() {
-                return null;
-        }
+    @Override
+    public String getLegalAddress() {
+        return null;
+    }
 
-        @Override
-        public String getLegalAddress() {
-                return null;
-        }
+    @Override
+    public ProfileType getType() {
+        return ProfileType.EMPLOYEE;
+    }
 
-        @Override
-        public Integer getOfficeId() {
-                return null;
-        }
+    @Override
+    public Integer getOfficeId() {
+        return null;
+    }
 
-        @Override
-        public Integer getRegionId() {
-                return null;
-        }
+    @Override
+    public Integer getRegionId() {
+        return null;
+    }
 
-        @Override
-        public Integer getDistrictId() {
-                return null;
-        }
+    @Override
+    public Integer getDistrictId() {
+        return null;
+    }
 
-        @Override
-        public String getLegalOwnershipType() {
-                return null;
-        }
+    @Override
+    public String getLegalOwnershipType() {
+        return null;
+    }
 
-        @Override
-        public String getLegalForm() {
-                return null;
-        }
+    @Override
+    public String getLegalForm() {
+        return null;
+    }
 }

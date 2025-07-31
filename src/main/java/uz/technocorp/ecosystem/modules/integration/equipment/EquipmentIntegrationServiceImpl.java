@@ -40,26 +40,20 @@ public class EquipmentIntegrationServiceImpl implements EquipmentIntegrationServ
     @Override
     public InfoDto<EquipmentInfoDto> getEquipmentInfo(String tinOrPin, EquipmentType type) {
 
-        if (tinOrPin == null) {
+        if (tinOrPin == null || (tinOrPin.length() != 9 && tinOrPin.length() != 14)) {
             throw new CustomException("STIR yoki Pinfl ma'lumotida xatolik");
         }
-        List<Equipment> equipmentList = new ArrayList<>();
-        Profile profile;
-        if (tinOrPin.length() == 9) {
-            profile = profileService.findByTin(Long.parseLong(tinOrPin));
-            equipmentList.addAll(equipmentService.getAllEquipmentByTypeAndTin(profile.getTin(), type));
-        } else {
-            profile = profileService.findByPin(Long.parseLong(tinOrPin));
-            equipmentList.addAll(equipmentService.getAllEquipmentByTypeAndPin(profile.getTin(), type));
-        }
+
+        Profile profile = profileService.findByIdentity(Long.parseLong(tinOrPin));
+
+        List<Equipment> equipmentList = new ArrayList<>(equipmentService.getAllEquipmentByTypeAndTinOrPin(profile.getIdentity(), type));
 
         InfoDto<EquipmentInfoDto> info = new InfoDto<>();
 
-        info.setTin(profile.getTin());
-        info.setPin(profile.getPin());
-        info.setLegalName(profile.getLegalName());
-        info.setLegalAddress(profile.getLegalAddress());
-        info.setFullName(profile.getFullName());
+        info.setTinOrPin(profile.getIdentity());
+        info.setLegalName(profile.getName());
+        info.setLegalAddress(profile.getAddress());
+        info.setFullName(profile.getDirectorName());
         info.setRegionName(profile.getRegionName());
         info.setDistrictName(profile.getDistrictName());
         info.setPhoneNumber(profile.getPhoneNumber());

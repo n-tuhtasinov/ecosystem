@@ -89,7 +89,7 @@ public class InspectionRepoImpl implements InspectionRepo {
             Profile profile = profileRepository
                     .findById(user.getProfileId())
                     .orElseThrow(() -> new ResourceNotFoundException("Profile", "id", user.getProfileId()));
-            Long profileTin = profile.getTin();
+            Long profileTin = profile.getIdentity();
             predicates.add(criteriaBuilder.equal(inspectionRoot.get("tin"), profileTin));
             countPredicates.add(criteriaBuilder.equal(countRoot.get("tin"), profileTin));
         }
@@ -106,8 +106,8 @@ public class InspectionRepoImpl implements InspectionRepo {
                         inspectionRoot.get("tin"),
                         regionJoin.get("name"),
                         districtJoin.get("name"),
-                        profileJoin.get("legalName"),
-                        profileJoin.get("legalAddress")
+                        profileJoin.get("name"),
+                        profileJoin.get("address")
                 ));
 
         // Qidiruvni amalga oshirish

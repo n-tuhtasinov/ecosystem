@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uz.technocorp.ecosystem.modules.profile.enums.ProfileType;
 
 import java.util.List;
 
@@ -51,18 +52,18 @@ public class OfficeUserDto implements UserDto {
     }
 
     @Override
-    public Long getTin() {
-        return null;
-    }
-
-    @Override
-    public String getLegalName() {
-        return null;
+    public Long getIdentity() {
+        return this.pin;
     }
 
     @Override
     public String getLegalAddress() {
         return null;
+    }
+
+    @Override
+    public ProfileType getType() {
+        return ProfileType.EMPLOYEE;
     }
 
     @Override

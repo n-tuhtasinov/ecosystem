@@ -200,7 +200,7 @@ public class ElevatorRiskIndicatorServiceImpl implements ElevatorRiskIndicatorSe
                                     .findAllByTinAndIntervalId(tin, riskAnalysisInterval.getId());
                             Set<Integer> regionIds = equipmentRepository.getAllRegionIdByLegalTin(tin);
                             if (inspectionOptional.isEmpty()) {
-                                profileRepository.findByTin(tin).ifPresent(profile -> {
+                                profileRepository.findByIdentity(tin).ifPresent(profile -> {
                                     inspectionRepository.save(
                                             Inspection
                                                     .builder()

@@ -13,8 +13,8 @@ public interface AppealViewByPeriod {
     UUID getId();
     String getAppealType();
     String getNumber();
-    String getLegalName();
-    Long getLegalTin();
+    String getOwnerName();
+    Long getOwnerIdentity();
     String getAddress();
     String getPhoneNumber();
     LocalDate getDeadline();

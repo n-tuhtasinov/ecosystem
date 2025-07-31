@@ -27,14 +27,14 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
     Optional<Long> getMax();
 
     @Query(nativeQuery = true, value = """
-            select a.id            as id,
-                   a.appeal_type   as appealType,
-                   a.number        as number,
-                   a.legal_name    as legalName,
-                   a.legal_tin     as legalTin,
-                   a.address       as address,
-                   a.phone_number  as phoneNumber,
-                   a.deadline as deadline
+            select a.id             as id,
+                   a.appeal_type    as appealType,
+                   a.number         as number,
+                   a.owner_name     as ownerName,
+                   a.owner_identity as ownerIdentity,
+                   a.address        as address,
+                   a.phone_number   as phoneNumber,
+                   a.deadline       as deadline
             from appeal a
             where a.deadline between :startDate and :endDate
               and a.executor_id = :inspectorId

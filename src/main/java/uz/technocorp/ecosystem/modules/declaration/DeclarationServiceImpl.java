@@ -34,9 +34,9 @@ public class DeclarationServiceImpl implements DeclarationService {
         DeclarationDto dto = JsonParser.parseJsonData(appeal.getData(), DeclarationDto.class);
 
         Declaration declaration = Declaration.builder()
-                .legalTin(appeal.getLegalTin())
-                .legalName(appeal.getLegalName())
-                .legalAddress(appeal.getLegalAddress())
+                .legalTin(appeal.getOwnerIdentity())
+                .legalName(appeal.getOwnerName())
+                .legalAddress(appeal.getOwnerAddress())
                 .appealId(appeal.getId())
                 .hfId(dto.getHfId())
                 .hfName(dto.getHfName())
@@ -65,7 +65,7 @@ public class DeclarationServiceImpl implements DeclarationService {
 
         switch (user.getRole()) {
             case MANAGER, HEAD -> changeParams(params, null);
-            case LEGAL -> changeParams(params, profile.getTin());
+            case LEGAL -> changeParams(params, profile.getIdentity());
             default -> throw new RuntimeException("Sizda kadastrni ko'rish ruxsati yo'q");
         }
 

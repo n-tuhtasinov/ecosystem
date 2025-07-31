@@ -16,9 +16,9 @@ public record EquipmentView (
         LocalDate registrationDate,
         String registryNumber,
         EquipmentType type,
-        String legalName,
-        Long legalTin,
-        String legalAddress,
+        String ownerName,
+        Long ownerIdentity,
+        String ownerAddress,
         String hfName,
         String address,
         String factoryNumber

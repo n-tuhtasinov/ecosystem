@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
@@ -24,10 +25,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PreventionFileServiceImpl implements PreventionFileService {
 
-    private final ProfileService profileService;
-    private final PreventionFileRepository repository;
-    private final OfficeService officeService;
     private final AttachmentService attachmentService;
+    private final PreventionFileRepository repository;
+    private final ProfileService profileService;
+    private final OfficeService officeService;
 
     @Override
     public PreventionFile get(User user, Integer year) {
@@ -46,12 +47,13 @@ public class PreventionFileServiceImpl implements PreventionFileService {
     public void create(User user, String filePath) {
         Integer currentYear = LocalDate.now().getYear();
         Profile profile = profileService.getProfile(user.getProfileId());
+        Office office = officeService.findById(profile.getOfficeId());
 
         PreventionFile file = repository.findByYearAndRegionId(currentYear, profile.getRegionId()).orElse(new PreventionFile());
 
         file.setPath(filePath);
         file.setYear(currentYear);
-        file.setRegionId(profile.getRegionId());
+        file.setRegionId(office.getRegionId());
 
         repository.save(file);
 

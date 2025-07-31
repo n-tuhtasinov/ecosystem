@@ -24,9 +24,7 @@ public interface ProfileService {
 
     Long getProfileTin(UUID profileId);
 
-    Profile findByTin(Long tin);
-
-    Profile findByPin(Long pin);
+    Profile findByIdentity(Long tin);
 
     Profile getProfile(UUID profileId);
 

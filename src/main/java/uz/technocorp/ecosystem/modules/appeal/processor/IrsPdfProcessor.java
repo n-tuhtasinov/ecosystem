@@ -2,7 +2,6 @@ package uz.technocorp.ecosystem.modules.appeal.processor;
 
 import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.EquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
@@ -33,8 +32,8 @@ public class IrsPdfProcessor extends BaseAppealPdfProcessor {
         IrsAppealDto dto = (IrsAppealDto) appealDto;
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", profile.getLegalName());
-        parameters.put("legalTin", profile.getTin().toString());
+        parameters.put("legalName", profile.getName());
+        parameters.put("legalTin", profile.getIdentity().toString());
         parameters.put("identifierType", dto.getIdentifierType());
         parameters.put("factoryNumber", dto.getFactoryNumber());
         parameters.put("serialNumber", dto.getSerialNumber());
@@ -43,7 +42,7 @@ public class IrsPdfProcessor extends BaseAppealPdfProcessor {
         parameters.put("regionName", getRegion(dto.getRegionId()).getName());
         parameters.put("districtName", getDistrict(dto.getDistrictId()).getName());
         parameters.put("address", dto.getAddress());
-        parameters.put("fullName", profile.getFullName());
+        parameters.put("fullName", profile.getDirectorName());
 
         return parameters;
     }

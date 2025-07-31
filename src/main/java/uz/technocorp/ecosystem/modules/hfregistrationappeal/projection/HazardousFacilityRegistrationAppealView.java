@@ -20,9 +20,9 @@
 //
 //    String getOrderNumber();
 //
-//    Long getLegalTin();
+//    Long getIdentity();
 //
-//    String getLegalName();
+//    String getName();
 //
 //    Integer getRegionId();
 //
@@ -32,7 +32,7 @@
 //
 //    String getDistrictName();
 //
-//    String getLegalAddress();
+//    String getAddress();
 //
 //    String getPhoneNumber();
 //

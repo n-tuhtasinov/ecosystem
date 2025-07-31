@@ -132,8 +132,8 @@ public class AccreditationServiceImpl implements AccreditationService {
         parameters.put("certificateDate", certDate);
         parameters.put("certificateNumber", dto.getCertificateNumber());
         parameters.put("certificateValidityDate", certValidDate);
-        parameters.put("legalAddress", profile.getLegalAddress());
-        parameters.put("legalName", profile.getLegalName());
+        parameters.put("legalAddress", profile.getAddress());
+        parameters.put("legalName", profile.getName());
         parameters.put("fullName", user.getName());
 
         // Save to an attachment and folder & Return a file path
@@ -152,7 +152,7 @@ public class AccreditationServiceImpl implements AccreditationService {
         UUID accreditationId;
         if (accreditationOpl.isPresent()) {
             Accreditation acc = accreditationOpl.get();
-            if (!acc.getTin().equals(appeal.getLegalTin())) {
+            if (!acc.getTin().equals(appeal.getOwnerIdentity())) {
                 throw new RuntimeException("Ariza boshqa tashkilot tomonidan yuborilgan!");
             }
             acc.setCertificateNumber(dto.getCertificateNumber());
@@ -171,7 +171,7 @@ public class AccreditationServiceImpl implements AccreditationService {
 
             accreditationId = repository.save(acc).getId();
         } else {
-            Profile profile = profileService.findByTin(appeal.getLegalTin());
+            Profile profile = profileService.findByIdentity(appeal.getOwnerIdentity());
 
             accreditationId = repository.save(
                     Accreditation
@@ -189,10 +189,10 @@ public class AccreditationServiceImpl implements AccreditationService {
                             .referencePath(dto.getReferencePath())
                             .accreditationCertificatePath(dto.getAccreditationCertificatePath())
                             .appealId(dto.getAppealId())
-                            .tin(profile.getTin())
-                            .legalName(profile.getLegalName())
-                            .legalAddress(profile.getLegalAddress())
-                            .legalFullName(profile.getFullName())
+                            .tin(profile.getIdentity())
+                            .legalName(profile.getName())
+                            .legalAddress(profile.getAddress())
+                            .legalFullName(profile.getDirectorName())
                             .legalPhoneNumber(profile.getPhoneNumber())
                             .type(AccreditationType.ACCREDITATION)
                             .build()
@@ -230,7 +230,7 @@ public class AccreditationServiceImpl implements AccreditationService {
         appealDto.setPhoneNumber(profile.getPhoneNumber());
         appealDto.setRegionId(profile.getRegionId());
         appealDto.setDistrictId(profile.getDistrictId());
-        String address = profile.getLegalAddress().split(", ")[2];
+        String address = profile.getAddress().split(", ")[2];
         appealDto.setAddress(address);
         return appealDto;
     }
@@ -278,7 +278,7 @@ public class AccreditationServiceImpl implements AccreditationService {
         String currentDate = currentFormatDate[0] + " yil " + currentFormatDate[2] + "-" + currentFormatDate[1];
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalName", appeal.getOwnerName());
         parameters.put("date", date);
         parameters.put("registrationDate", currentDate);
         parameters.put("fullName", user.getName());
@@ -292,7 +292,7 @@ public class AccreditationServiceImpl implements AccreditationService {
 
         ConclusionReplyDto replyDto = signDto.getDto();
         Appeal appeal = appealService.findById(replyDto.appealId());
-        Profile profile = profileService.findByTin(appeal.getLegalTin());
+        Profile profile = profileService.findByIdentity(appeal.getOwnerIdentity());
         ExpConclusionAppealDto dto = JsonParser.parseJsonData(appeal.getData(), ExpConclusionAppealDto.class);
 
         Long orderNumber = repository.getMaxNumber(AccreditationType.CONCLUSION).orElse(0L) + 1;
@@ -322,10 +322,10 @@ public class AccreditationServiceImpl implements AccreditationService {
                         .expertiseConclusionPath(dto.getFiles().getOrDefault("expertiseConclusionPath", ""))
                         .expertiseConclusionNumber(dto.getExpertiseConclusionNumber())
                         .expertiseConclusionDate(LocalDate.now())
-                        .tin(profile.getTin())
-                        .legalName(profile.getLegalName())
-                        .legalAddress(profile.getLegalAddress())
-                        .legalFullName(profile.getFullName())
+                        .tin(profile.getIdentity())
+                        .legalName(profile.getName())
+                        .legalAddress(profile.getAddress())
+                        .legalFullName(profile.getDirectorName())
                         .legalPhoneNumber(profile.getPhoneNumber())
                         .orderNumber(orderNumber)
                         .registryNumber(registryNumber)
@@ -378,8 +378,8 @@ public class AccreditationServiceImpl implements AccreditationService {
 
     private Accreditation findAccreditationByTinAndType(Profile profile, AccreditationType type) {
         return repository
-                .findByTinAndType(profile.getTin(), type)
-                .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya tashkiloti", "STIR va tur", profile.getTin() + ", " + type));
+                .findByTinAndType(profile.getIdentity(), type)
+                .orElseThrow(() -> new ResourceNotFoundException("Akkreditatsiya tashkiloti", "STIR va tur", profile.getIdentity() + ", " + type));
     }
 
     private PageRequest getPageRequest(AccreditationParamsDto params) {

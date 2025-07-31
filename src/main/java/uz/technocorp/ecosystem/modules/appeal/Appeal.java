@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.district.District;
@@ -42,17 +43,21 @@ public class Appeal extends BaseEntity {
     private Long orderNumber;
 
     @Column(nullable = false)
-    private Long legalTin;
+    private Long ownerIdentity;
 
     @Column(nullable = false)
-    private String legalName;
+    private String ownerName;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private OwnerType ownerType;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class, optional = false)
-    @JoinColumn(name = "legal_region_id", insertable = false, updatable = false)
-    private Region legalRegion;
+    @JoinColumn(name = "owner_region_id", insertable = false, updatable = false)
+    private Region ownerRegion;
 
-    @Column(name = "legal_region_id", nullable = false)
-    private Integer legalRegionId;
+    @Column(name = "owner_region_id")
+    private Integer ownerRegionId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Region.class)
     @JoinColumn(name = "region_id", insertable = false, updatable = false)
@@ -62,11 +67,11 @@ public class Appeal extends BaseEntity {
     private Integer regionId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class, optional = false)
-    @JoinColumn(name = "legal_district_id", insertable = false, updatable = false)
-    private District legalDistrict;
+    @JoinColumn(name = "owner_district_id", insertable = false, updatable = false)
+    private District ownerDistrict;
 
-    @Column(name = "legal_district_id", nullable = false)
-    private Integer legalDistrictId;
+    @Column(name = "owner_district_id")
+    private Integer ownerDistrictId;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = District.class)
     @JoinColumn(name = "district_id", insertable = false, updatable = false)
@@ -74,6 +79,9 @@ public class Appeal extends BaseEntity {
 
     @Column(name = "district_id")
     private Integer districtId;
+
+    @Column(nullable = false)
+    private String ownerAddress;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Profile.class)
     @JoinColumn(name = "profile_id", insertable = false, updatable = false)
@@ -111,9 +119,6 @@ public class Appeal extends BaseEntity {
     private AppealStatus status;
 
     private String address;
-
-    @Column(nullable = false)
-    private String legalAddress;
 
     @Column(nullable = false)
     private String phoneNumber;

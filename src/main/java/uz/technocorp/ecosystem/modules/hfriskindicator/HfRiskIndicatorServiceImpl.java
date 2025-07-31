@@ -233,7 +233,7 @@ public class HfRiskIndicatorServiceImpl implements HfRiskIndicatorService {
                             Set<Integer> regionIds = hazardousFacilityRepository.getAllRegionIdByLegalTin(tin);
                             if (inspectionOptional.isEmpty()) {
                                 profileRepository
-                                        .findByTin(tin)
+                                        .findByIdentity(tin)
                                         .ifPresent(profile -> {
                                             inspectionRepository.save(
                                                     Inspection

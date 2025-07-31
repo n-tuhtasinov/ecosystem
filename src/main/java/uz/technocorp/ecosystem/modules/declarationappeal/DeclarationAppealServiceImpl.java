@@ -11,11 +11,9 @@ import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
-import uz.technocorp.ecosystem.modules.cadastrepassportappeal.CadastrePassportAppealService;
 import uz.technocorp.ecosystem.modules.cadastrepassportappeal.dto.ConfirmPassportDto;
 import uz.technocorp.ecosystem.modules.cadastrepassportappeal.dto.RejectPassportDto;
 import uz.technocorp.ecosystem.modules.declaration.DeclarationService;
@@ -76,7 +74,7 @@ public class DeclarationAppealServiceImpl implements DeclarationAppealService {
         String[] workSpace = getExecutorWorkspace(user);
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalName", appeal.getOwnerName());
         parameters.put("date", appealDate);
         parameters.put("appealNumber", appeal.getNumber());
         parameters.put("executorWorkspace", workSpace[0]);
@@ -101,7 +99,7 @@ public class DeclarationAppealServiceImpl implements DeclarationAppealService {
         String[] workSpace = getExecutorWorkspace(user);
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalName", appeal.getOwnerName());
         parameters.put("date", appealDate);
         parameters.put("appealNumber", appeal.getNumber());
         parameters.put("conclusion", rejectPassportDto.conclusion());

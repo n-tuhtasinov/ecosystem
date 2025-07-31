@@ -113,10 +113,10 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
                     ObjectNode objectNode = objectMapper.createObjectNode();
                     objectNode.put("childEquipmentName", childEquipmentName);
                     Appeal appeal = Appeal.builder()
-                            .legalAddress(equipment.getLegalAddress())
+                            .ownerAddress(equipment.getOwnerAddress())
                             .data(objectNode)
-                            .legalTin(equipment.getLegalTin())
-                            .legalName(equipment.getLegalName())
+                            .ownerIdentity(equipment.getOwnerIdentity())
+                            .ownerName(equipment.getOwnerName())
                             .address(equipment.getAddress())
                             .build();
                     EquipmentDto dto = new EquipmentDto(
@@ -285,9 +285,9 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
         }
 
         ProfileInfoView profileInfo = profileService.getProfileInfo(Long.parseLong(legalTin));
-        equipment.setLegalTin(profileInfo.getTin());
-        equipment.setLegalName(profileInfo.getLegalName());
-        equipment.setLegalAddress(profileInfo.getLegalAddress());
+        equipment.setOwnerIdentity(profileInfo.getTin());
+        equipment.setOwnerName(profileInfo.getLegalName());
+        equipment.setOwnerAddress(profileInfo.getLegalAddress());
     }
 
     private static void isValid(String fieldValue, String fieldName) throws Exception {

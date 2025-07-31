@@ -17,7 +17,6 @@ import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
-import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 
@@ -46,11 +45,10 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     private final ProfileService profileService;
     private final UserService userService;
     private final DistrictService districtService;
-    private final RegionService regionService;
     private final HazardousFacilityService hazardousFacilityService;
     private final HfTypeService hfTypeService;
 
-//    @Transactional(rollbackFor = ExcelParsingException.class)
+    //    @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
     public void upload(MultipartFile file) {
         if (file.isEmpty()) {
@@ -93,7 +91,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
                     getDescription(dataFormatter, row, hf); // description
 
                     //create registry file
-                    Appeal appeal = Appeal.builder().legalName(hf.getLegalName()).legalTin(hf.getLegalTin()).address(hf.getAddress()).build();
+                    Appeal appeal = Appeal.builder().ownerName(hf.getLegalName()).ownerIdentity(hf.getLegalTin()).address(hf.getAddress()).build();
                     String hfTypeName = hfTypeService.getHfTypeNameById(hf.getHfTypeId());
                     HfAppealDto dto = new HfAppealDto();
                     dto.setUpperOrganization(hf.getUpperOrganization());
@@ -110,7 +108,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
 //                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
                 }
             }
-            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum+1);
+            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum + 1);
 
 //        } catch (ExcelParsingException e) {
 //            throw e; // to rollback transaction
@@ -122,7 +120,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
 
     private void getDescription(DataFormatter dataFormatter, Row row, HazardousFacility hf) {
         String description = dataFormatter.formatCellValue(row.getCell(17));
-        if (description != null &&  !description.isBlank()) {
+        if (description != null && !description.isBlank()) {
             hf.setDescription(description);
         }
     }

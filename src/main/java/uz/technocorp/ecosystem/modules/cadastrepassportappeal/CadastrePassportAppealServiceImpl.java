@@ -11,7 +11,6 @@ import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedReplyDto;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.dto.AppealExecutionProcessDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
@@ -74,7 +73,7 @@ public class CadastrePassportAppealServiceImpl implements CadastrePassportAppeal
         String[] workSpace = getExecutorWorkspace(user);
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalName", appeal.getOwnerName());
         parameters.put("date", appealDate);
         parameters.put("appealNumber", appeal.getNumber());
         parameters.put("executorWorkspace", workSpace[0]);
@@ -99,7 +98,7 @@ public class CadastrePassportAppealServiceImpl implements CadastrePassportAppeal
         String[] workSpace = getExecutorWorkspace(user);
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("legalName", appeal.getLegalName());
+        parameters.put("legalName", appeal.getOwnerName());
         parameters.put("date", appealDate);
         parameters.put("appealNumber", appeal.getNumber());
         parameters.put("conclusion", rejectPassportDto.conclusion());

@@ -1,10 +1,6 @@
 package uz.technocorp.ecosystem.modules.checklist;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
@@ -17,7 +13,6 @@ import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.user.User;
 
-import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,7 +45,7 @@ public class ChecklistServiceImpl implements ChecklistService {
                         .builder()
                         .path(checklistDto.path())
                         .templateId(checklistDto.templateId())
-                        .tin(profile.getTin())
+                        .tin(profile.getIdentity())
                         .intervalId(checklistDto.intervalId())
                         .objectId(checklistDto.objectId())
                         .build()

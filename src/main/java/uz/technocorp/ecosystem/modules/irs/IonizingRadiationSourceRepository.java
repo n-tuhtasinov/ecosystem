@@ -35,9 +35,9 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    factory_number as factoryNumber,
                    'INM'          as name,
                    irs.legal_tin  as legalTin,
-                   address,
+                   irs.address,
                    irs.legal_name as legalName,
-                   p.full_name    as inspectorName,
+                   p.name    as inspectorName,
                    ai.id          as assignId,
                    scores.total_score as score
             from ionizing_radiation_source irs
@@ -60,9 +60,9 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    factory_number as factoryNumber,
                    'INM'          as name,
                    irs.legal_tin  as legalTin,
-                   address,
+                   irs.address,
                    irs.legal_name as legalName,
-                   p.full_name    as inspectorName,
+                   p.name    as inspectorName,
                    ai.id          as assignId,
                    scores.total_score as score
             from ionizing_radiation_source irs
@@ -84,9 +84,9 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    factory_number as factoryNumber,
                    'INM'          as name,
                    irs.legal_tin  as legalTin,
-                   address,
+                   irs.address,
                    irs.legal_name as legalName,
-                   p.full_name    as inspectorName,
+                   p.name    as inspectorName,
                    ai.id          as assignId,
                    scores.total_score as score
             from ionizing_radiation_source irs
@@ -108,9 +108,9 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    factory_number as factoryNumber,
                    'INM' as name,
                    irs.legal_tin as legalTin,
-                   address,
+                   irs.address,
                    irs.legal_name as legalName,
-                   p.full_name as inspectorName,
+                   p.name as inspectorName,
                    aii.id as assignId,
                    scores.total_score as score
             from ionizing_radiation_source irs
@@ -134,9 +134,9 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    factory_number as factoryNumber,
                    'INM' as name,
                    irs.legal_tin as legalTin,
-                   address,
+                   irs.address,
                    irs.legal_name as legalName,
-                   p.full_name as inspectorName,
+                   p.name as inspectorName,
                    aii.id as assignId,
                    scores.total_score as score
             from ionizing_radiation_source irs
@@ -159,9 +159,9 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
                    factory_number as factoryNumber,
                    'INM' as name,
                    irs.legal_tin as legalTin,
-                   address,
+                   irs.address,
                    irs.legal_name as legalName,
-                   p.full_name as inspectorName,
+                   p.name as inspectorName,
                    aii.id as assignId,
                    scores.total_score as score
             from ionizing_radiation_source irs

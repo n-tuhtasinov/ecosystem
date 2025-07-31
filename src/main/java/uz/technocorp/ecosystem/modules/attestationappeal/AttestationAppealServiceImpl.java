@@ -107,7 +107,7 @@ public class AttestationAppealServiceImpl implements AttestationAppealService {
         Profile profile = profileService.getProfile(user.getProfileId());
 
         // Tin
-        Specification<Attestation> hasLegalTin = specification.hasLegalTin(profile.getTin());
+        Specification<Attestation> hasLegalTin = specification.hasLegalTin(profile.getIdentity());
 
         // Status
         Specification<Attestation> hasStatus = specification.hasStatus(AttestationStatus.PENDING);

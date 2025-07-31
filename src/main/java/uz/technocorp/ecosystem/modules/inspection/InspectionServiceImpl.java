@@ -206,7 +206,7 @@ public class InspectionServiceImpl implements InspectionService {
 
         // Inspection
         Inspection inspection = repository.findById(dto.getInspectionId()).orElseThrow(() -> new ResourceNotFoundException("Tekshiruv topilmadi"));
-        Profile inspectionProfile = profileService.findByTin(inspection.getTin());
+        Profile inspectionProfile = profileService.findByIdentity(inspection.getTin());
         Office inspectionOffice = officeService.findByRegionId(inspection.getRegionId());
         String[] splitDate = inspection.getDecreeDate().format((DateTimeFormatter.ofPattern("yyyy MMMM dd", Locale.of("uz")))).split(" ");
         String date = splitDate[0] + " yil " + splitDate[2] + " " + splitDate[1];
@@ -269,11 +269,11 @@ public class InspectionServiceImpl implements InspectionService {
         parameters.put("inspectionOfficeName", inspectionOffice.getName());
         parameters.put("decreeDate", date);
         parameters.put("decreeNumber", inspection.getDecreeNumber());
-        parameters.put("legalAddress", inspectionProfile.getLegalAddress());
-        parameters.put("legalName", inspectionProfile.getLegalName());
+        parameters.put("legalAddress", inspectionProfile.getAddress());
+        parameters.put("legalName", inspectionProfile.getName());
         parameters.put("tin", inspection.getTin().toString());
         parameters.put("objects", dto.getObjects());
-        parameters.put("directorName", inspectionProfile.getFullName());
+        parameters.put("directorName", inspectionProfile.getDirectorName());
         parameters.put("sectionFirst", dto.getSectionFirst());
         parameters.put("sectionSecond", dto.getSectionSecond());
         parameters.put("sectionThird", defectsFullInfo.toString());
