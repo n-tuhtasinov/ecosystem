@@ -157,7 +157,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     public Long getCount(User user) {
         Profile profile = profileService.getProfile(user.getProfileId());
         return switch (user.getRole()) {
-            case LEGAL -> repository.countByParams(profile.getIdentity(), null);
+            case LEGAL, INDIVIDUAL -> repository.countByParams(profile.getIdentity(), null);
             case REGIONAL, INSPECTOR -> repository.countByParams(null, profile.getRegionId());
             default -> repository.countByParams(null, null);
         };
