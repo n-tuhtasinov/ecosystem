@@ -21,5 +21,7 @@ public record EquipmentView (
         String ownerAddress,
         String hfName,
         String address,
-        String factoryNumber
+        String factoryNumber,
+        LocalDate partialCheckDate,
+        LocalDate fullCheckDate
 ) {}

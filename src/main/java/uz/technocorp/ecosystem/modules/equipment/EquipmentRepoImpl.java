@@ -91,7 +91,9 @@ public class EquipmentRepoImpl implements EquipmentRepo{
                         eRoot.get("ownerAddress"),
                         hfJoin.get("name"),
                         eRoot.get("address"),
-                        eRoot.get("factoryNumber")
+                        eRoot.get("factoryNumber"),
+                        eRoot.get("partialCheckDate"),
+                        eRoot.get("fullCheckDate")
                 ));
         equipmentQuery.where(ePredicates.toArray(new Predicate[0]));
         equipmentQuery.orderBy(cb.desc(eRoot.get("createdAt")));
