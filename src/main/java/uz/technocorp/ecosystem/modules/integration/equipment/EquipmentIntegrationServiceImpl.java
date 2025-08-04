@@ -15,6 +15,7 @@ import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.RegionService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class EquipmentIntegrationServiceImpl implements EquipmentIntegrationServ
         info.setDistrictName(profile.getDistrictName());
         info.setPhoneNumber(profile.getPhoneNumber());
 
-        info.setEquipment(equipmentList.stream().map(this::map).toList());
+        info.setEquipment(equipmentList.stream().filter(e -> e.getManufacturedAt().isAfter(LocalDate.now().minusYears(30))).map(this::map).toList());
 
         return info;
     }

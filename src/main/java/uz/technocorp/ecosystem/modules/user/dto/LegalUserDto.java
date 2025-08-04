@@ -55,7 +55,7 @@ public class LegalUserDto implements UserDto {
 
     @Override
     public List<String> getDirections() {
-        return List.of(Direction.APPEAL.name());
+        return List.of(Direction.APPEAL.name(), Direction.HF.name(),  Direction.EQUIPMENT.name(), Direction.IRS.name(), Direction.REGISTRY.name());
     }
 
     @Override
