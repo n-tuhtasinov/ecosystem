@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
+import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
@@ -54,6 +56,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     private final ProfileService profileService;
     private final RegionService regionService;
     private final OfficeService officeService;
+    private final ChildEquipmentService childEquipmentService;
 
     @Override
     public void create(Appeal appeal) {
@@ -350,10 +353,11 @@ public class EquipmentServiceImpl implements EquipmentService {
                 equipment.getAppealId(),
                 equipment.getRegistryNumber(),
                 equipment.getOwnerIdentity(),
+                equipment.getOwnerType() == null ? OwnerType.LEGAL.name() : equipment.getOwnerType().name(),
                 equipment.getHazardousFacilityId(),
                 equipment.getHazardousFacility() == null ? null : equipment.getHazardousFacility().getName(),
                 equipment.getChildEquipmentId(),
-                equipment.getChildEquipment() == null ? null : equipment.getChildEquipment().getName(),
+                childEquipmentService.getNameById(equipment.getChildEquipmentId()),
                 equipment.getFactoryNumber(),
                 equipment.getAddress(),
                 equipment.getModel(),

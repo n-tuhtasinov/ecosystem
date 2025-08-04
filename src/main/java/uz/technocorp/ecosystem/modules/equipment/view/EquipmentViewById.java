@@ -20,6 +20,7 @@ public record EquipmentViewById(
         UUID appealId,
         String registryNumber,
         Long ownerIdentity,
+        String ownerType,
 
         UUID hfId,
         String hfName,
