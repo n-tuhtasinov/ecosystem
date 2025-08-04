@@ -237,7 +237,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 }
             }
             params.setRegionId(office.getRegionId());
-        } else if (user.getRole() == Role.LEGAL) {
+        } else if (user.getRole().equals(Role.LEGAL) || user.getRole().equals(Role.INDIVIDUAL)) {
             params.setLegalTin(profile.getIdentity());
         } else {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
@@ -311,7 +311,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     public Long getCount(User user) {
         Profile profile = profileService.getProfile(user.getProfileId());
         return switch (user.getRole()) {
-            case LEGAL -> repository.countByParams(profile.getIdentity(), null);
+            case LEGAL, INDIVIDUAL -> repository.countByParams(profile.getIdentity(), null);
             case REGIONAL, INSPECTOR -> repository.countByParams(null, profile.getRegionId());
             default -> repository.countByParams(null, null);
         };
