@@ -36,7 +36,7 @@ public class IndividualUserDto implements UserDto {
 
     @Override
     public List<String> getDirections() {
-        return List.of(Direction.APPEAL.name());
+        return List.of(Direction.APPEAL.name(),  Direction.EQUIPMENT.name(), Direction.REGISTRY.name());
     }
 
     @Override
