@@ -64,6 +64,7 @@ public class AppealServiceImpl implements AppealService {
     private final IonizingRadiationSourceService ionizingRadiationSourceService;
     private final AppealExecutionProcessService appealExecutionProcessService;
     private final AttestationService attestationService;
+    private final DepartmentService departmentService;
     private final AttachmentService attachmentService;
     private final HazardousFacilityService hfService;
     private final EquipmentService equipmentService;
@@ -75,7 +76,6 @@ public class AppealServiceImpl implements AppealService {
     private final OfficeService officeService;
     private final AppealRepository repository;
     private final UserService userService;
-    private final DepartmentService departmentService;
 
     @Override
     @Transactional
@@ -315,6 +315,7 @@ public class AppealServiceImpl implements AppealService {
                 case "registerHf" -> hfService.create(appeal);
                 case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
                 case "registerEquipment", "registerAttractionPassport" -> equipmentService.create(appeal);
+                case "deregisterEquipment" -> equipmentService.deactivateEquipment(appeal);
 //                 akkreditatsiyani yaratish -> accreditationService.create(appeal);
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }
@@ -430,7 +431,8 @@ public class AppealServiceImpl implements AppealService {
         String number = switch (appealType.sort) {
             case "registerIrs" -> orderNumber + "-INM-" + LocalDate.now().getYear();
             case "registerHf" -> orderNumber + "-XIC-" + LocalDate.now().getYear();
-            case "registerEquipment", "reRegisterEquipment" -> orderNumber + "-QUR-" + LocalDate.now().getYear();
+            case "registerEquipment", "reRegisterEquipment", "deregisterEquipment" ->
+                    orderNumber + "-QUR-" + LocalDate.now().getYear();
             case "registerAttractionPassport", "reRegisterAttractionPassport" ->
                     orderNumber + "-ATP-" + LocalDate.now().getYear();
             case "accreditExpertOrganization", "reAccreditExpertOrganization", "expendAccreditExpertOrganization" ->

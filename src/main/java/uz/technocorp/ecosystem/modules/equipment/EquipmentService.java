@@ -46,4 +46,7 @@ public interface EquipmentService {
 
     List<Equipment> getAllEquipmentByTypeAndTinOrPin(Long tin, EquipmentType type);
 
+    Equipment findByRegistryNumberAndOwnerAndActive(String registryNumber, Long ownerIdentity, EquipmentType type, Boolean active);
+
+    void deactivateEquipment(Appeal appeal);
 }

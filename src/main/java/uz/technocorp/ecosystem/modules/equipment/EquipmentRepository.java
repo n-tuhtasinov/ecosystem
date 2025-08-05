@@ -3,7 +3,9 @@ package uz.technocorp.ecosystem.modules.equipment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 
@@ -358,4 +360,11 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     Optional<Equipment> findFetchedEquipmentByRegistryNumber(String registryNumber);
 
     List<Equipment> findAllByOwnerIdentityAndType(Long tinOrPin, EquipmentType type);
+
+    Optional<Equipment> findByRegistryNumberAndOwnerIdentityAndTypeAndIsActive(String registryNumber, Long ownerIdentity, EquipmentType type, Boolean active);
+
+    @Transactional
+    @Modifying
+    @Query("update Equipment set isActive = false where registryNumber = :registryNumber")
+    void deactivateByRegistryNumber(String registryNumber);
 }

@@ -22,7 +22,7 @@ public interface ProfileService {
 
     Integer getOfficeId(UUID profileId);
 
-    Long getProfileTin(UUID profileId);
+    Long getProfileIdentity(UUID profileId);
 
     Profile findByIdentity(Long tin);
 

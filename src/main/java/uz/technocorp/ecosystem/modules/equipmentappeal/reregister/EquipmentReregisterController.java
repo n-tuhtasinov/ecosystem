@@ -1,4 +1,4 @@
-//package uz.technocorp.ecosystem.modules.equipmentappeal;
+//package uz.technocorp.ecosystem.modules.equipmentappeal.reregister;
 //
 //import jakarta.servlet.http.HttpServletRequest;
 //import jakarta.validation.Valid;
@@ -8,9 +8,9 @@
 //import org.springframework.web.bind.annotation.RequestBody;
 //import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RestController;
-//import uz.technocorp.ecosystem.modules.appeal.AppealService;
 //import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
-//import uz.technocorp.ecosystem.modules.equipmentappeal.dto.*;
+//import uz.technocorp.ecosystem.modules.equipmentappeal.deregister.EquipmentDeregisterService;
+//import uz.technocorp.ecosystem.modules.equipmentappeal.deregister.dto.DeregisterEquipmentDto;
 //import uz.technocorp.ecosystem.modules.user.User;
 //import uz.technocorp.ecosystem.security.CurrentUser;
 //import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -25,15 +25,18 @@
 //@RestController
 //@RequestMapping("/api/v1/appeals/equipment")
 //@RequiredArgsConstructor
-//public class EquipmentDeregisterController {
+//public class EquipmentReregisterController {
 //
-//    private final AppealService appealService;
-//    private final EquipmentAppealService equipmentAppealService;
+//    private final EquipmentDeregisterService service;
 //
-//    @PostMapping("/deregister")
-//    public ResponseEntity<?> deregister(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<CraneDto> craneDto, HttpServletRequest request) {
-//        equipmentAppealService.setHfNameAndChildEquipmentName(craneDto.getDto());
-//        appealService.saveAndSign(user, craneDto, request);
+//    @PostMapping("/reregister-pdf")
+//    public ResponseEntity<?> reregisterPdf(@CurrentUser User user, @Valid @RequestBody DeregisterEquipmentDto dto) {
+//        return ResponseEntity.ok(new ApiResponse("PDF yaratish kerak"));
+//    }
+//
+//    @PostMapping("/reregister")
+//    public ResponseEntity<?> reregister(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<DeregisterEquipmentDto> signDto, HttpServletRequest request) {
+//        service.deregister(user, signDto, request);
 //        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
 //    }
 //
