@@ -276,7 +276,7 @@ public class PreventionServiceImpl implements PreventionService {
     }
 
     private Long getProfileTinById(UUID profileId) {
-        return profileService.getProfileTin(profileId);
+        return profileService.getProfileIdentity(profileId);
     }
 
     private PageRequest getPageRequest(PreventionParamsDto params) {

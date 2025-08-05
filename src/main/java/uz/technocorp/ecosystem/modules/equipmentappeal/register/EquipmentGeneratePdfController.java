@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.equipmentappeal;
+package uz.technocorp.ecosystem.modules.equipmentappeal.register;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
-import uz.technocorp.ecosystem.modules.equipmentappeal.dto.*;
+import uz.technocorp.ecosystem.modules.equipmentappeal.register.dto.*;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;

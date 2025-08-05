@@ -110,48 +110,27 @@ public class Equipment extends BaseEntity {
     @Column(nullable = false)
     private LocalDate manufacturedAt;
 
+    @Column
     private LocalDate partialCheckDate; // qisman texnik ko'rik / tashqi va ichki ko'rik
 
+    @Column
     private LocalDate fullCheckDate;  // to'liq texnik ko'rik / gidrosinov/ keyimgi tekshirish (100ming)
 
-    //previous registration number.
-    //it is used when the device is re-registered
-//    private String oldNumber;
-
-    //previous registration, it is used when the device is re-registered
-//    @OneToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
-//    @JoinColumn(name = "old_equipment_id", insertable = false, updatable = false)
-//    private Equipment oldEquipment;
-//
-//    @Column(name = "old_equipment_id")
-//    private UUID oldEquipmentId;
-
+    @Column
     private String oldRegistryNumber;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private Map<String, String> parameters;
 
-//    private String boomLength; //strelasining uzunligi (kran)
-//    private String liftingCapacity; //yuk ko'tarishi (kran, lift, yuk ko'targich)
-//    private String capacity; // hajmi (sosud, kimyoviy idish, qozon, sug, 100ming)
-//    private String environment; // muhit (sosud, quvur, qozon, sug)
-//    private String pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug, 100ming)
-
+    @Column
     @Enumerated(EnumType.STRING)
     private Sphere sphere;  // foydalanish sohasi (lift)
 
-    //    private String stopCount; // to'xtashlar soni (lift)
-//    private String length; // uzunligi (eskalator, osma yo'l, quvur, bug' va issiq suv quvuri)
-//    private String speed; // tezligi (eskalator, osma yo'l)
-//    private String height; // ko'tarish balandligi (eskalator, yuk ko'targich)
-//    private String passengersPerMinute; // o'tkazish qobilyati (eskalator)
-//    private String passengerCount; // harakatlanuvchi sostav soni (osma yo'l)
-//    private String diameter; // diametr (quvur, bug' va issiq suv quvuri)
-//    private String thickness; // devor qalinligi (quvur, bug' va issiq suv quvuri)
-//
+    @Column
     private String attractionName; // attraksion nomi (attraksion)
 
+    @Column
     private LocalDate acceptedAt; // foydalanishga qabul qilingan sana (attraksion pasporti)
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = ChildEquipmentSort.class)
@@ -161,19 +140,20 @@ public class Equipment extends BaseEntity {
     @Column(name = "child_equipment_sort_id")
     private Integer childEquipmentSortId;   // attratsion tipi (attraksion)
 
+    @Column
     private String country; // ishlab chiqargan mamlakat (attraksion)
 
+    @Column
     private Integer servicePeriod; // hizmat muddati (attraksion pasporti)
 
+    @Column
     private RiskLevel riskLevel; // havf darajasi (attraksion pasporti)
 
+    @Column
     private String parentOrganization; // yuqori turuvchi tashkilot (attraksion)
 
+    @Column
     private LocalDate nonDestructiveCheckDate; // putur yetkazmaydigan nazoratda ko'rikdan o'tkazish (sosud, bug'qozon, quvur, osma yo'l, kimyoviy idish, qozon, sug, )
-
-//    private String temperature; //temperatura (bug' va issiq suv quvuri, qozon)
-//    private String density; // zichligi (qozon)
-//    private String fuel; // yoqilg'i (100 ming)
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
     @JoinColumn(name = "attraction_passport_id", insertable = false, updatable = false)
@@ -182,9 +162,7 @@ public class Equipment extends BaseEntity {
     @Column(name = "attraction_passport_id")
     private UUID attractionPassportId; // faqat atraksionni ro'yhatga olish uchun
 
-//    @Column(nullable = false)
-//    private String labelPath; // birka rasmi
-
+    @Column
     private String description;
 
     @Column(nullable = false)
@@ -194,7 +172,8 @@ public class Equipment extends BaseEntity {
     @Column(columnDefinition = "jsonb", nullable = false)
     private Map<String, String> files;
 
-    private String registryFilePath; // Reestr file path
+    @Column
+    private String registryFilePath;
 
     @Column(nullable = false)
     private LocalDate registrationDate;
@@ -202,6 +181,35 @@ public class Equipment extends BaseEntity {
     //    @Column(nullable = false)
     private Boolean isActive;
 
+    /* previous registration number.
+       it is used when the device is re-registered */
+//    private String oldNumber;
+
+    /* previous registration, it is used when the device is re-registered */
+//    @OneToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
+//    @JoinColumn(name = "old_equipment_id", insertable = false, updatable = false)
+//    private Equipment oldEquipment;
+//    @Column(name = "old_equipment_id")
+//    private UUID oldEquipmentId;
+//    private String boomLength; //strelasining uzunligi (kran)
+//    private String liftingCapacity; //yuk ko'tarishi (kran, lift, yuk ko'targich)
+//    private String capacity; // hajmi (sosud, kimyoviy idish, qozon, sug, 100ming)
+//    private String environment; // muhit (sosud, quvur, qozon, sug)
+//    private String pressure; // ruxsat etilgan bosim (sosud, quvur, kimyoviy idish, bug' va issiq suv quvuri, qozon, sug, 100ming)
+//    private String stopCount; // to'xtashlar soni (lift)
+//    private String length; // uzunligi (eskalator, osma yo'l, quvur, bug' va issiq suv quvuri)
+//    private String speed; // tezligi (eskalator, osma yo'l)
+//    private String height; // ko'tarish balandligi (eskalator, yuk ko'targich)
+//    private String passengersPerMinute; // o'tkazish qobilyati (eskalator)
+//    private String passengerCount; // harakatlanuvchi sostav soni (osma yo'l)
+//    private String diameter; // diametr (quvur, bug' va issiq suv quvuri)
+//    private String thickness; // devor qalinligi (quvur, bug' va issiq suv quvuri)
+//    private String temperature; //temperatura (bug' va issiq suv quvuri, qozon)
+//    private String density; // zichligi (qozon)
+//    private String fuel; // yoqilg'i (100 ming)
+
+//    @Column(nullable = false)
+//    private String labelPath; // birka rasmi
 //    @Column(nullable = false)
 //    private String saleContractPath; // oldi-sotdi shartnomasi
 //    @Column(nullable = false)

@@ -103,7 +103,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Long getProfileTin(UUID profileId) {
+    public Long getProfileIdentity(UUID profileId) {
         return repository.findById(profileId).map(Profile::getIdentity).orElseThrow(
                 () -> new ResourceNotFoundException("Siz tashkilot sifatida tizimda mavjud emassiz (INN biriktirilmagan)"));
     }

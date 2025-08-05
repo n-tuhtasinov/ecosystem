@@ -164,7 +164,7 @@ public class AttestationServiceImpl implements AttestationService {
 
     private Page<AttestationView> getAllForLegal(User user, AttestationParamsDto params, Pageable pageable) {
         // LegalTin
-        Specification<Attestation> legalTin = specification.hasLegalTin(profileService.getProfileTin(user.getProfileId()));
+        Specification<Attestation> legalTin = specification.hasLegalTin(profileService.getProfileIdentity(user.getProfileId()));
 
         // Search
         Specification<Attestation> hasSearch = specification.hasSearch(params.getSearch());
@@ -183,7 +183,7 @@ public class AttestationServiceImpl implements AttestationService {
     }
 
     private List<AttestationView> getAllByTinAndAppealId(User user, UUID appealId) {
-        Long tin = profileService.getProfileTin(user.getProfileId());
+        Long tin = profileService.getProfileIdentity(user.getProfileId());
         return repository.findAllByAppealIdAndLegalTin(appealId, tin).stream().map(this::map).toList();
     }
 
@@ -207,7 +207,7 @@ public class AttestationServiceImpl implements AttestationService {
     }
 
     private AttestationView getByIdForLegal(User user, UUID attestationId) {
-        Long tin = profileService.getProfileTin(user.getProfileId());
+        Long tin = profileService.getProfileIdentity(user.getProfileId());
 
         return repository.findByIdAndLegalTin(attestationId, tin).map(this::map).orElseThrow(
                 () -> new ResourceNotFoundException("Attestatsiya", "ID", attestationId));

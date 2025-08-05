@@ -27,7 +27,8 @@ public enum HFSphere {
     AGNKS("AGNKS"),
     AYOQSH("AYOQSH"),
     AGTKSH("AGTKSH"),
-    DEPARTMENT("Boshqarma");
+    DEPARTMENT("Boshqarma"),
+    OTHERS("Boshqalar");
 
     public final String label;
     private static final Map<String, HFSphere> BY_LABEL = new HashMap<>();

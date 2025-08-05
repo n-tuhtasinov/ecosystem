@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
@@ -21,6 +22,7 @@ import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
+import uz.technocorp.ecosystem.modules.equipmentappeal.deregister.dto.DeregisterEquipmentDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -259,6 +261,19 @@ public class EquipmentServiceImpl implements EquipmentService {
         return repository.findAllByOwnerIdentityAndType(tin, type);
     }
 
+    @Override
+    public Equipment findByRegistryNumberAndOwnerAndActive(String registryNumber, Long ownerIdentity, EquipmentType type, Boolean active) {
+        return repository.findByRegistryNumberAndOwnerIdentityAndTypeAndIsActive(registryNumber, ownerIdentity, type, active)
+                .orElseThrow(() -> new CustomException("Sizga tegishli aktiv qurilma topilmadi"));
+    }
+
+    @Override
+    public void deactivateEquipment(Appeal appeal) {
+        DeregisterEquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), DeregisterEquipmentDto.class);
+        repository.deactivateByRegistryNumber(dto.getRegistryNumber());
+    }
+
+    // HELPER
     protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
         return switch (appealType) {
             case REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P");
@@ -346,6 +361,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         return templateService.getByType(type.name()).getContent();
     }
 
+    // MAPPER
     private EquipmentViewById mapToView(Equipment equipment) {
         return new EquipmentViewById(
                 equipment.getRegistrationDate(),

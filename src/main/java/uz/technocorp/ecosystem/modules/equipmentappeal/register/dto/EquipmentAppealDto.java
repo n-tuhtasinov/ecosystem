@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.equipmentappeal.dto;
+package uz.technocorp.ecosystem.modules.equipmentappeal.register.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
