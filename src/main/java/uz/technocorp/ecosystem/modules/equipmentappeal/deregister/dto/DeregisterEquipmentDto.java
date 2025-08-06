@@ -16,6 +16,7 @@ import uz.technocorp.ecosystem.shared.SkipDb;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Suxrob
@@ -92,11 +93,16 @@ public class DeregisterEquipmentDto implements AppealDto {
     private String address;
 
     // Other fields
-    @SkipDb
     @Schema(hidden = true)
     private String factoryNumber;
-
-    @SkipDb
     @Schema(hidden = true)
     private String model;
+    @Schema(hidden = true)
+    private LocalDate manufacturedAt;
+    @Schema(hidden = true)
+    private String childEquipmentName;
+    @Schema(hidden = true)
+    private String factory;
+    @Schema(hidden = true)
+    private UUID hazardousFacilityId;
 }
