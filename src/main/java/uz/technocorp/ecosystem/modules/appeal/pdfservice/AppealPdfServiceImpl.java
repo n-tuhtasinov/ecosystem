@@ -72,7 +72,7 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         // Generate PDF and return path
         return switch (appeal.getAppealType().sort) {
             case "registerHf" -> makeHfReplyPdf(user, dto, appeal);
-            case "registerEquipment" -> makeEquipmentReplyPdf(user, dto, appeal);
+            case "registerEquipment", "deregisterEquipment", "reRegisterEquipment" -> makeEquipmentReplyPdf(user, dto, appeal);
             case "registerIrs" -> makeIrsReplyPdf(user, dto, appeal);
             case "registerAttractionPassport" -> makeAttractionPassportReplyPdf(user, dto, appeal);
             default ->

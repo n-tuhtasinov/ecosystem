@@ -30,7 +30,8 @@ public class EquipmentDeregisterController {
 
     @PostMapping("/deregister-pdf")
     public ResponseEntity<?> deregisterPdf(@CurrentUser User user, @Valid @RequestBody DeregisterEquipmentDto dto) {
-        return ResponseEntity.ok(new ApiResponse("PDF yaratish kerak"));
+        // TODO
+        return ResponseEntity.ok(new ApiResponse("/files/appeals/equipment/2025/july/31/1753937994300.pdf"));
     }
 
     @PostMapping("/deregister")

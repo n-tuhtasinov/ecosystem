@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
+import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
 import uz.technocorp.ecosystem.modules.equipmentappeal.deregister.dto.DeregisterEquipmentDto;
@@ -22,6 +23,7 @@ import uz.technocorp.ecosystem.modules.user.User;
 @RequiredArgsConstructor
 public class EquipmentDeregisterServiceImpl implements EquipmentDeregisterService {
 
+    private final ChildEquipmentService childEquipmentService;
     private final EquipmentService equipmentService;
     private final AppealPdfService appealPdfService;
     private final ProfileService profileService;
@@ -53,7 +55,13 @@ public class EquipmentDeregisterServiceImpl implements EquipmentDeregisterServic
         // Check and get equipment
         Equipment eq = equipmentService.findByRegistryNumberAndOwnerAndActive(dto.getRegistryNumber(), identity, dto.getType(), true);
 
-        // Set address information
+        // Set required fields
+        dto.setFactoryNumber(eq.getFactoryNumber());
+        dto.setModel(eq.getModel());
+        dto.setManufacturedAt(eq.getManufacturedAt());
+        dto.setChildEquipmentName(childEquipmentService.getNameById(eq.getChildEquipmentId()));
+        dto.setFactory(eq.getFactory());
+        dto.setHazardousFacilityId(eq.getHazardousFacilityId());
         dto.setRegionId(eq.getRegionId());
         dto.setDistrictId(eq.getDistrictId());
         dto.setAddress(eq.getAddress());
