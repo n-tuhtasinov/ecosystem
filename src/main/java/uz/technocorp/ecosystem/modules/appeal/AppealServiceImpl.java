@@ -316,6 +316,7 @@ public class AppealServiceImpl implements AppealService {
                 case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
                 case "registerEquipment", "registerAttractionPassport" -> equipmentService.create(appeal);
                 case "deregisterEquipment" -> equipmentService.deactivateEquipment(appeal);
+                case "reRegisterEquipment" -> equipmentService.reRegister(appeal);
 //                 akkreditatsiyani yaratish -> accreditationService.create(appeal);
                 //TODO: boshqa turdagi arizalar uchun ham registr ochilishini yozish kerak
             }

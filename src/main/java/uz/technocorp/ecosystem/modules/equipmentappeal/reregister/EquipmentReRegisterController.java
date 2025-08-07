@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
-import uz.technocorp.ecosystem.modules.equipmentappeal.deregister.EquipmentDeregisterService;
-import uz.technocorp.ecosystem.modules.equipmentappeal.deregister.dto.DeregisterEquipmentDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.reregister.dto.ReRegisterEquipmentDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -25,21 +24,18 @@ import uz.technocorp.ecosystem.shared.ResponseMessage;
 @RestController
 @RequestMapping("/api/v1/appeals/equipment")
 @RequiredArgsConstructor
-public class EquipmentReregisterController {
+public class EquipmentReRegisterController {
 
-    private final EquipmentDeregisterService service;
+    private final EquipmentReRegisterService service;
 
     @PostMapping("/reregister-pdf")
-    public ResponseEntity<?> reregisterPdf(@CurrentUser User user, @Valid @RequestBody DeregisterEquipmentDto dto) {
-        // TODO
-        return ResponseEntity.ok(new ApiResponse("/files/appeals/equipment/2025/july/31/1753937994300.pdf"));
+    public ResponseEntity<ApiResponse> reregisterPdf(@CurrentUser User user, @Valid @RequestBody ReRegisterEquipmentDto dto) {
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", service.reregisterPdf(user, dto)));
     }
 
     @PostMapping("/reregister")
-    public ResponseEntity<?> reregister(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<DeregisterEquipmentDto> signDto, HttpServletRequest request) {
-        service.deregister(user, signDto, request);
+    public ResponseEntity<ApiResponse> reregister(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ReRegisterEquipmentDto> signDto, HttpServletRequest request) {
+        service.reregister(user, signDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
-
-
 }

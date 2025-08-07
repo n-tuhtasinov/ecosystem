@@ -29,16 +29,13 @@ public class EquipmentDeregisterController {
     private final EquipmentDeregisterService service;
 
     @PostMapping("/deregister-pdf")
-    public ResponseEntity<?> deregisterPdf(@CurrentUser User user, @Valid @RequestBody DeregisterEquipmentDto dto) {
-        // TODO
-        return ResponseEntity.ok(new ApiResponse("/files/appeals/equipment/2025/july/31/1753937994300.pdf"));
+    public ResponseEntity<ApiResponse> deregisterPdf(@CurrentUser User user, @Valid @RequestBody DeregisterEquipmentDto dto) {
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", service.deregisterPdf(user, dto)));
     }
 
     @PostMapping("/deregister")
-    public ResponseEntity<?> deregister(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<DeregisterEquipmentDto> signDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> deregister(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<DeregisterEquipmentDto> signDto, HttpServletRequest request) {
         service.deregister(user, signDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
-
-
 }

@@ -35,11 +35,14 @@ public class EquipmentDeregisterServiceImpl implements EquipmentDeregisterServic
         Long identity = profileService.getProfileIdentity(user.getProfileId());
 
         // Check and get equipment
-        Equipment eq = equipmentService.findByRegistryNumberAndOwnerAndActive(dto.getRegistryNumber(), identity, dto.getType(), true);
+        Equipment eq = equipmentService.findByRegistryNumberAndTypeAndOwnerAndActive(dto.getRegistryNumber(), identity, dto.getType(), true);
 
         // Set required fields
         dto.setFactoryNumber(eq.getFactoryNumber());
         dto.setModel(eq.getModel());
+        dto.setManufacturedAt(eq.getManufacturedAt());
+        dto.setFactory(eq.getFactory());
+        dto.setAddress(eq.getAddress());
 
         // Generate PDF and return path
         return appealPdfService.preparePdfWithParam(dto, user);
@@ -53,7 +56,7 @@ public class EquipmentDeregisterServiceImpl implements EquipmentDeregisterServic
         Long identity = profileService.getProfileIdentity(user.getProfileId());
 
         // Check and get equipment
-        Equipment eq = equipmentService.findByRegistryNumberAndOwnerAndActive(dto.getRegistryNumber(), identity, dto.getType(), true);
+        Equipment eq = equipmentService.findByRegistryNumberAndTypeAndOwnerAndActive(dto.getRegistryNumber(), identity, dto.getType(), true);
 
         // Set required fields
         dto.setFactoryNumber(eq.getFactoryNumber());

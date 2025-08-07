@@ -15,8 +15,8 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentRepository;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
@@ -120,11 +120,20 @@ public class UploadBoilerServiceImpl implements UploadEquipmentExcelService {
                             .ownerName(equipment.getOwnerName())
                             .address(equipment.getAddress())
                             .build();
-                    EquipmentDto dto = new EquipmentDto(
-                            null, null, null, equipment.getFactoryNumber(), equipment.getModel(), equipment.getFactory(), null, equipment.getManufacturedAt(), null,
-                            null, null, equipment.getParameters(), null, null, null, null, null, null,
-                            null, null, null, null, null, null, null);
-                    String registryPdfPath = equipmentService.createEquipmentRegistryPdf(appeal, dto, info, equipment.getRegistrationDate());
+
+                    EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
+                    registryDto.setType(info.equipmentType());
+                    registryDto.setRegistryNumber(info.registryNumber());
+                    registryDto.setRegistrationDate(equipment.getRegistrationDate());
+                    registryDto.setManufacturedAt(equipment.getManufacturedAt());
+                    registryDto.setFactory(equipment.getFactory());
+                    registryDto.setFactoryNumber(equipment.getFactoryNumber());
+                    registryDto.setModel(equipment.getModel());
+                    registryDto.setParameters(equipment.getParameters());
+                    registryDto.setAttractionName(equipment.getAttractionName());
+                    registryDto.setRiskLevel(equipment.getRiskLevel());
+
+                    String registryPdfPath = equipmentService.createEquipmentRegistryPdf(appeal, registryDto);
 
                     equipment.setRegistryFilePath(registryPdfPath);
                     equipmentRepository.save(equipment);
