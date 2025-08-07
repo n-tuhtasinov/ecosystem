@@ -15,8 +15,8 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.Equipment;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentRepository;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
@@ -59,7 +59,7 @@ public class UploadElevatorServiceImpl implements UploadEquipmentExcelService {
     private static final String DATE_FORMAT = "dd.MM.yyyy";
 
 
-//    @Transactional(rollbackFor = ExcelParsingException.class)
+    //    @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
     public void upload(MultipartFile file) {
 
@@ -121,11 +121,20 @@ public class UploadElevatorServiceImpl implements UploadEquipmentExcelService {
                             .ownerName(equipment.getOwnerName())
                             .address(equipment.getAddress())
                             .build();
-                    EquipmentDto dto = new EquipmentDto(
-                            null, null, null, equipment.getFactoryNumber(), equipment.getModel(), equipment.getFactory(), null, equipment.getManufacturedAt(), null,
-                            null, null, equipment.getParameters(), null, null, null, null, null, null,
-                            null, null, null, null, null, null, null);
-                    String registryPdfPath = equipmentService.createEquipmentRegistryPdf(appeal, dto, info, equipment.getRegistrationDate());
+
+                    EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
+                    registryDto.setType(info.equipmentType());
+                    registryDto.setRegistryNumber(info.registryNumber());
+                    registryDto.setRegistrationDate(equipment.getRegistrationDate());
+                    registryDto.setManufacturedAt(equipment.getManufacturedAt());
+                    registryDto.setFactory(equipment.getFactory());
+                    registryDto.setFactoryNumber(equipment.getFactoryNumber());
+                    registryDto.setModel(equipment.getModel());
+                    registryDto.setParameters(equipment.getParameters());
+                    registryDto.setAttractionName(equipment.getAttractionName());
+                    registryDto.setRiskLevel(equipment.getRiskLevel());
+
+                    String registryPdfPath = equipmentService.createEquipmentRegistryPdf(appeal, registryDto);
 
                     equipment.setRegistryFilePath(registryPdfPath);
                     equipmentRepository.save(equipment);
@@ -134,7 +143,7 @@ public class UploadElevatorServiceImpl implements UploadEquipmentExcelService {
 //                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
                 }
             }
-            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum+1);
+            log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum + 1);
 //        } catch (ExcelParsingException e) {
 //            throw e; // to rollback transaction
         } catch (Exception e) {
@@ -279,7 +288,7 @@ public class UploadElevatorServiceImpl implements UploadEquipmentExcelService {
         }
     }
 
-    private void getLegal (DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+    private void getLegal(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
         String legalTin = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(legalTin, "legalTin(b)");
 
@@ -297,7 +306,7 @@ public class UploadElevatorServiceImpl implements UploadEquipmentExcelService {
 
     private static void isValid(String fieldValue, String fieldName) throws Exception {
         if (fieldValue == null || fieldValue.isBlank()) {
-            throw new Exception(fieldName +" bo'sh bo'lishi mumkin emas");
+            throw new Exception(fieldName + " bo'sh bo'lishi mumkin emas");
         }
     }
 
@@ -306,12 +315,12 @@ public class UploadElevatorServiceImpl implements UploadEquipmentExcelService {
             throw new Exception(fieldName + " bo'sh bo'lishi mumkin emas");
         }
         LocalDate manufacturedAt;
-        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell) ) {
+        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
             manufacturedAt = cell.getLocalDateTimeCellValue().toLocalDate();
-        }else if (cell.getCellType() == CellType.STRING){
+        } else if (cell.getCellType() == CellType.STRING) {
             String dateStr = cell.getStringCellValue();
             manufacturedAt = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(DATE_FORMAT));
-        }else {
+        } else {
             throw new Exception(fieldName + " format yacheykasi date bo'lishi kerak");
         }
         return manufacturedAt;

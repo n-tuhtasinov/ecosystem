@@ -11,10 +11,10 @@ import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,7 +43,19 @@ public class EquipmentEventController {
             EquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), EquipmentDto.class);
             EquipmentInfoDto info = service.getEquipmentInfoByAppealType(appeal.getAppealType());
 
-            return service.createEquipmentRegistryPdf(appeal, dto, info, LocalDate.now());
+            EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
+            registryDto.setType(info.equipmentType());
+            registryDto.setRegistryNumber(info.registryNumber());
+            registryDto.setRegistrationDate(LocalDate.now());
+            registryDto.setManufacturedAt(dto.manufacturedAt());
+            registryDto.setFactory(dto.factory());
+            registryDto.setFactoryNumber(dto.factoryNumber());
+            registryDto.setModel(dto.model());
+            registryDto.setParameters(dto.parameters());
+            registryDto.setAttractionName(dto.attractionName());
+            registryDto.setRiskLevel(dto.riskLevel());
+
+            return service.createEquipmentRegistryPdf(appeal, registryDto);
         }
         return "Bunday ID li ariza topilmadi";
     }

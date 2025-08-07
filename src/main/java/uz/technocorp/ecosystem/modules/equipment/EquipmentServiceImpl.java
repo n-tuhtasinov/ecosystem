@@ -16,6 +16,7 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentParameter;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
@@ -23,6 +24,7 @@ import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
 import uz.technocorp.ecosystem.modules.equipmentappeal.deregister.dto.DeregisterEquipmentDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.reregister.dto.ReRegisterEquipmentDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -67,8 +69,21 @@ public class EquipmentServiceImpl implements EquipmentService {
         EquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), EquipmentDto.class);
         EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
 
+        EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
+
+        registryDto.setType(info.equipmentType());
+        registryDto.setRegistryNumber(info.registryNumber());
+        registryDto.setRegistrationDate(LocalDate.now());
+        registryDto.setManufacturedAt(dto.manufacturedAt());
+        registryDto.setFactory(dto.factory());
+        registryDto.setFactoryNumber(dto.factoryNumber());
+        registryDto.setModel(dto.model());
+        registryDto.setParameters(dto.parameters());
+        registryDto.setAttractionName(dto.attractionName());
+        registryDto.setRiskLevel(dto.riskLevel());
+
         // Create registry PDF
-        String registryFilepath = createEquipmentRegistryPdf(appeal, dto, info, LocalDate.now());
+        String registryFilepath = createEquipmentRegistryPdf(appeal, registryDto);
 
         Equipment equipment = Equipment.builder()
                 .type(info.equipmentType())
@@ -249,11 +264,11 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
-    public String createEquipmentRegistryPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate) {
+    public String createEquipmentRegistryPdf(Appeal appeal, EquipmentRegistryDto dto) {
         // Create registry PDF with parameters
-        return EquipmentType.ATTRACTION_PASSPORT.equals(info.equipmentType())
-                ? createAttractionPassportPdf(appeal, dto, info, registrationDate) // Attraction Passport
-                : createEquipmentPdf(appeal, dto, info, registrationDate); // All Equipments
+        return EquipmentType.ATTRACTION_PASSPORT.equals(dto.getType())
+                ? createAttractionPassportPdf(appeal, dto) // Attraction Passport
+                : createEquipmentPdf(appeal, dto); // All Equipments
     }
 
     @Override
@@ -262,7 +277,12 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
-    public Equipment findByRegistryNumberAndOwnerAndActive(String registryNumber, Long ownerIdentity, EquipmentType type, Boolean active) {
+    public Equipment findByRegistryNumberAndTypeAndActive(String registryNumber, EquipmentType type, Boolean isActive) {
+        return repository.findByRegistryNumberAndTypeAndIsActive(registryNumber, type, isActive).orElseThrow(() -> new ResourceNotFoundException("Qurilma", "registratsiya", registryNumber));
+    }
+
+    @Override
+    public Equipment findByRegistryNumberAndTypeAndOwnerAndActive(String registryNumber, Long ownerIdentity, EquipmentType type, Boolean active) {
         return repository.findByRegistryNumberAndOwnerIdentityAndTypeAndIsActive(registryNumber, ownerIdentity, type, active)
                 .orElseThrow(() -> new CustomException("Sizga tegishli aktiv qurilma topilmadi"));
     }
@@ -273,24 +293,90 @@ public class EquipmentServiceImpl implements EquipmentService {
         repository.deactivateByRegistryNumber(dto.getRegistryNumber());
     }
 
+    @Override
+    public void reRegister(Appeal appeal) {
+        ReRegisterEquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), ReRegisterEquipmentDto.class);
+
+        Equipment old = findByRegistryNumberAndTypeAndActive(dto.getOldRegistryNumber(), dto.getType(), false);
+        EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
+
+        EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
+        registryDto.setType(info.equipmentType());
+        registryDto.setRegistryNumber(info.registryNumber());
+        registryDto.setRegistrationDate(LocalDate.now());
+        registryDto.setManufacturedAt(old.getManufacturedAt());
+        registryDto.setFactory(old.getFactory());
+        registryDto.setFactoryNumber(old.getFactoryNumber());
+        registryDto.setModel(old.getModel());
+        registryDto.setParameters(old.getParameters());
+        registryDto.setAttractionName(old.getAttractionName());
+        registryDto.setRiskLevel(old.getRiskLevel());
+
+        // Create registry PDF
+        String registryFilepath = createEquipmentRegistryPdf(appeal, registryDto);
+
+        Equipment equipment = Equipment.builder()
+                .type(old.getType())
+                .appealId(appeal.getId())
+                .registryNumber(info.registryNumber())
+                .orderNumber(info.orderNumber())
+                .ownerIdentity(appeal.getOwnerIdentity())
+                .ownerName(appeal.getOwnerName())
+                .hazardousFacilityId(dto.getHazardousFacilityId())
+                .childEquipmentId(old.getChildEquipmentId())
+                .factoryNumber(old.getFactoryNumber())
+                .regionId(appeal.getRegionId())
+                .districtId(appeal.getDistrictId())
+                .ownerAddress(appeal.getOwnerAddress())
+                .address(appeal.getAddress())
+                .model(old.getModel())
+                .factory(old.getFactory())
+                .location(dto.getLocation())
+                .manufacturedAt(old.getManufacturedAt())
+                .partialCheckDate(old.getPartialCheckDate())
+                .fullCheckDate(old.getFullCheckDate())
+                .parameters(old.getParameters())
+                .sphere(old.getSphere())
+                .attractionName(old.getAttractionName())
+                .acceptedAt(old.getAcceptedAt())
+                .childEquipmentSortId(old.getChildEquipmentSortId())
+                .country(old.getCountry())
+                .servicePeriod(old.getServicePeriod())
+                .riskLevel(old.getRiskLevel())
+                .parentOrganization(old.getParentOrganization())
+                .nonDestructiveCheckDate(old.getNonDestructiveCheckDate())
+                .files(dto.getFiles())
+                .description(old.getDescription())
+                .inspectorName(appeal.getExecutorName())
+                .registryFilePath(registryFilepath)
+                .registrationDate(LocalDate.now())
+                .attractionPassportId(old.getAttractionPassportId())
+                .isActive(true)
+                .build();
+
+        repository.save(equipment);
+    }
+
     // HELPER
     protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
         return switch (appealType) {
-            case REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P");
-            case REGISTER_CONTAINER -> getInfo(EquipmentType.CONTAINER, "A");
-            case REGISTER_BOILER -> getInfo(EquipmentType.BOILER, "K");
-            case REGISTER_ELEVATOR -> getInfo(EquipmentType.ELEVATOR, "L");
-            case REGISTER_ESCALATOR -> getInfo(EquipmentType.ESCALATOR, "E");
-            case REGISTER_CABLEWAY -> getInfo(EquipmentType.CABLEWAY, "KD");
-            case REGISTER_HOIST -> getInfo(EquipmentType.HOIST, "V");
-            case REGISTER_PIPELINE -> getInfo(EquipmentType.PIPELINE, "T");
-            case REGISTER_ATTRACTION_PASSPORT -> getInfo(EquipmentType.ATTRACTION_PASSPORT, "AT");
-            case REGISTER_ATTRACTION -> getInfo(EquipmentType.ATTRACTION, "ADR");
-            case REGISTER_CHEMICAL_CONTAINER -> getInfo(EquipmentType.CHEMICAL_CONTAINER, "XA");
-            case REGISTER_HEAT_PIPELINE -> getInfo(EquipmentType.HEAT_PIPELINE, "PAX");
-            case REGISTER_BOILER_UTILIZER -> getInfo(EquipmentType.BOILER_UTILIZER, "KC");
-            case REGISTER_LPG_CONTAINER -> getInfo(EquipmentType.LPG_CONTAINER, "AG");
-            case REGISTER_LPG_POWERED -> getInfo(EquipmentType.LPG_POWERED, "TG");
+            case REGISTER_CRANE, RE_REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P");
+            case REGISTER_CONTAINER, RE_REGISTER_CONTAINER -> getInfo(EquipmentType.CONTAINER, "A");
+            case REGISTER_BOILER, RE_REGISTER_BOILER -> getInfo(EquipmentType.BOILER, "K");
+            case REGISTER_ELEVATOR, RE_REGISTER_ELEVATOR -> getInfo(EquipmentType.ELEVATOR, "L");
+            case REGISTER_ESCALATOR, RE_REGISTER_ESCALATOR -> getInfo(EquipmentType.ESCALATOR, "E");
+            case REGISTER_CABLEWAY, RE_REGISTER_CABLEWAY -> getInfo(EquipmentType.CABLEWAY, "KD");
+            case REGISTER_HOIST, RE_REGISTER_HOIST -> getInfo(EquipmentType.HOIST, "V");
+            case REGISTER_PIPELINE, RE_REGISTER_PIPELINE -> getInfo(EquipmentType.PIPELINE, "T");
+            case REGISTER_ATTRACTION_PASSPORT, RE_REGISTER_ATTRACTION_PASSPORT ->
+                    getInfo(EquipmentType.ATTRACTION_PASSPORT, "AT");
+            case REGISTER_ATTRACTION, RE_REGISTER_ATTRACTION -> getInfo(EquipmentType.ATTRACTION, "ADR");
+            case REGISTER_CHEMICAL_CONTAINER, RE_REGISTER_CHEMICAL_CONTAINER ->
+                    getInfo(EquipmentType.CHEMICAL_CONTAINER, "XA");
+            case REGISTER_HEAT_PIPELINE, RE_REGISTER_HEAT_PIPELINE -> getInfo(EquipmentType.HEAT_PIPELINE, "PAX");
+            case REGISTER_BOILER_UTILIZER, RE_REGISTER_BOILER_UTILIZER -> getInfo(EquipmentType.BOILER_UTILIZER, "KC");
+            case REGISTER_LPG_CONTAINER, RE_REGISTER_LPG_CONTAINER -> getInfo(EquipmentType.LPG_CONTAINER, "AG");
+            case REGISTER_LPG_POWERED, RE_REGISTER_LPG_POWERED -> getInfo(EquipmentType.LPG_POWERED, "TG");
             default -> throw new RuntimeException("Ariza turi hech bir qurilma turiga mos kelmadi");
         };
     }
@@ -301,45 +387,45 @@ public class EquipmentServiceImpl implements EquipmentService {
         return new EquipmentInfoDto(equipmentType, label + formatted, orderNumber);
     }
 
-    private String createAttractionPassportPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate) {
+    private String createAttractionPassportPdf(Appeal appeal, EquipmentRegistryDto dto) {
         Map<String, String> parameters = new HashMap<>();
 
-        parameters.put("attractionName", dto.attractionName());
+        parameters.put("attractionName", dto.getAttractionName());
         parameters.put("attractionType", appeal.getData().get("childEquipmentName").asText());
         parameters.put("childEquipmentSortName", appeal.getData().get("childEquipmentSortName").asText());
-        parameters.put("manufacturedAt", dto.manufacturedAt().toString());
+        parameters.put("manufacturedAt", dto.getManufacturedAt().toString());
         parameters.put("legalName", appeal.getOwnerName());
         parameters.put("legalTin", appeal.getOwnerIdentity().toString());
         parameters.put("legalAddress", appeal.getOwnerAddress());
-        parameters.put("registryNumber", info.registryNumber());
-        parameters.put("factoryNumber", dto.factoryNumber());
+        parameters.put("registryNumber", dto.getRegistryNumber());
+        parameters.put("factoryNumber", dto.getFactoryNumber());
         parameters.put("regionName", regionService.findById(appeal.getRegionId()).getName());
         parameters.put("districtName", districtService.findById(appeal.getDistrictId()).getName());
         parameters.put("address", appeal.getAddress());
-        parameters.put("riskLevel", dto.riskLevel().value);
-        parameters.put("registrationDate", registrationDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        parameters.put("riskLevel", dto.getRiskLevel().value);
+        parameters.put("registrationDate", dto.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 
         String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
 
         return attachmentService.createPdfFromHtml(content, "reestr/attraction-passport", parameters, false);
     }
 
-    private String createEquipmentPdf(Appeal appeal, EquipmentDto dto, EquipmentInfoDto info, LocalDate registrationDate) {
+    private String createEquipmentPdf(Appeal appeal, EquipmentRegistryDto dto) {
         Map<String, String> parameters = new HashMap<>();
 
         parameters.put("legalAddress", appeal.getOwnerAddress());
-        parameters.put("equipmentType", info.equipmentType().value);
+        parameters.put("equipmentType", dto.getType().value);
         parameters.put("childEquipmentName", appeal.getData().get("childEquipmentName").asText());
         parameters.put("legalTin", appeal.getOwnerIdentity().toString());
         parameters.put("legalName", appeal.getOwnerName());
-        parameters.put("factoryNumber", dto.factoryNumber());
-        parameters.put("factory", dto.factory());
-        parameters.put("model", dto.model());
-        parameters.put("manufacturedAt", dto.manufacturedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
-        parameters.put("number", info.registryNumber());
-        parameters.put("registrationDate", registrationDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        parameters.put("factoryNumber", dto.getFactoryNumber());
+        parameters.put("factory", dto.getFactory());
+        parameters.put("model", dto.getModel());
+        parameters.put("manufacturedAt", dto.getManufacturedAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        parameters.put("number", dto.getRegistryNumber());
+        parameters.put("registrationDate", dto.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         parameters.put("address", appeal.getAddress());
-        parameters.put("dynamicParameters", makeDynamicRows(dto.parameters()));
+        parameters.put("dynamicParameters", makeDynamicRows(dto.getParameters()));
 
         String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
 
