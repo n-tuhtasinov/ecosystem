@@ -277,7 +277,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
         return switch (appealType) {
             case REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P");
-            case REGISTER_CONTAINER -> getInfo(EquipmentType.CONTAINER, "AG");
+            case REGISTER_CONTAINER -> getInfo(EquipmentType.CONTAINER, "A");
             case REGISTER_BOILER -> getInfo(EquipmentType.BOILER, "K");
             case REGISTER_ELEVATOR -> getInfo(EquipmentType.ELEVATOR, "L");
             case REGISTER_ESCALATOR -> getInfo(EquipmentType.ESCALATOR, "E");
