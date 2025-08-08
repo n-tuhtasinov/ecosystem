@@ -29,5 +29,10 @@ public class InfoDto<T> {
     private String regionName;
     private String districtName;
     private String phoneNumber;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<T> equipment;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<T> hf;
 }

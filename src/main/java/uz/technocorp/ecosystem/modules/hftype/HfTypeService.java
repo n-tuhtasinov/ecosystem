@@ -1,6 +1,5 @@
 package uz.technocorp.ecosystem.modules.hftype;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.hftype.dto.HfTypeDto;
 

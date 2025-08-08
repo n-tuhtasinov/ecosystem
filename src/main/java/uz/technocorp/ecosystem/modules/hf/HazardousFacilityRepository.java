@@ -297,4 +297,6 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
     Optional<HazardousFacility> findByIdAndProfileId(UUID id, UUID profileId);
 
     Optional<HazardousFacility> findByRegistryNumber(String hfRegistryNumber);
+
+    List<HazardousFacility> findAllByLegalTinAndActive(Long tin, Boolean active);
 }

@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.hf.enums;
 
+import lombok.Getter;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
  * @created 08.04.2025
  * @since v1.0
  */
+@Getter
 public enum HFSphere {
     OIL("Neft"),
     GAS("Gaz"),
@@ -30,7 +32,7 @@ public enum HFSphere {
     DEPARTMENT("Boshqarma"),
     OTHERS("Boshqalar");
 
-    public final String label;
+    private final String label;
     private static final Map<String, HFSphere> BY_LABEL = new HashMap<>();
 
     HFSphere(String label) {
