@@ -10,6 +10,7 @@ import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
+import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -41,9 +42,10 @@ public class EquipmentController {
                                     @RequestParam(value = "regionId", required = false) Integer regionId,
                                     @RequestParam(value = "districtId", required = false) Integer districtId,
                                     @RequestParam(value = "startDate", required = false) LocalDate startDate,
-                                    @RequestParam(value = "endDate", required = false) LocalDate endDate
-    ) {
-        Page<EquipmentView> all = equipmentService.getAll(user, new EquipmentParams(type, page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
+                                    @RequestParam(value = "endDate", required = false) LocalDate endDate,
+                                    @RequestParam(value = "isActive", required = false) Boolean isActive
+                                    ) {
+        Page<EquipmentView> all = equipmentService.getAll(user, new EquipmentParams(type, page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate, isActive));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 
