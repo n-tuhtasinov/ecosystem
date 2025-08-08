@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Repository
 @RequiredArgsConstructor
-public class EquipmentRepoImpl implements EquipmentRepo{
+public class EquipmentRepoImpl implements EquipmentRepo {
 
     private final EntityManager entityManager;
 
@@ -49,7 +49,7 @@ public class EquipmentRepoImpl implements EquipmentRepo{
         Join<Equipment, HazardousFacility> hfJoin = eRoot.join("hazardousFacility", JoinType.LEFT);
 
         // Dinamik qidiruv shartlarini qo'shish
-        if (params.getType() != null){
+        if (params.getType() != null) {
             ePredicates.add(cb.equal(eRoot.get("type"), params.getType()));
             cPredicates.add(cb.equal(cRoot.get("type"), params.getType()));
         }
@@ -76,6 +76,13 @@ public class EquipmentRepoImpl implements EquipmentRepo{
         if (params.getDistrictId() != null) {
             ePredicates.add(cb.equal(eRoot.get("districtId"), params.getDistrictId()));
             cPredicates.add(cb.equal(cRoot.get("districtId"), params.getDistrictId()));
+        }
+        if (params.getIsActive() == null) {
+            ePredicates.add(cb.equal(eRoot.get("isActive"), true));
+            cPredicates.add(cb.equal(cRoot.get("isActive"), true));
+        } else {
+            ePredicates.add(cb.equal(eRoot.get("isActive"), params.getIsActive()));
+            cPredicates.add(cb.equal(cRoot.get("isActive"), params.getIsActive()));
         }
 
         // DTO yaratish -> condition -> sorting -> run

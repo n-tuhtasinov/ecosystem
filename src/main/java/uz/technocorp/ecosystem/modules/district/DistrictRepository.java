@@ -25,7 +25,7 @@ public interface DistrictRepository extends JpaRepository<District, Integer> {
     @Query(nativeQuery = true,
             value = """
                     SELECT d.id as id, d.name as name, r.name as region, d.soato
-                    FROM "district-1" d
+                    FROM "district" d
                              JOIN public.region r ON r.id = d.region_id
                     WHERE (:regionId IS NULL OR d.region_id = :regionId)
                       AND (:search IS NULL OR d.name ILIKE '%' || :search || '%')
