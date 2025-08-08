@@ -42,6 +42,7 @@ public class DeregisterEquipmentDto implements AppealDto {
     private String description;
 
     @SkipDb
+    @NotBlank(message = "Qurilmaning oldi sotdi shartnomasi kiritilmadi")
     private String purchaseAgreementPath;
 
     @SkipDb

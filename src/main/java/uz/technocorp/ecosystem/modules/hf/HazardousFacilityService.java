@@ -50,4 +50,6 @@ public interface HazardousFacilityService {
     Long getCount(User user);
 
     String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto, String now);
+
+    List<HazardousFacility> getAllByTin(Long tin, Boolean active);
 }

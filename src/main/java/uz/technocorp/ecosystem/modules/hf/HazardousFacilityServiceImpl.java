@@ -339,6 +339,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         return attachmentService.createPdfFromHtml(template.getContent(), "reestr/hf", parameters, false);
     }
 
+    @Override
+    public List<HazardousFacility> getAllByTin(Long tin, Boolean active) {
+        return repository.findAllByLegalTinAndActive(tin, active);
+    }
+
     private HfViewById mapToView(HazardousFacility hf) {
         return new HfViewById(
                 hf.getLegalTin(),
