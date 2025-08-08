@@ -340,8 +340,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     }
 
     @Override
-    public List<HazardousFacility> getAllByTin(Long tin, Boolean active) {
-        return repository.findAllByLegalTinAndActive(tin, active);
+    public List<HazardousFacility> getAllByTin(Long tin) {
+        return repository.findAllByLegalTin(tin);
     }
 
     private HfViewById mapToView(HazardousFacility hf) {

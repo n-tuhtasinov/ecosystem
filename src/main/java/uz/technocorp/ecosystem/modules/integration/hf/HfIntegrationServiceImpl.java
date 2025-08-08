@@ -45,7 +45,7 @@ public class HfIntegrationServiceImpl implements HfIntegrationService {
 
         Profile profile = profileService.findByIdentity(Long.parseLong(tin));
 
-        List<HazardousFacility> hfList = new ArrayList<>(hfService.getAllByTin(profile.getIdentity(), true));
+        List<HazardousFacility> hfList = new ArrayList<>(hfService.getAllByTin(profile.getIdentity()));
 
         InfoDto<HfInfoDto> info = new InfoDto<>();
 

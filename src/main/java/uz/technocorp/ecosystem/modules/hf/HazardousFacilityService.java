@@ -51,5 +51,5 @@ public interface HazardousFacilityService {
 
     String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto, String now);
 
-    List<HazardousFacility> getAllByTin(Long tin, Boolean active);
+    List<HazardousFacility> getAllByTin(Long tin);
 }
