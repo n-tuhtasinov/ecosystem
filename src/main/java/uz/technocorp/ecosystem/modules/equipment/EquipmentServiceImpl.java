@@ -319,6 +319,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .type(old.getType())
                 .appealId(appeal.getId())
                 .registryNumber(info.registryNumber())
+                .oldRegistryNumber(old.getRegistryNumber())
                 .orderNumber(info.orderNumber())
                 .ownerIdentity(appeal.getOwnerIdentity())
                 .ownerName(appeal.getOwnerName())
@@ -396,7 +397,6 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("manufacturedAt", dto.getManufacturedAt().toString());
         parameters.put("legalName", appeal.getOwnerName());
         parameters.put("legalTin", appeal.getOwnerIdentity().toString());
-        parameters.put("legalAddress", appeal.getOwnerAddress());
         parameters.put("registryNumber", dto.getRegistryNumber());
         parameters.put("factoryNumber", dto.getFactoryNumber());
         parameters.put("regionName", regionService.findById(appeal.getRegionId()).getName());
@@ -404,6 +404,11 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("address", appeal.getAddress());
         parameters.put("riskLevel", dto.getRiskLevel().value);
         parameters.put("registrationDate", dto.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        if (appeal.getOwnerAddress() == null || "null".equals(appeal.getOwnerAddress())) {
+            parameters.put("legalAddress", "-");
+        } else {
+            parameters.put("legalAddress", appeal.getOwnerAddress());
+        }
 
         String content = getTemplateContent(TemplateType.REGISTRY_ATTRACTION);
 
@@ -413,7 +418,12 @@ public class EquipmentServiceImpl implements EquipmentService {
     private String createEquipmentPdf(Appeal appeal, EquipmentRegistryDto dto) {
         Map<String, String> parameters = new HashMap<>();
 
-        parameters.put("legalAddress", appeal.getOwnerAddress());
+        if (appeal.getOwnerAddress() == null || "null".equals(appeal.getOwnerAddress())) {
+            parameters.put("legalAddress", "-");
+        } else {
+            parameters.put("legalAddress", appeal.getOwnerAddress());
+        }
+
         parameters.put("equipmentType", dto.getType().value);
         parameters.put("childEquipmentName", appeal.getData().get("childEquipmentName").asText());
         parameters.put("legalTin", appeal.getOwnerIdentity().toString());
