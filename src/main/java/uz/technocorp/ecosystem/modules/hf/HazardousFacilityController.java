@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
@@ -36,26 +35,10 @@ public class HazardousFacilityController {
 
     private final HazardousFacilityService service;
 
-//    @PostMapping("/without-appeal")
-//    public ResponseEntity<?> create(@Valid @RequestBody HfDto dto) {
-//        service.create(dto);
-//        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-//    }
-
     @PutMapping("/{hfId}")
     public ResponseEntity<?> update(@PathVariable UUID hfId, @Valid @RequestBody HfDto dto) {
         service.update(hfId, dto);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
-    @PutMapping("/deregister/{hfId}")
-    public ResponseEntity<?> deregister(@PathVariable UUID hfId, @Valid @RequestBody HfDeregisterDto hfDeregisterDto) {
-        try {
-            service.deregister(hfId, hfDeregisterDto);
-            return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @PutMapping("/periodic-update/{hfId}")
@@ -69,7 +52,7 @@ public class HazardousFacilityController {
     }
 
     @GetMapping("/select")
-    public ResponseEntity<?> findAllByUser(@CurrentUser User user, @RequestParam(required = false, defaultValue = "") String registryNumber ) {
+    public ResponseEntity<?> findAllByUser(@CurrentUser User user, @RequestParam(required = false, defaultValue = "") String registryNumber) {
         List<HfSelectView> allByProfile = service.findAllByUser(user, registryNumber);
         return ResponseEntity.ok(new ApiResponse(allByProfile));
     }
@@ -84,7 +67,7 @@ public class HazardousFacilityController {
                                     @RequestParam(value = "districtId", required = false) Integer districtId,
                                     @RequestParam(value = "startDate", required = false) LocalDate startDate,
                                     @RequestParam(value = "endDate", required = false) LocalDate endDate
-                                    ) {
+    ) {
         Page<HfCustom> all = service.getAll(user, new HfParams(page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
         return ResponseEntity.ok(new ApiResponse(all));
     }
@@ -97,15 +80,14 @@ public class HazardousFacilityController {
     }
 
 
-
     @GetMapping("/risk-assessment")
     public ResponseEntity<?> getAllForRiskAssessment(@CurrentUser User user,
-                                    @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
-                                    @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-                                    @RequestParam(value = "legalTin", required = false) Long legalTin,
-                                    @RequestParam(value = "registryNumber", required = false) String registryNumber,
-                                    @RequestParam(value = "intervalId") Integer intervalId,
-                                    @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
+                                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
+                                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
+                                                     @RequestParam(value = "legalTin", required = false) Long legalTin,
+                                                     @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                                     @RequestParam(value = "intervalId") Integer intervalId,
+                                                     @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
         Page<HfPageView> all = service.getAllForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
         return ResponseEntity.ok(new ApiResponse(all));

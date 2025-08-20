@@ -7,7 +7,7 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.time.LocalDate;
@@ -27,7 +27,7 @@ public interface AppealService {
 
     void saveReplyAndSign(User user, SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request);
 
-    void replyAccept(User user, SignedReplyDto<?> replyDto, HttpServletRequest request);
+    void replyAcceptAttestation(User user, SignedReplyDto<?> replyDto, HttpServletRequest request);
 
     void replyReject(User user, SignedReplyDto<ReplyDto> replyDto, HttpServletRequest request);
 

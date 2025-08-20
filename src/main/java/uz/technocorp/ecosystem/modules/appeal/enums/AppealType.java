@@ -20,7 +20,7 @@ public enum AppealType {
     // Xavfli Ishlab Chiqarish Obyektini ro‘yxatga olish, o'zgartirish va chiqarish
     REGISTER_HF("", "registerHf", "", "HF", ""),
     DEREGISTER_HF("", "deregisterHf", "", "HF", ""),
-    MODIFY_HF("", "hf", "modifyHf", "HF", ""),
+    MODIFY_HF("", "modifyHf", "", "HF", ""),
 
     //Crane
     REGISTER_CRANE("", "registerEquipment", "P", "EQUIPMENT", "CRANE"),

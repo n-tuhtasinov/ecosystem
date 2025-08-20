@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hfappeal.dto;
+package uz.technocorp.ecosystem.modules.hfappeal.register.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

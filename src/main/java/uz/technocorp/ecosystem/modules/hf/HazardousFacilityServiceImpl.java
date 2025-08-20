@@ -5,12 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
-import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
@@ -18,7 +18,8 @@ import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.deregister.dto.HfDeregisterDto;
+import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
@@ -99,59 +100,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .build());
     }
 
-//    @Override
-//    public void create(HfDto dto) {
-//
-//        Region region = regionRepository
-//                .findById(dto.regionId())
-//                .orElseThrow(() -> new ResourceNotFoundException("Viloyat", "Id", dto.regionId()));
-//
-//        District district = districtRepository
-//                .findById(dto.districtId())
-//                .orElseThrow(() -> new ResourceNotFoundException("Tuman", "Id", dto.districtId()));
-//
-//        Profile profile = profileRepository.findByTin(dto.legalTin()).orElseThrow(() -> new ResourceNotFoundException("Profile", "Tin", dto.legalTin()));
-//
-//        repository.save(
-//                HazardousFacility.builder()
-//                        .legalTin(dto.legalTin())
-//                        .legalName(profile.getName())
-//                        .regionId(dto.regionId())
-//                        .districtId(dto.districtId())
-//                        .profileId(profile.getId())
-//                        .legalAddress(profile.getAddress())
-//                        .phoneNumber(dto.phoneNumber())
-//                        .email(dto.email())
-//                        .upperOrganization(dto.upperOrganization())
-//                        .name(dto.name())
-//                        .address(region.getName()+", "+district.getName()+", "+dto.address())
-//                        .location(dto.location())
-//                        .hazardousSubstance(dto.hazardousSubstance())
-//                        .spheres(dto.spheres())
-//                        .registrationDate(dto.registrationDate())
-//                        .hfTypeId(dto.hfTypeId())
-//                        .extraArea(dto.extraArea())
-//                        .description(dto.description())
-//                        .registryNumber(dto.registryNumber())
-//                        .registrationDate(dto.registrationDate())
-//                        .active(true)
-//                        .appointmentOrderPath(dto.appointmentOrderPath())
-//                        .cadastralPassportPath(dto.cadastralPassportPath())
-//                        .certificationPath(dto.certificationPath())
-//                        .permitPath(dto.permitPath())
-//                        .deviceTestingPath(dto.deviceTestingPath())
-//                        .licensePath(dto.licensePath())
-//                        .ecologicalConclusionPath(dto.ecologicalConclusionPath())
-//                        .expertOpinionPath(dto.expertOpinionPath())
-//                        .industrialSafetyDeclarationPath(dto.industrialSafetyDeclarationPath())
-//                        .insurancePolicyPath(dto.insurancePolicyPath())
-//                        .projectDocumentationPath(dto.projectDocumentationPath())
-//                        .replyLetterPath(dto.replyLetterPath())
-//                        .identificationCardPath(dto.identificationCardPath())
-//                        .receiptPath(dto.receiptPath())
-//                        .build());
-//    }
-
     @Override
     public void update(UUID id, HfDto dto) {
         HazardousFacility hazardousFacility = findById(id);
@@ -175,30 +123,32 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setSpheres(dto.spheres());
         hazardousFacility.setRegistrationDate(dto.registrationDate());
         //TODO HfDtoga filesni set qilishni yozish kerak
-//        hazardousFacility.setAppointmentOrderPath(dto.appointmentOrderPath());
-//        hazardousFacility.setCadastralPassportPath(dto.cadastralPassportPath());
-//        hazardousFacility.setCertificationPath(dto.certificationPath());
-//        hazardousFacility.setPermitPath(dto.permitPath());
-//        hazardousFacility.setIndustrialSafetyDeclarationPath(dto.industrialSafetyDeclarationPath());
-//        hazardousFacility.setLicensePath(dto.licensePath());
-//        hazardousFacility.setEcologicalConclusionPath(dto.ecologicalConclusionPath());
-//        hazardousFacility.setExpertOpinionPath(dto.expertOpinionPath());
-//        hazardousFacility.setInsurancePolicyPath(dto.insurancePolicyPath());
-//        hazardousFacility.setProjectDocumentationPath(dto.projectDocumentationPath());
-//        hazardousFacility.setIdentificationCardPath(dto.identificationCardPath());
-//        hazardousFacility.setDeviceTestingPath(dto.deviceTestingPath());
-//        hazardousFacility.setReceiptPath(dto.receiptPath());
+        /*hazardousFacility.setAppointmentOrderPath(dto.appointmentOrderPath());
+        hazardousFacility.setCadastralPassportPath(dto.cadastralPassportPath());
+        hazardousFacility.setCertificationPath(dto.certificationPath());
+        hazardousFacility.setPermitPath(dto.permitPath());
+        hazardousFacility.setIndustrialSafetyDeclarationPath(dto.industrialSafetyDeclarationPath());
+        hazardousFacility.setLicensePath(dto.licensePath());
+        hazardousFacility.setEcologicalConclusionPath(dto.ecologicalConclusionPath());
+        hazardousFacility.setExpertOpinionPath(dto.expertOpinionPath());
+        hazardousFacility.setInsurancePolicyPath(dto.insurancePolicyPath());
+        hazardousFacility.setProjectDocumentationPath(dto.projectDocumentationPath());
+        hazardousFacility.setIdentificationCardPath(dto.identificationCardPath());
+        hazardousFacility.setDeviceTestingPath(dto.deviceTestingPath());
+        hazardousFacility.setReceiptPath(dto.receiptPath());*/
         repository.save(hazardousFacility);
     }
 
     @Override
-    public void deregister(UUID id, HfDeregisterDto dto) {
-        HazardousFacility hazardousFacility = findById(id);
+    public void deregister(Appeal appeal) {
+        HfDeregisterDto dto = JsonParser.parseJsonData(appeal.getData(), HfDeregisterDto.class);
+
+        HazardousFacility hazardousFacility = findByRegistryNumber(dto.getRegistryNumber());
         hazardousFacility.setActive(false);
-        hazardousFacility.setDeregisterFilePath(dto.deregisterFilePath());
-        hazardousFacility.setDeregisterReason(dto.deregisterReason());
+        hazardousFacility.setDeregisterFilePath(dto.getJustifiedDocumentPath());
+        hazardousFacility.setDeregisterReason(dto.getReasons());
         hazardousFacility.setRegistryNumber(
-                hazardousFacility.getRegistryNumber() + "/р-ч" + String.format("%05d", hazardousFacility.getOrderNumber())
+                hazardousFacility.getRegistryNumber() + "/r-ch" + String.format("%05d", hazardousFacility.getOrderNumber())
         );
 
         repository.save(hazardousFacility);
@@ -342,6 +292,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     @Override
     public List<HazardousFacility> getAllByTin(Long tin) {
         return repository.findAllByLegalTin(tin);
+    }
+
+    @Override
+    public HazardousFacility findByRegistryNumberAndLegalTinAndActive(String registryNumber, Long legalTin, Boolean active) {
+        return repository.findByRegistryNumberAndLegalTinAndActive(registryNumber, legalTin, active).orElseThrow(() -> new CustomException("XICHO topilmadi"));
     }
 
     private HfViewById mapToView(HazardousFacility hf) {

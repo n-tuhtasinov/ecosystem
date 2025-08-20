@@ -71,7 +71,7 @@ public class AttestationAppealController {
 
     @PostMapping("/reply/regional-accept")
     public ResponseEntity<ApiResponse> replyAcceptRegional(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<SetInspectorDto> signedReplyDto, HttpServletRequest request) {
-        appealService.replyAccept(user, signedReplyDto, request);
+        appealService.replyAcceptAttestation(user, signedReplyDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
@@ -84,7 +84,7 @@ public class AttestationAppealController {
 
     @PostMapping("/reply/committee-accept")
     public ResponseEntity<ApiResponse> replyAcceptByCommittee(@CurrentUser User user, @Valid @RequestBody SignedReplyDto<ReplyAttestationDto> signedReplyDto, HttpServletRequest request) {
-        appealService.replyAccept(user, signedReplyDto, request);
+        appealService.replyAcceptAttestation(user, signedReplyDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
