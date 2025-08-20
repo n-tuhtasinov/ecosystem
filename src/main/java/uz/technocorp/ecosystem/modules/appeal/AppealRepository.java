@@ -64,21 +64,25 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
 
     @Query(nativeQuery = true,
             value = """
-                    SELECT COALESCE(o.name, 'Qo''mita')                      AS "officeName",
-                           COUNT(*)                                          AS total,
-                           COUNT(*) FILTER (WHERE a.status = 'IN_PROCESS')   AS "inProcess",
-                           COUNT(*) FILTER (WHERE a.status = 'IN_AGREEMENT') AS "inAgreement",
-                           COUNT(*) FILTER (WHERE a.status = 'IN_APPROVAL')  AS "inApproval",
-                           COUNT(*) FILTER (WHERE a.status = 'COMPLETED')    AS "completed",
-                           COUNT(*) FILTER (WHERE a.status = 'REJECTED')     AS "rejected",
-                           COUNT(*) FILTER (WHERE a.status = 'CANCELED')     AS "canceled"
-                    FROM appeal a
-                             LEFT JOIN
-                         office o ON a.office_id = o.id
-                    WHERE a.owner_type = :ownerType
-                      AND a.created_at >= :startDate
-                      AND (CAST(:endDate AS timestamp) IS NULL OR a.created_at <= :endDate)
-                    GROUP BY "officeName"
+                    with office_list as (select id, name
+                                         from office
+                                         union all
+                                         select null as id, 'Qo''mita' as name)
+                    select ol.name                                              as "officeName",
+                           count(a.id)                                          as total,
+                           count(a.id) filter (where a.status = 'IN_PROCESS')   as "inProcess",
+                           count(a.id) filter (where a.status = 'IN_AGREEMENT') as "inAgreement",
+                           count(a.id) filter (where a.status = 'IN_APPROVAL')  as "inApproval",
+                           count(a.id) filter (where a.status = 'COMPLETED')    as "completed",
+                           count(a.id) filter (where a.status = 'REJECTED')     as "rejected",
+                           count(a.id) filter (where a.status = 'CANCELED')     as "canceled"
+                    from office_list ol
+                             left join
+                         appeal a on (ol.id = a.office_id or (ol.id is null and a.office_id is null))
+                             and a.owner_type = :ownerType
+                             and a.created_at >= :startDate
+                             and (cast(:endDate as timestamp) is null or a.created_at <= :endDate)
+                    group by ol.name
                     """)
     List<StatByAppealStatusView> countByAppealStatus(String ownerType, LocalDate startDate, LocalDate endDate);
 
@@ -102,11 +106,11 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
                    count(a.id) filter ( where r.soato = 1727)      as tashkentRegion
             from (select unnest(:appealTypes) as appeal_type_name) as typesSource
                      left join appeal a on typesSource.appeal_type_name = a.appeal_type
+                            and a.owner_type = :ownerType
+                            and a.created_at >= :startDate
+                            and (cast(:endDate as timestamp) is null or a.created_at <= :endDate)
                      left join office o on a.office_id = o.id
                      left join region r on o.region_id = r.id
-            where a.owner_type = :ownerType
-              and a.created_at >= :startDate
-              and (cast(:endDate as timestamp) is null or a.created_at <= :endDate)
             group by typesSource.appeal_type_name
             """)
     List<StatByAppealTypeView> countByAppealType(String ownerType, LocalDate startDate, LocalDate endDate, String[] appealTypes);
