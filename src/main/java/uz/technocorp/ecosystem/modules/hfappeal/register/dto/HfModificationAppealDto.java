@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.hfappeal.dto;
+package uz.technocorp.ecosystem.modules.hfappeal.register.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**

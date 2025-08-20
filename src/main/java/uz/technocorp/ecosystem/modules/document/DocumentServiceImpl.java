@@ -156,7 +156,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private String getSigner(String sign, String ip) {
-        if (eImzoMode.equals("prod")) {
+        if (!eImzoMode.equals("dev")) {
             Pkcs7VerifyAttachedJson pkcs7VerifyAttached = eImzoProxy.pkcs7Attached(host, ip, sign);
             if (!"1".equals(pkcs7VerifyAttached.getStatus())) {
                 throw new ResourceNotFoundException("Document verification failed");

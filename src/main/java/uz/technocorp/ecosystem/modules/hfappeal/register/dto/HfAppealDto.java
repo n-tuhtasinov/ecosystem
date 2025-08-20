@@ -1,7 +1,6 @@
-package uz.technocorp.ecosystem.modules.hfappeal.dto;
+package uz.technocorp.ecosystem.modules.hfappeal.register.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

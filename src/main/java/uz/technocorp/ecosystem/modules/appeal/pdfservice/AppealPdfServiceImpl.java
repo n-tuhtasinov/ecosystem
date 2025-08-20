@@ -72,7 +72,9 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         // Generate PDF and return path
         return switch (appeal.getAppealType().sort) {
             case "registerHf" -> makeHfReplyPdf(user, dto, appeal);
-            case "registerEquipment", "deregisterEquipment", "reRegisterEquipment" -> makeEquipmentReplyPdf(user, dto, appeal);
+            case "deregisterHf" -> makeHfDeregisterReplyPdf(user, dto, appeal);
+            case "registerEquipment", "deregisterEquipment", "reRegisterEquipment" ->
+                    makeEquipmentReplyPdf(user, dto, appeal);
             case "registerIrs" -> makeIrsReplyPdf(user, dto, appeal);
             case "registerAttractionPassport" -> makeAttractionPassportReplyPdf(user, dto, appeal);
             default ->
@@ -207,9 +209,20 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         parameters.put("extraArea", appeal.getData().get("extraArea").asText());
         parameters.put("hazardousSubstance", appeal.getData().get("hazardousSubstance").asText());
 
-
         // Save to an attachment and folder & Return a file path
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/hf", parameters, true);
+    }
+
+    private String makeHfDeregisterReplyPdf(User user, ReplyDto replyDto, Appeal appeal) {
+        Template template = templateService.getByType(TemplateType.REPLY_HF_DEREGISTER_APPEAL.name());
+
+        Map<String, String> parameters = buildBaseParameters(user.getName(), replyDto, appeal);
+
+        parameters.put("address", appeal.getAddress());
+        parameters.put("name", appeal.getData().get("hfName").asText());
+
+        // Save to an attachment and folder & Return a file path
+        return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/hf/deregister", parameters, true);
     }
 
     private String makeIrsReplyPdf(User user, ReplyDto replyDto, Appeal appeal) {

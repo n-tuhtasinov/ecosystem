@@ -121,6 +121,12 @@ public class HazardousFacility extends BaseEntity {
     @Column(columnDefinition = "jsonb")
     private Map<String, String> files;
 
+    // Reestr fayl path
+    private String registryFilePath;
+
+    @Column(nullable = false)
+    private String inspectorName;
+
 //    //Identifikatsiya varag'i
 //    private String identificationCardPath;
 //
@@ -162,12 +168,4 @@ public class HazardousFacility extends BaseEntity {
 //
 //    // Yong‘in xavfsizligi xulosasi(PDF)
 //    private String fireSafetyConclusionPath;
-
-    // Reestr fayl path
-    private String registryFilePath;
-
-    @Column(nullable = false)
-    private String inspectorName;
-
-
 }

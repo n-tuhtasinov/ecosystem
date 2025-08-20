@@ -299,4 +299,6 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
     Optional<HazardousFacility> findByRegistryNumber(String hfRegistryNumber);
 
     List<HazardousFacility> findAllByLegalTin(Long tin);
+
+    Optional<HazardousFacility> findByRegistryNumberAndLegalTinAndActive(String registryNumber, Long legalTin, Boolean active);
 }
