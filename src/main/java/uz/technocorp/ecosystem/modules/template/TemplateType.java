@@ -37,6 +37,7 @@ public enum TemplateType {
 
     // Inspektor javob xati ( Ma'lumotnoma )
     REPLY_HF_APPEAL,
+    REPLY_HF_DEREGISTER_APPEAL,
     REPLY_IRS_APPEAL,
     REPLY_EQUIPMENT_APPEAL,
     REPLY_ATTRACTION_PASSPORT_APPEAL,
