@@ -35,7 +35,7 @@ public class DeregisterHfController {
 
     @PostMapping("/deregister")
     public ResponseEntity<ApiResponse> deregister(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<HfDeregisterDto> signDto, HttpServletRequest request) {
-//        service.deregister(user, signDto, request);
+        service.deregister(user, signDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 }
