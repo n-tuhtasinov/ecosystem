@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
-import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.appeal.repo.AppealRepo;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
-import uz.technocorp.ecosystem.modules.statistics.view.AppealStatusCountView;
+import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealStatusView;
+import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealTypeView;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -64,19 +64,50 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
 
     @Query(nativeQuery = true,
             value = """
-                    select case when o.name is not null then o.name else 'Qo''mita' end as officeName,
-                           count(a.id) as total,
-                           count(case when a.status = 'IN_PROCESS' then 1 end) as inProcess,
-                           count(case when a.status = 'IN_AGREEMENT' then 1 end) as inAgreement,
-                           count(case when a.status = 'IN_APPROVAL' then 1 end) as inApproval,
-                           count(case when a.status = 'COMPLETED' then 1 end) as completed,
-                           count(case when a.status = 'REJECTED' then 1 end) as rejected,
-                           count(case when a.status = 'CANCELED' then 1 end) as canceled
-                    from appeal a
-                             left join office o on a.office_id = o.id
-                    where a.created_at >= :startDate
-                      and a.owner_type = :ownerType
-                      and (cast(:endDate as date) is null or a.created_at <= :endDate) group by o.name
+                    SELECT COALESCE(o.name, 'Qo''mita')                      AS "officeName",
+                           COUNT(*)                                          AS total,
+                           COUNT(*) FILTER (WHERE a.status = 'IN_PROCESS')   AS "inProcess",
+                           COUNT(*) FILTER (WHERE a.status = 'IN_AGREEMENT') AS "inAgreement",
+                           COUNT(*) FILTER (WHERE a.status = 'IN_APPROVAL')  AS "inApproval",
+                           COUNT(*) FILTER (WHERE a.status = 'COMPLETED')    AS "completed",
+                           COUNT(*) FILTER (WHERE a.status = 'REJECTED')     AS "rejected",
+                           COUNT(*) FILTER (WHERE a.status = 'CANCELED')     AS "canceled"
+                    FROM appeal a
+                             LEFT JOIN
+                         office o ON a.office_id = o.id
+                    WHERE a.owner_type = :ownerType
+                      AND a.created_at >= :startDate
+                      AND (CAST(:endDate AS timestamp) IS NULL OR a.created_at <= :endDate)
+                    GROUP BY "officeName"
                     """)
-    List<AppealStatusCountView> countByAppealStatus(String ownerType, LocalDate startDate, LocalDate endDate);
+    List<StatByAppealStatusView> countByAppealStatus(String ownerType, LocalDate startDate, LocalDate endDate);
+
+    @Query(nativeQuery = true, value = """
+            select typesSource.appeal_type_name                    as appealType,
+                   count(a.id)                                     as total,
+                   count(a.id) filter ( where a.office_id is null) as committee,
+                   count(a.id) filter ( where r.soato = 1735)      as karakalpakstan,
+                   count(a.id) filter ( where r.soato = 1703)      as andijan,
+                   count(a.id) filter ( where r.soato = 1706)      as bukhara,
+                   count(a.id) filter ( where r.soato = 1730)      as fergana,
+                   count(a.id) filter ( where r.soato = 1708)      as jizzakh,
+                   count(a.id) filter ( where r.soato = 1710)      as kashkadarya,
+                   count(a.id) filter ( where r.soato = 1733)      as khorezm,
+                   count(a.id) filter ( where r.soato = 1714)      as namangan,
+                   count(a.id) filter ( where r.soato = 1712)      as navoi,
+                   count(a.id) filter ( where r.soato = 1718)      as samarkand,
+                   count(a.id) filter ( where r.soato = 1724)      as syrdarya,
+                   count(a.id) filter ( where r.soato = 1722)      as surkhandarya,
+                   count(a.id) filter ( where r.soato = 1726)      as tashkent,
+                   count(a.id) filter ( where r.soato = 1727)      as tashkentRegion
+            from (select unnest(:appealTypes) as appeal_type_name) as typesSource
+                     left join appeal a on typesSource.appeal_type_name = a.appeal_type
+                     left join office o on a.office_id = o.id
+                     left join region r on o.region_id = r.id
+            where a.owner_type = :ownerType
+              and a.created_at >= :startDate
+              and (cast(:endDate as timestamp) is null or a.created_at <= :endDate)
+            group by typesSource.appeal_type_name
+            """)
+    List<StatByAppealTypeView> countByAppealType(String ownerType, LocalDate startDate, LocalDate endDate, String[] appealTypes);
 }

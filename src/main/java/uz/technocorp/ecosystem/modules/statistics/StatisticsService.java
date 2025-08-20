@@ -1,7 +1,9 @@
 package uz.technocorp.ecosystem.modules.statistics;
 
 import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealStatusFilterDto;
-import uz.technocorp.ecosystem.modules.statistics.view.AppealStatusCountView;
+import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealTypeFilterDto;
+import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealStatusView;
+import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealTypeView;
 
 import java.util.List;
 
@@ -12,6 +14,9 @@ import java.util.List;
  * @since v1.0
  */
 public interface StatisticsService {
-    List<AppealStatusCountView> getAppealStatus(AppealStatusFilterDto filterDto);
+    List<StatByAppealStatusView> getAppealStatus(AppealStatusFilterDto filterDto);
 
+    List<StatByAppealTypeView> getAppealType(AppealTypeFilterDto filterDto);
+
+    String getLabelByAppealType(String appealType);
 }

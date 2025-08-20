@@ -18,12 +18,12 @@ import java.util.stream.Stream;
 public enum AppealType {
 
     // Xavfli Ishlab Chiqarish Obyektini ro‘yxatga olish, o'zgartirish va chiqarish
-    REGISTER_HF("", "registerHf", "", "HF", ""),
+    REGISTER_HF("XICHO larni ro'yhatga olish", "registerHf", "", "HF", ""),
     DEREGISTER_HF("", "deregisterHf", "", "HF", ""),
     MODIFY_HF("", "modifyHf", "", "HF", ""),
 
     //Crane
-    REGISTER_CRANE("", "registerEquipment", "P", "EQUIPMENT", "CRANE"),
+    REGISTER_CRANE("Kranni ro'yhatga olish", "registerEquipment", "P", "EQUIPMENT", "CRANE"),
     DEREGISTER_CRANE("", "deregisterEquipment", "P", "EQUIPMENT", "CRANE"),
     RE_REGISTER_CRANE("", "reRegisterEquipment", "P", "EQUIPMENT", "CRANE"),
 
@@ -115,7 +115,7 @@ public enum AppealType {
     OBTAIN_CONCLUSION("", "", "", "PERMITS", ""),
 
     // Xavfli ishlab chiqarish obyektlari kadastr pasporti
-    REGISTER_CADASTRE_PASSPORT("", "registerCadastrePassport", "", "CADASTRE", ""),
+    REGISTER_CADASTRE_PASSPORT("Kadastr pasportini ro'yhatga olish", "registerCadastrePassport", "", "CADASTRE", ""),
     DEREGISTER_CADASTRE_PASSPORT("", "", "", "CADASTRE", ""),
 
     // Sanoat xavfsizligi deklaratsiyasi

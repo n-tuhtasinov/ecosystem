@@ -6,7 +6,7 @@ package uz.technocorp.ecosystem.modules.statistics.view;
  * @created 20.08.2025
  * @since v1.0
  */
-public interface AppealStatusCountView {
+public interface StatByAppealStatusView {
     String getOfficeName();
     Integer getTotal();
     Integer getInProcess();
