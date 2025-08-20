@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 
@@ -353,6 +354,113 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
               and e.type = :equipmentType
             """, nativeQuery = true)
     Page<EquipmentRiskView> getAllByRegistryNumber(Pageable pageable, String registryNumber, String equipmentType, Integer intervalId);
+
+    @Query(value = """
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.owner_identity    as legalTin,
+                   e.owner_address,
+                   e.owner_name   as legalName,
+                   p.name    as inspectorName,
+                   aie.id         as assignId,
+                   case
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
+                   end as score
+            from equipment e
+                     inner join assign_inspector_equipment aie on e.id = aie.equipment_id
+                     join users u on u.id = aie.inspector_id
+                     join profile p on p.id = u.profile_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
+            where e.owner_type = :ownerType
+              and aie.interval_id = :intervalId
+              and e.type = :equipmentType
+            """, nativeQuery = true)
+    Page<EquipmentRiskView> getAllByIntervalAndOwnerType(Pageable pageable, Integer intervalId, String equipmentType, String ownerType);
+
+    @Query(value = """
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.owner_identity    as legalTin,
+                   e.owner_address,
+                   e.owner_name   as legalName,
+                   p.name    as inspectorName,
+                   aie.id         as assignId,
+                   case
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
+                   end as score
+            from equipment e
+                     inner join assign_inspector_equipment aie on e.id = aie.equipment_id
+                     join users u on u.id = aie.inspector_id
+                     join profile p on p.id = u.profile_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
+            where e.owner_type = :ownerType
+                          and e.owner_identity = :tin
+                          and aie.interval_id = :intervalId
+                          and e.type = :equipmentType
+            """, nativeQuery = true)
+    Page<EquipmentRiskView> getAllByLegalTinAndIntervalAndOwnerType(Pageable pageable, Long tin, Integer intervalId, String equipmentType, String ownerType);
+
+    @Query(value = """
+            select e.id           as id,
+                   e.registry_number as factoryNumber,
+                   e.type         as name,
+                   e.owner_identity    as legalTin,
+                   e.owner_address,
+                   e.owner_name   as legalName,
+                   p.name    as inspectorName,
+                   aie.id         as assignId,
+                   case
+                        when e.type = 'ELEVATOR' then elev_scores.total_score
+                        when e.type = 'ATTRACTION' then attr_scores.total_score
+                   end as score
+            from equipment e
+                     inner join assign_inspector_equipment aie on e.id = aie.equipment_id
+                     join users u on u.id = aie.inspector_id
+                     join profile p on p.id = u.profile_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from elevator_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as elev_scores on e.id = elev_scores.equipment_id
+                     left join (
+                        select equipment_id, sum(score) as total_score
+                        from attraction_risk_indicator
+                        where risk_analysis_interval_id = :intervalId
+                        group by equipment_id
+                     ) as attr_scores on e.id = attr_scores.equipment_id
+            where e.owner_type = :ownerType
+                          and e.registry_number = :registryNumber
+                          and aie.interval_id = :intervalId
+                          and e.type = :equipmentType
+            """, nativeQuery = true)
+    Page<EquipmentRiskView> getAllByRegistryNumberAndIntervalAndOwnerType(Pageable pageable, String registryNumber, Integer intervalId, String equipmentType, String ownerType);
 
     Optional<Equipment> findByRegistryNumber(String registryNumber);
 

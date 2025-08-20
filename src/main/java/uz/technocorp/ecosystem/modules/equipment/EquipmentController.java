@@ -5,12 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRiskParamsDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
-import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -44,7 +44,7 @@ public class EquipmentController {
                                     @RequestParam(value = "startDate", required = false) LocalDate startDate,
                                     @RequestParam(value = "endDate", required = false) LocalDate endDate,
                                     @RequestParam(value = "isActive", required = false) Boolean isActive
-                                    ) {
+    ) {
         Page<EquipmentView> all = equipmentService.getAll(user, new EquipmentParams(type, page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate, isActive));
         return ResponseEntity.ok(new ApiResponse(all));
     }
@@ -72,7 +72,8 @@ public class EquipmentController {
                                                                 @RequestParam(value = "intervalId") Integer intervalId,
                                                                 @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
-        Page<EquipmentRiskView> all = equipmentService.getAllAttractionForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
+        Page<EquipmentRiskView> all = equipmentService.getAllEquipmentRiskAssessment(
+                new EquipmentRiskParamsDto(EquipmentType.ATTRACTION, user, page, size, legalTin, registryNumber, isAssigned, intervalId));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 
@@ -85,7 +86,8 @@ public class EquipmentController {
                                                               @RequestParam(value = "intervalId") Integer intervalId,
                                                               @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
-        Page<EquipmentRiskView> all = equipmentService.getAllElevatorForRiskAssessment(user, page, size, legalTin, registryNumber, isAssigned, intervalId);
+        Page<EquipmentRiskView> all = equipmentService.getAllEquipmentRiskAssessment(
+                new EquipmentRiskParamsDto(EquipmentType.ELEVATOR, user, page, size, legalTin, registryNumber, isAssigned, intervalId));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 

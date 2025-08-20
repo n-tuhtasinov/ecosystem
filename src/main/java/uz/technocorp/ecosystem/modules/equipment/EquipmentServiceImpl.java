@@ -13,10 +13,7 @@ import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
-import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.*;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentParameter;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
@@ -92,6 +89,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .orderNumber(info.orderNumber())
                 .ownerIdentity(appeal.getOwnerIdentity())
                 .ownerName(profile.getName())
+                .ownerType(OwnerType.find(appeal.getOwnerIdentity().toString().length()))
                 .hazardousFacilityId(dto.hazardousFacilityId())
                 .childEquipmentId(dto.childEquipmentId())
                 .factoryNumber(dto.factoryNumber())
@@ -184,82 +182,53 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
-    public Page<EquipmentRiskView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Role role = user.getRole();
+    public Page<EquipmentRiskView> getAllEquipmentRiskAssessment(EquipmentRiskParamsDto dto) {
+        Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
+        Role role = dto.getUser().getRole();
+
         if (role == Role.REGIONAL) {
-            Profile profile = profileService.getProfile(user.getProfileId());
+            Profile profile = profileService.getProfile(dto.getUser().getProfileId());
             Office office = officeService.findById(profile.getOfficeId());
             Integer regionId = office.getRegionId();
-            if (isAssigned) {
-                if (registryNumber != null)
-                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
-                if (tin != null)
-                    return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ATTRACTION.name());
+            if (dto.getIsAssigned()) {
+                if (dto.getRegistryNumber() != null)
+                    return repository.getAllByRegistryNumberAndInterval(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name());
+                if (dto.getLegalTin() != null)
+                    return repository.getAllByLegalTinAndInterval(pageable, dto.getLegalTin(), dto.getIntervalId(), dto.getEquipmentType().name());
                 else
-                    return repository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ATTRACTION.name());
+                    return repository.getAllByRegionAndInterval(pageable, regionId, dto.getIntervalId(), dto.getEquipmentType().name());
             } else {
-                if (tin != null)
-                    return repository.getAllByLegalTin(pageable, tin, EquipmentType.ATTRACTION.name(), intervalId);
-                if (registryNumber != null)
-                    return repository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ATTRACTION.name(), intervalId);
+                if (dto.getLegalTin() != null)
+                    return repository.getAllByLegalTin(pageable, dto.getLegalTin(), dto.getEquipmentType().name(), dto.getIntervalId());
+                if (dto.getRegistryNumber() != null)
+                    return repository.getAllByRegistryNumber(pageable, dto.getRegistryNumber(), dto.getEquipmentType().name(), dto.getIntervalId());
                 else
-                    return repository.getAllByRegion(pageable, regionId, EquipmentType.ATTRACTION.name(), intervalId);
+                    return repository.getAllByRegion(pageable, regionId, dto.getEquipmentType().name(), dto.getIntervalId());
             }
+
         } else if (role == Role.INSPECTOR) {
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name(), user.getId());
-            if (tin != null)
+            if (dto.getRegistryNumber() != null)
+                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name(), dto.getUser().getId());
+            if (dto.getLegalTin() != null)
                 return repository
-                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ATTRACTION.name(), user.getId());
+                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, dto.getLegalTin(), dto.getIntervalId(), dto.getEquipmentType().name(), dto.getUser().getId());
             else
-                return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ATTRACTION.name());
+                return repository.getAllByInspectorIdAndInterval(pageable, dto.getUser().getId(), dto.getIntervalId(), dto.getEquipmentType().name());
+
+        } else if (role == Role.CHAIRMAN || role == Role.MANAGER) {
+            if (dto.getRegistryNumber() != null)
+                return repository.getAllByRegistryNumberAndIntervalAndOwnerType(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name(), OwnerType.LEGAL.name());
+            if (dto.getLegalTin() != null)
+                return repository
+                        .getAllByLegalTinAndIntervalAndOwnerType(pageable, dto.getLegalTin(), dto.getIntervalId(), dto.getEquipmentType().name(), OwnerType.LEGAL.name());
+            else
+                return repository.getAllByIntervalAndOwnerType(pageable, dto.getIntervalId(), dto.getEquipmentType().name(), OwnerType.LEGAL.name());
 
         } else {
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ATTRACTION.name());
-            Profile profile = profileService.getProfile(user.getProfileId());
-            return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), intervalId, EquipmentType.ATTRACTION.name());
-        }
-    }
-
-    @Override
-    public Page<EquipmentRiskView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Role role = user.getRole();
-        if (role == Role.REGIONAL) {
-            Profile profile = profileService.getProfile(user.getProfileId());
-            Office office = officeService.findById(profile.getOfficeId());
-            Integer regionId = office.getRegionId();
-            if (isAssigned) {
-                if (registryNumber != null)
-                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
-                if (tin != null)
-                    return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId, EquipmentType.ELEVATOR.name());
-                else
-                    return repository.getAllByRegionAndInterval(pageable, regionId, intervalId, EquipmentType.ELEVATOR.name());
-            } else {
-                if (tin != null) return repository
-                        .getAllByLegalTin(pageable, tin, EquipmentType.ELEVATOR.name(), intervalId);
-                if (registryNumber != null)
-                    return repository.getAllByRegistryNumber(pageable, registryNumber, EquipmentType.ELEVATOR.name(), intervalId);
-                else
-                    return repository.getAllByRegion(pageable, regionId, EquipmentType.ELEVATOR.name(), intervalId);
-            }
-        } else if (role == Role.INSPECTOR) {
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name(), user.getId());
-            if (tin != null)
-                return repository
-                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, EquipmentType.ELEVATOR.name(), user.getId());
-            else
-                return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId, EquipmentType.ELEVATOR.name());
-
-        } else {
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId, EquipmentType.ELEVATOR.name());
-            Profile profile = profileService.getProfile(user.getProfileId());
-            return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), intervalId, EquipmentType.ELEVATOR.name());
+            if (dto.getRegistryNumber() != null)
+                return repository.getAllByRegistryNumberAndInterval(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name());
+            Profile profile = profileService.getProfile(dto.getUser().getProfileId());
+            return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), dto.getIntervalId(), dto.getEquipmentType().name());
         }
     }
 
@@ -323,6 +292,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .orderNumber(info.orderNumber())
                 .ownerIdentity(appeal.getOwnerIdentity())
                 .ownerName(appeal.getOwnerName())
+                .ownerType(OwnerType.find(appeal.getOwnerIdentity().toString().length()))
                 .hazardousFacilityId(dto.getHazardousFacilityId())
                 .childEquipmentId(old.getChildEquipmentId())
                 .factoryNumber(old.getFactoryNumber())
