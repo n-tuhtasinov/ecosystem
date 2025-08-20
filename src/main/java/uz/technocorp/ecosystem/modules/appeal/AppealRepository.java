@@ -78,7 +78,7 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
                            count(a.id) filter (where a.status = 'CANCELED')     as "canceled"
                     from office_list ol
                              left join
-                         appeal a on (ol.id = a.office_id or (ol.id is null and a.office_id is null))
+                         appeal a on ol.id = a.office_id
                              and a.owner_type = :ownerType
                              and a.created_at >= :startDate
                              and (cast(:endDate as timestamp) is null or a.created_at <= :endDate)
