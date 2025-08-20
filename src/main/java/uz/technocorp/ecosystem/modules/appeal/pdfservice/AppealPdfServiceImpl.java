@@ -203,11 +203,11 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         parameters.put("regionName", fullAddress[0]);
         parameters.put("districtName", fullAddress[1]);
         parameters.put("address", fullAddress[2]);
-        parameters.put("name", appeal.getData().get("name").asText());
-        parameters.put("upperOrganization", appeal.getData().get("upperOrganization").asText());
-        parameters.put("appealType", appeal.getAppealType().label);
-        parameters.put("extraArea", appeal.getData().get("extraArea").asText());
-        parameters.put("hazardousSubstance", appeal.getData().get("hazardousSubstance").asText());
+        parameters.put("name", appeal.getData().path("name").asText("-"));
+        parameters.put("upperOrganization", appeal.getData().path("upperOrganization").asText("Mavjud emas"));
+        parameters.put("hfTypeName", appeal.getData().path("hfTypeName").asText("-"));
+        parameters.put("extraArea", appeal.getData().path("extraArea").asText("Mavjud emas"));
+        parameters.put("hazardousSubstance", appeal.getData().path("hazardousSubstance").asText("Mavjud emas"));
 
         // Save to an attachment and folder & Return a file path
         return attachmentService.createPdfFromHtml(template.getContent(), "appeals/reply/hf", parameters, true);

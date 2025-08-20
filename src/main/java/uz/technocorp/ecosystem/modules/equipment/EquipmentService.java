@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
+import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRiskParamsDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
@@ -22,9 +23,7 @@ import java.util.UUID;
  */
 public interface EquipmentService {
 
-    Page<EquipmentRiskView> getAllAttractionForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
-
-    Page<EquipmentRiskView> getAllElevatorForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId);
+    Page<EquipmentRiskView> getAllEquipmentRiskAssessment(EquipmentRiskParamsDto paramsDto);
 
     void create(Appeal appeal);
 
