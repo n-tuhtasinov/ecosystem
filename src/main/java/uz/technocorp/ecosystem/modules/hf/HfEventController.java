@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;

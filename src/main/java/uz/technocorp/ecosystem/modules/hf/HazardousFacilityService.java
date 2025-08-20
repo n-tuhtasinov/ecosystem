@@ -2,7 +2,6 @@ package uz.technocorp.ecosystem.modules.hf;
 
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.hf.dto.HfDeregisterDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
@@ -10,7 +9,7 @@ import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
 import java.util.List;
@@ -26,10 +25,9 @@ public interface HazardousFacilityService {
 
     void create(Appeal appeal);
 
-    //    void create(HfDto dto);
     void update(UUID id, HfDto dto);
 
-    void deregister(UUID id, HfDeregisterDto dto);
+    void deregister(Appeal appeal);
 
     void periodicUpdate(UUID id, HfPeriodicUpdateDto dto);
 
@@ -52,4 +50,6 @@ public interface HazardousFacilityService {
     String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto, String now);
 
     List<HazardousFacility> getAllByTin(Long tin);
+
+    HazardousFacility findByRegistryNumberAndLegalTinAndActive(String registryNumber, Long legalTin, Boolean active);
 }

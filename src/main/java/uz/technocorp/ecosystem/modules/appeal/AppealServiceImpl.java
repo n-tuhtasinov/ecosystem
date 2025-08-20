@@ -31,7 +31,7 @@ import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
-import uz.technocorp.ecosystem.modules.hfappeal.dto.HfAppealDto;
+import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -117,10 +117,10 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     @Transactional
-    public void replyAccept(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
+    public void replyAcceptAttestation(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
         switch (user.getRole()) {
-            case REGIONAL -> acceptByRegional(user, replyDto, request);
-            case MANAGER, HEAD -> acceptByCommittee(user, replyDto, request);
+            case REGIONAL -> attestationAcceptByRegional(user, replyDto, request);
+            case MANAGER, HEAD -> attestationAcceptByCommittee(user, replyDto, request);
             default -> throw new CustomException("Sizda attestatsiyaga javob berish huquqi yo'q");
         }
     }
@@ -313,6 +313,7 @@ public class AppealServiceImpl implements AppealService {
         if (appealStatus == AppealStatus.COMPLETED) {
             switch (appeal.getAppealType().sort) {
                 case "registerHf" -> hfService.create(appeal);
+                case "deregisterHf" -> hfService.deregister(appeal);
                 case "registerIrs" -> ionizingRadiationSourceService.create(appeal);
                 case "registerEquipment", "registerAttractionPassport" -> equipmentService.create(appeal);
                 case "deregisterEquipment" -> equipmentService.deactivateEquipment(appeal);
@@ -431,7 +432,7 @@ public class AppealServiceImpl implements AppealService {
 
         String number = switch (appealType.sort) {
             case "registerIrs" -> orderNumber + "-INM-" + LocalDate.now().getYear();
-            case "registerHf" -> orderNumber + "-XIC-" + LocalDate.now().getYear();
+            case "registerHf", "deregisterHf", "modifyHf" -> orderNumber + "-XIC-" + LocalDate.now().getYear();
             case "registerEquipment", "reRegisterEquipment", "deregisterEquipment" ->
                     orderNumber + "-QUR-" + LocalDate.now().getYear();
             case "registerAttractionPassport", "reRegisterAttractionPassport" ->
@@ -461,7 +462,7 @@ public class AppealServiceImpl implements AppealService {
         };
     }
 
-    private void acceptByCommittee(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
+    private void attestationAcceptByCommittee(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
         ReplyAttestationDto dto = (ReplyAttestationDto) replyDto.getDto();
         Appeal appeal = repository.findByIdAndStatusAndAppealType(dto.getAppealId(), AppealStatus.NEW, AppealType.ATTESTATION_COMMITTEE)
                 .orElseThrow(() -> new ResourceNotFoundException("Ariza", "ID", dto.getAppealId()));
@@ -482,7 +483,7 @@ public class AppealServiceImpl implements AppealService {
         attestationService.create(appeal);
     }
 
-    private void acceptByRegional(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
+    private void attestationAcceptByRegional(User user, SignedReplyDto<?> replyDto, HttpServletRequest request) {
         SetInspectorDto dto = (SetInspectorDto) replyDto.getDto();
         User inspector = userService.findById(dto.inspectorId());
         Integer officeId = getProfile(user.getProfileId()).getOfficeId();
