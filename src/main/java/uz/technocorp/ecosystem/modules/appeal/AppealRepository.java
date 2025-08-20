@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
+import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.appeal.repo.AppealRepo;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
+import uz.technocorp.ecosystem.modules.statistics.view.AppealStatusCountView;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -60,4 +62,21 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
     @Query("update Appeal set conclusion = :conclusion, status = :status  where id = :id")
     void changeStatusAndSetConclusion(UUID id, String conclusion, AppealStatus status);
 
+    @Query(nativeQuery = true,
+            value = """
+                    select case when o.name is not null then o.name else 'Qo''mita' end as officeName,
+                           count(a.id) as total,
+                           count(case when a.status = 'IN_PROCESS' then 1 end) as inProcess,
+                           count(case when a.status = 'IN_AGREEMENT' then 1 end) as inAgreement,
+                           count(case when a.status = 'IN_APPROVAL' then 1 end) as inApproval,
+                           count(case when a.status = 'COMPLETED' then 1 end) as completed,
+                           count(case when a.status = 'REJECTED' then 1 end) as rejected,
+                           count(case when a.status = 'CANCELED' then 1 end) as canceled
+                    from appeal a
+                             left join office o on a.office_id = o.id
+                    where a.created_at >= :startDate
+                      and a.owner_type = :ownerType
+                      and (cast(:endDate as date) is null or a.created_at <= :endDate) group by o.name
+                    """)
+    List<AppealStatusCountView> countByAppealStatus(String ownerType, LocalDate startDate, LocalDate endDate);
 }
