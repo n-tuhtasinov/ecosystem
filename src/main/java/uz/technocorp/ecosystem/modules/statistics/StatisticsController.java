@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealStatusFilterDto;
-import uz.technocorp.ecosystem.modules.statistics.view.AppealStatusCountView;
+import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealTypeFilterDto;
+import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealStatusView;
+import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealTypeView;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 
 import java.util.List;
@@ -30,14 +32,14 @@ public class StatisticsController {
 
     @GetMapping("/appeal-status")
     public ResponseEntity<?> getAppealStatus(@Valid AppealStatusFilterDto filterDto) {
-        List<AppealStatusCountView> count = statisticsService.getAppealStatus(filterDto);
+        List<StatByAppealStatusView> count = statisticsService.getAppealStatus(filterDto);
         return ResponseEntity.ok(new ApiResponse(count));
     }
 
     @GetMapping("/appeal-type")
-    public ResponseEntity<?> getAppealsByType() {
-
-        return null;
+    public ResponseEntity<?> getAppealType(@Valid AppealTypeFilterDto filterDto) {
+        List<StatByAppealTypeView> list =  statisticsService.getAppealType(filterDto);
+        return ResponseEntity.ok(new ApiResponse(list));
     }
 
     @GetMapping("/registry")
