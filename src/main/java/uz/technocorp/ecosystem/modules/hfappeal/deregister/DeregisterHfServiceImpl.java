@@ -56,9 +56,21 @@ public class DeregisterHfServiceImpl implements DeregisterHfService {
         dto.setHfName(hf.getName());
         dto.setRegionId(hf.getRegionId());
         dto.setDistrictId(hf.getDistrictId());
-        dto.setAddress(hf.getAddress());
+        dto.setAddress(getAddress(hf.getAddress()));
 
         // Create appeal
         appealService.saveAndSign(user, signDto, request);
+    }
+
+    private String getAddress(String fullAddress) {
+        if (fullAddress == null || fullAddress.isBlank()) {
+            return "";
+        }
+
+        int lastCommaIndex = fullAddress.lastIndexOf(",");
+        if (lastCommaIndex == -1) {
+            return fullAddress.trim();
+        }
+        return fullAddress.substring(lastCommaIndex + 1).trim();
     }
 }
