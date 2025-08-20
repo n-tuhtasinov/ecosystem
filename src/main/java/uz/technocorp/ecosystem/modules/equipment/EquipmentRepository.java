@@ -142,7 +142,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                         where risk_analysis_interval_id = :intervalId
                         group by equipment_id
                      ) as attr_scores on e.id = attr_scores.equipment_id
-            where e.legal_tin = :legalTin
+            where e.owner_identity = :legalTin
               and aie.interval_id = :intervalId
               and e.type = :equipmentType
             """, nativeQuery = true)
@@ -177,7 +177,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                         where risk_analysis_interval_id = :intervalId
                         group by equipment_id
                      ) as attr_scores on e.id = attr_scores.equipment_id
-            where e.legal_tin = :legalTin
+            where e.owner_identity = :legalTin
               and aie.interval_id = :intervalId
               and e.type = :equipmentType
               and aie.inspector_id = :inspectorId
@@ -315,7 +315,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
                         where risk_analysis_interval_id = :intervalId
                         group by equipment_id
                      ) as attr_scores on e.id = attr_scores.equipment_id
-            where e.legal_tin = :legalTin
+            where e.owner_identity = :legalTin
               and aie.id is null
               and e.type = :equipmentType
             """, nativeQuery = true)

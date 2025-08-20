@@ -45,27 +45,7 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
     Optional<HazardousFacility> getHfById(UUID hfId);
 
 
-
-
-//    @Query(value = """
-//            select hf.id as id,
-//            registry_number as registryNumber,
-//            hf.name as name,
-//            legal_tin as legalTin,
-//            address,
-//            legal_name as legalName,
-//            email,
-//            ht.name as typeName,
-//            r.name as regionName,
-//            d.name as districtName
-//            from hazardous_facility hf
-//            join region r on hf.region_id = r.id
-//            join district d on hf.district_id = d.id
-//            join hf_type ht on hf.hf_type_id = ht.id
-//            where profile_id = :profileId
-//            """, nativeQuery = true)
-//    Page<HfPageView> getAllByProfileId(UUID profileId, Pageable pageable);
-@Query(value = """
+    @Query(value = """
             select hf.id as id,
             registry_number as registryNumber,
             hf.name as name,
@@ -88,7 +68,7 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
             where hf.region_id = :regionId
             and aih.interval_id = :intervalId
             """, nativeQuery = true)
-Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId);
+    Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, Integer intervalId);
 
     @Query(value = """
             select hf.id as id,
@@ -286,6 +266,27 @@ Page<HfPageView> getAllByRegionAndInterval(Pageable pageable, Integer regionId, 
             """, nativeQuery = true)
     Page<HfPageView> getAllByRegistryNumber(Pageable pageable, String registryNumber, Integer intervalId);
 
+    @Query(value = """
+            select hf.id as id,
+            registry_number as registryNumber,
+            hf.name as name,
+            legal_tin as legalTin,
+            hf.address,
+            hf.legal_name as legalName,
+            null as inspectorName,
+            null as assignId,
+            scores.total_score as score
+            from hazardous_facility hf
+            left join assign_inspector_hf aih on hf.id = aih.hf_id and aih.interval_id = :intervalId
+            left join (
+                select hazardous_facility_id, sum(score) as total_score
+                from hf_risk_indicator
+                where risk_analysis_interval_id = :intervalId
+                group by hazardous_facility_id
+            ) as scores on hf.id = scores.hazardous_facility_id
+            where aih.id is null
+            """, nativeQuery = true)
+    Page<HfPageView> getAllByInterval(Pageable pageable, Integer intervalId);
 
     @Query(value = """
             select distinct(region_id)

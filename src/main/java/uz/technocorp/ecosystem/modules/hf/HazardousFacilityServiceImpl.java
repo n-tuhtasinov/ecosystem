@@ -207,6 +207,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         Pageable pageable = PageRequest.of(page - 1, size);
         UUID profileId = user.getProfileId();
         Role role = user.getRole();
+
         if (role == Role.REGIONAL) {
             Profile profile = profileRepository
                     .findById(profileId)
@@ -224,12 +225,21 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                     return repository.getAllByRegistryNumber(pageable, registryNumber, intervalId);
                 else return repository.getAllByRegion(pageable, regionId, intervalId);
             }
+
         } else if (role == Role.INSPECTOR) {
             if (registryNumber != null)
                 return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
             if (tin != null)
                 return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
             else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
+
+        } else if (role == Role.CHAIRMAN || role == Role.MANAGER) {
+            if (registryNumber != null)
+                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+            if (tin != null)
+                return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
+            else return repository.getAllByInterval(pageable, intervalId);
+
         } else {
             if (registryNumber != null)
                 return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
@@ -238,7 +248,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                     .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));
             return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), intervalId);
         }
-
     }
 
     @Override
