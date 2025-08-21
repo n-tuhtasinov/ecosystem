@@ -31,7 +31,7 @@ public class HfRepoImpl implements HfRepo {
     @Override
     public Page<HfCustom> getHfCustoms(HfParams params) {
 
-        Pageable pageable= PageRequest.of(params.getPage()-1, params.getSize());
+        Pageable pageable = PageRequest.of(params.getPage() - 1, params.getSize());
 
         // select uchun alohida query va root
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -54,13 +54,15 @@ public class HfRepoImpl implements HfRepo {
         List<Predicate> countPredicates = new ArrayList<>();
 
         // Dinamik qidiruv shartlarini qo'shish
-        if (params.getLegalTin() != null) {
-            predicates.add(cb.equal(hfRoot.get("legalTin"), params.getLegalTin()));
-            countPredicates.add(cb.equal(countRoot.get("legalTin"), params.getLegalTin()));
-        }
-        if (params.getRegistryNumber() != null) {
-            predicates.add(cb.equal(hfRoot.get("registryNumber"), params.getRegistryNumber()));
-            countPredicates.add(cb.equal(countRoot.get("registryNumber"), params.getRegistryNumber()));
+        if (params.getSearch() != null) {
+            Long tin = parseTin(params.getSearch());
+            if (tin != null) {
+                predicates.add(cb.equal(hfRoot.get("legalTin"), tin));
+                countPredicates.add(cb.equal(countRoot.get("legalTin"), tin));
+            } else {
+                predicates.add(cb.equal(hfRoot.get("registryNumber"), params.getSearch()));
+                countPredicates.add(cb.equal(countRoot.get("registryNumber"), params.getSearch()));
+            }
         }
         if (params.getStartDate() != null) {
             predicates.add(cb.greaterThanOrEqualTo(hfRoot.get("registrationDate"), params.getStartDate()));
@@ -100,7 +102,7 @@ public class HfRepoImpl implements HfRepo {
                         hfRoot.get("legalTin"),
                         hfRoot.get("legalAddress"),
                         hfRoot.get("registrationDate")
-                        ));
+                ));
 
         // Qidiruvni amalga oshirish
         TypedQuery<HfCustom> query = em.createQuery(cq);
@@ -133,5 +135,13 @@ public class HfRepoImpl implements HfRepo {
         countQuery.select(cb.count(countRoot));
         countQuery.where(countPredicates.toArray(new Predicate[0]));
         return em.createQuery(countQuery).getSingleResult();
+    }
+
+    private Long parseTin(String search) {
+        try {
+            return search.length() == 9 ? Long.parseLong(search) : null;
+        } catch (RuntimeException ex) {
+            return null;
+        }
     }
 }

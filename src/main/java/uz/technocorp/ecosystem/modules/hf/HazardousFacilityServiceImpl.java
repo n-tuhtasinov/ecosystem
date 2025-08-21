@@ -189,7 +189,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
             }
             params.setRegionId(office.getRegionId());
         } else if (user.getRole().equals(Role.LEGAL) || user.getRole().equals(Role.INDIVIDUAL)) {
-            params.setLegalTin(profile.getIdentity());
+            params.setSearch(profile.getIdentity().toString());
         } else {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }

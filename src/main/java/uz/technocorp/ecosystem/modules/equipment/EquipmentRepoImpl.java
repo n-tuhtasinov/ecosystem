@@ -53,13 +53,16 @@ public class EquipmentRepoImpl implements EquipmentRepo {
             ePredicates.add(cb.equal(eRoot.get("type"), params.getType()));
             cPredicates.add(cb.equal(cRoot.get("type"), params.getType()));
         }
-        if (params.getLegalTin() != null) {
-            ePredicates.add(cb.equal(eRoot.get("ownerIdentity"), params.getLegalTin()));
-            cPredicates.add(cb.equal(cRoot.get("ownerIdentity"), params.getLegalTin()));
-        }
-        if (params.getRegistryNumber() != null) {
-            ePredicates.add(cb.equal(eRoot.get("registryNumber"), params.getRegistryNumber()));
-            cPredicates.add(cb.equal(cRoot.get("registryNumber"), params.getRegistryNumber()));
+        // Search (identity or registryNumber)
+        if (params.getSearch() != null) {
+            Long identity = parseIdentity(params.getSearch());
+            if (identity != null) {
+                ePredicates.add(cb.equal(eRoot.get("ownerIdentity"), identity));
+                cPredicates.add(cb.equal(cRoot.get("ownerIdentity"), identity));
+            } else {
+                ePredicates.add(cb.equal(eRoot.get("registryNumber"), params.getSearch()));
+                cPredicates.add(cb.equal(cRoot.get("registryNumber"), params.getSearch()));
+            }
         }
         if (params.getStartDate() != null) {
             ePredicates.add(cb.greaterThanOrEqualTo(eRoot.get("registrationDate"), params.getStartDate()));
@@ -136,5 +139,13 @@ public class EquipmentRepoImpl implements EquipmentRepo {
         countQuery.select(cb.count(countRoot));
         countQuery.where(countPredicates.toArray(new Predicate[0]));
         return entityManager.createQuery(countQuery).getSingleResult();
+    }
+
+    private Long parseIdentity(String search) {
+        try {
+            return (search.length() == 9 || search.length() == 14) ? Long.parseLong(search) : null;
+        } catch (RuntimeException ex) {
+            return null;
+        }
     }
 }
