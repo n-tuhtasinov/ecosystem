@@ -16,10 +16,7 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.dto.*;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentParameter;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
-import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
-import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
-import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
-import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
+import uz.technocorp.ecosystem.modules.equipment.view.*;
 import uz.technocorp.ecosystem.modules.equipmentappeal.deregister.dto.DeregisterEquipmentDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.reregister.dto.ReRegisterEquipmentDto;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -326,6 +323,11 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .build();
 
         repository.save(equipment);
+    }
+
+    @Override
+    public EquipmentCountByStatusView countEquipmentStatusByDateAndRegionId(LocalDate date, Integer regionId) {
+        return repository.countStatusByPeriodAndRegionId(date, regionId);
     }
 
     // HELPER

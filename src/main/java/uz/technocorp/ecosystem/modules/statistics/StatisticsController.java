@@ -4,13 +4,16 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealStatusFilterDto;
 import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealTypeFilterDto;
+import uz.technocorp.ecosystem.modules.statistics.dto.response.StatByRegistryDto;
 import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealStatusView;
 import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealTypeView;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -43,8 +46,8 @@ public class StatisticsController {
     }
 
     @GetMapping("/registry")
-    public ResponseEntity<?> getAppealsByType2() {
-
-        return null;
+    public ResponseEntity<?> getRegistry(@RequestParam(required = false) LocalDate date) {
+        List<StatByRegistryDto> list = statisticsService.getRegistry(date);
+        return ResponseEntity.ok(new ApiResponse(list));
     }
 }

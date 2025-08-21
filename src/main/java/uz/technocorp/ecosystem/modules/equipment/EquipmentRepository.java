@@ -8,8 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
+import uz.technocorp.ecosystem.modules.equipment.view.EquipmentCountByStatusView;
 import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -477,4 +479,14 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
     void deactivateByRegistryNumber(String registryNumber);
 
     Optional<Equipment> findByRegistryNumberAndTypeAndIsActive(String registryNumber, EquipmentType type, Boolean isActive);
+
+    @Query(nativeQuery = true, value = """
+            select count(e.id) filter ( where e.deactivation_date is null or :date <= e.deactivation_date )      as active,
+                   count(e.id) filter ( where e.deactivation_date is not null and :date >= e.deactivation_date ) as inactive,
+                   count(e.id) filter ( where :date > e.full_check_date )                                        as expired
+            from equipment e
+            where e.region_id = :regionId
+              and e.registration_date <= :date
+            """)
+    EquipmentCountByStatusView countStatusByPeriodAndRegionId(LocalDate date, Integer regionId);
 }

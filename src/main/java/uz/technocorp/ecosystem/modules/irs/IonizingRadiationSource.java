@@ -149,4 +149,6 @@ public class IonizingRadiationSource extends BaseEntity {
 
     @Column(nullable = false)
     private String inspectorName;
+
+    private LocalDate deactivationDate; // INM xolatini yaroqsiz holatda o'tkazilgan sana
 }

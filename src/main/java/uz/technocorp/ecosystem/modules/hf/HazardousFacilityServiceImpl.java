@@ -15,6 +15,7 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
+import uz.technocorp.ecosystem.modules.hf.view.HfCountByStatusView;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
@@ -306,6 +307,11 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     @Override
     public HazardousFacility findByRegistryNumberAndLegalTinAndActive(String registryNumber, Long legalTin, Boolean active) {
         return repository.findByRegistryNumberAndLegalTinAndActive(registryNumber, legalTin, active).orElseThrow(() -> new CustomException("XICHO topilmadi"));
+    }
+
+    @Override
+    public HfCountByStatusView countHfStatusByDateAndRegionId(LocalDate date, Integer regionId) {
+        return repository.countStatusByDateAndRegionId(date, regionId);
     }
 
     private HfViewById mapToView(HazardousFacility hf) {
