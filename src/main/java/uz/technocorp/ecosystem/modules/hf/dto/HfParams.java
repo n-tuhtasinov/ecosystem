@@ -20,8 +20,7 @@ import java.time.LocalDate;
 public class HfParams {
     private Integer page;
     private Integer size;
-    private Long legalTin;
-    private String registryNumber;
+    private String search;
     private Integer regionId;
     private Integer districtId;
     private LocalDate startDate;

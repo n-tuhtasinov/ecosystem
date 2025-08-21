@@ -61,14 +61,13 @@ public class HazardousFacilityController {
     public ResponseEntity<?> getAll(@CurrentUser User user,
                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
-                                    @RequestParam(value = "legalTin", required = false) Long legalTin,
-                                    @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                    @RequestParam(value = "search", required = false) String search,
                                     @RequestParam(value = "regionId", required = false) Integer regionId,
                                     @RequestParam(value = "districtId", required = false) Integer districtId,
                                     @RequestParam(value = "startDate", required = false) LocalDate startDate,
                                     @RequestParam(value = "endDate", required = false) LocalDate endDate
     ) {
-        Page<HfCustom> all = service.getAll(user, new HfParams(page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate));
+        Page<HfCustom> all = service.getAll(user, new HfParams(page, size, search, regionId, districtId, startDate, endDate));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 

@@ -37,15 +37,14 @@ public class EquipmentController {
                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer page,
                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer size,
                                     @RequestParam(value = "type", required = false) EquipmentType type,
-                                    @RequestParam(value = "legalTin", required = false) Long legalTin,
-                                    @RequestParam(value = "registryNumber", required = false) String registryNumber,
+                                    @RequestParam(value = "search", required = false) String search,
                                     @RequestParam(value = "regionId", required = false) Integer regionId,
                                     @RequestParam(value = "districtId", required = false) Integer districtId,
                                     @RequestParam(value = "startDate", required = false) LocalDate startDate,
                                     @RequestParam(value = "endDate", required = false) LocalDate endDate,
                                     @RequestParam(value = "isActive", required = false) Boolean isActive
     ) {
-        Page<EquipmentView> all = equipmentService.getAll(user, new EquipmentParams(type, page, size, legalTin, registryNumber, regionId, districtId, startDate, endDate, isActive));
+        Page<EquipmentView> all = equipmentService.getAll(user, new EquipmentParams(type, page, size, search, regionId, districtId, startDate, endDate, isActive));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 
