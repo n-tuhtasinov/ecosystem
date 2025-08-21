@@ -153,7 +153,7 @@ public class Equipment extends BaseEntity {
     private String parentOrganization; // yuqori turuvchi tashkilot (attraksion)
 
     @Column
-    private LocalDate nonDestructiveCheckDate; // putur yetkazmaydigan nazoratda ko'rikdan o'tkazish (sosud, bug'qozon, quvur, osma yo'l, kimyoviy idish, qozon, sug, )
+    private LocalDate nonDestructiveCheckDate; // putur yetkazmaydigan nazoratda ko'rikdan o'tkazish (sosud, bug'qozon, quvur, osma yo'l, kimyoviy idish, qozon, sug)
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
     @JoinColumn(name = "attraction_passport_id", insertable = false, updatable = false)
@@ -177,6 +177,8 @@ public class Equipment extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate registrationDate;
+
+    private LocalDate deactivationDate; //ro'yhatdan chiqarilgan sana
 
     //    @Column(nullable = false)
     private Boolean isActive;

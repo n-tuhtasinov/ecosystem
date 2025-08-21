@@ -13,6 +13,7 @@ import uz.technocorp.ecosystem.modules.irs.dto.IrsParams;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
+import uz.technocorp.ecosystem.modules.irs.view.IrsCountByStatusView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsRiskView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsViewById;
@@ -168,6 +169,11 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
             case REGIONAL, INSPECTOR -> repository.countByParams(null, profile.getRegionId());
             default -> repository.countByParams(null, null);
         };
+    }
+
+    @Override
+    public IrsCountByStatusView countIrsStatusByDate(LocalDate date) {
+        return repository.countStatusByDate(date);
     }
 
     private IrsViewById mapToView(IonizingRadiationSource irs) {

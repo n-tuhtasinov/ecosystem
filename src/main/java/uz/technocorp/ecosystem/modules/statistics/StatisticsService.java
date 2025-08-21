@@ -2,9 +2,11 @@ package uz.technocorp.ecosystem.modules.statistics;
 
 import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealStatusFilterDto;
 import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealTypeFilterDto;
+import uz.technocorp.ecosystem.modules.statistics.dto.response.StatByRegistryDto;
 import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealStatusView;
 import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealTypeView;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -19,4 +21,6 @@ public interface StatisticsService {
     List<StatByAppealTypeView> getAppealType(AppealTypeFilterDto filterDto);
 
     String getLabelByAppealType(String appealType);
+
+    List<StatByRegistryDto> getRegistry(LocalDate date);
 }

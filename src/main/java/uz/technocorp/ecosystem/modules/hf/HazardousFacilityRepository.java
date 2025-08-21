@@ -4,9 +4,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import uz.technocorp.ecosystem.modules.hf.view.HfCountByStatusView;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -302,4 +304,13 @@ public interface HazardousFacilityRepository extends JpaRepository<HazardousFaci
     List<HazardousFacility> findAllByLegalTin(Long tin);
 
     Optional<HazardousFacility> findByRegistryNumberAndLegalTinAndActive(String registryNumber, Long legalTin, Boolean active);
+
+    @Query(nativeQuery = true, value = """
+            select count(hf.id) filter ( where hf.deactivation_date is null or :date <= hf.deactivation_date )      as active,
+                   count(hf.id) filter ( where hf.deactivation_date is not null and :date >= hf.deactivation_date ) as inactive
+            from hazardous_facility hf
+            where hf.region_id = :regionId
+              and hf.registration_date <= :date
+            """)
+    HfCountByStatusView countStatusByDateAndRegionId(LocalDate date, Integer regionId);
 }

@@ -43,6 +43,8 @@ public class HazardousFacility extends BaseEntity {
 
     private LocalDate registrationDate;
 
+    private LocalDate deactivationDate; //ro'yhatdan chiqarilgan sana
+
     @Column(nullable = false, unique = true)
     private String registryNumber;
 

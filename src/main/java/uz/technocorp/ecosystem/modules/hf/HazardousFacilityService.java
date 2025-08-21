@@ -6,12 +6,14 @@ import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
+import uz.technocorp.ecosystem.modules.hf.view.HfCountByStatusView;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
 import uz.technocorp.ecosystem.modules.hf.view.HfSelectView;
 import uz.technocorp.ecosystem.modules.hf.view.HfViewById;
 import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,4 +54,6 @@ public interface HazardousFacilityService {
     List<HazardousFacility> getAllByTin(Long tin);
 
     HazardousFacility findByRegistryNumberAndLegalTinAndActive(String registryNumber, Long legalTin, Boolean active);
+
+    HfCountByStatusView countHfStatusByDateAndRegionId(LocalDate date, Integer regionId);
 }

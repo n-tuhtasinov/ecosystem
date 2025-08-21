@@ -4,8 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import uz.technocorp.ecosystem.modules.irs.view.IrsCountByStatusView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsRiskView;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -248,4 +250,14 @@ public interface IonizingRadiationSourceRepository extends JpaRepository<Ionizin
               and aii.id is null
             """, nativeQuery = true)
     Page<IrsRiskView> getAllByFactoryNumber(Pageable pageable, String factoryNumber, Integer intervalId);
+
+
+    @Query(nativeQuery = true,
+            value = """
+                    select count(irs.id) filter ( where irs.deactivation_date is null or :date <= irs.deactivation_date )      as active,
+                           count(irs.id) filter ( where irs.deactivation_date is not null and :date >= irs.deactivation_date ) as inactive
+                    from ionizing_radiation_source irs
+                    where irs.registration_date <= :date
+                    """)
+    IrsCountByStatusView countStatusByDate(LocalDate date);
 }
