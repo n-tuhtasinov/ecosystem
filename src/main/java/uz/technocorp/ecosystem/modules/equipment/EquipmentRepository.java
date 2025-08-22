@@ -475,8 +475,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, Equ
 
     @Transactional
     @Modifying
-    @Query("update Equipment set isActive = false where registryNumber = :registryNumber")
-    void deactivateByRegistryNumber(String registryNumber);
+    @Query("update Equipment set isActive = false, deactivationDate = :now where registryNumber = :registryNumber")
+    void deactivateByRegistryNumber(String registryNumber, LocalDate now);
 
     Optional<Equipment> findByRegistryNumberAndTypeAndIsActive(String registryNumber, EquipmentType type, Boolean isActive);
 
