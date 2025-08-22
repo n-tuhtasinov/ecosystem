@@ -61,21 +61,28 @@ public class AppealRepoImpl implements AppealRepo {
             countPredicates.add(cb.equal(countRoot.get("status"), AppealStatus.valueOf(params.get("status"))));
         }
         if (params.get("appealType") != null && !params.get("appealType").isEmpty()) {
-            predicates.add(cb.equal(appealRoot.get("appealType"), AppealType.valueOf(params.get("params"))));
-            countPredicates.add(cb.equal(countRoot.get("appealType"), AppealType.valueOf(params.get("params"))));
-        }
-        if (params.get("ownerIdentity") != null && !params.get("ownerIdentity").isEmpty()) {
-            predicates.add(cb.equal(appealRoot.get("ownerIdentity"), params.get("ownerIdentity")));
-            countPredicates.add(cb.equal(countRoot.get("ownerIdentity"), params.get("ownerIdentity")));
+            predicates.add(cb.equal(appealRoot.get("appealType"), AppealType.valueOf(params.get("appealType"))));
+            countPredicates.add(cb.equal(countRoot.get("appealType"), AppealType.valueOf(params.get("appealType"))));
         }
 
+        // Search (ownerIdentity or number)
+        if (params.get("search") != null) {
+            Long identity = parseIdentity(params.get("search"));
+            if (identity != null) {
+                predicates.add(cb.equal(appealRoot.get("ownerIdentity"), identity));
+                countPredicates.add(cb.equal(countRoot.get("ownerIdentity"), identity));
+            } else {
+                predicates.add(cb.equal(appealRoot.get("number"), params.get("search")));
+                countPredicates.add(cb.equal(countRoot.get("number"), params.get("search")));
+            }
+        }
         if (params.get("startDate") != null && !params.get("startDate").isEmpty()) {
             predicates.add(cb.greaterThanOrEqualTo(appealRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay()));
             countPredicates.add(cb.greaterThanOrEqualTo(countRoot.get("createdAt"), LocalDate.parse(params.get("startDate")).atStartOfDay()));
         }
 
         if (params.get("endDate") != null && !params.get("endDate").isEmpty()) {
-            predicates.add(cb.lessThanOrEqualTo(appealRoot.get("endDate"), LocalDate.parse(params.get("endDate")).atTime(23, 59, 59)));
+            predicates.add(cb.lessThanOrEqualTo(appealRoot.get("createdAt"), LocalDate.parse(params.get("endDate")).atTime(23, 59, 59)));
             countPredicates.add(cb.lessThanOrEqualTo(countRoot.get("createdAt"), LocalDate.parse(params.get("endDate")).atTime(23, 59, 59)));
         }
 
@@ -177,5 +184,13 @@ public class AppealRepoImpl implements AppealRepo {
         countQuery.select(cb.count(countRoot));
         countQuery.where(countPredicates.toArray(new Predicate[0]));
         return em.createQuery(countQuery).getSingleResult();
+    }
+
+    private Long parseIdentity(String search) {
+        try {
+            return (search.length() == 9 || search.length() == 14) ? Long.parseLong(search) : null;
+        } catch (RuntimeException ex) {
+            return null;
+        }
     }
 }
