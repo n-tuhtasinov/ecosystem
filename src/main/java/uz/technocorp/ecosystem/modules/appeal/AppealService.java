@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealTypeView;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
@@ -59,4 +60,5 @@ public interface AppealService {
 
     List<AppealViewById> getByIds(List<UUID> appealIds);
 
+    List<AppealTypeView> getTypes();
 }

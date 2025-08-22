@@ -14,6 +14,7 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealTypeView;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.appealexecutionprocess.AppealExecutionProcessService;
@@ -46,6 +47,7 @@ import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.utils.JsonMaker;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -398,6 +400,13 @@ public class AppealServiceImpl implements AppealService {
             return repository.findAllByIdIn(appealIds);
         }
         return null;
+    }
+
+    @Override
+    public List<AppealTypeView> getTypes() {
+        return Arrays.stream(AppealType.values())
+                .map(type -> new AppealTypeView(type.name(), type.label))
+                .collect(Collectors.toList());
     }
 
     private AppealCountParams makeAppealCountParamsByDirections(User user, AppealStatus status) {
