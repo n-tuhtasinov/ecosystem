@@ -43,5 +43,13 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
                      join profile p on u.profile_id = p.id
             where p.identity = :identity
             """)
-    Optional<UserViewByProfile> findLegalAndIndividualUserByIdentity(Long identity);
+    Optional<UserViewByProfile> getLegalAndIndividualUserByIdentity(Long identity);
+
+    @Query(nativeQuery = true, value = """
+            select u.*
+            from users u
+                     join profile p on u.profile_id = p.id
+            where p.identity = :identity
+            """)
+    Optional<User> findUserByIdentity(Long identity);
 }

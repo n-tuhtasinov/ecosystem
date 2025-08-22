@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
+import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisInterval;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.RiskAnalysisIntervalRepository;
 import uz.technocorp.ecosystem.modules.riskanalysisinterval.enums.RiskAnalysisIntervalStatus;
@@ -36,6 +37,7 @@ import uz.technocorp.ecosystem.modules.user.view.CommitteeUserView;
 import uz.technocorp.ecosystem.modules.user.view.OfficeUserView;
 import uz.technocorp.ecosystem.modules.user.view.UserViewById;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.springframework.data.jpa.domain.Specification.where;
@@ -58,6 +60,7 @@ public class UserServiceImpl implements UserService {
     private final DepartmentRepository departmentRepository;
     private final OfficeRepository officeRepository;
     private final RiskAnalysisIntervalRepository intervalRepository;
+    private final IIPService iipService;
 
     @Override
     public UserMeDto getMe(User user) {
@@ -217,12 +220,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserViewByProfile getLegalOrIndividualUserByIdentity(Long identity) {
-        return userRepository.findLegalAndIndividualUserByIdentity(identity).orElseThrow(()-> new ResourceNotFoundException("User (roli legal yoki individual)", "tin yoki pin", identity));
+        return userRepository.getLegalAndIndividualUserByIdentity(identity).orElseThrow(()-> new ResourceNotFoundException("User (roli legal yoki individual)", "tin yoki pin", identity));
     }
 
     @Override
     public User findById(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
+
+    @Override
+    public User getOrCreateByIdentityAndDate(Long identity, LocalDate birthDate) {
+
+        String identityStr = identity.toString();
+        if (identityStr.length() != 9 && identityStr.length() != 14){
+            throw new RuntimeException("INN 9 ta raqamdan va JSHIR 14 ta raqamdan iborat bo'lishi kerak");
+        }
+
+        return userRepository.findUserByIdentity(identity)
+                .orElseGet(() -> create(fetchUserDetails(identityStr, birthDate)));
+    }
+
+    private UserDto fetchUserDetails(String identityStr, LocalDate birthDate) {
+        if (identityStr.length() == 9) {
+            return iipService.getGnkInfo(identityStr);
+        } else {
+            return iipService.getPinInfo(identityStr, birthDate);
+        }
+    }
+
+
 
 }
