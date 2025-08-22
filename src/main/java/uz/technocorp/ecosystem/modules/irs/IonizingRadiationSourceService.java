@@ -5,11 +5,13 @@ import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDeregisterDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsDto;
 import uz.technocorp.ecosystem.modules.irs.dto.IrsParams;
+import uz.technocorp.ecosystem.modules.irs.view.IrsCountByStatusView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsRiskView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsView;
 import uz.technocorp.ecosystem.modules.irs.view.IrsViewById;
 import uz.technocorp.ecosystem.modules.user.User;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -33,4 +35,6 @@ public interface IonizingRadiationSourceService {
     IrsViewById getById(UUID irsId);
 
     Long getCount(User user);
+
+    IrsCountByStatusView countIrsStatusByDate(LocalDate date);
 }

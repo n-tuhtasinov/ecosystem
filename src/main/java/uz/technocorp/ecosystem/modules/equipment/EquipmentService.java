@@ -6,12 +6,10 @@ import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRiskParamsDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
-import uz.technocorp.ecosystem.modules.equipment.view.AttractionPassportView;
-import uz.technocorp.ecosystem.modules.equipment.view.EquipmentRiskView;
-import uz.technocorp.ecosystem.modules.equipment.view.EquipmentView;
-import uz.technocorp.ecosystem.modules.equipment.view.EquipmentViewById;
+import uz.technocorp.ecosystem.modules.equipment.view.*;
 import uz.technocorp.ecosystem.modules.user.User;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,4 +48,6 @@ public interface EquipmentService {
     void deactivateEquipment(Appeal appeal);
 
     void reRegister(Appeal appeal);
+
+    EquipmentCountByStatusView countEquipmentStatusByDateAndRegionId(LocalDate date, Integer regionId);
 }
