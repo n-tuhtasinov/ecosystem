@@ -6,6 +6,7 @@ import uz.technocorp.ecosystem.modules.user.dto.UserDto;
 import uz.technocorp.ecosystem.modules.user.dto.UserMeDto;
 import uz.technocorp.ecosystem.modules.user.view.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,4 +44,6 @@ public interface UserService {
     UserViewByProfile getLegalOrIndividualUserByIdentity(Long identity);
 
     User findById(UUID id);
+
+    User getOrCreateByIdentityAndDate(Long identity, LocalDate birthDate);
 }
