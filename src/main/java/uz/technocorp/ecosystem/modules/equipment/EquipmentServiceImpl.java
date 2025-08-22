@@ -256,7 +256,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Override
     public void deactivateEquipment(Appeal appeal) {
         DeregisterEquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), DeregisterEquipmentDto.class);
-        repository.deactivateByRegistryNumber(dto.getRegistryNumber());
+        repository.deactivateByRegistryNumber(dto.getRegistryNumber(), LocalDate.now());
     }
 
     @Override
