@@ -101,6 +101,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
                     dto.setHazardousSubstance(hf.getHazardousSubstance());
                     String registryPdfPath = hazardousFacilityService.createHfRegistryPdf(appeal, hf.getRegistryNumber(), dto, hf.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
                     hf.setRegistryFilePath(registryPdfPath);
+                    hf.setActive(true); // TODO: agar ro'yhatdan chiqarilgan xicholar kiritilsa false qilish kerak
 
                     hazardousFacilityRepository.save(hf);
                 } catch (Exception e) {
