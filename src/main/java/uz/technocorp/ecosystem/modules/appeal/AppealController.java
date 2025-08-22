@@ -10,6 +10,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.*;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
+import uz.technocorp.ecosystem.modules.appeal.view.AppealTypeView;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
 import uz.technocorp.ecosystem.modules.document.DocumentService;
@@ -123,6 +124,12 @@ public class AppealController {
     public ResponseEntity<?> getCount(@CurrentUser User user, @RequestParam AppealStatus status) {
         Long count = service.getCount(user, status);
         return ResponseEntity.ok(new ApiResponse(count));
+    }
+
+    @GetMapping("/types")
+    public ResponseEntity<?> getTypes(){
+        List<AppealTypeView> list = service.getTypes();
+        return ResponseEntity.ok(new ApiResponse(list));
     }
 
 }
