@@ -81,7 +81,7 @@ public class HazardousFacility extends BaseEntity {
 //    @Column(nullable = false)
     private String location;
 
-    @Column(nullable = false, columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String hazardousSubstance;
 
     @OneToOne(fetch = FetchType.LAZY, targetEntity = Appeal.class)
@@ -123,7 +123,6 @@ public class HazardousFacility extends BaseEntity {
     @Column(columnDefinition = "jsonb")
     private Map<String, String> files;
 
-    // Reestr fayl path
     private String registryFilePath;
 
     @Column(nullable = false)

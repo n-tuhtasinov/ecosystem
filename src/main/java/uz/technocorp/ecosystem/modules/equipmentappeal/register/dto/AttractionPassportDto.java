@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
@@ -146,5 +147,10 @@ public class AttractionPassportDto implements AppealDto {
     @Override
     public LocalDate getDeadline() {
         return null;
+    }
+
+    @Override
+    public AppealMode getAppealMode() {
+        return AppealMode.OFFICIAL;
     }
 }

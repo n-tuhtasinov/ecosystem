@@ -187,6 +187,7 @@ public class AppealServiceImpl implements AppealService {
                 .executorName(executorName)
                 .data(data)
                 .isRejected(false)
+                .mode(dto.getAppealMode())
                 .build();
         repository.save(appeal);
 

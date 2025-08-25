@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
@@ -126,6 +127,11 @@ public class IrsAppealDto implements AppealDto {
     @Override
     public LocalDate getDeadline() {
         return LocalDate.now().plusDays(15);
+    }
+
+    @Override
+    public AppealMode getAppealMode() {
+        return AppealMode.OFFICIAL;
     }
 
         public void buildFiles() {

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
@@ -26,42 +27,47 @@ import java.util.UUID;
 @AllArgsConstructor
 public class HfDeregisterAppealDto implements AppealDto {
 
-        @NotNull(message = "XICHO ID raqami jo'natilmadi")
-        private UUID hazardousFacilityId;
+    @NotNull(message = "XICHO ID raqami jo'natilmadi")
+    private UUID hazardousFacilityId;
 
-        @NotBlank(message = "Telefon raqami kiritilmadi!")
-        private String phoneNumber;
+    @NotBlank(message = "Telefon raqami kiritilmadi!")
+    private String phoneNumber;
 
-        @NotBlank(message = "Pochta manzili kiritilmadi!")
-        private String email;
+    @NotBlank(message = "Pochta manzili kiritilmadi!")
+    private String email;
 
-        @NotNull(message = "Viloyat jo'natilmadi")
-        private Integer regionId;
+    @NotNull(message = "Viloyat jo'natilmadi")
+    private Integer regionId;
 
-        @NotNull(message = "Tuman jo'natilmadi")
-        private Integer districtId;
+    @NotNull(message = "Tuman jo'natilmadi")
+    private Integer districtId;
 
-        @NotBlank(message = "Manzil jo'natilmadi")
-        private String address;
+    @NotBlank(message = "Manzil jo'natilmadi")
+    private String address;
 
-        @NotBlank(message = "XICHOni ro'yxatdan chiqarish sababi kiritilmadi")
-        private String reason;
+    @NotBlank(message = "XICHOni ro'yxatdan chiqarish sababi kiritilmadi")
+    private String reason;
 
-        @NotBlank(message = "Ariza bayoni kiritilmadi!")
-        private String description;
+    @NotBlank(message = "Ariza bayoni kiritilmadi!")
+    private String description;
 
-        @NotBlank(message = "Asos hujjati jo'natilmadi")
-        private String actPath;
+    @NotBlank(message = "Asos hujjati jo'natilmadi")
+    private String actPath;
 
-        private Map<String, String> files = new HashMap<>(); // TODO
+    private Map<String, String> files = new HashMap<>(); // TODO
 
-        @Override
-        public AppealType getAppealType() {
-                return AppealType.DEREGISTER_HF;
-        }
+    @Override
+    public AppealType getAppealType() {
+        return AppealType.DEREGISTER_HF;
+    }
 
-        @Override
-        public LocalDate getDeadline() {
-                return null;
-        }
+    @Override
+    public LocalDate getDeadline() {
+        return null;
+    }
+
+    @Override
+    public AppealMode getAppealMode() {
+        return AppealMode.OFFICIAL;
+    }
 }

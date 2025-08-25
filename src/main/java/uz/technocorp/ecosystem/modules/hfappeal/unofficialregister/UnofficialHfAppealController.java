@@ -45,8 +45,6 @@ public class UnofficialHfAppealController {
 
     @PostMapping("/generate-pdf")
     public ResponseEntity<ApiResponse> generatePdfFromForm(@CurrentUser User user, @Valid @RequestBody UnofficialHfAppealDto hfDto) {
-        hfDto.setInspector(user);
-        User legal = userService.getOrCreateByIdentityAndDate(hfDto.getLegalTin(), null);
-        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", appealPdfService.preparePdfWithParam(hfDto, legal)));
+        return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", appealPdfService.preparePdfWithParam(hfDto, user)));
     }
 }

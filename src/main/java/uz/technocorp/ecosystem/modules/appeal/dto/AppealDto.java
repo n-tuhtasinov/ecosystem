@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
@@ -26,6 +27,9 @@ public interface AppealDto {
     String getPhoneNumber();
 
     Map<String, String> getFiles();
+
+    @Schema(hidden = true)
+    AppealMode getAppealMode();
 
     @Schema(hidden = true)
     LocalDate getDeadline();

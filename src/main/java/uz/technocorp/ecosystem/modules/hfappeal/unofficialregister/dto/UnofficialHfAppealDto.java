@@ -11,9 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
-import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
 import java.time.LocalDate;
@@ -126,6 +126,11 @@ public class UnofficialHfAppealDto implements AppealDto {
         return null;
     }
 
+    @Override
+    public AppealMode getAppealMode() {
+        return AppealMode.UNOFFICIAL;
+    }
+
     public void buildFiles() {
         files.put("identificationCardPath", identificationCardPath);
         files.put("receiptPath", receiptPath);
@@ -148,9 +153,4 @@ public class UnofficialHfAppealDto implements AppealDto {
         buildFiles();
         return true;
     }
-
-    // Other fields
-    @SkipDb
-    @Schema(hidden = true)
-    private User inspector;
 }
