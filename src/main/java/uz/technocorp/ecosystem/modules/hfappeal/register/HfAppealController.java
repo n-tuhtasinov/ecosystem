@@ -9,7 +9,6 @@ import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
-import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfDeregisterAppealDto;
 import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfModificationAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
@@ -34,7 +33,7 @@ public class HfAppealController {
 
     @PostMapping
     public ResponseEntity<ApiResponse> createAndSign(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<HfAppealDto> signedDto, HttpServletRequest request) {
-        appealService.setHfTypeName(signedDto.getDto());
+        signedDto.getDto().setHfTypeName(appealService.setHfTypeName(signedDto.getDto().getHfTypeId()));
         appealService.saveAndSign(user, signedDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
