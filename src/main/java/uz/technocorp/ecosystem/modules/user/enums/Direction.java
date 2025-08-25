@@ -19,5 +19,6 @@ public enum Direction {
     PREVENTION, // Profilaktika
     ACCREDITATION, // Akkreditatsiya
     CADASTRE, // Kadastr
-    PERMITS // Ruxsat beruvchi hujjatlar
+    PERMITS, // Ruxsat beruvchi hujjatlar
+    REPORT // Hisobot
 }

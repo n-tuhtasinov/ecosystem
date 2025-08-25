@@ -106,9 +106,9 @@ public enum AppealType {
     REGISTER_EXPERTISE_CONCLUSION("Sanoat xavfsizligi ekspertiza xulosalarini ro‘yxatga olish", "registerExpertiseConclusion", "", "ACCREDITATION", ""),
 
     // Litsenziya va ruxsatnomalar
-    OBTAIN_LICENSE("", "", "", "PERMITS", ""),
-    OBTAIN_PERMIT("", "", "", "PERMITS", ""),
-    OBTAIN_CONCLUSION("", "", "", "PERMITS", ""),
+//    OBTAIN_LICENSE("Litsenziya", "", "", "PERMITS", ""),
+//    OBTAIN_PERMIT("Ruxsatnoma", "", "", "PERMITS", ""),
+//    OBTAIN_CONCLUSION("Xulosa", "", "", "PERMITS", ""),
 
     // Xavfli ishlab chiqarish obyektlari kadastr pasporti
     REGISTER_CADASTRE_PASSPORT("TXYuZ kadastr pasportini ro‘yxatga olish", "registerCadastrePassport", "", "CADASTRE", ""),

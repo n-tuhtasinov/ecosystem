@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.statistics;
+package uz.technocorp.ecosystem.modules.report;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,11 +12,11 @@ import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
 import uz.technocorp.ecosystem.modules.irs.view.IrsCountByStatusView;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
-import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealStatusFilterDto;
-import uz.technocorp.ecosystem.modules.statistics.dto.request.AppealTypeFilterDto;
-import uz.technocorp.ecosystem.modules.statistics.dto.response.StatByRegistryDto;
-import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealStatusView;
-import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealTypeView;
+import uz.technocorp.ecosystem.modules.report.dto.request.AppealStatusFilterDto;
+import uz.technocorp.ecosystem.modules.report.dto.request.AppealTypeFilterDto;
+import uz.technocorp.ecosystem.modules.report.dto.response.ReportByRegistryDto;
+import uz.technocorp.ecosystem.modules.report.view.ReportByAppealStatusView;
+import uz.technocorp.ecosystem.modules.report.view.ReportByAppealTypeView;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  */
 @Service
 @RequiredArgsConstructor
-public class StatisticsServiceImpl implements StatisticsService {
+public class ReportServiceImpl implements ReportService {
 
 
     private final AppealRepository appealRepository;
@@ -42,7 +42,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final IonizingRadiationSourceService ionizingRadiationSourceService;
 
     @Override
-    public List<StatByAppealStatusView> getAppealStatus(AppealStatusFilterDto filterDto) {
+    public List<ReportByAppealStatusView> getAppealStatus(AppealStatusFilterDto filterDto) {
         if (filterDto.getStartDate() == null) {
             filterDto.setStartDate(LocalDate.of(LocalDate.now().getYear(), 1, 1));
         }
@@ -50,7 +50,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public List<StatByAppealTypeView> getAppealType(AppealTypeFilterDto dto) {
+    public List<ReportByAppealTypeView> getAppealType(AppealTypeFilterDto dto) {
         Stream<AppealType> appealTypeStream = dto.getAppealTypes().isEmpty() ? Arrays.stream(AppealType.values()) : dto.getAppealTypes().stream();
         String[] appealTypes = appealTypeStream.map(Enum::name).toArray(String[]::new);
 
@@ -67,7 +67,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public List<StatByRegistryDto> getRegistry(LocalDate date) {
+    public List<ReportByRegistryDto> getRegistry(LocalDate date) {
 
         if (date == null) {
             date = LocalDate.now();
@@ -76,10 +76,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<Office> offices = officeService.getAllBySelect();
         Office committee = Office.builder().regionId(null).name("Qo'mita").build();  //for adding qo'mita to the list
         offices.add(committee);
-        List<StatByRegistryDto> statList = new ArrayList<>();
+        List<ReportByRegistryDto> statList = new ArrayList<>();
 
         for (Office office : offices) {
-            StatByRegistryDto stat = new StatByRegistryDto();
+            ReportByRegistryDto stat = new ReportByRegistryDto();
             stat.setOfficeName(office.getName());
 
             if (office.getRegionId()==null){

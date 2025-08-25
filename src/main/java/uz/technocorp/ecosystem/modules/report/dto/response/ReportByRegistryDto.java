@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.statistics.dto.response;
+package uz.technocorp.ecosystem.modules.report.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StatByRegistryDto {
+public class ReportByRegistryDto {
     private String officeName;
     private Integer activeHf = 0;
     private Integer inactiveHf = 0;

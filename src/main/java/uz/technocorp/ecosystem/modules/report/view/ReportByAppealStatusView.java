@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.statistics.view;
+package uz.technocorp.ecosystem.modules.report.view;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -6,7 +6,7 @@ package uz.technocorp.ecosystem.modules.statistics.view;
  * @created 20.08.2025
  * @since v1.0
  */
-public interface StatByAppealStatusView {
+public interface ReportByAppealStatusView {
     String getOfficeName();
     Integer getTotal();
     Integer getInProcess();

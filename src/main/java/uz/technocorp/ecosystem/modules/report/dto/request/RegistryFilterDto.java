@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.statistics.dto.request;
+package uz.technocorp.ecosystem.modules.report.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

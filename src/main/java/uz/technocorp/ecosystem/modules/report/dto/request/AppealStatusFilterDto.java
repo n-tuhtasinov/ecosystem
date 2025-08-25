@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.statistics.dto.request;
+package uz.technocorp.ecosystem.modules.report.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
