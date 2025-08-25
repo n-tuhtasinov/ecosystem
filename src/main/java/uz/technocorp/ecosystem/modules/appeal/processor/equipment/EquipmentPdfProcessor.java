@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.appeal.processor.BaseAppealPdfProcessor;
 import uz.technocorp.ecosystem.modules.equipmentappeal.register.dto.EquipmentAppealDto;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 

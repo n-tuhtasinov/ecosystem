@@ -1,8 +1,6 @@
-package uz.technocorp.ecosystem.modules.statistics.view;
+package uz.technocorp.ecosystem.modules.report.view;
 
 import org.springframework.beans.factory.annotation.Value;
-
-import java.util.List;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -10,8 +8,8 @@ import java.util.List;
  * @created 20.08.2025
  * @since v1.0
  */
-public interface StatByAppealTypeView {
-    @Value("#{@statisticsServiceImpl.getLabelByAppealType(target.appealType)}")
+public interface ReportByAppealTypeView {
+    @Value("#{@reportServiceImpl.getLabelByAppealType(target.appealType)}")
     String getAppealType();
     Integer getTotal();
     Integer getCommittee();
