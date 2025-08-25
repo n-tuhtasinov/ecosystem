@@ -229,6 +229,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User getOrCreateByIdentityAndDate(Long identity, LocalDate birthDate) {
 
         String identityStr = identity.toString();
