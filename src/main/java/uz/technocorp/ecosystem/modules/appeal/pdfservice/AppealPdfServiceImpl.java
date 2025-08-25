@@ -16,6 +16,7 @@ import uz.technocorp.ecosystem.modules.department.DepartmentService;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipmentappeal.register.dto.AttractionPassportDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.register.dto.EquipmentAppealDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.unofficialregister.dto.UnofficialEquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.irsappeal.dto.IrsAppealDto;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
@@ -173,6 +174,11 @@ public class AppealPdfServiceImpl implements AppealPdfService {
         if (dto instanceof EquipmentAppealDto) {
             return processors.get(EquipmentAppealDto.class);
         }
+
+        if (dto instanceof UnofficialEquipmentAppealDto) {
+            return processors.get(UnofficialEquipmentAppealDto.class);
+        }
+
         return null;
     }
 
