@@ -234,7 +234,7 @@ public class UserServiceImpl implements UserService {
 
         String identityStr = identity.toString();
         if (identityStr.length() != 9 && identityStr.length() != 14){
-            throw new RuntimeException("INN 9 ta raqamdan va JSHIR 14 ta raqamdan iborat bo'lishi kerak");
+            throw new RuntimeException("INN 9 ta raqamdan va JSHSHIR 14 ta raqamdan iborat bo'lishi kerak");
         }
 
         return userRepository.findUserByIdentity(identity)

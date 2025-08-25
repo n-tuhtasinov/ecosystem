@@ -13,7 +13,6 @@ import uz.technocorp.ecosystem.modules.equipmentappeal.register.EquipmentAppealS
 import uz.technocorp.ecosystem.modules.equipmentappeal.register.dto.*;
 import uz.technocorp.ecosystem.modules.equipmentappeal.unofficialregister.dto.UnofficialCraneDto;
 import uz.technocorp.ecosystem.modules.user.User;
-import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 
@@ -30,11 +29,9 @@ public class UnofficialEquipmentGeneratePdfController {
 
     private final EquipmentAppealService equipmentAppealService;
     private final AppealPdfService appealPdfService;
-    private final UserService userService;
 
     @PostMapping("/crane")
-    public ResponseEntity<ApiResponse> generatePdf(@Valid @RequestBody UnofficialCraneDto craneDto) {
-        User user = userService.getOrCreateByIdentityAndDate(craneDto.getIdentity(), craneDto.getBirthDate());
+    public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody UnofficialCraneDto craneDto) {
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(craneDto, user)));
     }
 
