@@ -32,11 +32,9 @@ public class UnofficialElevatorDto extends UnofficialEquipmentAppealDto {
     private Sphere sphere;
 
     @SkipDb
-    @NotBlank(message = "Yuk ko'tara olish qiymati jo'natilmadi")
     private String liftingCapacity;
 
     @SkipDb
-    @NotBlank(message = "To'xtashlar soni jo'natilmadi")
     private String stopCount;
 
     @Schema(hidden = true)

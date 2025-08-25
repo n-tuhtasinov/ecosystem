@@ -30,66 +30,79 @@ public class EquipmentGeneratePdfController {
 
     @PostMapping("/boiler")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @RequestBody BoilerDto boilerDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(boilerDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(boilerDto, user)));
     }
 
     @PostMapping("/boiler-utilizer")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody BoilerUtilizerDto boilerUtilizerDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(boilerUtilizerDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(boilerUtilizerDto, user)));
     }
 
     @PostMapping("/cableway")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody CablewayDto cablewayDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(cablewayDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(cablewayDto, user)));
     }
 
     @PostMapping("/chemical-container")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody ChemicalContainerDto chemicalContainerDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(chemicalContainerDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(chemicalContainerDto, user)));
     }
 
     @PostMapping("/container")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody ContainerDto containerDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(containerDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(containerDto, user)));
     }
 
     @PostMapping("/crane")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody CraneDto craneDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(craneDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(craneDto, user)));
     }
 
     @PostMapping("/elevator")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody ElevatorDto elevatorDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(elevatorDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(elevatorDto, user)));
     }
 
     @PostMapping("/escalator")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody EscalatorDto escalatorDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(escalatorDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(escalatorDto, user)));
     }
 
     @PostMapping("/heat-pipeline")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody HeatPipelineDto heatPipelineDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(heatPipelineDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(heatPipelineDto, user)));
     }
 
     @PostMapping("/hoist")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody HoistDto hoistDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(hoistDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(hoistDto, user)));
     }
 
     @PostMapping("/lpg-container")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody LpgContainerDto lpgContainerDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(lpgContainerDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(lpgContainerDto, user)));
     }
 
     @PostMapping("/lpg-powered")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody LpgPoweredDto lpgPoweredDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(lpgPoweredDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(lpgPoweredDto, user)));
     }
 
     @PostMapping("/pipeline")
     public ResponseEntity<ApiResponse> generatePdf(@CurrentUser User user, @Valid @RequestBody PipelineDto pipelineDto) {
+        equipmentAppealService.setHfNameAndChildEquipmentName(pipelineDto);
         return ResponseEntity.ok(new ApiResponse("PDF fayl yaratildi", preparePdfWithParam(pipelineDto, user)));
     }
 

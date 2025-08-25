@@ -27,23 +27,18 @@ import java.time.LocalDate;
 public class UnofficialHeatPipelineDto extends UnofficialEquipmentAppealDto {
 
     @SkipDb
-    @NotBlank(message = "Diametr jo'natilmadi")
     private String diameter;
 
     @SkipDb
-    @NotBlank(message = "Devor qalinligi jo'natilmadi")
     private String thickness;
 
     @SkipDb
-    @NotBlank(message = "Uzunligi jo'natilmadi")
     private String length;
 
     @SkipDb
-    @NotBlank(message = "Bosim jo'natilmadi")
     private String pressure;
 
     @SkipDb
-    @NotBlank(message = "Temperatura jo'natilmadi")
     private String temperature;
 
     @Schema(hidden = true)

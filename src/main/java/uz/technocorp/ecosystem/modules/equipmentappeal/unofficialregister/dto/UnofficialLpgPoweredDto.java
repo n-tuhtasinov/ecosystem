@@ -27,19 +27,15 @@ import java.time.LocalDate;
 public class UnofficialLpgPoweredDto extends UnofficialEquipmentAppealDto {
 
     @SkipDb
-    @NotBlank(message = "Hajm jo'natilmadi")
     private String capacity;
 
     @SkipDb
-    @NotBlank(message = "Bosim jo'natilmadi")
     private String pressure;
 
     @SkipDb
-    @NotBlank(message = "Yoqilg'i jo'natilmadi")
     private String fuel;
 
     @SkipDb
-    @NotBlank(message = "Gaz ta'minoti loyihasi fayli uchun path jo'natilmadi")
     private String gasSupplyProjectPath;
 
     @Schema(hidden = true)

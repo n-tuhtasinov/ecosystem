@@ -28,28 +28,22 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UnofficialPipelineDto extends UnofficialEquipmentAppealDto {
 
-    @NotNull(message = "Qurilmaning putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi jo'natilmadi")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate nonDestructiveCheckDate;
 
     @SkipDb
-    @NotBlank(message = "Diametr jo'natilmadi")
     private String diameter;
 
     @SkipDb
-    @NotBlank(message = "Devor qalinligi jo'natilmadi")
     private String thickness;
 
     @SkipDb
-    @NotBlank(message = "Uzunligi jo'natilmadi")
     private String length;
 
     @SkipDb
-    @NotBlank(message = "Bosim jo'natilmadi")
     private String pressure;
 
     @SkipDb
-    @NotBlank(message = "Muhit jo'natilmadi")
     private String environment;
 
     @Schema(hidden = true)
