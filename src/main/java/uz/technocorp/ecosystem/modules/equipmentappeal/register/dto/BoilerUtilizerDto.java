@@ -47,6 +47,7 @@ public class BoilerUtilizerDto extends EquipmentAppealDto {
     @NotBlank(message = "Zichlik jo'natilmadi")
     private String density;
 
+    @SkipDb
     @NotBlank(message = "Temperatura jo'natilmadi")
     private String temperature;
 

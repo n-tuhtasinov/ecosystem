@@ -26,11 +26,9 @@ import java.time.LocalDate;
 public class UnofficialHoistDto extends UnofficialEquipmentAppealDto {
 
     @SkipDb
-    @NotBlank(message = "Ko'tarish balandligi jo'natilmadi")
     private String height;
 
     @SkipDb
-    @NotBlank(message = "Yuk ko'tarish quvvati jo'natilmadi")
     private String liftingCapacity;
 
     @Schema(hidden = true)

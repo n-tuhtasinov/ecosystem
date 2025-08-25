@@ -27,20 +27,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UnofficialCablewayDto extends UnofficialEquipmentAppealDto {
 
-    @NotNull(message = "Qurilmaning putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi jo'natilmadi")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate nonDestructiveCheckDate;
 
     @SkipDb
-    @NotBlank(message = "Tezlik jo'natilmadi")
     private String speed;
 
     @SkipDb
-    @NotBlank(message = "Harakatlanuvchi sostav soni jo'natilamdi")
     private String passengerCount;
 
     @SkipDb
-    @NotBlank(message = "Uzunligi jo'natilmadi")
     private String length;
 
     @Schema(hidden = true)

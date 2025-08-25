@@ -26,19 +26,15 @@ import java.time.LocalDate;
 public class UnofficialEscalatorDto extends UnofficialEquipmentAppealDto {
 
     @SkipDb
-    @NotBlank(message = "O'tkazish qobilyati jo'natilmadi")
     private String passengersPerMinute;
 
     @SkipDb
-    @NotBlank(message = "Uzunligi jo'natilmadi")
     private String length;
 
     @SkipDb
-    @NotBlank(message = "Tezligi jo'natilmadi")
     private String speed;
 
     @SkipDb
-    @NotBlank(message = "Ko'tarish balandligi jo'natilmadi")
     private String height;
 
     @Schema(hidden = true)
