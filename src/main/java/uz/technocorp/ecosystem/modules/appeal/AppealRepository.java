@@ -9,8 +9,8 @@ import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.repo.AppealRepo;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewById;
 import uz.technocorp.ecosystem.modules.appeal.view.AppealViewByPeriod;
-import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealStatusView;
-import uz.technocorp.ecosystem.modules.statistics.view.StatByAppealTypeView;
+import uz.technocorp.ecosystem.modules.report.view.ReportByAppealStatusView;
+import uz.technocorp.ecosystem.modules.report.view.ReportByAppealTypeView;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -84,7 +84,7 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
                              and (cast(:endDate as timestamp) is null or a.created_at <= :endDate)
                     group by ol.name
                     """)
-    List<StatByAppealStatusView> countByAppealStatus(String ownerType, LocalDate startDate, LocalDate endDate);
+    List<ReportByAppealStatusView> countByAppealStatus(String ownerType, LocalDate startDate, LocalDate endDate);
 
     @Query(nativeQuery = true, value = """
             select typesSource.appeal_type_name                    as appealType,
@@ -113,5 +113,5 @@ public interface AppealRepository extends JpaRepository<Appeal, UUID>, AppealRep
                      left join region r on o.region_id = r.id
             group by typesSource.appeal_type_name
             """)
-    List<StatByAppealTypeView> countByAppealType(String ownerType, LocalDate startDate, LocalDate endDate, String[] appealTypes);
+    List<ReportByAppealTypeView> countByAppealType(String ownerType, LocalDate startDate, LocalDate endDate, String[] appealTypes);
 }
