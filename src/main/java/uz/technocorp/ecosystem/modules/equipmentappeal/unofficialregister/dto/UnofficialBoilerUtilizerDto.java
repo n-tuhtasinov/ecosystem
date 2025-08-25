@@ -27,27 +27,22 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UnofficialBoilerUtilizerDto extends UnofficialEquipmentAppealDto {
 
-    @NotNull(message = "Qurilmaning putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi jo'natilmadi")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate nonDestructiveCheckDate;
 
     @SkipDb
-    @NotBlank(message = "Hajm jo'natilmadi")
     private String capacity;
 
     @SkipDb
-    @NotBlank(message = "Muhit jo'natilmadi")
     private String environment;
 
     @SkipDb
-    @NotBlank(message = "Ruxsat etilgan bosim jo'natilmadi")
     private String pressure;
 
     @SkipDb
-    @NotBlank(message = "Zichlik jo'natilmadi")
     private String density;
 
-    @NotBlank(message = "Temperatura jo'natilmadi")
+    @SkipDb
     private String temperature;
 
     @Schema(hidden = true)

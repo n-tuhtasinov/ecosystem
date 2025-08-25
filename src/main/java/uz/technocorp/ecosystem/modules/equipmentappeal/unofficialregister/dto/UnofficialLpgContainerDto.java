@@ -27,20 +27,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UnofficialLpgContainerDto extends UnofficialEquipmentAppealDto {
 
-    @NotNull(message = "Qurilmaning putur yetkazmaydigan nazoratda ko'rikdan o'tkazish sanasi jo'natilmadi")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate nonDestructiveCheckDate;
 
     @SkipDb
-    @NotBlank(message = "Hajm jo'natilmadi")
     private String capacity;
 
     @SkipDb
-    @NotBlank(message = "Muhit jo'natilmadi")
     private String environment;
 
     @SkipDb
-    @NotBlank(message = "Ruxsat etilgan bosim")
     private String pressure;
 
     @Schema(hidden = true)
