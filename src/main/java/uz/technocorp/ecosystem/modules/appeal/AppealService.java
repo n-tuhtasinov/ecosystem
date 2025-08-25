@@ -48,7 +48,7 @@ public interface AppealService {
 
     void confirm(User user, ConfirmationDto dto);
 
-    void setHfTypeName(HfAppealDto appealDto);
+    String setHfTypeName(Integer hfTypeId);
 
     Appeal findByIdStatusAndOffice(UUID appealId, AppealStatus appealStatus, Integer officeId);
 

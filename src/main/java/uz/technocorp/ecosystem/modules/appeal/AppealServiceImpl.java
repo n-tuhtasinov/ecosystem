@@ -187,6 +187,7 @@ public class AppealServiceImpl implements AppealService {
                 .executorName(executorName)
                 .data(data)
                 .isRejected(false)
+                .mode(dto.getAppealMode())
                 .build();
         repository.save(appeal);
 
@@ -327,9 +328,8 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public void setHfTypeName(HfAppealDto appealDto) {
-        String hfTypeName = hfTypeService.getHfTypeNameById(appealDto.getHfTypeId());
-        appealDto.setHfTypeName(hfTypeName);
+    public String setHfTypeName(Integer hfTypeId) {
+        return hfTypeService.getHfTypeNameById(hfTypeId);
     }
 
     private Appeal findByIdAndStatusAndSetExecutorName(UUID appealId, AppealStatus appealStatus, User user) {

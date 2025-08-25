@@ -13,6 +13,7 @@ public enum TemplateType {
     // XICHO
     XICHO_APPEAL,
     DEREGISTER_HF_APPEAL,
+    UNOFFICIAL_HF_APPEAL,
 
     // Equipment,
     EQUIPMENT_APPEAL,

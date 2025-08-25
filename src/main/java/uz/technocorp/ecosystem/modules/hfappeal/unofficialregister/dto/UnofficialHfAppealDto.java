@@ -1,5 +1,4 @@
-package uz.technocorp.ecosystem.modules.hfappeal.register.dto;
-
+package uz.technocorp.ecosystem.modules.hfappeal.unofficialregister.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
@@ -23,20 +22,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Rasulov Komil
+ * @author Sukhrob
  * @version 1.0
- * @created 12.02.2025
+ * @created 25.08.2025
  * @since v1.0
  */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HfAppealDto implements AppealDto {
+public class UnofficialHfAppealDto implements AppealDto {
 
     @SkipDb
     @NotBlank(message = "Telefon raqami kiritilmadi!")
     private String phoneNumber;
+
+    @NotNull(message = "Tashkilot STIR kiritilmadi!")
+    private Long legalTin;
 
     private String upperOrganization;
 
@@ -47,7 +49,6 @@ public class HfAppealDto implements AppealDto {
     @NotBlank(message = "Manzil kiritilmadi!")
     private String address;
 
-    @NotNull(message = "XICHO turi tanlanmadi!")
     private Integer hfTypeId;
 
     private String hfTypeName;
@@ -65,18 +66,15 @@ public class HfAppealDto implements AppealDto {
     @NotBlank(message = "Lokatsiya kiritilmadi!")
     private String location;
 
-    @NotBlank(message = "Xavfli moddalarning nomi va miqdori kiritilmadi!")
     private String hazardousSubstance;
 
     @Enumerated(EnumType.STRING)
     private List<HFSphere> spheres;
 
     @SkipDb
-    @NotBlank(message = "Identifikatsiya varag'i fayli biriktirilmadi!")
     private String identificationCardPath;
 
     @SkipDb
-    @NotBlank(message = "XICHOni ro'yxatga olish uchun to'lov kvitansiyasi fayli biriktirilmadi!")
     private String receiptPath;
 
     @SkipDb
@@ -130,7 +128,7 @@ public class HfAppealDto implements AppealDto {
 
     @Override
     public AppealMode getAppealMode() {
-        return AppealMode.OFFICIAL;
+        return AppealMode.UNOFFICIAL;
     }
 
     public void buildFiles() {
@@ -155,5 +153,4 @@ public class HfAppealDto implements AppealDto {
         buildFiles();
         return true;
     }
-
 }

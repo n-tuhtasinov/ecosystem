@@ -7,6 +7,7 @@ import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
+import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
@@ -15,6 +16,7 @@ import uz.technocorp.ecosystem.modules.template.Template;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
+import uz.technocorp.ecosystem.modules.user.UserService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,18 +28,18 @@ public abstract class BaseAppealPdfProcessor implements AppealPdfProcessor {
 
     @Autowired
     protected RegionService regionService;
-
     @Autowired
     protected DistrictService districtService;
-
     @Autowired
     protected ProfileService profileService;
-
     @Autowired
     protected TemplateService templateService;
-
     @Autowired
     protected AttachmentService attachmentService;
+    @Autowired
+    protected UserService userService;
+    @Autowired
+    protected OfficeService officeService;
 
     protected static final String DATE_FORMATTER = "dd-MM-yyyy";
 
@@ -71,6 +73,10 @@ public abstract class BaseAppealPdfProcessor implements AppealPdfProcessor {
         return profileService.getProfile(profileId);
     }
 
+    protected User getOrCreateByIdentityAndDate(Long identity, LocalDate birtDate) {
+        return userService.getOrCreateByIdentityAndDate(identity, birtDate);
+    }
+
     protected Template getTemplate(TemplateType type) {
         Template template = templateService.getByType(type.name());
         if (template == null) {
@@ -79,7 +85,7 @@ public abstract class BaseAppealPdfProcessor implements AppealPdfProcessor {
         return template;
     }
 
-    protected String getFormattedDateAsString (LocalDate localDate) {
+    protected String getFormattedDateAsString(LocalDate localDate) {
         return localDate.format(DateTimeFormatter.ofPattern(DATE_FORMATTER));
     }
 }
