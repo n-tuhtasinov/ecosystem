@@ -115,11 +115,9 @@ public class AttachmentServiceImpl implements AttachmentService {
                 .filter(path -> !path.trim().isEmpty())
                 .collect(Collectors.toList());
 
-        if (validPaths.isEmpty()) {
-            throw new RuntimeException("Files mapning elementi bo'sh bo'lishi mumkin emas!");
+        if (!validPaths.isEmpty()) {
+            repository.deleteByPaths(validPaths);
         }
-
-        repository.deleteByPaths(validPaths);
     }
 
     @Override
