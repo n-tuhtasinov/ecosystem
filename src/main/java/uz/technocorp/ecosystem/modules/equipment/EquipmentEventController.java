@@ -12,6 +12,7 @@ import uz.technocorp.ecosystem.modules.appeal.AppealRepository;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
@@ -41,7 +42,7 @@ public class EquipmentEventController {
             Appeal appeal = appealOpl.get();
 
             EquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), EquipmentDto.class);
-            EquipmentInfoDto info = service.getEquipmentInfoByAppealType(appeal.getAppealType());
+            EquipmentInfoDto info = service.getEquipmentInfoByAppealType(appeal.getAppealType(), RegistrationMode.OFFICIAL);
 
             EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
             registryDto.setType(info.equipmentType());

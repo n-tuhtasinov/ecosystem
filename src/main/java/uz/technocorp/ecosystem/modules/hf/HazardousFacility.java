@@ -128,7 +128,7 @@ public class HazardousFacility extends BaseEntity {
     @Column(nullable = false)
     private String inspectorName;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private RegistrationMode mode;
 

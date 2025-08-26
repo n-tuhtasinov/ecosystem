@@ -28,6 +28,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
@@ -61,7 +62,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         Profile profile = profileService.findByIdentity(appeal.getOwnerIdentity());
 
         EquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), EquipmentDto.class);
-        EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
+        EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType(), dto.mode());
 
         EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
 
@@ -117,6 +118,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(dto.attractionPassportId())
                 .isActive(true)
+                .mode(dto.mode())
                 .build();
 
         repository.save(equipment);
@@ -264,7 +266,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         ReRegisterEquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), ReRegisterEquipmentDto.class);
 
         Equipment old = findByRegistryNumberAndTypeAndActive(dto.getOldRegistryNumber(), dto.getType(), false);
-        EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType());
+        EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType(), RegistrationMode.OFFICIAL);
 
         EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
         registryDto.setType(info.equipmentType());
@@ -331,32 +333,32 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     // HELPER
-    protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType) {
+    protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType, RegistrationMode mode) {
         return switch (appealType) {
-            case REGISTER_CRANE, RE_REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P");
-            case REGISTER_CONTAINER, RE_REGISTER_CONTAINER -> getInfo(EquipmentType.CONTAINER, "A");
-            case REGISTER_BOILER, RE_REGISTER_BOILER -> getInfo(EquipmentType.BOILER, "K");
-            case REGISTER_ELEVATOR, RE_REGISTER_ELEVATOR -> getInfo(EquipmentType.ELEVATOR, "L");
-            case REGISTER_ESCALATOR, RE_REGISTER_ESCALATOR -> getInfo(EquipmentType.ESCALATOR, "E");
-            case REGISTER_CABLEWAY, RE_REGISTER_CABLEWAY -> getInfo(EquipmentType.CABLEWAY, "KD");
-            case REGISTER_HOIST, RE_REGISTER_HOIST -> getInfo(EquipmentType.HOIST, "V");
-            case REGISTER_PIPELINE, RE_REGISTER_PIPELINE -> getInfo(EquipmentType.PIPELINE, "T");
+            case REGISTER_CRANE, RE_REGISTER_CRANE -> getInfo(EquipmentType.CRANE, "P", mode);
+            case REGISTER_CONTAINER, RE_REGISTER_CONTAINER -> getInfo(EquipmentType.CONTAINER, "A", mode);
+            case REGISTER_BOILER, RE_REGISTER_BOILER -> getInfo(EquipmentType.BOILER, "K", mode);
+            case REGISTER_ELEVATOR, RE_REGISTER_ELEVATOR -> getInfo(EquipmentType.ELEVATOR, "L", mode);
+            case REGISTER_ESCALATOR, RE_REGISTER_ESCALATOR -> getInfo(EquipmentType.ESCALATOR, "E", mode);
+            case REGISTER_CABLEWAY, RE_REGISTER_CABLEWAY -> getInfo(EquipmentType.CABLEWAY, "KD", mode);
+            case REGISTER_HOIST, RE_REGISTER_HOIST -> getInfo(EquipmentType.HOIST, "V", mode);
+            case REGISTER_PIPELINE, RE_REGISTER_PIPELINE -> getInfo(EquipmentType.PIPELINE, "T", mode);
             case REGISTER_ATTRACTION_PASSPORT, RE_REGISTER_ATTRACTION_PASSPORT ->
-                    getInfo(EquipmentType.ATTRACTION_PASSPORT, "AT");
-            case REGISTER_ATTRACTION, RE_REGISTER_ATTRACTION -> getInfo(EquipmentType.ATTRACTION, "ADR");
+                    getInfo(EquipmentType.ATTRACTION_PASSPORT, "AT", mode);
+            case REGISTER_ATTRACTION, RE_REGISTER_ATTRACTION -> getInfo(EquipmentType.ATTRACTION, "ADR", mode);
             case REGISTER_CHEMICAL_CONTAINER, RE_REGISTER_CHEMICAL_CONTAINER ->
-                    getInfo(EquipmentType.CHEMICAL_CONTAINER, "XA");
-            case REGISTER_HEAT_PIPELINE, RE_REGISTER_HEAT_PIPELINE -> getInfo(EquipmentType.HEAT_PIPELINE, "PAX");
-            case REGISTER_BOILER_UTILIZER, RE_REGISTER_BOILER_UTILIZER -> getInfo(EquipmentType.BOILER_UTILIZER, "KC");
-            case REGISTER_LPG_CONTAINER, RE_REGISTER_LPG_CONTAINER -> getInfo(EquipmentType.LPG_CONTAINER, "AG");
-            case REGISTER_LPG_POWERED, RE_REGISTER_LPG_POWERED -> getInfo(EquipmentType.LPG_POWERED, "TG");
+                    getInfo(EquipmentType.CHEMICAL_CONTAINER, "XA", mode);
+            case REGISTER_HEAT_PIPELINE, RE_REGISTER_HEAT_PIPELINE -> getInfo(EquipmentType.HEAT_PIPELINE, "PAX", mode);
+            case REGISTER_BOILER_UTILIZER, RE_REGISTER_BOILER_UTILIZER -> getInfo(EquipmentType.BOILER_UTILIZER, "KC", mode);
+            case REGISTER_LPG_CONTAINER, RE_REGISTER_LPG_CONTAINER -> getInfo(EquipmentType.LPG_CONTAINER, "AG", mode);
+            case REGISTER_LPG_POWERED, RE_REGISTER_LPG_POWERED -> getInfo(EquipmentType.LPG_POWERED, "TG", mode);
             default -> throw new RuntimeException("Ariza turi hech bir qurilma turiga mos kelmadi");
         };
     }
 
-    private EquipmentInfoDto getInfo(EquipmentType equipmentType, String label) {
+    private EquipmentInfoDto getInfo(EquipmentType equipmentType, String label, RegistrationMode mode) {
         long orderNumber = repository.getMax(equipmentType).orElse(0L) + 1;
-        String formatted = String.format("%06d%s", orderNumber, "S"); // 'S' means that the number was given by system
+        String formatted = String.format("%06d%s", orderNumber, "S" + (RegistrationMode.OFFICIAL.equals(mode)? "" : "/nr")); // 'S' means that the number was given by system. '/nr' means that it is 'norasmiy'
         return new EquipmentInfoDto(equipmentType, label + formatted, orderNumber);
     }
 
@@ -409,9 +411,17 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("address", appeal.getAddress());
         parameters.put("dynamicParameters", makeDynamicRows(dto.getParameters()));
 
-        String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
+        // get template by registration mode
+        String content = getTemplateContent(
+                RegistrationMode.OFFICIAL.equals(appeal.getMode())
+                ? TemplateType.REGISTRY_EQUIPMENT
+                : TemplateType.UNOFFICIAL_REGISTRY_EQUIPMENT);
 
-        return attachmentService.createPdfFromHtml(content, "reestr/equipment", parameters, false);
+        return attachmentService.createPdfFromHtml(
+                content,
+                RegistrationMode.OFFICIAL.equals(appeal.getMode()) ? "reestr/equipment" :"reestr/equipment/unofficial",
+                parameters,
+                false);
     }
 
     private String makeDynamicRows(Map<String, String> parameters) {
