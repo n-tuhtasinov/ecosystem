@@ -55,7 +55,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         for (UUID id : dto.executorIds()) {
 
-            if (id == dto.singerId()) {
+            if (id == dto.signerId()) {
                 String signerName = getSigner(dto.sign(), dto.ip());
                 Signer signer = new Signer(signerName, id, LocalDateTime.now(), true);
                 signers.add(signer);

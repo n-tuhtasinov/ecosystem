@@ -32,7 +32,9 @@ import uz.technocorp.ecosystem.modules.document.enums.AgreementStatus;
 import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
+import uz.technocorp.ecosystem.modules.equipmentappeal.unofficialregister.dto.UnofficialEquipmentAppealDto;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
+import uz.technocorp.ecosystem.modules.hfappeal.unofficialregister.dto.UnofficialHfAppealDto;
 import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -153,7 +155,7 @@ public class AppealServiceImpl implements AppealService {
     public UUID create(AppealDto dto, User user) {
 
         //make data
-        Profile profile = getProfile(user.getProfileId());
+        Profile profile = changeProfileByAppealMode(user.getProfileId(), dto);
         Region region = regionService.findById(dto.getRegionId());
         District district = districtService.findById(dto.getDistrictId());
         Office office = getOffice(dto.getAppealType(), region.getId());
@@ -195,6 +197,19 @@ public class AppealServiceImpl implements AppealService {
         createExecutionProcess(new AppealExecutionProcessDto(appeal.getId(), AppealStatus.NEW, null));
 
         return appeal.getId();
+    }
+
+    private Profile changeProfileByAppealMode(UUID profileId, AppealDto dto) {
+        if (AppealMode.UNOFFICIAL.equals(dto.getAppealMode())){
+            if (dto.getAppealType().equals(AppealType.REGISTER_HF)){
+                UnofficialHfAppealDto hfDto = (UnofficialHfAppealDto) dto;
+                return profileService.findByIdentity(hfDto.getLegalTin());
+            }else {
+                UnofficialEquipmentAppealDto equipmentDto = (UnofficialEquipmentAppealDto) dto;
+                return profileService.findByIdentity(equipmentDto.getIdentity());
+            }
+        }
+        return getProfile(profileId);
     }
 
     private Department getDepartment(AppealType appealType) {

@@ -19,7 +19,7 @@ public record DocumentDto(
         String path,
         String sign,
         String ip,
-        UUID singerId,
+        UUID signerId,
         List<UUID> executorIds,
         AgreementStatus status) {
 }

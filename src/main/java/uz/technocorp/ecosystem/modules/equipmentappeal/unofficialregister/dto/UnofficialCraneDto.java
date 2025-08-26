@@ -44,10 +44,10 @@ public class UnofficialCraneDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    @Override
-    public AppealMode getAppealMode() {
-        return AppealMode.UNOFFICIAL;
-    }
+//    @Override
+//    public AppealMode getAppealMode() {
+//        return AppealMode.UNOFFICIAL;
+//    }
 
     public void buildParameters() {
         super.getParameters().put("boomLength", boomLength);
