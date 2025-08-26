@@ -11,7 +11,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealCountParams;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.helper.AppealCustom;
@@ -103,8 +103,8 @@ public class AppealRepoImpl implements AppealRepo {
         }
 
         if (params.get("mode") != null && !params.get("mode").isEmpty()) {
-            predicates.add(cb.equal(appealRoot.get("mode"), AppealMode.valueOf(params.get("mode"))));
-            countPredicates.add(cb.equal(countRoot.get("mode"), AppealMode.valueOf(params.get("mode"))));
+            predicates.add(cb.equal(appealRoot.get("mode"), RegistrationMode.valueOf(params.get("mode"))));
+            countPredicates.add(cb.equal(countRoot.get("mode"), RegistrationMode.valueOf(params.get("mode"))));
         }
 
         // if appealTypes is not null and is empty, this user should not see any type of appeal.

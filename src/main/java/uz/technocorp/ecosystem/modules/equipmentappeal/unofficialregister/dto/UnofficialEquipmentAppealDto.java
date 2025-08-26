@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
@@ -111,6 +112,12 @@ public abstract class UnofficialEquipmentAppealDto implements AppealDto {
 
     @Schema(hidden = true)
     public abstract EquipmentType getType();
+
+    @Override
+    public RegistrationMode getMode() {
+        return RegistrationMode.UNOFFICIAL;
+    }
+
 
     public void buildFiles() {
         files.put("labelPath", labelPath);

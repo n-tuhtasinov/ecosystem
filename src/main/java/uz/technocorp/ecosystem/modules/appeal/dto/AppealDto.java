@@ -1,7 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
@@ -29,7 +29,7 @@ public interface AppealDto {
     Map<String, String> getFiles();
 
     @Schema(hidden = true)
-    AppealMode getAppealMode();
+    RegistrationMode getMode();
 
     @Schema(hidden = true)
     LocalDate getDeadline();

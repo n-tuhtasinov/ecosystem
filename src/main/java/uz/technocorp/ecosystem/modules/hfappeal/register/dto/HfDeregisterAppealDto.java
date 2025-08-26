@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
@@ -67,7 +67,7 @@ public class HfDeregisterAppealDto implements AppealDto {
     }
 
     @Override
-    public AppealMode getAppealMode() {
-        return AppealMode.OFFICIAL;
+    public RegistrationMode getMode() {
+        return RegistrationMode.OFFICIAL;
     }
 }

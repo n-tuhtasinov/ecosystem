@@ -13,7 +13,6 @@ import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.appeal.pdfservice.AppealPdfService;
 import uz.technocorp.ecosystem.modules.hfappeal.unofficialregister.dto.UnofficialHfAppealDto;
 import uz.technocorp.ecosystem.modules.user.User;
-import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
@@ -31,16 +30,14 @@ public class UnofficialHfAppealController {
 
     private final AppealPdfService appealPdfService;
     private final AppealService appealService;
-    private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createAndSign(@Valid @RequestBody SignedAppealDto<UnofficialHfAppealDto> signedDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse> createAndSign(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialHfAppealDto> signedDto, HttpServletRequest request) {
         // Set hfTypeName
         if (signedDto.getDto().getHfTypeId() != null)
             signedDto.getDto().setHfTypeName(appealService.setHfTypeName(signedDto.getDto().getHfTypeId()));
 
-        User legal = userService.getOrCreateByIdentityAndDate(signedDto.getDto().getLegalTin(), null);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED, appealService.saveAndSign(legal, signedDto, request)));
+        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED, appealService.saveAndSign(user, signedDto, request)));
     }
 
     @PostMapping("/generate-pdf")
