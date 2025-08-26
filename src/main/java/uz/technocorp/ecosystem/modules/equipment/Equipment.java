@@ -58,7 +58,7 @@ public class Equipment extends BaseEntity {
     @Column(nullable = false)
     private String ownerName;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OwnerType ownerType;
 
@@ -185,7 +185,7 @@ public class Equipment extends BaseEntity {
     private Boolean isActive;
 
     @Enumerated(EnumType.STRING)
-//    @Column(nullable = false) //TODO: uncommit qilish kerak
+    @Column(nullable = false)
     private RegistrationMode mode;
 
     /* previous registration number.

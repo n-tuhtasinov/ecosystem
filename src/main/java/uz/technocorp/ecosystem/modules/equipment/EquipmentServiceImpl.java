@@ -411,9 +411,17 @@ public class EquipmentServiceImpl implements EquipmentService {
         parameters.put("address", appeal.getAddress());
         parameters.put("dynamicParameters", makeDynamicRows(dto.getParameters()));
 
-        String content = getTemplateContent(TemplateType.REGISTRY_EQUIPMENT);
+        // get template by registration mode
+        String content = getTemplateContent(
+                RegistrationMode.OFFICIAL.equals(appeal.getMode())
+                ? TemplateType.REGISTRY_EQUIPMENT
+                : TemplateType.UNOFFICIAL_REGISTRY_EQUIPMENT);
 
-        return attachmentService.createPdfFromHtml(content, "reestr/equipment", parameters, false);
+        return attachmentService.createPdfFromHtml(
+                content,
+                RegistrationMode.OFFICIAL.equals(appeal.getMode()) ? "reestr/equipment" :"reestr/equipment/unofficial",
+                parameters,
+                false);
     }
 
     private String makeDynamicRows(Map<String, String> parameters) {
