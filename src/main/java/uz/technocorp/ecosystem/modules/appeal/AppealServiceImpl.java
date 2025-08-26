@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
@@ -161,7 +161,7 @@ public class AppealServiceImpl implements AppealService {
         Office office = getOffice(dto.getAppealType(), region.getId());
         Department department = getDepartment(dto.getAppealType());
         String executorName = getExecutorName(dto.getAppealType(), region.getId());
-        OrderNumberDto numberDto = makeNumber(dto.getAppealType(), dto.getAppealMode());
+        OrderNumberDto numberDto = makeNumber(dto.getAppealType(), dto.getMode());
         JsonNode data = JsonMaker.makeJsonSkipFields(dto);
 
         Appeal appeal = Appeal
@@ -189,7 +189,7 @@ public class AppealServiceImpl implements AppealService {
                 .executorName(executorName)
                 .data(data)
                 .isRejected(false)
-                .mode(dto.getAppealMode())
+                .mode(dto.getMode())
                 .build();
         repository.save(appeal);
 
@@ -200,7 +200,7 @@ public class AppealServiceImpl implements AppealService {
     }
 
     private Profile changeProfileByAppealMode(UUID profileId, AppealDto dto) {
-        if (AppealMode.UNOFFICIAL.equals(dto.getAppealMode())){
+        if (RegistrationMode.UNOFFICIAL.equals(dto.getMode())){
             if (dto.getAppealType().equals(AppealType.REGISTER_HF)){
                 UnofficialHfAppealDto hfDto = (UnofficialHfAppealDto) dto;
                 return profileService.findByIdentity(hfDto.getLegalTin());
@@ -451,16 +451,16 @@ public class AppealServiceImpl implements AppealService {
         return appealStatus;
     }
 
-    private OrderNumberDto makeNumber(AppealType appealType, AppealMode mode) {
+    private OrderNumberDto makeNumber(AppealType appealType, RegistrationMode mode) {
         Long orderNumber = repository.getMax().orElse(0L) + 1;
 
         String number = switch (appealType.sort) {
             case "registerIrs" -> orderNumber + "-INM-" + LocalDate.now().getYear();
             case "registerHf", "deregisterHf", "modifyHf" -> orderNumber
-                                                             + (AppealMode.UNOFFICIAL.equals(mode) ? "-XIC-NR-" : "-XIC-")
+                                                             + (RegistrationMode.UNOFFICIAL.equals(mode) ? "-XIC-NR-" : "-XIC-")
                                                              + LocalDate.now().getYear();
             case "registerEquipment", "reRegisterEquipment", "deregisterEquipment" -> orderNumber
-                                                                                      + (AppealMode.UNOFFICIAL.equals(mode) ? "-QUR-NR-" : "-QUR-")
+                                                                                      + (RegistrationMode.UNOFFICIAL.equals(mode) ? "-QUR-NR-" : "-QUR-")
                                                                                       + LocalDate.now().getYear();
             case "registerAttractionPassport", "reRegisterAttractionPassport" ->
                     orderNumber + "-ATP-" + LocalDate.now().getYear();

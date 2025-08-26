@@ -1,4 +1,4 @@
-package uz.technocorp.ecosystem.modules.appeal.enums;
+package uz.technocorp.ecosystem.shared.enums;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -6,7 +6,7 @@ package uz.technocorp.ecosystem.modules.appeal.enums;
  * @created 25.08.2025
  * @since v1.0
  */
-public enum AppealMode {
+public enum RegistrationMode {
     OFFICIAL,
     UNOFFICIAL
 }

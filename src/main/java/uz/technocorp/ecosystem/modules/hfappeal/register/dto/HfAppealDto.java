@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 import uz.technocorp.ecosystem.shared.SkipDb;
@@ -129,8 +129,8 @@ public class HfAppealDto implements AppealDto {
     }
 
     @Override
-    public AppealMode getAppealMode() {
-        return AppealMode.OFFICIAL;
+    public RegistrationMode getMode() {
+        return RegistrationMode.OFFICIAL;
     }
 
     public void buildFiles() {

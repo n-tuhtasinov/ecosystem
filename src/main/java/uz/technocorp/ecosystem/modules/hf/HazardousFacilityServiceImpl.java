@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
@@ -281,7 +281,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
         String content;
         String folderPath;
-        if (AppealMode.UNOFFICIAL.equals(appeal.getMode())) {
+        if (RegistrationMode.UNOFFICIAL.equals(appeal.getMode())) {
             content = templateService.getByType(TemplateType.UNOFFICIAL_REGISTRY_HF.name()).getContent();
             folderPath = "reestr/hf/unofficial";
         } else {
@@ -319,7 +319,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         District district = districtService.findById(appeal.getDistrictId());
 
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
-        if (AppealMode.UNOFFICIAL.equals(appeal.getMode())) {
+        if (RegistrationMode.UNOFFICIAL.equals(appeal.getMode())) {
             registryNumber += "/nr" + String.format("%05d", maxOrderNumber);
         }
         return registryNumber;

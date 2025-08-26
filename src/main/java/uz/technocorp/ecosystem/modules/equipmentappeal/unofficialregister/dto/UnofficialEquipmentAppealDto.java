@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
 
@@ -114,8 +114,8 @@ public abstract class UnofficialEquipmentAppealDto implements AppealDto {
     public abstract EquipmentType getType();
 
     @Override
-    public AppealMode getAppealMode() {
-        return AppealMode.UNOFFICIAL;
+    public RegistrationMode getMode() {
+        return RegistrationMode.UNOFFICIAL;
     }
 
 

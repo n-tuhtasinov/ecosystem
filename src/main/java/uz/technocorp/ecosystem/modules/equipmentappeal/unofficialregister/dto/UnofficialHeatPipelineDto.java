@@ -2,12 +2,11 @@ package uz.technocorp.ecosystem.modules.equipmentappeal.unofficialregister.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
@@ -55,8 +54,8 @@ public class UnofficialHeatPipelineDto extends UnofficialEquipmentAppealDto {
     }
 
     @Override
-    public AppealMode getAppealMode() {
-        return AppealMode.UNOFFICIAL;
+    public RegistrationMode getMode() {
+        return RegistrationMode.UNOFFICIAL;
     }
 
     public void buildParameters() {
