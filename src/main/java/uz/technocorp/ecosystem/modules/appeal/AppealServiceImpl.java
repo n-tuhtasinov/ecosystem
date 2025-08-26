@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
@@ -32,7 +33,6 @@ import uz.technocorp.ecosystem.modules.document.enums.DocumentType;
 import uz.technocorp.ecosystem.modules.eimzo.helper.Helper;
 import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
-import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.hftype.HfTypeService;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceService;
 import uz.technocorp.ecosystem.modules.office.Office;
@@ -159,7 +159,7 @@ public class AppealServiceImpl implements AppealService {
         Office office = getOffice(dto.getAppealType(), region.getId());
         Department department = getDepartment(dto.getAppealType());
         String executorName = getExecutorName(dto.getAppealType(), region.getId());
-        OrderNumberDto numberDto = makeNumber(dto.getAppealType());
+        OrderNumberDto numberDto = makeNumber(dto.getAppealType(), dto.getAppealMode());
         JsonNode data = JsonMaker.makeJsonSkipFields(dto);
 
         Appeal appeal = Appeal
@@ -436,14 +436,17 @@ public class AppealServiceImpl implements AppealService {
         return appealStatus;
     }
 
-    private OrderNumberDto makeNumber(AppealType appealType) {
+    private OrderNumberDto makeNumber(AppealType appealType, AppealMode mode) {
         Long orderNumber = repository.getMax().orElse(0L) + 1;
 
         String number = switch (appealType.sort) {
             case "registerIrs" -> orderNumber + "-INM-" + LocalDate.now().getYear();
-            case "registerHf", "deregisterHf", "modifyHf" -> orderNumber + "-XIC-" + LocalDate.now().getYear();
-            case "registerEquipment", "reRegisterEquipment", "deregisterEquipment" ->
-                    orderNumber + "-QUR-" + LocalDate.now().getYear();
+            case "registerHf", "deregisterHf", "modifyHf" -> orderNumber
+                                                             + (AppealMode.UNOFFICIAL.equals(mode) ? "-XIC-NR-" : "-XIC-")
+                                                             + LocalDate.now().getYear();
+            case "registerEquipment", "reRegisterEquipment", "deregisterEquipment" -> orderNumber
+                                                                                      + (AppealMode.UNOFFICIAL.equals(mode) ? "-QUR-NR-" : "-QUR-")
+                                                                                      + LocalDate.now().getYear();
             case "registerAttractionPassport", "reRegisterAttractionPassport" ->
                     orderNumber + "-ATP-" + LocalDate.now().getYear();
             case "accreditExpertOrganization", "reAccreditExpertOrganization", "expendAccreditExpertOrganization" ->

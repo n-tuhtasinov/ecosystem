@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealMode;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
@@ -24,11 +25,9 @@ import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.office.Office;
 import uz.technocorp.ecosystem.modules.office.OfficeService;
 import uz.technocorp.ecosystem.modules.profile.Profile;
-import uz.technocorp.ecosystem.modules.profile.ProfileRepository;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.modules.region.RegionService;
-import uz.technocorp.ecosystem.modules.template.Template;
 import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
@@ -54,23 +53,20 @@ import java.util.UUID;
 public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     private final HazardousFacilityRepository repository;
-    private final RegionService regionService;
-    private final DistrictService districtService;
     private final AttachmentService attachmentService;
+    private final DistrictService districtService;
     private final TemplateService templateService;
     private final ProfileService profileService;
-    private final ProfileRepository profileRepository;
+    private final RegionService regionService;
     private final OfficeService officeService;
 
     @Override
     public void create(Appeal appeal) {
         Long maxOrderNumber = repository.findMaxOrderNumber().orElse(0L) + 1;
 
-        Region region = regionService.findById(appeal.getRegionId());
-        District district = districtService.findById(appeal.getDistrictId());
-
-        String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
         HfAppealDto hfAppealDto = JsonParser.parseJsonData(appeal.getData(), HfAppealDto.class);
+
+        String registryNumber = makeRegistryNumber(appeal, maxOrderNumber);
 
         String registryFilePath = createHfRegistryPdf(appeal, registryNumber, hfAppealDto, LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 
@@ -149,9 +145,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setDeregisterFilePath(dto.getJustifiedDocumentPath());
         hazardousFacility.setDeregisterReason(dto.getReasons());
         hazardousFacility.setRegistryNumber(
-                hazardousFacility.getRegistryNumber() + "/r-ch" + String.format("%05d", hazardousFacility.getOrderNumber())
-        );
-
+                hazardousFacility.getRegistryNumber() + "/r-ch" + String.format("%05d", hazardousFacility.getOrderNumber()));
         repository.save(hazardousFacility);
     }
 
@@ -161,9 +155,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         hazardousFacility.setPeriodicUpdateFilePath(dto.periodicUpdateFilePath());
         hazardousFacility.setPeriodicUpdateReason(dto.periodicUpdateReason());
         hazardousFacility.setRegistryNumber(
-                hazardousFacility.getRegistryNumber() + "/д-я" + String.format("%05d", hazardousFacility.getOrderNumber())
-        );
-
+                hazardousFacility.getRegistryNumber() + "/д-я" + String.format("%05d", hazardousFacility.getOrderNumber()));
         repository.save(hazardousFacility);
     }
 
@@ -193,8 +185,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         } else {
             //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
         }
-
-
         return repository.getHfCustoms(params);
     }
 
@@ -210,9 +200,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         Role role = user.getRole();
 
         if (role == Role.REGIONAL) {
-            Profile profile = profileRepository
-                    .findById(profileId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));
+            Profile profile = profileService.getProfile(profileId);
+
             Office office = officeService.findById(profile.getOfficeId());
             Integer regionId = office.getRegionId();
             if (isAssigned) {
@@ -244,9 +233,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         } else {
             if (registryNumber != null)
                 return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
-            Profile profile = profileRepository
-                    .findById(profileId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Profile", "Id", profileId));
+            Profile profile = profileService.getProfile(profileId);
             return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), intervalId);
         }
     }
@@ -278,25 +265,32 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     }
 
     @Override
-    public String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto hfAppealDto, String now) {
+    public String createHfRegistryPdf(Appeal appeal, String registryNumber, HfAppealDto dto, String now) {
         // Make parameters
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("upperOrganization", hfAppealDto.getUpperOrganization() != null ? hfAppealDto.getUpperOrganization() : "-");
+        parameters.put("upperOrganization", dto.getUpperOrganization() != null ? dto.getUpperOrganization() : "-");
         parameters.put("legalName", appeal.getOwnerName());
         parameters.put("legalTin", appeal.getOwnerIdentity().toString());
-        parameters.put("name", hfAppealDto.getName());
+        parameters.put("name", dto.getName());
         parameters.put("address", appeal.getAddress());
-        parameters.put("hfTypeName", hfAppealDto.getHfTypeName());
+        parameters.put("hfTypeName", dto.getHfTypeName() != null ? dto.getHfTypeName() : "-");
         parameters.put("registrationDate", now);
         parameters.put("number", registryNumber);
-        parameters.put("extraArea", hfAppealDto.getExtraArea() != null ? hfAppealDto.getExtraArea() : "-");
-        parameters.put("hazardousSubstance", hfAppealDto.getHazardousSubstance());
+        parameters.put("extraArea", dto.getExtraArea() != null ? dto.getExtraArea() : "-");
+        parameters.put("hazardousSubstance", dto.getHazardousSubstance() != null ? dto.getHazardousSubstance() : "-");
 
-        // Find template
-        Template template = templateService.getByType(TemplateType.REGISTRY_HF.name());
+        String content;
+        String folderPath;
+        if (AppealMode.UNOFFICIAL.equals(appeal.getMode())) {
+            content = templateService.getByType(TemplateType.UNOFFICIAL_REGISTRY_HF.name()).getContent();
+            folderPath = "reestr/hf/unofficial";
+        } else {
+            content = templateService.getByType(TemplateType.REGISTRY_HF.name()).getContent();
+            folderPath = "reestr/hf";
+        }
 
         // Create file
-        return attachmentService.createPdfFromHtml(template.getContent(), "reestr/hf", parameters, false);
+        return attachmentService.createPdfFromHtml(content, folderPath, parameters, false);
     }
 
     @Override
@@ -314,6 +308,24 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         return repository.countStatusByDateAndRegionId(date, regionId);
     }
 
+    protected HazardousFacility findById(UUID id) {
+        return repository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
+    }
+
+    private String makeRegistryNumber(Appeal appeal, Long maxOrderNumber) {
+        Region region = regionService.findById(appeal.getRegionId());
+        District district = districtService.findById(appeal.getDistrictId());
+
+        String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
+        if (AppealMode.UNOFFICIAL.equals(appeal.getMode())) {
+            registryNumber += "/nr" + maxOrderNumber;
+        }
+        return registryNumber;
+    }
+
+    // MAPPER
     private HfViewById mapToView(HazardousFacility hf) {
         return new HfViewById(
                 hf.getLegalTin(),
@@ -340,11 +352,5 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 hf.getFiles(),
                 hf.getRegistryFilePath(),
                 hf.getInspectorName());
-    }
-
-    protected HazardousFacility findById(UUID id) {
-        return repository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
     }
 }
