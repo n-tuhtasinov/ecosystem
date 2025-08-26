@@ -12,7 +12,7 @@ import uz.technocorp.ecosystem.modules.appeal.AppealService;
 import uz.technocorp.ecosystem.modules.appeal.dto.SignedAppealDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.register.EquipmentAppealService;
 import uz.technocorp.ecosystem.modules.equipmentappeal.register.dto.*;
-import uz.technocorp.ecosystem.modules.equipmentappeal.unofficialregister.dto.UnofficialCraneDto;
+import uz.technocorp.ecosystem.modules.equipmentappeal.unofficialregister.dto.*;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
@@ -40,98 +40,91 @@ public class UnofficialEquipmentAppealController {
     }
 
     @PostMapping("/container")
-    public ResponseEntity<?> createContainer(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ContainerDto> containerDto, HttpServletRequest request) {
+    public ResponseEntity<?> createContainer(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialContainerDto> containerDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(containerDto.getDto());
         appealService.saveAndSign(user, containerDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/boiler")
-    public ResponseEntity<?> createBoiler(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<BoilerDto> boilerDto, HttpServletRequest request) {
+    public ResponseEntity<?> createBoiler(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialBoilerDto> boilerDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(boilerDto.getDto());
         appealService.saveAndSign(user, boilerDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/elevator")
-    public ResponseEntity<?> createElevator(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ElevatorDto> elevatorDto, HttpServletRequest request) {
+    public ResponseEntity<?> createElevator(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialElevatorDto> elevatorDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(elevatorDto.getDto());
         appealService.saveAndSign(user, elevatorDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/escalator")
-    public ResponseEntity<?> createEscalator(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<EscalatorDto> escalator, HttpServletRequest request) {
+    public ResponseEntity<?> createEscalator(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialEscalatorDto> escalator, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(escalator.getDto());
         appealService.saveAndSign(user, escalator, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/cableway")
-    public ResponseEntity<?> createCableway(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<CablewayDto> cablewayDto, HttpServletRequest request) {
+    public ResponseEntity<?> createCableway(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialCablewayDto> cablewayDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(cablewayDto.getDto());
         appealService.saveAndSign(user, cablewayDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/hoist")
-    public ResponseEntity<?> createHoist(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<HoistDto> hoistDto, HttpServletRequest request) {
+    public ResponseEntity<?> createHoist(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialHoistDto> hoistDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(hoistDto.getDto());
         appealService.saveAndSign(user, hoistDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/pipeline")
-    public ResponseEntity<?> createPipeline(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<PipelineDto> pipelineDto, HttpServletRequest request) {
+    public ResponseEntity<?> createPipeline(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialPipelineDto> pipelineDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(pipelineDto.getDto());
         appealService.saveAndSign(user, pipelineDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/chemical-container")
-    public ResponseEntity<?> createChemicalContainer(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<ChemicalContainerDto> chemicalContainerDto, HttpServletRequest request) {
+    public ResponseEntity<?> createChemicalContainer(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialChemicalContainerDto> chemicalContainerDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(chemicalContainerDto.getDto());
         appealService.saveAndSign(user, chemicalContainerDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/heat-pipeline")
-    public ResponseEntity<?> createHeatPipeline(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<HeatPipelineDto> heatPipelineDto, HttpServletRequest request) {
+    public ResponseEntity<?> createHeatPipeline(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialHeatPipelineDto> heatPipelineDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(heatPipelineDto.getDto());
         appealService.saveAndSign(user, heatPipelineDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/boiler-utilizer")
-    public ResponseEntity<?> createBoilerUtilizer(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<BoilerUtilizerDto> boilerUtilizerDto, HttpServletRequest request) {
+    public ResponseEntity<?> createBoilerUtilizer(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialBoilerUtilizerDto> boilerUtilizerDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(boilerUtilizerDto.getDto());
         appealService.saveAndSign(user, boilerUtilizerDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/lpg-container")
-    public ResponseEntity<?> createLpgContainer(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<LpgContainerDto> lpgContainerDto, HttpServletRequest request) {
+    public ResponseEntity<?> createLpgContainer(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialLpgContainerDto> lpgContainerDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(lpgContainerDto.getDto());
         appealService.saveAndSign(user, lpgContainerDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
     @PostMapping("/lpg-powered")
-    public ResponseEntity<?> createLpgPowered(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<LpgPoweredDto> lpgPoweredDto, HttpServletRequest request) {
+    public ResponseEntity<?> createLpgPowered(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialLpgPoweredDto> lpgPoweredDto, HttpServletRequest request) {
         service.setHfNameAndChildEquipmentName(lpgPoweredDto.getDto());
         appealService.saveAndSign(user, lpgPoweredDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
     }
 
-    @PostMapping("/attraction-passport")
-    public ResponseEntity<?> createAttractionPassport(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<AttractionPassportDto> attractionPassportDto, HttpServletRequest request) {
-        service.setChildEquipmentNameAndChildEquipmentSortName(attractionPassportDto.getDto());
-        appealService.saveAndSign(user, attractionPassportDto, request);
-        return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
-    }
-
     @PostMapping("/attraction")
-    public ResponseEntity<?> createAttraction(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<AttractionDto> attractionDto, HttpServletRequest request) {
+    public ResponseEntity<?> createAttraction(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<UnofficialAttractionDto> attractionDto, HttpServletRequest request) {
         service.setRequiredFields(attractionDto.getDto());
         appealService.saveAndSign(user, attractionDto, request);
         return ResponseEntity.ok(new ApiResponse(ResponseMessage.CREATED));
