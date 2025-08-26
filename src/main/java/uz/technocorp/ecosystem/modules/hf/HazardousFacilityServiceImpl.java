@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
-import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.attachment.AttachmentService;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
@@ -32,6 +31,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
@@ -94,6 +94,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                         .files(hfAppealDto.getFiles())
                         .registryFilePath(registryFilePath)
                         .inspectorName(appeal.getExecutorName())
+                        .mode(appeal.getMode())
                         .build());
     }
 
@@ -279,8 +280,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         parameters.put("extraArea", dto.getExtraArea() != null ? dto.getExtraArea() : "-");
         parameters.put("hazardousSubstance", dto.getHazardousSubstance() != null ? dto.getHazardousSubstance() : "-");
 
-        String content;
-        String folderPath;
+        String content, folderPath;
         if (RegistrationMode.UNOFFICIAL.equals(appeal.getMode())) {
             content = templateService.getByType(TemplateType.UNOFFICIAL_REGISTRY_HF.name()).getContent();
             folderPath = "reestr/hf/unofficial";
@@ -351,6 +351,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 hf.isActive(),
                 hf.getFiles(),
                 hf.getRegistryFilePath(),
-                hf.getInspectorName());
+                hf.getInspectorName(),
+                hf.getMode().name());
     }
 }

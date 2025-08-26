@@ -37,6 +37,7 @@ public record HfViewById(
         boolean active,
         Map<String, String> files,
         String registryFilePath,
-        String inspectorName
+        String inspectorName,
+        String mode
 ) {
 }
