@@ -4,14 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import uz.technocorp.ecosystem.modules.user.User;
-import uz.technocorp.ecosystem.shared.BaseEntity;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 import uz.technocorp.ecosystem.modules.hftype.HfType;
-import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
+import uz.technocorp.ecosystem.shared.BaseEntity;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,7 +38,7 @@ public class HazardousFacility extends BaseEntity {
     @Column(nullable = false)
     private String legalName;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private Long orderNumber;
 
     private LocalDate registrationDate;
@@ -78,7 +78,7 @@ public class HazardousFacility extends BaseEntity {
 
     private String address;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String location;
 
     @Column(columnDefinition = "text")
@@ -127,6 +127,10 @@ public class HazardousFacility extends BaseEntity {
 
     @Column(nullable = false)
     private String inspectorName;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private RegistrationMode mode;
 
 //    //Identifikatsiya varag'i
 //    private String identificationCardPath;
