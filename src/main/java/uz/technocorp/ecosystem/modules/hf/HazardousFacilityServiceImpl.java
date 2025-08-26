@@ -320,7 +320,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
         String registryNumber = String.format("%05d", maxOrderNumber) + "-" + String.format("%04d", district.getNumber()) + "-" + String.format("%02d", region.getNumber());
         if (AppealMode.UNOFFICIAL.equals(appeal.getMode())) {
-            registryNumber += "/nr" + maxOrderNumber;
+            registryNumber += "/nr" + String.format("%05d", maxOrderNumber);
         }
         return registryNumber;
     }
