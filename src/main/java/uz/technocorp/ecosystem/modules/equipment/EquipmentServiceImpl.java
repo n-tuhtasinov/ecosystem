@@ -62,7 +62,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         Profile profile = profileService.findByIdentity(appeal.getOwnerIdentity());
 
         EquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), EquipmentDto.class);
-        EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType(), dto.mode());
+        EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType(), appeal.getMode());
 
         EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
 
@@ -118,7 +118,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(dto.attractionPassportId())
                 .isActive(true)
-                .mode(dto.mode())
+                .mode(appeal.getMode())
                 .build();
 
         repository.save(equipment);
@@ -266,7 +266,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         ReRegisterEquipmentDto dto = JsonParser.parseJsonData(appeal.getData(), ReRegisterEquipmentDto.class);
 
         Equipment old = findByRegistryNumberAndTypeAndActive(dto.getOldRegistryNumber(), dto.getType(), false);
-        EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType(), RegistrationMode.OFFICIAL);
+        EquipmentInfoDto info = getEquipmentInfoByAppealType(appeal.getAppealType(), appeal.getMode());
 
         EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
         registryDto.setType(info.equipmentType());
@@ -322,6 +322,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .registrationDate(LocalDate.now())
                 .attractionPassportId(old.getAttractionPassportId())
                 .isActive(true)
+                .mode(appeal.getMode())
                 .build();
 
         repository.save(equipment);
