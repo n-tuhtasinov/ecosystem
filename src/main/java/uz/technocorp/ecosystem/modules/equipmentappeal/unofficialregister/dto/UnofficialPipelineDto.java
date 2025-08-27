@@ -57,11 +57,6 @@ public class UnofficialPipelineDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    @Override
-    public RegistrationMode getMode() {
-        return RegistrationMode.UNOFFICIAL;
-    }
-
     public void buildParameters() {
         super.getParameters().put("diameter", diameter);
         super.getParameters().put("thickness", thickness);

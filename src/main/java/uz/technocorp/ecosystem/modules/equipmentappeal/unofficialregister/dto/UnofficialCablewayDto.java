@@ -51,11 +51,6 @@ public class UnofficialCablewayDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    @Override
-    public RegistrationMode getMode() {
-        return RegistrationMode.UNOFFICIAL;
-    }
-
     public void buildParameters() {
         super.getParameters().put("speed", speed);
         super.getParameters().put("passengerCount", passengerCount);

@@ -25,4 +25,5 @@ public class HfParams {
     private Integer districtId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String mode;
 }

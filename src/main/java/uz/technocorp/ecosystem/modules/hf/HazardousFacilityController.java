@@ -65,9 +65,10 @@ public class HazardousFacilityController {
                                     @RequestParam(value = "regionId", required = false) Integer regionId,
                                     @RequestParam(value = "districtId", required = false) Integer districtId,
                                     @RequestParam(value = "startDate", required = false) LocalDate startDate,
-                                    @RequestParam(value = "endDate", required = false) LocalDate endDate
+                                    @RequestParam(value = "endDate", required = false) LocalDate endDate,
+                                    @RequestParam(value = "mode", required = false) String mode
     ) {
-        Page<HfCustom> all = service.getAll(user, new HfParams(page, size, search, regionId, districtId, startDate, endDate));
+        Page<HfCustom> all = service.getAll(user, new HfParams(page, size, search, regionId, districtId, startDate, endDate, mode));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 

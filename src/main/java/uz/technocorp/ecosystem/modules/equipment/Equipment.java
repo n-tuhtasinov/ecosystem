@@ -215,13 +215,9 @@ public class Equipment extends BaseEntity {
 //    private String density; // zichligi (qozon)
 //    private String fuel; // yoqilg'i (100 ming)
 
-//    @Column(nullable = false)
 //    private String labelPath; // birka rasmi
-//    @Column(nullable = false)
 //    private String saleContractPath; // oldi-sotdi shartnomasi
-//    @Column(nullable = false)
 //    private String equipmentCertPath; // qurilma sertifikati
-//    @Column(nullable = false)
 //    private String assignmentDecreePath; // maxsus tayinlash buyrug'i
 //    private String expertisePath; //ekspertiza fayli
 //    private String installationCertPath; //montaj guvohnomasi
