@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
@@ -53,11 +52,6 @@ public class LpgPoweredDto extends EquipmentAppealDto {
     @Override
     public LocalDate getDeadline() {
         return null;
-    }
-
-    @Override
-    public RegistrationMode getMode() {
-        return RegistrationMode.OFFICIAL;
     }
 
     public void buildParameters() {

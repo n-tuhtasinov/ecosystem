@@ -49,11 +49,6 @@ public class UnofficialBoilerDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    @Override
-    public RegistrationMode getMode() {
-        return RegistrationMode.UNOFFICIAL;
-    }
-
     public void buildParameters() {
         super.getParameters().put("capacity", capacity);
         super.getParameters().put("environment", environment);

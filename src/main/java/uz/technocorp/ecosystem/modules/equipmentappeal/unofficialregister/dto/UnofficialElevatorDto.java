@@ -49,11 +49,6 @@ public class UnofficialElevatorDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    @Override
-    public RegistrationMode getMode() {
-        return RegistrationMode.UNOFFICIAL;
-    }
-
     public void buildParameters() {
         super.getParameters().put("liftingCapacity", liftingCapacity);
         super.getParameters().put("stopCount", stopCount);

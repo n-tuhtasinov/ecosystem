@@ -44,11 +44,6 @@ public class UnofficialHoistDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    @Override
-    public RegistrationMode getMode() {
-        return RegistrationMode.UNOFFICIAL;
-    }
-
     public void buildParameters() {
         super.getParameters().put("height", height);
         super.getParameters().put("liftingCapacity", liftingCapacity);

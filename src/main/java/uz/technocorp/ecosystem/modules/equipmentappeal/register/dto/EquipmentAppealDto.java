@@ -12,6 +12,7 @@ import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -116,6 +117,11 @@ public abstract class EquipmentAppealDto implements AppealDto {
 
     @Schema(hidden = true)
     public abstract EquipmentType getType();
+
+    @Override
+    public RegistrationMode getMode() {
+        return RegistrationMode.OFFICIAL;
+    }
 
     public void buildFiles() {
         files.put("labelPath", labelPath);
