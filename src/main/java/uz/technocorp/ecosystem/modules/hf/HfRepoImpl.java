@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hftype.HfType;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +39,8 @@ public class HfRepoImpl implements HfRepo {
         CriteriaQuery<HfCustom> cq = cb.createQuery(HfCustom.class);
         Root<HazardousFacility> hfRoot = cq.from(HazardousFacility.class);
         List<Predicate> predicates = new ArrayList<>();
-//
-//        // JOIN — Region bilan LEFT JOIN qilish
-//        Join<HazardousFacility, Region> regionJoin = hfRoot.join("region", JoinType.LEFT);
-//
-//        // JOIN — District bilan LEFT JOIN qilish
-//        Join<HazardousFacility, District> districtJoin = hfRoot.join("district", JoinType.LEFT);
 
-        // JOIN — Region bilan LEFT JOIN qilish
+        // JOIN — HfType bilan LEFT JOIN qilish
         Join<HazardousFacility, HfType> hfTypeJoin = hfRoot.join("hfType", JoinType.LEFT);
 
         // count uchun alohida query va root
@@ -82,6 +77,11 @@ public class HfRepoImpl implements HfRepo {
         if (params.getDistrictId() != null) {
             predicates.add(cb.equal(hfRoot.get("districtId"), params.getDistrictId()));
             countPredicates.add(cb.equal(countRoot.get("districtId"), params.getDistrictId()));
+        }
+
+        if (params.getMode() != null && !params.getMode().isBlank()) {
+            predicates.add(cb.equal(hfRoot.get("mode"), RegistrationMode.valueOf(params.getMode())));
+            countPredicates.add(cb.equal(countRoot.get("mode"), RegistrationMode.valueOf(params.getMode())));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
@@ -131,7 +131,6 @@ public class HfRepoImpl implements HfRepo {
         if (regionId != null) {
             countPredicates.add(cb.equal(countRoot.get("regionId"), regionId));
         }
-
         countQuery.select(cb.count(countRoot));
         countQuery.where(countPredicates.toArray(new Predicate[0]));
         return em.createQuery(countQuery).getSingleResult();

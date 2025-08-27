@@ -288,7 +288,6 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
             content = templateService.getByType(TemplateType.REGISTRY_HF.name()).getContent();
             folderPath = "reestr/hf";
         }
-
         // Create file
         return attachmentService.createPdfFromHtml(content, folderPath, parameters, false);
     }
