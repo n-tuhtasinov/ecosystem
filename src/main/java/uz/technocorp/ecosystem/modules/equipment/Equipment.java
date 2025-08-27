@@ -15,6 +15,7 @@ import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.shared.BaseEntity;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class Equipment extends BaseEntity {
     @Column(nullable = false)
     private String ownerName;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OwnerType ownerType;
 
@@ -182,6 +183,10 @@ public class Equipment extends BaseEntity {
 
     //    @Column(nullable = false)
     private Boolean isActive;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RegistrationMode mode;
 
     /* previous registration number.
        it is used when the device is re-registered */

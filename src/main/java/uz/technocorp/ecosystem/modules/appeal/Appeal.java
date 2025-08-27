@@ -49,7 +49,7 @@ public class Appeal extends BaseEntity {
     @Column(nullable = false)
     private String ownerName;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OwnerType ownerType;
 
