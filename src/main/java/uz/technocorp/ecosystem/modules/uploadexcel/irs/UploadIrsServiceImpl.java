@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.district.District;
 import uz.technocorp.ecosystem.modules.district.DistrictService;
-import uz.technocorp.ecosystem.modules.hfappeal.register.dto.HfAppealDto;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSource;
 import uz.technocorp.ecosystem.modules.irs.IonizingRadiationSourceRepository;
@@ -24,6 +22,8 @@ import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -97,10 +97,10 @@ public class UploadIrsServiceImpl implements UploadIrsService {
                     getRegistrationDate(row, irs);
                     getInspectorName(dataFormatter, row, irs);
                     getDescription(dataFormatter, row, irs);
-//                    setFiles(irs); // set files
+                    setFiles(irs);
 
 
-                    //create registry file //TODO: pdfni generatsi qilish kerak
+                    //create registry file //TODO: pdfni generatsi qilish kerak. Bu yerda hf pdf generatsiyasidan copy olingan. IRS ga to'g'rilash kerak
 //                    Appeal appeal = Appeal.builder().ownerName(irs.getLegalName()).ownerIdentity(irs.getLegalTin()).address(irs.getAddress()).build();
 //                    String hfTypeName = hfTypeService.getHfTypeNameById(irs.getHfTypeId());
 //                    HfAppealDto dto = new HfAppealDto();
@@ -121,6 +121,13 @@ public class UploadIrsServiceImpl implements UploadIrsService {
         } catch (Exception e) {
             log.error("Excel faylni qayta ishlashda kutilmagan xatolik: {}", e.getMessage());
         }
+    }
+
+    private void setFiles(IonizingRadiationSource irs) {
+        Map<String, String> files = new HashMap<>();
+        files.put("passportPath", null);
+        files.put("additionalFilePath", null);
+        irs.setFiles(files);
     }
 
     private void getDescription(DataFormatter dataFormatter, Row row, IonizingRadiationSource irs) {
@@ -286,7 +293,7 @@ public class UploadIrsServiceImpl implements UploadIrsService {
         if (text == null || text.isBlank()) {
             throw new Exception("division bo'sh bo'lishi mumkin emas");
         }
-        return text;
+        return text.trim();
     }
 
     private LocalDate getLocalDate(Cell cell, String fieldName) throws Exception {
@@ -298,12 +305,10 @@ public class UploadIrsServiceImpl implements UploadIrsService {
             manufacturedAt = cell.getLocalDateTimeCellValue().toLocalDate();
         } else if (cell.getCellType() == CellType.STRING) {
             String dateStr = cell.getStringCellValue();
-            manufacturedAt = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(DATE_FORMAT));
+            manufacturedAt = LocalDate.parse(dateStr.trim(), DateTimeFormatter.ofPattern(DATE_FORMAT));
         } else {
             throw new Exception(fieldName + " format yacheykasi date bo'lishi kerak");
         }
         return manufacturedAt;
     }
-
-
 }

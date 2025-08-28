@@ -191,6 +191,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                 irs.getSymbol(),
                 irs.getSphere(),
                 irs.getFactoryNumber(),
+                irs.getSerialNumber(),
                 irs.getActivity(),
                 irs.getType(),
                 irs.getCategory(),
