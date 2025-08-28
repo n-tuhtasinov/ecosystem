@@ -23,7 +23,7 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID>, JpaSpec
                 name as legalName,
                 address as legalAddress,
                 director_name as fullName,
-                identity,
+                identity as tin,
                 region_id as regionId,
                 region_name as regionName,
                 district_id as districtId,

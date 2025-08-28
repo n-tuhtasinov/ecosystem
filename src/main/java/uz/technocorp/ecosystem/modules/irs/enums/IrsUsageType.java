@@ -10,5 +10,5 @@ public enum IrsUsageType {
     USAGE,             // Ishlatish (foydalanish) uchun
     DISPOSAL,          // Ko‘mish uchun
     EXPORT,            // Chet-elga olib chiqish uchun
-    STORAGE            // Vaqtinchalik saqlash uchun
+    TEMPORARY_STORAGE  // Vaqtinchalik saqlash uchun
 }

@@ -70,7 +70,7 @@ public class IrsAppealDto implements AppealDto {
     private String serialNumber;
 
     @NotNull(message = "Ativligi kiritilmadi")
-    private Integer activity;
+    private String activity;
 
     @NotBlank(message = "Tipi kiritilmadi")
     private String type;
