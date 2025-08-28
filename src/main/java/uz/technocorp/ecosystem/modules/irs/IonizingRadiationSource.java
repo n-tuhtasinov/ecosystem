@@ -70,7 +70,10 @@ public class IonizingRadiationSource extends BaseEntity {
     private Long orderNumber;
 
     @Column(nullable = false)
-    private Integer activity; // aktivligi
+    private String serialNumber;
+
+    @Column(nullable = false)
+    private String activity; // aktivligi
 
     @Column(nullable = false)
     private String type;
@@ -151,4 +154,6 @@ public class IonizingRadiationSource extends BaseEntity {
     private String inspectorName;
 
     private LocalDate deactivationDate; // INM xolatini yaroqsiz holatda o'tkazilgan sana
+
+    private String description;
 }

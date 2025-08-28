@@ -74,6 +74,7 @@ public class IonizingRadiationSourceServiceImpl implements IonizingRadiationSour
                         .sphere(irsAppealDto.getSphere())
                         .factoryNumber(irsAppealDto.getFactoryNumber())
                         .orderNumber(maxOrderNumber)
+                        .serialNumber(irsAppealDto.getSerialNumber())
                         .activity(irsAppealDto.getActivity())
                         .category(IrsCategory.valueOf(irsAppealDto.getCategory()))
                         .type(irsAppealDto.getType())
