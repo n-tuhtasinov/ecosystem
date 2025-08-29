@@ -28,7 +28,7 @@ public class IrsView {
     private String symbol;
     private String sphere;
     private String factoryNumber;
-    private Integer activity;
+    private String activity;
     private IrsCategory category;
     private Boolean isValid;
     private IrsUsageType usageType;
