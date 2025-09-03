@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
@@ -74,7 +75,7 @@ public class IrsTransferAppealDto implements AppealDto {
 
     private String additionalFilePath;
 
-    private Map<String, String> files = new HashMap<>(); // TODO
+    private Map<String, FileDto> files = new HashMap<>(); // TODO
 
     @Override
     public AppealType getAppealType() {

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
@@ -106,15 +107,15 @@ public class ReRegisterEquipmentDto implements AppealDto {
     }
 
     @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
+    private Map<String, FileDto> files = new HashMap<>();
 
     private void buildFiles() {
-        files.put("labelPath", labelPath);
-        files.put("saleContractPath", saleContractPath);
-        files.put("assignmentDecreePath", assignmentDecreePath);
-        files.put("installationCertPath", installationCertPath);
-        files.put("equipmentCertPath", equipmentCertPath);
-        files.put("expertisePath", expertisePath);
+        files.put("labelPath", new FileDto(labelPath, null));
+        files.put("saleContractPath", new FileDto(saleContractPath, null));
+        files.put("assignmentDecreePath", new FileDto(assignmentDecreePath, null));
+        files.put("installationCertPath", new FileDto(installationCertPath, null));
+        files.put("equipmentCertPath", new FileDto(equipmentCertPath, null));
+        files.put("expertisePath", new FileDto(expertisePath, null));
     }
 
     @AssertTrue

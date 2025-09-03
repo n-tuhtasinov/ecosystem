@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
@@ -59,7 +60,7 @@ public class UnofficialLpgPoweredDto extends UnofficialEquipmentAppealDto {
     @AssertTrue
     public boolean isParametersBuilt() {
         buildParameters();
-        super.getFiles().put("gasSupplyProjectPath", gasSupplyProjectPath); // add file the map
+        super.getFiles().put("gasSupplyProjectPath", new FileDto(gasSupplyProjectPath, null)); // add file the map
         return true;
     }
 }

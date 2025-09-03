@@ -7,9 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.shared.SkipDb;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class HfDeregisterDto implements AppealDto {
     private String justifiedDocumentPath;
 
     @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
+    private Map<String, FileDto> files = new HashMap<>();
 
     @SkipDb
     @Schema(hidden = true)
@@ -72,7 +73,7 @@ public class HfDeregisterDto implements AppealDto {
     }
 
     private void buildFiles() {
-        files.put("justifiedDocumentPath", justifiedDocumentPath);
+        files.put("justifiedDocumentPath", new FileDto(justifiedDocumentPath, null));
     }
 
     @AssertTrue

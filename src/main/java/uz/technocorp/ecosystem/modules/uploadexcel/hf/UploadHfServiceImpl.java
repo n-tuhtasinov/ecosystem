@@ -19,6 +19,7 @@ import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
 import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -127,7 +128,7 @@ public class UploadHfServiceImpl implements UploadHfExcelService {
     }
 
     private static void setFiles(HazardousFacility hf) {
-        Map<String, String> files = new HashMap<>();
+        Map<String, FileDto> files = new HashMap<>();
         files.put("identificationCardPath", null);
         files.put("receiptPath", null);
         files.put("expertOpinionPath", null);

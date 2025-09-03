@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.attestation.enums.AttestationDirection;
@@ -89,7 +90,7 @@ public class AttestationDto implements AppealDto {
 
     @SkipDb
     @Schema(hidden = true)
-    private Map<String, String> files;
+    private Map<String, FileDto> files;
 
     @Override
     public LocalDate getDeadline() {

@@ -10,6 +10,7 @@ import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.time.LocalDate;
 
@@ -63,7 +64,7 @@ public class LpgPoweredDto extends EquipmentAppealDto {
     @AssertTrue
     public boolean isParametersBuilt() {
         buildParameters();
-        super.getFiles().put("gasSupplyProjectPath", gasSupplyProjectPath); // add file the map
+        super.getFiles().put("gasSupplyProjectPath", new FileDto(gasSupplyProjectPath, null)); // add file the map
         return true;
     }
 }

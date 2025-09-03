@@ -12,6 +12,7 @@ import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
 import uz.technocorp.ecosystem.modules.region.Region;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -105,7 +106,7 @@ public class IonizingRadiationSource extends BaseEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
-    private Map<String, String> files;
+    private Map<String, FileDto> files;
 
     @ManyToOne(targetEntity = Region.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "region_id", updatable = false, insertable = false)

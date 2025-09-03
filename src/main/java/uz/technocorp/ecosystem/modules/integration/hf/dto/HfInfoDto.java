@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,6 +38,6 @@ public class HfInfoDto {
     private String periodicUpdateReason;
     private String periodicUpdateFilePath;
     private Boolean active;
-    private Map<String, String> files;
+    private Map<String, FileDto> files;
     private String registryFilePath;
 }

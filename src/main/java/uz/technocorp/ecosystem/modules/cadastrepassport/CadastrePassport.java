@@ -8,6 +8,7 @@ import org.hibernate.type.SqlTypes;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
 import uz.technocorp.ecosystem.shared.BaseEntity;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.util.Map;
 import java.util.UUID;
@@ -80,5 +81,5 @@ public class CadastrePassport extends BaseEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "jsonb")
-    private Map<String, String> files;
+    private Map<String, FileDto> files;
 }

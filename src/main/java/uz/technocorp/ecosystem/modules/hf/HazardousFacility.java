@@ -11,6 +11,7 @@ import uz.technocorp.ecosystem.modules.hftype.HfType;
 import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.region.Region;
 import uz.technocorp.ecosystem.shared.BaseEntity;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
@@ -121,7 +122,7 @@ public class HazardousFacility extends BaseEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private Map<String, String> files;
+    private Map<String, FileDto> files;
 
     private String registryFilePath;
 

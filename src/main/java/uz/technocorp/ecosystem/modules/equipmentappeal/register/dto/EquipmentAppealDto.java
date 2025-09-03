@@ -12,6 +12,7 @@ import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
@@ -93,6 +94,7 @@ public abstract class EquipmentAppealDto implements AppealDto {
     @SkipDb
     @NotBlank(message = "Qurilmaning sertifikati fayli pathi jo'natilmadi")
     private String equipmentCertPath;
+    private LocalDate equipmentCertExpiryDate;
 
     @SkipDb
     @NotBlank(message = "Qurilmaning mas'ul shaxs tayinlanganligi to'g'risidagi buyrug'i pathi jo'natilmadi")
@@ -101,16 +103,19 @@ public abstract class EquipmentAppealDto implements AppealDto {
     @SkipDb
     @NotBlank(message = "Qurilmaning expertiza loyihasi pathi jo'natilmadi")
     private String expertisePath;
+    private LocalDate expertiseExpiryDate;
 
     @SkipDb
     @NotBlank(message = "Qurilmaning montaj guvohnomasi fayli pathi jo'natilmadi")
     private String installationCertPath;
+    private LocalDate installationCertExpiryDate;
 
     @SkipDb
     private String additionalFilePath;
+    private LocalDate additionalFileExpiryDate;
 
     @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
+    private Map<String, FileDto> files = new HashMap<>();
 
     @Schema(hidden = true)
     private Map<String, String> parameters = new HashMap<>();
@@ -124,13 +129,13 @@ public abstract class EquipmentAppealDto implements AppealDto {
     }
 
     public void buildFiles() {
-        files.put("labelPath", labelPath);
-        files.put("saleContractPath", saleContractPath);
-        files.put("equipmentCertPath", equipmentCertPath);
-        files.put("assignmentDecreePath", assignmentDecreePath);
-        files.put("expertisePath", expertisePath);
-        files.put("installationCertPath", installationCertPath);
-        files.put("additionalFilePath", additionalFilePath);
+        files.put("labelPath", new FileDto(labelPath, null));
+        files.put("saleContractPath", new FileDto(saleContractPath, null));
+        files.put("equipmentCertPath", new FileDto(equipmentCertPath, equipmentCertExpiryDate));
+        files.put("assignmentDecreePath", new FileDto(assignmentDecreePath, null));
+        files.put("expertisePath", new FileDto(expertisePath, expertiseExpiryDate));
+        files.put("installationCertPath", new FileDto(installationCertPath, installationCertExpiryDate));
+        files.put("additionalFilePath", new FileDto(additionalFilePath, additionalFileExpiryDate));
     }
 
     @AssertTrue

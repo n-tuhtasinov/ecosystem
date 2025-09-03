@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.hf.view;
 
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,7 +36,7 @@ public record HfViewById(
         String periodicUpdateReason,
         String periodicUpdateFilePath,
         boolean active,
-        Map<String, String> files,
+        Map<String, FileDto> files,
         String registryFilePath,
         String inspectorName,
         String mode

@@ -26,6 +26,7 @@ import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
 import uz.technocorp.ecosystem.modules.uploadexcel.equipment.UploadEquipmentExcelService;
 import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -151,7 +152,7 @@ public class UploadCraneServiceImpl implements UploadEquipmentExcelService {
     }
 
     private static void setFiles(Equipment equipment) {
-        Map<String, String> files = new HashMap<>();
+        Map<String, FileDto> files = new HashMap<>();
         files.put("labelPath", null);
         files.put("saleContractPath", null);
         files.put("equipmentCertPath", null);
