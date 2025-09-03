@@ -189,16 +189,7 @@ public class Equipment extends BaseEntity {
     @Column(nullable = false)
     private RegistrationMode mode;
 
-    /* previous registration number.
-       it is used when the device is re-registered */
-//    private String oldNumber;
 
-    /* previous registration, it is used when the device is re-registered */
-//    @OneToOne(fetch = FetchType.LAZY, targetEntity = Equipment.class)
-//    @JoinColumn(name = "old_equipment_id", insertable = false, updatable = false)
-//    private Equipment oldEquipment;
-//    @Column(name = "old_equipment_id")
-//    private UUID oldEquipmentId;
 //    private String boomLength; //strelasining uzunligi (kran)
 //    private String liftingCapacity; //yuk ko'tarishi (kran, lift, yuk ko'targich)
 //    private String capacity; // hajmi (sosud, kimyoviy idish, qozon, sug, 100ming)
