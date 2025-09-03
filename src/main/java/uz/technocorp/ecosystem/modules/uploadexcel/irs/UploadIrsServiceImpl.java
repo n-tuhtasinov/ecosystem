@@ -15,9 +15,9 @@ import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
-import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.user.UserService;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -39,7 +39,6 @@ public class UploadIrsServiceImpl implements UploadIrsService {
     private final ProfileService profileService;
     private final IIPService iipService;
     private final UserService userService;
-    private final RegionService regionService;
     private final DistrictService districtService;
 
     private static final String DATE_FORMAT = "dd.MM.yyyy";
@@ -124,7 +123,7 @@ public class UploadIrsServiceImpl implements UploadIrsService {
     }
 
     private void setFiles(IonizingRadiationSource irs) {
-        Map<String, String> files = new HashMap<>();
+        Map<String, FileDto> files = new HashMap<>();
         files.put("passportPath", null);
         files.put("additionalFilePath", null);
         irs.setFiles(files);
@@ -220,7 +219,7 @@ public class UploadIrsServiceImpl implements UploadIrsService {
     }
 
     private void getIdentifierType(DataFormatter dataFormatter, Row row, IonizingRadiationSource irs) throws Exception {
-       String text = getAsStringNotNull(dataFormatter, row, 15);
+        String text = getAsStringNotNull(dataFormatter, row, 15);
         IrsIdentifierType irsIdentifierType = IrsIdentifierType.valueOf(text);
         irs.setIdentifierType(irsIdentifierType);
     }
@@ -282,7 +281,7 @@ public class UploadIrsServiceImpl implements UploadIrsService {
 
     private String getRegistryNumber(DataFormatter dataFormatter, Row row, IonizingRadiationSource irs) throws Exception {
         String orderNumber = getAsStringNotNull(dataFormatter, row, 34);
-        String registryNumber ="INM" + String.format("%05d", Integer.parseInt(orderNumber.trim()));
+        String registryNumber = "INM" + String.format("%05d", Integer.parseInt(orderNumber.trim()));
         irs.setRegistryNumber(registryNumber);
         return registryNumber;
     }

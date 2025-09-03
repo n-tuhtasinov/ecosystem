@@ -20,6 +20,7 @@ import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.security.CurrentUser;
 import uz.technocorp.ecosystem.shared.ApiResponse;
 import uz.technocorp.ecosystem.shared.ResponseMessage;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class AttestationAppealController {
     //TODO   ROLE -> LEGAL
     @PostMapping
     public ResponseEntity<ApiResponse> create(@CurrentUser User user, @Valid @RequestBody SignedAppealDto<AttestationDto> signedDto, HttpServletRequest request) {
-        signedDto.getDto().setFiles(Map.of("1", signedDto.getFilePath()));
+        signedDto.getDto().setFiles(Map.of("1", new FileDto(signedDto.getFilePath(), null)));
         hfService.findByIdAndProfileId(signedDto.getDto().getHfId(), user.getProfileId());
         UUID appealId = appealService.saveAndSign(user, signedDto, request);
         return ResponseEntity.ok().body(new ApiResponse("Ariza yaratildi", appealId));

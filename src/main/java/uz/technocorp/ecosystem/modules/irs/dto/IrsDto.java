@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.util.Map;
 
@@ -102,11 +103,11 @@ public class IrsDto {
         @NotBlank(message = "INM joylashgan manzil kiritilmadi")
         private String address;
 
-        private Map<String, String> files;
+        private Map<String, FileDto> files;
 
         public void buildFiles() {
-                files.put("passportPath", passportPath);
-                files.put("additionalFilePath", additionalFilePath);
+                files.put("passportPath", new FileDto(passportPath, null));
+                files.put("additionalFilePath", new FileDto(additionalFilePath, null));
         }
 
         @AssertTrue

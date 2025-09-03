@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.equipment.view;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -55,7 +56,7 @@ public record EquipmentViewById(
         String inspectorName,
         Boolean isActive,
 
-        Map<String, String> files,
+        Map<String, FileDto> files,
         String registryFilePath
 
 ) {}

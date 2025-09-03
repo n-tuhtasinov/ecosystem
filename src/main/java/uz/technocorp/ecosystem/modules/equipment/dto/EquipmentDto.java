@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.equipment.dto;
 
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
 import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
@@ -38,7 +39,7 @@ public record EquipmentDto(
         LocalDate nonDestructiveCheckDate,
         String description,
         UUID inspectorId,
-        Map<String, String> files,
+        Map<String, FileDto> files,
         UUID attractionPassportId,  // for only attraction
         RegistrationMode mode
 ) {

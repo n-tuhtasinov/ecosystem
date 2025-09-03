@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
 import uz.technocorp.ecosystem.modules.appeal.dto.*;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealStatus;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
@@ -91,7 +92,7 @@ public class AppealServiceImpl implements AppealService {
         createDocument(new DocumentDto(appealId, dto.getType(), dto.getFilePath(), dto.getSign(), Helper.getIp(request), user.getId(), List.of(user.getId()), null));
 
         // Delete files from Attachment
-        attachmentService.deleteByPaths(dto.getDto().getFiles().values());
+        attachmentService.deleteByPaths(dto.getDto().getFiles().values().stream().map(FileDto::getPath).toList());
 
         return appealId;
     }

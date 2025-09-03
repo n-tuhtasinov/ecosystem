@@ -10,9 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.shared.SkipDb;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -85,27 +86,36 @@ public abstract class UnofficialEquipmentAppealDto implements AppealDto {
 
     @SkipDb
     private String labelPath;
+    @SkipDb
+    private LocalDate labelExpiryDate;
 
     @SkipDb
     private String saleContractPath;
+    @SkipDb
+    private LocalDate saleContractExpiryDate;
 
     @SkipDb
     private String equipmentCertPath;
+    private LocalDate equipmentCertExpiryDate;
 
     @SkipDb
     private String assignmentDecreePath;
+    private LocalDate assignmentDecreeExpiryDate;
 
     @SkipDb
     private String expertisePath;
+    private LocalDate expertiseExpiryDate;
 
     @SkipDb
     private String installationCertPath;
+    private LocalDate installationCertExpiryDate;
 
     @SkipDb
     private String additionalFilePath;
+    private LocalDate additionalFileExpiryDate;
 
     @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
+    private Map<String, FileDto> files = new HashMap<>();
 
     @Schema(hidden = true)
     private Map<String, String> parameters = new HashMap<>();
@@ -120,19 +130,19 @@ public abstract class UnofficialEquipmentAppealDto implements AppealDto {
 
 
     public void buildFiles() {
-        files.put("labelPath", labelPath);
-        files.put("saleContractPath", saleContractPath);
-        files.put("equipmentCertPath", equipmentCertPath);
-        files.put("assignmentDecreePath", assignmentDecreePath);
-        files.put("expertisePath", expertisePath);
-        files.put("installationCertPath", installationCertPath);
-        files.put("additionalFilePath", additionalFilePath);
+        files.put("labelPath", new FileDto(labelPath, labelExpiryDate));
+        files.put("saleContractPath", new FileDto(saleContractPath, saleContractExpiryDate));
+        files.put("equipmentCertPath", new FileDto(equipmentCertPath, equipmentCertExpiryDate));
+        files.put("assignmentDecreePath", new FileDto(assignmentDecreePath, assignmentDecreeExpiryDate));
+        files.put("expertisePath", new FileDto(expertisePath, expertiseExpiryDate));
+        files.put("installationCertPath", new FileDto(installationCertPath, installationCertExpiryDate));
+        files.put("additionalFilePath", new FileDto(additionalFilePath, additionalFileExpiryDate));
     }
 
     @AssertTrue
     public boolean isFilesBuilt() {
         buildFiles();
-        this.fullCheckDate = partialCheckDate==null? null : partialCheckDate.plusYears(1);  //to prevent invalid data coming from the frontend
+        this.fullCheckDate = partialCheckDate == null ? null : partialCheckDate.plusYears(1);  //to prevent invalid data coming from the frontend
         return true;
     }
 

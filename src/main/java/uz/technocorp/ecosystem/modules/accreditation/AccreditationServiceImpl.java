@@ -42,6 +42,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateService;
 import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
@@ -319,7 +320,7 @@ public class AccreditationServiceImpl implements AccreditationService {
                         .objectAddress(dto.getAddress())
                         .regionId(dto.getRegionId())
                         .districtId(dto.getDistrictId())
-                        .expertiseConclusionPath(dto.getFiles().getOrDefault("expertiseConclusionPath", ""))
+                        .expertiseConclusionPath(Optional.ofNullable(dto.getFiles().get("expertiseConclusionPath")).map(FileDto::getPath).orElse(null))
                         .expertiseConclusionNumber(dto.getExpertiseConclusionNumber())
                         .expertiseConclusionDate(LocalDate.now())
                         .tin(profile.getIdentity())

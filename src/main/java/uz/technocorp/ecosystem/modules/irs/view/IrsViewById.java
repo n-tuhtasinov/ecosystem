@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.irs.view;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsCategory;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsIdentifierType;
 import uz.technocorp.ecosystem.modules.irs.enums.IrsUsageType;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -38,7 +39,7 @@ public record IrsViewById(
         Boolean isValid,
         IrsUsageType usageType,
         String storageLocation,
-        Map<String, String> files,
+        Map<String, FileDto> files,
         UUID appealId,
         String registryNumber,
         UUID profileId,

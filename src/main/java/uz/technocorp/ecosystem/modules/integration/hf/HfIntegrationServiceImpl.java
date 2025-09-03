@@ -84,7 +84,9 @@ public class HfIntegrationServiceImpl implements HfIntegrationService {
         dto.setActive(hf.isActive());
         dto.setRegistryFilePath(fileBaseUrl + hf.getRegistryFilePath());
 
-        hf.getFiles().replaceAll((key, path) -> path != null ? fileBaseUrl + path : null);
+        hf.getFiles().values().stream()
+                .filter(fileDto -> fileDto.getPath() != null)
+                .forEach(fileDto -> fileDto.setPath(fileBaseUrl + fileDto.getPath()));
         dto.setFiles(hf.getFiles());
 
         return dto;

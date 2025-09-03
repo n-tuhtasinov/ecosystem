@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.shared.SkipDb;
@@ -82,7 +83,7 @@ public class DeclarationDto implements AppealDto {
     private String agreementPath;
 
     @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
+    private Map<String, FileDto> files = new HashMap<>();
 
     @Override
     public AppealType getAppealType() {
@@ -100,8 +101,8 @@ public class DeclarationDto implements AppealDto {
     }
 
     public void buildFiles(){
-        files.put("declarationPath", declarationPath);
-        files.put("agreementPath", agreementPath);
+        files.put("declarationPath", new FileDto(declarationPath, null));
+        files.put("agreementPath", new FileDto(agreementPath, null));
     }
 
     @Schema(hidden = true)

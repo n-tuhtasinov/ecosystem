@@ -9,11 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
 import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
 import uz.technocorp.ecosystem.shared.SkipDb;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -94,42 +95,48 @@ public class AttractionPassportDto implements AppealDto {
     @SkipDb
     @NotBlank(message = "Sertifikat fayli yuklanmadi")
     private String equipmentCertPath;
+    private LocalDate equipmentCertExpiryDate;
 
     @SkipDb
     @NotBlank(message = "Masul shaxs tayinlanganlik to'g'risida buyruq fayli yuklanmadi")
     private String assignmentDecreePath;
+    private LocalDate assignmentDecreeExpiryDate;
 
     @SkipDb
     @NotBlank(message = "Texnik tayyorligi to'g'risida dalolatnoma yuklanmadi")
     private String techReadinessActPath;
+    private LocalDate techReadinessActExpiryDate;
 
     @SkipDb
     @NotBlank(message = "Mavsumga tayyorligi to'g'risida dalolatnoma yuklanmadi")
     private String seasonalReadinessActPath;
+    private LocalDate seasonalReadinessActExpiryDate;
 
     @SkipDb
     @NotBlank(message = "Soz holatda va undan xavsiz foydalanish bo'yicha mas'ul shaxs buyrug'i")
     private String safetyDecreePath;
+    private LocalDate safetyDecreeExpiryDate;
 
     @SkipDb
     @NotBlank(message = "Foydalanishga qabul qilish guvohnomasi yuklanmadi")
     private String acceptanceCertPath;
+    private LocalDate acceptanceCertExpiryDate;
 
     @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
+    private Map<String, FileDto> files = new HashMap<>();
 
     @Schema(hidden = true)
     private EquipmentType type = EquipmentType.ATTRACTION_PASSPORT;
 
     public void buildFiles() {
-        files.put("labelPath", labelPath);
-        files.put("passportPath", passportPath);
-        files.put("equipmentCertPath", equipmentCertPath);
-        files.put("assignmentDecreePath", assignmentDecreePath);
-        files.put("techReadinessActPath", techReadinessActPath);
-        files.put("seasonalReadinessActPath", seasonalReadinessActPath);
-        files.put("safetyDecreePath", safetyDecreePath);
-        files.put("acceptanceCertPath", acceptanceCertPath);
+        files.put("labelPath", new FileDto(labelPath, null));
+        files.put("passportPath", new FileDto(passportPath, null));
+        files.put("equipmentCertPath", new FileDto(equipmentCertPath, equipmentCertExpiryDate));
+        files.put("assignmentDecreePath", new FileDto(assignmentDecreePath, assignmentDecreeExpiryDate));
+        files.put("techReadinessActPath", new FileDto(techReadinessActPath, techReadinessActExpiryDate));
+        files.put("seasonalReadinessActPath", new FileDto(seasonalReadinessActPath, seasonalReadinessActExpiryDate));
+        files.put("safetyDecreePath", new FileDto(safetyDecreePath, safetyDecreeExpiryDate));
+        files.put("acceptanceCertPath", new FileDto(acceptanceCertPath, acceptanceCertExpiryDate));
     }
 
     @AssertTrue

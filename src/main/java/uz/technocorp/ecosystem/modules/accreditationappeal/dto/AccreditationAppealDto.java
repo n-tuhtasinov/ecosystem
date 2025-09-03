@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationSphere;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.shared.SkipDb;
@@ -59,9 +60,6 @@ public class AccreditationAppealDto implements AppealDto {
         return AppealType.ACCREDIT_EXPERT_ORGANIZATION;
     }
 
-    @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
-
     @SkipDb
     private String accreditationFieldPath;
 
@@ -70,6 +68,8 @@ public class AccreditationAppealDto implements AppealDto {
 
     @SkipDb
     private String declarationConformityPath;
+
+    private LocalDate declarationConformityExpiryDate;
 
     @SkipDb
     private String receiptPath;
@@ -87,16 +87,19 @@ public class AccreditationAppealDto implements AppealDto {
     @SkipDb
     private String qualityManagementSystemPath;
 
+    @Schema(hidden = true)
+    private Map<String, FileDto> files = new HashMap<>();
+
     public void buildFiles() {
-        files.put("accreditationFieldPath", accreditationFieldPath);
-        files.put("organizationCharterPath", organizationCharterPath);
-        files.put("declarationConformityPath", declarationConformityPath);
-        files.put("receiptPath", receiptPath);
-        files.put("employeesInfoPath", employeesInfoPath);
-        files.put("accreditationResourcedPath", accreditationResourcedPath);
-        files.put("propertyOwnerShipPath", propertyOwnerShipPath);
-        files.put("qualityPerformanceInstructionPath", qualityPerformanceInstructionPath);
-        files.put("qualityManagementSystemPath", qualityManagementSystemPath);
+        files.put("accreditationFieldPath", new FileDto(accreditationFieldPath, null));
+        files.put("organizationCharterPath", new FileDto(organizationCharterPath, null));
+        files.put("declarationConformityPath", new FileDto(declarationConformityPath, declarationConformityExpiryDate));
+        files.put("receiptPath", new FileDto(receiptPath, null));
+        files.put("employeesInfoPath", new FileDto(employeesInfoPath, null));
+        files.put("accreditationResourcedPath", new FileDto(accreditationResourcedPath, null));
+        files.put("propertyOwnerShipPath", new FileDto(propertyOwnerShipPath, null));
+        files.put("qualityPerformanceInstructionPath", new FileDto(qualityPerformanceInstructionPath, null));
+        files.put("qualityManagementSystemPath", new FileDto(qualityManagementSystemPath, null));
     }
 
     @AssertTrue

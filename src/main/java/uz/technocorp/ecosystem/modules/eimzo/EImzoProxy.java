@@ -56,7 +56,7 @@ public interface EImzoProxy {
                         @RequestHeader(value = "X-Real-IP") String ip,
                         @RequestBody String documentBase64AndPkcs7Base64);
 
-    // Frontend
+    // Mobile
     @PostMapping("/frontend/mobile/auth")
     Object getAuthChallenge();
 

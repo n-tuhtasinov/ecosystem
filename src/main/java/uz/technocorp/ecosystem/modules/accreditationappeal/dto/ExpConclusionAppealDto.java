@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.accreditation.enums.AccreditationSphere;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.shared.SkipDb;
@@ -109,10 +110,10 @@ public class ExpConclusionAppealDto implements AppealDto {
     private List<AccreditationSphere> accreditationSpheres;
 
     @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
+    private Map<String, FileDto> files = new HashMap<>();
 
     public void buildFiles() {
-        files.put("expertiseConclusionPath", expertiseConclusionPath);
+        files.put("expertiseConclusionPath", new FileDto(expertiseConclusionPath, null));
     }
 
     @AssertTrue

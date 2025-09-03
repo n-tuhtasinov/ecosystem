@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
@@ -114,7 +115,7 @@ public class UnofficialHfAppealDto implements AppealDto {
     private String fireSafetyConclusionPath;
 
     @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
+    private Map<String, FileDto> files = new HashMap<>();
 
     @Override
     public AppealType getAppealType() {
@@ -132,20 +133,20 @@ public class UnofficialHfAppealDto implements AppealDto {
     }
 
     public void buildFiles() {
-        files.put("identificationCardPath", identificationCardPath);
-        files.put("receiptPath", receiptPath);
-        files.put("expertOpinionPath", expertOpinionPath);
-        files.put("projectDocumentationPath", projectDocumentationPath);
-        files.put("cadastralPassportPath", cadastralPassportPath);
-        files.put("industrialSafetyDeclarationPath", industrialSafetyDeclarationPath);
-        files.put("insurancePolicyPath", insurancePolicyPath);
-        files.put("licensePath", licensePath);
-        files.put("permitPath", permitPath);
-        files.put("certificationPath", certificationPath);
-        files.put("deviceTestingPath", deviceTestingPath);
-        files.put("appointmentOrderPath", appointmentOrderPath);
-        files.put("ecologicalConclusionPath", ecologicalConclusionPath);
-        files.put("fireSafetyConclusionPath", fireSafetyConclusionPath);
+        files.put("identificationCardPath", new FileDto(identificationCardPath, null));
+        files.put("receiptPath", new FileDto(receiptPath, null));
+        files.put("expertOpinionPath", new FileDto(expertOpinionPath, null));
+        files.put("projectDocumentationPath", new FileDto(projectDocumentationPath, null));
+        files.put("cadastralPassportPath", new FileDto(cadastralPassportPath, null));
+        files.put("industrialSafetyDeclarationPath", new FileDto(industrialSafetyDeclarationPath, null));
+        files.put("insurancePolicyPath", new FileDto(insurancePolicyPath, null));
+        files.put("licensePath", new FileDto(licensePath, null));
+        files.put("permitPath", new FileDto(permitPath, null));
+        files.put("certificationPath", new FileDto(certificationPath, null));
+        files.put("deviceTestingPath", new FileDto(deviceTestingPath, null));
+        files.put("appointmentOrderPath", new FileDto(appointmentOrderPath, null));
+        files.put("ecologicalConclusionPath", new FileDto(ecologicalConclusionPath, null));
+        files.put("fireSafetyConclusionPath", new FileDto(fireSafetyConclusionPath, null));
     }
 
     @AssertTrue

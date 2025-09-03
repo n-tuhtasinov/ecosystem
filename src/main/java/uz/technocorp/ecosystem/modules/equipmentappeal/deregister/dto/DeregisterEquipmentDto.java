@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
@@ -56,13 +57,13 @@ public class DeregisterEquipmentDto implements AppealDto {
     private String additionalInfoPath;
 
     @Schema(hidden = true)
-    private Map<String, String> files = new HashMap<>();
+    private Map<String, FileDto> files = new HashMap<>();
 
     private void buildFiles() {
-        files.put("purchaseAgreementPath", purchaseAgreementPath);
-        files.put("orderSuspensionPath", orderSuspensionPath);
-        files.put("laboratoryReportPath", laboratoryReportPath);
-        files.put("additionalInfoPath", additionalInfoPath);
+        files.put("purchaseAgreementPath", new FileDto(purchaseAgreementPath, null));
+        files.put("orderSuspensionPath", new FileDto(orderSuspensionPath, null));
+        files.put("laboratoryReportPath", new FileDto(laboratoryReportPath, null));
+        files.put("additionalInfoPath", new FileDto(additionalInfoPath, null));
     }
 
     @AssertTrue

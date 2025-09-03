@@ -1,6 +1,7 @@
 package uz.technocorp.ecosystem.modules.appeal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
@@ -26,7 +27,7 @@ public interface AppealDto {
 
     String getPhoneNumber();
 
-    Map<String, String> getFiles();
+    Map<String, FileDto> getFiles();
 
     @Schema(hidden = true)
     RegistrationMode getMode();
