@@ -56,7 +56,6 @@ public class DeregisterEquipmentDto implements AppealDto {
     @SkipDb
     private String additionalInfoPath;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     private void buildFiles() {

@@ -82,7 +82,6 @@ public class DeclarationDto implements AppealDto {
     @NotBlank(message = "Deklaratsiya kelishganlik titul varag'i nusxasi jo'natilmadi")
     private String agreementPath;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @Override

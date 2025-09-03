@@ -122,7 +122,6 @@ public class AttractionPassportDto implements AppealDto {
     private String acceptanceCertPath;
     private LocalDate acceptanceCertExpiryDate;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @Schema(hidden = true)

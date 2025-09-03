@@ -33,7 +33,6 @@ public class HoistDto extends EquipmentAppealDto {
     @NotBlank(message = "Yuk ko'tarish quvvati jo'natilmadi")
     private String liftingCapacity;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.HOIST;
 
     @Override
@@ -52,6 +51,7 @@ public class HoistDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

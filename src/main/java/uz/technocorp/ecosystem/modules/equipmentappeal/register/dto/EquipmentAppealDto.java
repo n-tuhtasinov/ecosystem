@@ -114,7 +114,6 @@ public abstract class EquipmentAppealDto implements AppealDto {
     private String additionalFilePath;
     private LocalDate additionalFileExpiryDate;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @Schema(hidden = true)

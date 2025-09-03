@@ -87,7 +87,6 @@ public class AccreditationAppealDto implements AppealDto {
     @SkipDb
     private String qualityManagementSystemPath;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     public void buildFiles() {

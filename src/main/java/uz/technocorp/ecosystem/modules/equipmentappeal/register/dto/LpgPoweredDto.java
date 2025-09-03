@@ -42,7 +42,6 @@ public class LpgPoweredDto extends EquipmentAppealDto {
     @NotBlank(message = "Gaz ta'minoti loyihasi fayli uchun path jo'natilmadi")
     private String gasSupplyProjectPath;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.LPG_POWERED;
 
     @Override
@@ -62,6 +61,7 @@ public class LpgPoweredDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         super.getFiles().put("gasSupplyProjectPath", new FileDto(gasSupplyProjectPath, null)); // add file the map

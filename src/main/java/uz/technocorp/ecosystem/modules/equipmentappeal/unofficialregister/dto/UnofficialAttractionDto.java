@@ -155,10 +155,8 @@ public class UnofficialAttractionDto extends UnofficialEquipmentAppealDto implem
     private String usageRightsPath;
     private LocalDate usageRightsExpiryDate;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.ATTRACTION;
 
     public void buildFiles() {
@@ -178,6 +176,7 @@ public class UnofficialAttractionDto extends UnofficialEquipmentAppealDto implem
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isFilesBuilt() {
         buildFiles();
         return true;

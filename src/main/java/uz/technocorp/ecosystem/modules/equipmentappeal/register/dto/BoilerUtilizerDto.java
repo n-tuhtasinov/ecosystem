@@ -51,7 +51,6 @@ public class BoilerUtilizerDto extends EquipmentAppealDto {
     @NotBlank(message = "Temperatura jo'natilmadi")
     private String temperature;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.BOILER_UTILIZER;
 
     @Override
@@ -73,6 +72,7 @@ public class BoilerUtilizerDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

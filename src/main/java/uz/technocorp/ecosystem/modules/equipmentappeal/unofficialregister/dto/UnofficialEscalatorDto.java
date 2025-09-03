@@ -37,7 +37,6 @@ public class UnofficialEscalatorDto extends UnofficialEquipmentAppealDto {
     @SkipDb
     private String height;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.ESCALATOR;
 
     @Override
@@ -50,7 +49,7 @@ public class UnofficialEscalatorDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    public void buildParameters() {
+    private void buildParameters() {
         super.getParameters().put("passengersPerMinute", passengersPerMinute);
         super.getParameters().put("length", length);
         super.getParameters().put("speed", speed);
@@ -58,6 +57,7 @@ public class UnofficialEscalatorDto extends UnofficialEquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

@@ -109,7 +109,6 @@ public class ExpConclusionAppealDto implements AppealDto {
     @Enumerated(EnumType.STRING)
     private List<AccreditationSphere> accreditationSpheres;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     public void buildFiles() {

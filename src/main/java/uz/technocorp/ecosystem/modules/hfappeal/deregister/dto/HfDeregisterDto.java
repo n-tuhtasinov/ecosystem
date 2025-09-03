@@ -42,7 +42,6 @@ public class HfDeregisterDto implements AppealDto {
     @NotBlank(message = "Asosli hujjat fayli kiritilmadi")
     private String justifiedDocumentPath;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @SkipDb

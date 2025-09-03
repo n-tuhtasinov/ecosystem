@@ -114,7 +114,6 @@ public class UnofficialHfAppealDto implements AppealDto {
     @SkipDb
     private String fireSafetyConclusionPath;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @Override

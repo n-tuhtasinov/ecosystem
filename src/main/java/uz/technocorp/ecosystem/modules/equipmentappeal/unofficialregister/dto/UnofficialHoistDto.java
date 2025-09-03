@@ -31,7 +31,6 @@ public class UnofficialHoistDto extends UnofficialEquipmentAppealDto {
     @SkipDb
     private String liftingCapacity;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.HOIST;
 
     @Override
@@ -44,12 +43,13 @@ public class UnofficialHoistDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    public void buildParameters() {
+    private void buildParameters() {
         super.getParameters().put("height", height);
         super.getParameters().put("liftingCapacity", liftingCapacity);
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

@@ -51,7 +51,6 @@ public class PipelineDto extends EquipmentAppealDto {
     @NotBlank(message = "Muhit jo'natilmadi")
     private String environment;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.PIPELINE;
 
     @Override
@@ -73,6 +72,7 @@ public class PipelineDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

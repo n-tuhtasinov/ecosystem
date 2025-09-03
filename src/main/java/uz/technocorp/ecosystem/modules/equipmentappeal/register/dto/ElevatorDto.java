@@ -38,7 +38,6 @@ public class ElevatorDto extends EquipmentAppealDto {
     @NotBlank(message = "To'xtashlar soni jo'natilmadi")
     private String stopCount;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.ELEVATOR;
 
     @Override
@@ -57,6 +56,7 @@ public class ElevatorDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

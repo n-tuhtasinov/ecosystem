@@ -33,7 +33,6 @@ public class CraneDto extends EquipmentAppealDto {
     @NotBlank(message = "Yuk ko'tara olish qiymati jo'natilmadi")
     private String liftingCapacity;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.CRANE;
 
     @Override
@@ -52,6 +51,7 @@ public class CraneDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

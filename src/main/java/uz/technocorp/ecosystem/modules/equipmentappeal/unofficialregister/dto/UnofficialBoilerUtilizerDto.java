@@ -44,7 +44,6 @@ public class UnofficialBoilerUtilizerDto extends UnofficialEquipmentAppealDto {
     @SkipDb
     private String temperature;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.BOILER_UTILIZER;
 
     @Override
@@ -57,7 +56,7 @@ public class UnofficialBoilerUtilizerDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    public void buildParameters() {
+    private void buildParameters() {
         super.getParameters().put("capacity", capacity);
         super.getParameters().put("environment", environment);
         super.getParameters().put("pressure", pressure);
@@ -66,6 +65,7 @@ public class UnofficialBoilerUtilizerDto extends UnofficialEquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

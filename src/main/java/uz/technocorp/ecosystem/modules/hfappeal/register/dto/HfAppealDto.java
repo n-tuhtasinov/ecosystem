@@ -1,6 +1,5 @@
 package uz.technocorp.ecosystem.modules.hfappeal.register.dto;
 
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,11 +11,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.shared.dto.FileDto;
-import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 import uz.technocorp.ecosystem.shared.SkipDb;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -75,6 +74,7 @@ public class HfAppealDto implements AppealDto {
     @SkipDb
     @NotBlank(message = "Identifikatsiya varag'i fayli biriktirilmadi!")
     private String identificationCardPath;
+    @SkipDb
     private LocalDate identificationCardExpiryDate;
 
     @SkipDb
@@ -83,53 +83,64 @@ public class HfAppealDto implements AppealDto {
 
     @SkipDb
     private String expertOpinionPath;
+    @SkipDb
     private LocalDate expertOpinionExpiryDate;
 
     @SkipDb
     private String projectDocumentationPath;
+    @SkipDb
     private LocalDate projectDocumentationExpiryDate;
 
     @SkipDb
     private String cadastralPassportPath;
+    @SkipDb
     private LocalDate cadastralPassportExpiryDate;
 
     @SkipDb
     private String industrialSafetyDeclarationPath;
+    @SkipDb
     private LocalDate industrialSafetyDeclarationExpiryDate;
 
     @SkipDb
     private String insurancePolicyPath;
+    @SkipDb
     private LocalDate insurancePolicyExpiryDate;
 
     @SkipDb
     private String licensePath;
+    @SkipDb
     private LocalDate licenseExpiryDate;
 
     @SkipDb
     private String permitPath;
+    @SkipDb
     private LocalDate permitExpiryDate;
 
     @SkipDb
     private String certificationPath;
+    @SkipDb
     private LocalDate certificationExpiryDate;
 
     @SkipDb
     private String deviceTestingPath;
+    @SkipDb
     private LocalDate deviceTestingExpiryDate;
 
     @SkipDb
     private String appointmentOrderPath;
+    @SkipDb
     private LocalDate appointmentOrderExpiryDate;
 
     @SkipDb
     private String ecologicalConclusionPath;
+    @SkipDb
     private LocalDate ecologicalConclusionExpiryDate;
 
     @SkipDb
     private String fireSafetyConclusionPath;
+    @SkipDb
     private LocalDate fireSafetyConclusionExpiryDate;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @Override
@@ -147,7 +158,7 @@ public class HfAppealDto implements AppealDto {
         return RegistrationMode.OFFICIAL;
     }
 
-    public void buildFiles() {
+    private void buildFiles() {
         files.put("identificationCardPath", new FileDto(identificationCardPath, identificationCardExpiryDate));
         files.put("receiptPath", new FileDto(receiptPath, null));
         files.put("expertOpinionPath", new FileDto(expertOpinionPath, expertOpinionExpiryDate));
@@ -165,6 +176,7 @@ public class HfAppealDto implements AppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isFilesBuilt() {
         buildFiles();
         return true;

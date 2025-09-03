@@ -43,7 +43,6 @@ public class CablewayDto extends EquipmentAppealDto {
     @NotBlank(message = "Uzunligi jo'natilmadi")
     private String length;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.CABLEWAY;
 
     @Override
@@ -63,6 +62,7 @@ public class CablewayDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

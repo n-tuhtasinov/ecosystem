@@ -38,7 +38,6 @@ public class UnofficialLpgPoweredDto extends UnofficialEquipmentAppealDto {
     @SkipDb
     private String gasSupplyProjectPath;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.LPG_POWERED;
 
     @Override
@@ -51,13 +50,14 @@ public class UnofficialLpgPoweredDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    public void buildParameters() {
+    private void buildParameters() {
         super.getParameters().put("capacity", capacity);
         super.getParameters().put("pressure", pressure);
         super.getParameters().put("fuel", fuel);
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         super.getFiles().put("gasSupplyProjectPath", new FileDto(gasSupplyProjectPath, null)); // add file the map

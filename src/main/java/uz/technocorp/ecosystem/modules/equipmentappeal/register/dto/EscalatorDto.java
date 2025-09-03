@@ -41,7 +41,6 @@ public class EscalatorDto extends EquipmentAppealDto {
     @NotBlank(message = "Ko'tarish balandligi jo'natilmadi")
     private String height;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.ESCALATOR;
 
     @Override
@@ -62,6 +61,7 @@ public class EscalatorDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

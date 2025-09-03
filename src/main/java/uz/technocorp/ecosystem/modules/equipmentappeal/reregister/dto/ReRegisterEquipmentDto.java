@@ -106,7 +106,6 @@ public class ReRegisterEquipmentDto implements AppealDto {
         return RegistrationMode.OFFICIAL;
     }
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     private void buildFiles() {
