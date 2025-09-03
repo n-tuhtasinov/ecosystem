@@ -1,6 +1,5 @@
 package uz.technocorp.ecosystem.modules.irsappeal.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,10 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uz.technocorp.ecosystem.modules.appeal.dto.AppealDto;
-import uz.technocorp.ecosystem.shared.dto.FileDto;
-import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.shared.SkipDb;
+import uz.technocorp.ecosystem.shared.dto.FileDto;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -117,7 +116,6 @@ public class IrsAppealDto implements AppealDto {
     @NotBlank(message = "INM joylashgan manzil kiritilmadi")
     private String address;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @Override
@@ -135,17 +133,14 @@ public class IrsAppealDto implements AppealDto {
         return RegistrationMode.OFFICIAL;
     }
 
-        public void buildFiles() {
-                files.put("passportPath", new FileDto(passportPath, null));
-                files.put("additionalFilePath", new FileDto(additionalFilePath, null));
-        }
+    public void buildFiles() {
+        files.put("passportPath", new FileDto(passportPath, null));
+        files.put("additionalFilePath", new FileDto(additionalFilePath, null));
+    }
 
-        @AssertTrue
-        public boolean isFilesBuilt() {
-                buildFiles();
-                return true;
-        }
-
-
-
+    @AssertTrue
+    public boolean isFilesBuilt() {
+        buildFiles();
+        return true;
+    }
 }

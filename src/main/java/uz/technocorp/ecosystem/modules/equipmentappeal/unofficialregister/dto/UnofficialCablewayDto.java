@@ -38,7 +38,6 @@ public class UnofficialCablewayDto extends UnofficialEquipmentAppealDto {
     @SkipDb
     private String length;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.CABLEWAY;
 
     @Override
@@ -51,13 +50,14 @@ public class UnofficialCablewayDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    public void buildParameters() {
+    private void buildParameters() {
         super.getParameters().put("speed", speed);
         super.getParameters().put("passengerCount", passengerCount);
         super.getParameters().put("length", length);
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

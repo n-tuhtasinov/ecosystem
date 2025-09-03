@@ -73,7 +73,6 @@ public class CadastrePassportDto implements AppealDto {
     @NotBlank(message = "Passportni kelishilganligi titul varag'i yuklanmadi")
     private String agreementPath;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @Override

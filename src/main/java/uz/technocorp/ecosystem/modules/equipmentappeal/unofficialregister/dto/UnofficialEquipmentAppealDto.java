@@ -114,7 +114,6 @@ public abstract class UnofficialEquipmentAppealDto implements AppealDto {
     private String additionalFilePath;
     private LocalDate additionalFileExpiryDate;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @Schema(hidden = true)
@@ -128,8 +127,7 @@ public abstract class UnofficialEquipmentAppealDto implements AppealDto {
         return RegistrationMode.UNOFFICIAL;
     }
 
-
-    public void buildFiles() {
+    private void buildFiles() {
         files.put("labelPath", new FileDto(labelPath, labelExpiryDate));
         files.put("saleContractPath", new FileDto(saleContractPath, saleContractExpiryDate));
         files.put("equipmentCertPath", new FileDto(equipmentCertPath, equipmentCertExpiryDate));

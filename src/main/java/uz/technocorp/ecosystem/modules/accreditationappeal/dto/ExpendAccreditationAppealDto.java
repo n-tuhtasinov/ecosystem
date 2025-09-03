@@ -100,7 +100,6 @@ public class ExpendAccreditationAppealDto implements AppealDto {
     @NotNull(message = "Akkreditatsiya attestatining amal qilish muddati yuborilmadi!")
     private LocalDate certificateValidityDate;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     public void buildFiles() {

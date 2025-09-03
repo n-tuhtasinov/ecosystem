@@ -89,7 +89,6 @@ public class AttestationDto implements AppealDto {
     }
 
     @SkipDb
-    @Schema(hidden = true)
     private Map<String, FileDto> files;
 
     @Override

@@ -1,9 +1,9 @@
 package uz.technocorp.ecosystem.modules.appeal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 import uz.technocorp.ecosystem.shared.dto.FileDto;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
-import uz.technocorp.ecosystem.modules.appeal.enums.AppealType;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -27,6 +27,7 @@ public interface AppealDto {
 
     String getPhoneNumber();
 
+    @Schema(hidden = true)
     Map<String, FileDto> getFiles();
 
     @Schema(hidden = true)
@@ -34,6 +35,4 @@ public interface AppealDto {
 
     @Schema(hidden = true)
     LocalDate getDeadline();
-
-
 }

@@ -45,7 +45,6 @@ public class HeatPipelineDto extends EquipmentAppealDto {
     @NotBlank(message = "Temperatura jo'natilmadi")
     private String temperature;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.HEAT_PIPELINE;
 
     @Override
@@ -67,6 +66,7 @@ public class HeatPipelineDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

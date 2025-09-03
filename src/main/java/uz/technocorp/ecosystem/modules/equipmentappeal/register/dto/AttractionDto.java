@@ -151,7 +151,6 @@ public class AttractionDto implements AppealDto {
     private String usageRightsPath;
     private LocalDate usageRightsExpiryDate;
 
-    @Schema(hidden = true)
     private Map<String, FileDto> files = new HashMap<>();
 
     @Schema(hidden = true)

@@ -44,7 +44,6 @@ public class UnofficialPipelineDto extends UnofficialEquipmentAppealDto {
     @SkipDb
     private String environment;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.PIPELINE;
 
     @Override
@@ -57,7 +56,7 @@ public class UnofficialPipelineDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    public void buildParameters() {
+    private void buildParameters() {
         super.getParameters().put("diameter", diameter);
         super.getParameters().put("thickness", thickness);
         super.getParameters().put("length", length);
@@ -66,6 +65,7 @@ public class UnofficialPipelineDto extends UnofficialEquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

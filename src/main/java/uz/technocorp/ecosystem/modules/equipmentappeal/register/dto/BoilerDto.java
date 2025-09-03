@@ -41,7 +41,6 @@ public class BoilerDto extends EquipmentAppealDto {
     @NotBlank(message = "Ruxsat etilgan bosim jo'natilmadi")
     private String pressure;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.BOILER;
 
     @Override
@@ -61,6 +60,7 @@ public class BoilerDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

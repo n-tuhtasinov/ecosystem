@@ -36,7 +36,6 @@ public class UnofficialElevatorDto extends UnofficialEquipmentAppealDto {
     @SkipDb
     private String stopCount;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.ELEVATOR;
 
     @Override
@@ -49,12 +48,13 @@ public class UnofficialElevatorDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    public void buildParameters() {
+    private void buildParameters() {
         super.getParameters().put("liftingCapacity", liftingCapacity);
         super.getParameters().put("stopCount", stopCount);
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

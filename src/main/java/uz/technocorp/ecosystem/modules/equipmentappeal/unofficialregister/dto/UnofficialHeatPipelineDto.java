@@ -40,7 +40,6 @@ public class UnofficialHeatPipelineDto extends UnofficialEquipmentAppealDto {
     @SkipDb
     private String temperature;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.HEAT_PIPELINE;
 
     @Override
@@ -53,7 +52,7 @@ public class UnofficialHeatPipelineDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    public void buildParameters() {
+    private void buildParameters() {
         super.getParameters().put("diameter", diameter);
         super.getParameters().put("thickness", thickness);
         super.getParameters().put("length", length);
@@ -62,6 +61,7 @@ public class UnofficialHeatPipelineDto extends UnofficialEquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

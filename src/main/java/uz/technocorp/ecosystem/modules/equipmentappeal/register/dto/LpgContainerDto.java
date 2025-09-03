@@ -43,7 +43,6 @@ public class LpgContainerDto extends EquipmentAppealDto {
     @NotBlank(message = "Ruxsat etilgan bosim")
     private String pressure;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.LPG_CONTAINER;
 
     @Override
@@ -63,6 +62,7 @@ public class LpgContainerDto extends EquipmentAppealDto {
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;

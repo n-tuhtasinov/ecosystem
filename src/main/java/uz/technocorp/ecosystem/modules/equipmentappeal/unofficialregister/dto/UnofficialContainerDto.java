@@ -38,7 +38,6 @@ public class UnofficialContainerDto extends UnofficialEquipmentAppealDto {
     @SkipDb
     private String pressure;
 
-    @Schema(hidden = true)
     private EquipmentType type = EquipmentType.CONTAINER;
 
     @Override
@@ -51,13 +50,14 @@ public class UnofficialContainerDto extends UnofficialEquipmentAppealDto {
         return null;
     }
 
-    public void buildParameters() {
+    private void buildParameters() {
         super.getParameters().put("capacity", capacity);
         super.getParameters().put("environment", environment);
         super.getParameters().put("pressure", pressure);
     }
 
     @AssertTrue
+    @Schema(hidden = true)
     public boolean isParametersBuilt() {
         buildParameters();
         return true;
