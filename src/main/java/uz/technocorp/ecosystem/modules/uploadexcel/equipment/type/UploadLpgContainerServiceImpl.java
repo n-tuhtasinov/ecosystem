@@ -44,10 +44,10 @@ import java.util.Map;
  * @created 21.06.2025
  * @since v1.0
  */
-@Service("CONTAINER")
+@Service("LPG_CONTAINER")
 @RequiredArgsConstructor
 @Slf4j
-public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
+public class UploadLpgContainerServiceImpl implements UploadEquipmentExcelService {
 
     private final IIPService iipService;
     private final ProfileService profileService;
@@ -70,7 +70,7 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(9);                                   //TODO: Shu joyga qarash kerak
+            Sheet sheet = workbook.getSheetAt(11);                                   //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
@@ -87,24 +87,24 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
                 try {
                     Equipment equipment = new Equipment();
 
-                    String identityLatter = "A";                                    //TODO: Shu joyga qarash kerak
-                    EquipmentType equipmentType = EquipmentType.CONTAINER;              //TODO: Shu joyga qarash kerak
+                    String identityLatter = "AG";                                    //TODO: Shu joyga qarash kerak
+                    EquipmentType equipmentType = EquipmentType.LPG_CONTAINER;              //TODO: Shu joyga qarash kerak
 
-                    registryNumber = getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
+                    registryNumber = getRegistryNumber(dataFormatter, row, equipment, 14); // m) registry number
                     getLegalOrIndividual(dataFormatter, row, equipment, 2, 4, 5); // b) legalTin
-                    getDistrict(dataFormatter, row, equipment, 9); // g) districtSoato
-                    getAddress(dataFormatter, row, equipment, 10); // h) address
-                    String childEquipmentName = getChildEquipment(dataFormatter, row, equipment, equipmentType, 11);// k) child equipment
-                    getFactoryNumber(dataFormatter, row, equipment, 12); // l) factoryNumber
-                    getOldRegistryNumber(dataFormatter, row, equipment, identityLatter, 14);
-                    getFactory(dataFormatter, row, equipment, 15);
-                    getModel(dataFormatter, row, equipment, 16);
-                    getManufacturedAt(row, equipment, 17); // q) manufacturedAt
-                    getPartialCheckDate(row, equipment, 19); // s) partialCheckDate
-                    getFullCheckDate(row, equipment, 20); // t) full check date
-                    getRegistrationDate(row, equipment, 25); // w) registration date
-                    getInspectorName(dataFormatter, row, equipment, 26); // x) inspectorName
-                    getIsActive(dataFormatter, row, equipment, 28); // z) is active
+                    getDistrict(dataFormatter, row, equipment, 10); // g) districtSoato
+                    getAddress(dataFormatter, row, equipment, 11); // h) address
+                    String childEquipmentName = getChildEquipment(dataFormatter, row, equipment, equipmentType, 12);// k) child equipment
+                    getFactoryNumber(dataFormatter, row, equipment, 13); // l) factoryNumber
+                    getOldRegistryNumber(dataFormatter, row, equipment, identityLatter, 15);
+                    getFactory(dataFormatter, row, equipment, 16);
+                    getModel(dataFormatter, row, equipment, 17);
+                    getManufacturedAt(row, equipment, 18); // q) manufacturedAt
+                    getPartialCheckDate(row, equipment, 20); // s) partialCheckDate
+                    getFullCheckDate(row, equipment, 21); // t) full check date
+                    getRegistrationDate(row, equipment, 26); // w) registration date
+                    getInspectorName(dataFormatter, row, equipment, 27); // x) inspectorName
+                    getIsActive(dataFormatter, row, equipment, 29); // z) is active
                     getParams(dataFormatter, row, equipment); // u) params              //TODO: Shu joyga qarash kerak
                     setFiles(equipment); // set files
                     equipment.setType(equipmentType); // set equipment type
@@ -164,15 +164,15 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
     private void getParams(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
         Map<String, String> params = new HashMap<>();
 
-        String capacity = dataFormatter.formatCellValue(row.getCell(22));
+        String capacity = dataFormatter.formatCellValue(row.getCell(23));
         isValid(capacity, "Ishlab chiqarish hajmi(y)");
         params.put("capacity", capacity);
 
-        String environment = dataFormatter.formatCellValue(row.getCell(23));
+        String environment = dataFormatter.formatCellValue(row.getCell(24));
         isValid(environment, "Muhit harorati(z)");
         params.put("environment", environment);
 
-        String pressure = dataFormatter.formatCellValue(row.getCell(24));
+        String pressure = dataFormatter.formatCellValue(row.getCell(25));
         isValid(pressure, "Ruxsat etilgan bosim(AA)");
         params.put("pressure", pressure);
 
