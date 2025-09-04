@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
+import uz.technocorp.ecosystem.modules.appeal.enums.OwnerType;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipment;
 import uz.technocorp.ecosystem.modules.childequipment.ChildEquipmentService;
 import uz.technocorp.ecosystem.modules.district.District;
@@ -18,16 +20,17 @@ import uz.technocorp.ecosystem.modules.equipment.EquipmentService;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentInfoDto;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentRegistryDto;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
-import uz.technocorp.ecosystem.modules.hf.HazardousFacility;
-import uz.technocorp.ecosystem.modules.hf.HazardousFacilityService;
 import uz.technocorp.ecosystem.modules.integration.iip.IIPService;
+import uz.technocorp.ecosystem.modules.profile.Profile;
 import uz.technocorp.ecosystem.modules.profile.ProfileService;
+import uz.technocorp.ecosystem.modules.profile.enums.ProfileType;
 import uz.technocorp.ecosystem.modules.profile.projection.ProfileInfoView;
-import uz.technocorp.ecosystem.modules.region.RegionService;
 import uz.technocorp.ecosystem.modules.uploadexcel.equipment.UploadEquipmentExcelService;
 import uz.technocorp.ecosystem.modules.user.UserService;
+import uz.technocorp.ecosystem.modules.user.dto.IndividualUserDto;
 import uz.technocorp.ecosystem.modules.user.dto.LegalUserDto;
 import uz.technocorp.ecosystem.shared.dto.FileDto;
+import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -50,8 +53,6 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
     private final ProfileService profileService;
     private final UserService userService;
     private final DistrictService districtService;
-    private final RegionService regionService;
-    private final HazardousFacilityService hazardousFacilityService;
     private final ChildEquipmentService childEquipmentService;
     private final EquipmentService equipmentService;
     private final EquipmentRepository equipmentRepository;
@@ -60,7 +61,6 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
     private static final String DATE_FORMAT = "dd.MM.yyyy";
 
 
-    //    @Transactional(rollbackFor = ExcelParsingException.class)
     @Override
     public void upload(MultipartFile file) {
 
@@ -87,29 +87,28 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
                 try {
                     Equipment equipment = new Equipment();
 
-                    String identityLatter = "E";                                        //TODO: Shu joyga qarash kerak
+                    String identityLatter = "E";                                    //TODO: Shu joyga qarash kerak
                     EquipmentType equipmentType = EquipmentType.ESCALATOR;              //TODO: Shu joyga qarash kerak
 
-                    registryNumber = getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
-                    getLegal(dataFormatter, row, equipment, 2); // b) legalTin
-//                    getHf(dataFormatter, row, equipment, 5); // b) hfRegistryNumber
-                    District district = getDistrict(dataFormatter, row, equipment, 9); // g) districtSoato
-                    getRegionAndAddress(dataFormatter, row, district, equipment, 10); // h) address
-                    String childEquipmentName = getChildEquipment(dataFormatter, row, equipment, equipmentType, 11);// k) child equipment
-                    getFactoryNumber(dataFormatter, row, equipment, 12); // l) factoryNumber
-//                    getOldEquipment(dataFormatter, row, equipment, identityLatter, 14); // n) old equipment
-                    getOldRegistryNumber(dataFormatter, row, equipment, identityLatter, 14);
-                    getFactory(dataFormatter, row, equipment, 15);
-                    getModel(dataFormatter, row, equipment, 16);
-                    getManufacturedAt(row, equipment, 17); // q) manufacturedAt
-                    getPartialCheckDate(row, equipment, 19); // s) partialCheckDate
-                    getFullCheckDate(row, equipment, 20); // t) full check date
-                    getRegistrationDate(row, equipment, 25); // w) registration date
-                    getInspectorName(dataFormatter, row, equipment, 26); // x) inspectorName
-                    getIsActive(dataFormatter, row, equipment, 28); // z) is active
+                    registryNumber = getRegistryNumber(dataFormatter, row, equipment, 14); // m) registry number
+                    getLegalOrIndividual(dataFormatter, row, equipment, 2, 4, 5); // b) legalTin
+                    getDistrict(dataFormatter, row, equipment, 10); // g) districtSoato
+                    getAddress(dataFormatter, row, equipment, 11); // h) address
+                    String childEquipmentName = getChildEquipment(dataFormatter, row, equipment, equipmentType, 12);// k) child equipment
+                    getFactoryNumber(dataFormatter, row, equipment, 13); // l) factoryNumber
+                    getOldRegistryNumber(dataFormatter, row, equipment, identityLatter, 15);
+                    getFactory(dataFormatter, row, equipment, 16);
+                    getModel(dataFormatter, row, equipment, 17);
+                    getManufacturedAt(row, equipment, 18); // q) manufacturedAt
+                    getPartialCheckDate(row, equipment, 20); // s) partialCheckDate
+                    getFullCheckDate(row, equipment, 21); // t) full check date
+                    getRegistrationDate(row, equipment, 26); // w) registration date
+                    getInspectorName(dataFormatter, row, equipment, 27); // x) inspectorName
+                    getIsActive(dataFormatter, row, equipment, 29); // z) is active
                     getParams(dataFormatter, row, equipment); // u) params              //TODO: Shu joyga qarash kerak
                     setFiles(equipment); // set files
                     equipment.setType(equipmentType); // set equipment type
+                    equipment.setMode(RegistrationMode.OFFICIAL);
 
                     // create registry file
                     EquipmentInfoDto info = new EquipmentInfoDto(equipmentType, equipment.getRegistryNumber(), null);
@@ -121,6 +120,7 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
                             .ownerIdentity(equipment.getOwnerIdentity())
                             .ownerName(equipment.getOwnerName())
                             .address(equipment.getAddress())
+                            .mode(RegistrationMode.OFFICIAL)
                             .build();
 
                     EquipmentRegistryDto registryDto = new EquipmentRegistryDto();
@@ -141,46 +141,42 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
                     equipmentRepository.save(equipment);
                 } catch (Exception e) {
                     log.error("Xatolik! Excel faylning {}-qatoridagi {} sonli ro'yhat raqamli ma'lumotlarni o'qishda muammo yuzaga keldi. Tafsilotlar: {}", excelRowNumber, registryNumber, e.getMessage());
-//                    throw new ExcelParsingException("Excel faylni o'qishda xatolik", excelRowNumber, e.getMessage(), e);
                 }
             }
             log.info("Fayl muvaffaqiyatli o'qildi. {} qator ma'lumot o'qildi.", lastRowNum + 1);
-//        } catch (ExcelParsingException e) {
-//            throw e; // to rollback transaction
         } catch (Exception e) {
             log.error("Excel faylni qayta ishlashda kutilmagan xatolik: {}", e.getMessage());
-//            throw new RuntimeException("Excel faylni qayta ishlashda kutilmagan xatolik: " + e.getMessage(), e);
         }
     }
 
     private static void setFiles(Equipment equipment) {
         Map<String, FileDto> files = new HashMap<>();
-        files.put("labelPath", null);
-        files.put("saleContractPath", null);
-        files.put("equipmentCertPath", null);
-        files.put("assignmentDecreePath", null);
-        files.put("expertisePath", null);
-        files.put("installationCertPath", null);
-        files.put("additionalFilePath", null);
+        files.put("labelPath", new FileDto());
+        files.put("saleContractPath", new FileDto());
+        files.put("equipmentCertPath", new FileDto());
+        files.put("assignmentDecreePath", new FileDto());
+        files.put("expertisePath", new FileDto());
+        files.put("installationCertPath", new FileDto());
+        files.put("additionalFilePath", new FileDto());
         equipment.setFiles(files);
     }
 
     private void getParams(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
         Map<String, String> params = new HashMap<>();
 
-        String passengersPerMinute = dataFormatter.formatCellValue(row.getCell(21));
+        String passengersPerMinute = dataFormatter.formatCellValue(row.getCell(22));
         isValid(passengersPerMinute, "O'tkazish qobilyati(v)");
         params.put("passengersPerMinute", passengersPerMinute);
 
-        String length = dataFormatter.formatCellValue(row.getCell(22));
+        String length = dataFormatter.formatCellValue(row.getCell(23));
         isValid(length, "Uzunligi(w)");
         params.put("length", length);
 
-        String speed = dataFormatter.formatCellValue(row.getCell(23));
+        String speed = dataFormatter.formatCellValue(row.getCell(24));
         isValid(speed, "Tezligi(w)");
         params.put("speed", speed);
 
-        String height = dataFormatter.formatCellValue(row.getCell(24));
+        String height = dataFormatter.formatCellValue(row.getCell(25));
         isValid(height, "Ko'tarish balandligi(w)");
         params.put("height", height);
 
@@ -195,7 +191,9 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
 
     private void getOldRegistryNumber(DataFormatter dataFormatter, Row row, Equipment equipment, String identityLatter, int cellIndex) {
         String oldRegNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
-        equipment.setOldRegistryNumber(identityLatter + oldRegNumber);
+        if (oldRegNumber != null && !oldRegNumber.isEmpty()) {
+            equipment.setOldRegistryNumber(identityLatter + oldRegNumber);
+        }
     }
 
     private void getFactory(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
@@ -225,7 +223,7 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
     private void getFullCheckDate(Row row, Equipment equipment, int cellIndex) throws Exception {
         Cell cell = row.getCell(cellIndex);
         LocalDate fullCheckDate = getLocalDate(cell, "To'liq texnk ko'rik sanasi(t)");
-        equipment.setPartialCheckDate(fullCheckDate);
+        equipment.setFullCheckDate(fullCheckDate);
     }
 
     private void getPartialCheckDate(Row row, Equipment equipment, int cellIndex) throws Exception {
@@ -239,14 +237,6 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
         LocalDate manufacturedAt = getLocalDate(cell, "manufacturedAt(q)");
         equipment.setManufacturedAt(manufacturedAt);
     }
-
-//    private void getOldEquipment(DataFormatter dataFormatter, Row row, Equipment equipment, String identityLetter, int cellIndex) throws Exception {
-//        String oldEquipmentRegistryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
-//        if (oldEquipmentRegistryNumber !=null && !oldEquipmentRegistryNumber.isBlank()) {
-//            Equipment oldEquipment = equipmentService.findByRegistryNumber(identityLetter + oldEquipmentRegistryNumber);
-//            equipment.setOldEquipmentId(oldEquipment.getId());
-//        }
-//    }
 
     private String getRegistryNumber(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
         String registryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
@@ -269,7 +259,7 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
         return childEquipmentName;
     }
 
-    private void getRegionAndAddress(DataFormatter dataFormatter, Row row, District district, Equipment equipment, int cellIndex) throws Exception {
+    private void getAddress(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
         String addressExcel = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(addressExcel, "address(j)");
 //        Region region = regionService.findById(district.getRegionId());
@@ -280,34 +270,43 @@ public class UploadEscalatorServiceImpl implements UploadEquipmentExcelService {
         equipment.setAddress(addressExcel);
     }
 
-    private District getDistrict(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
+    private void getDistrict(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
         String soato = dataFormatter.formatCellValue(row.getCell(cellIndex));
         isValid(soato, "districtSoato(i)");
         District district = districtService.findBySoato(Integer.valueOf(soato));
         equipment.setDistrictId(district.getId());
         equipment.setRegionId(district.getRegionId());
-        return district;
     }
 
-    private void getHf(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
-        String hfRegistryNumber = dataFormatter.formatCellValue(row.getCell(cellIndex));
-        if (hfRegistryNumber != null && !hfRegistryNumber.isBlank()) {
-            HazardousFacility hf = hazardousFacilityService.findByRegistryNumber(hfRegistryNumber);
-            equipment.setHazardousFacilityId(hf.getId());
+
+    private void getLegalOrIndividual(DataFormatter dataFormatter, Row row, Equipment equipment, int legalCellIndex, int individualCellIndex, int birthCellIndex) throws Exception {
+        String identity = dataFormatter.formatCellValue(row.getCell(legalCellIndex));
+        if (identity == null || identity.isBlank()) {
+            identity = dataFormatter.formatCellValue(row.getCell(individualCellIndex));
+            isValid(identity, "Ham STIR ham JSHSHIR");
+
+            try {
+                Profile profile = profileService.findByIdentity(Long.valueOf(identity));
+                if (ProfileType.EMPLOYEE.equals(profile.getType())) {
+                    throw new RuntimeException("JSHSHIRi "+identity+" bo'lgan ichki hodim tizimda mavjud");
+                }
+            } catch (CustomException e) {
+                Cell birthCell = row.getCell(birthCellIndex);
+                LocalDate birthDate = getLocalDate(birthCell, "Qurilma egasi tug'ilgan sanasi");
+                IndividualUserDto pinInfo = iipService.getPinInfo(identity, birthDate);
+                userService.create(pinInfo);
+            }
+            equipment.setOwnerType(OwnerType.INDIVIDUAL);
+        }else {
+            boolean isExist = profileService.existsProfileByTin(Long.parseLong(identity));
+            if (!isExist) {
+                LegalUserDto legalDto = iipService.getGnkInfo(identity);
+                userService.create(legalDto);
+            }
+            equipment.setOwnerType(OwnerType.LEGAL);
         }
-    }
 
-    private void getLegal(DataFormatter dataFormatter, Row row, Equipment equipment, int cellIndex) throws Exception {
-        String legalTin = dataFormatter.formatCellValue(row.getCell(cellIndex));
-        isValid(legalTin, "legalTin(b)");
-
-        boolean isExist = profileService.existsProfileByTin(Long.parseLong(legalTin));
-        if (!isExist) {
-            LegalUserDto legalDto = iipService.getGnkInfo(legalTin);
-            userService.create(legalDto);
-        }
-
-        ProfileInfoView profileInfo = profileService.getProfileInfo(Long.parseLong(legalTin));
+        ProfileInfoView profileInfo = profileService.getProfileInfo(Long.parseLong(identity));
         equipment.setOwnerIdentity(profileInfo.getTin());
         equipment.setOwnerName(profileInfo.getLegalName());
         equipment.setOwnerAddress(profileInfo.getLegalAddress());
