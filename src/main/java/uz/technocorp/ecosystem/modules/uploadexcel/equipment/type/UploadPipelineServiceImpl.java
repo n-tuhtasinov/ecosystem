@@ -44,10 +44,10 @@ import java.util.Map;
  * @created 21.06.2025
  * @since v1.0
  */
-@Service("CONTAINER")
+@Service("PIPELINE")
 @RequiredArgsConstructor
 @Slf4j
-public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
+public class UploadPipelineServiceImpl implements UploadEquipmentExcelService {
 
     private final IIPService iipService;
     private final ProfileService profileService;
@@ -70,7 +70,7 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
 
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(9);                                   //TODO: Shu joyga qarash kerak
+            Sheet sheet = workbook.getSheetAt(5);                                   //TODO: Shu joyga qarash kerak
             DataFormatter dataFormatter = new DataFormatter();
 
             // Oxirgi ma'lumotga ega qator raqami
@@ -87,8 +87,8 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
                 try {
                     Equipment equipment = new Equipment();
 
-                    String identityLatter = "A";                                    //TODO: Shu joyga qarash kerak
-                    EquipmentType equipmentType = EquipmentType.CONTAINER;              //TODO: Shu joyga qarash kerak
+                    String identityLatter = "T";                                    //TODO: Shu joyga qarash kerak
+                    EquipmentType equipmentType = EquipmentType.PIPELINE;              //TODO: Shu joyga qarash kerak
 
                     registryNumber = getRegistryNumber(dataFormatter, row, equipment, 13); // m) registry number
                     getLegalOrIndividual(dataFormatter, row, equipment, 2, 4, 5); // b) legalTin
@@ -102,9 +102,9 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
                     getManufacturedAt(row, equipment, 17); // q) manufacturedAt
                     getPartialCheckDate(row, equipment, 19); // s) partialCheckDate
                     getFullCheckDate(row, equipment, 20); // t) full check date
-                    getRegistrationDate(row, equipment, 25); // w) registration date
-                    getInspectorName(dataFormatter, row, equipment, 26); // x) inspectorName
-                    getIsActive(dataFormatter, row, equipment, 28); // z) is active
+                    getRegistrationDate(row, equipment, 27); // w) registration date
+                    getInspectorName(dataFormatter, row, equipment, 28); // x) inspectorName
+                    getIsActive(dataFormatter, row, equipment, 30); // z) is active
                     getParams(dataFormatter, row, equipment); // u) params              //TODO: Shu joyga qarash kerak
                     setFiles(equipment); // set files
                     equipment.setType(equipmentType); // set equipment type
@@ -164,17 +164,25 @@ public class UploadContainerServiceImpl implements UploadEquipmentExcelService {
     private void getParams(DataFormatter dataFormatter, Row row, Equipment equipment) throws Exception {
         Map<String, String> params = new HashMap<>();
 
-        String capacity = dataFormatter.formatCellValue(row.getCell(22));
-        isValid(capacity, "Ishlab chiqarish hajmi(y)");
-        params.put("capacity", capacity);
+        String diameter = dataFormatter.formatCellValue(row.getCell(22));
+        isValid(diameter, "Diametr");
+        params.put("diameter", diameter);
 
-        String environment = dataFormatter.formatCellValue(row.getCell(23));
-        isValid(environment, "Muhit harorati(z)");
-        params.put("environment", environment);
+        String thickness = dataFormatter.formatCellValue(row.getCell(23));
+        isValid(thickness, "Devor qalinligi");
+        params.put("thickness", thickness);
 
-        String pressure = dataFormatter.formatCellValue(row.getCell(24));
-        isValid(pressure, "Ruxsat etilgan bosim(AA)");
+        String length = dataFormatter.formatCellValue(row.getCell(24));
+        isValid(length, "Uzunligi");
+        params.put("length", length);
+
+        String pressure = dataFormatter.formatCellValue(row.getCell(25));
+        isValid(pressure, "Bosim");
         params.put("pressure", pressure);
+
+        String environment = dataFormatter.formatCellValue(row.getCell(26));
+        isValid(environment, "Muhit");
+        params.put("environment", environment);
 
         equipment.setParameters(params);
     }
