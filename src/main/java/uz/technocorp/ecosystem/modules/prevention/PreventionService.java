@@ -54,5 +54,5 @@ public interface PreventionService {
     // Citizen
     PreventionView getByIdForCitizen(User user, UUID preventionId);
 
-    Page<PreventionView> getAllByCitizen(User user);
+    Page<PreventionView> getAllByCitizen(UUID profileId);
 }

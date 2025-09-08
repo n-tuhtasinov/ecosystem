@@ -1,9 +1,12 @@
 package uz.technocorp.ecosystem.modules.hf;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
@@ -14,6 +17,7 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
 import uz.technocorp.ecosystem.modules.hf.dto.HfParams;
 import uz.technocorp.ecosystem.modules.hf.dto.HfPeriodicUpdateDto;
+import uz.technocorp.ecosystem.modules.hf.enums.HFSphere;
 import uz.technocorp.ecosystem.modules.hf.helper.HfCustom;
 import uz.technocorp.ecosystem.modules.hf.view.HfCountByStatusView;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
@@ -32,6 +36,7 @@ import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
+import uz.technocorp.ecosystem.utils.GenericExcelExporter;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
@@ -40,6 +45,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+
+import static org.springframework.data.jpa.domain.Specification.where;
 
 /**
  * @author Rasulov Komil
@@ -59,6 +67,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     private final ProfileService profileService;
     private final RegionService regionService;
     private final OfficeService officeService;
+    private final HfSpecification hfSpecification;
+    private final GenericExcelExporter genericExcelExporter;
 
     @Override
     public void create(Appeal appeal) {
@@ -168,24 +178,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
 
     @Override
     public Page<HfCustom> getAll(User user, HfParams params) {
-
-        Profile profile = profileService.getProfile(user.getProfileId());
-
         // check by role
-        if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
-
-            Office office = officeService.findById(profile.getOfficeId());
-            if (params.getRegionId() != null) {
-                if (!params.getRegionId().equals(office.getRegionId())) {
-                    throw new RuntimeException("Sizga bu viloyat ma'lumotlarini ko'rish uchun ruxsat berilmagan");
-                }
-            }
-            params.setRegionId(office.getRegionId());
-        } else if (user.getRole().equals(Role.LEGAL) || user.getRole().equals(Role.INDIVIDUAL)) {
-            params.setSearch(profile.getIdentity().toString());
-        } else {
-            //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
-        }
+        checkByRole(user, params);
         return repository.getHfCustoms(params);
     }
 
@@ -198,61 +192,62 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
     public Page<HfPageView> getAllForRiskAssessment(User user, int page, int size, Long tin, String registryNumber, Boolean isAssigned, Integer intervalId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         UUID profileId = user.getProfileId();
-        Role role = user.getRole();
 
-        if (role == Role.REGIONAL) {
-            Profile profile = profileService.getProfile(profileId);
+        switch (user.getRole()) {
+            case Role.REGIONAL -> {
+                Profile profile = profileService.getProfile(profileId);
 
-            Office office = officeService.findById(profile.getOfficeId());
-            Integer regionId = office.getRegionId();
-            if (isAssigned) {
-                if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
-                if (registryNumber != null) return repository
-                        .getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
-                else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
-            } else {
-                if (tin != null) return repository.getAllByLegalTin(pageable, tin, intervalId);
-                if (registryNumber != null)
-                    return repository.getAllByRegistryNumber(pageable, registryNumber, intervalId);
-                else return repository.getAllByRegion(pageable, regionId, intervalId);
+                Office office = officeService.findById(profile.getOfficeId());
+                Integer regionId = office.getRegionId();
+                if (Boolean.TRUE.equals(isAssigned)) {
+                    if (tin != null) return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
+                    if (registryNumber != null) return repository
+                            .getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+                    else return repository.getAllByRegionAndInterval(pageable, regionId, intervalId);
+                } else {
+                    if (tin != null) return repository.getAllByLegalTin(pageable, tin, intervalId);
+                    if (registryNumber != null)
+                        return repository.getAllByRegistryNumber(pageable, registryNumber, intervalId);
+                    else return repository.getAllByRegion(pageable, regionId, intervalId);
+                }
             }
-
-        } else if (role == Role.INSPECTOR) {
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
-            if (tin != null)
-                return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
-            else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
-
-        } else if (role == Role.CHAIRMAN || role == Role.MANAGER) {
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
-            if (tin != null)
-                return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
-            else return repository.getAllByInterval(pageable, intervalId);
-
-        } else {
-            if (registryNumber != null)
-                return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
-            Profile profile = profileService.getProfile(profileId);
-            return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), intervalId);
+            case Role.INSPECTOR -> {
+                if (registryNumber != null)
+                    return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, registryNumber, intervalId, user.getId());
+                if (tin != null)
+                    return repository.getAllByLegalTinAndIntervalAndInspectorId(pageable, tin, intervalId, user.getId());
+                else return repository.getAllByInspectorIdAndInterval(pageable, user.getId(), intervalId);
+            }
+            case Role.CHAIRMAN, Role.MANAGER -> {
+                if (registryNumber != null)
+                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+                if (tin != null)
+                    return repository.getAllByLegalTinAndInterval(pageable, tin, intervalId);
+                else return repository.getAllByInterval(pageable, intervalId);
+            }
+            default -> {
+                if (registryNumber != null)
+                    return repository.getAllByRegistryNumberAndInterval(pageable, registryNumber, intervalId);
+                Profile profile = profileService.getProfile(profileId);
+                return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), intervalId);
+            }
         }
     }
 
     @Override
     public HfViewById getById(UUID hfId) {
-        HazardousFacility hf = repository.getHfById(hfId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", hfId));
+        HazardousFacility hf = repository.getHfById(hfId).orElseThrow(() -> new ResourceNotFoundException("XICHO", "ID", hfId));
         return mapToView(hf);
     }
 
     @Override
     public HazardousFacility findByIdAndProfileId(UUID id, UUID profileId) {
-        return repository.findByIdAndProfileId(id, profileId).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
+        return repository.findByIdAndProfileId(id, profileId).orElseThrow(() -> new ResourceNotFoundException("XICHO", "ID", id));
     }
 
     @Override
     public HazardousFacility findByRegistryNumber(String hfRegistryNumber) {
-        return repository.findByRegistryNumber(hfRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("Xicho", "ro'yhatga olish raqami", hfRegistryNumber));
+        return repository.findByRegistryNumber(hfRegistryNumber).orElseThrow(() -> new ResourceNotFoundException("XICHO", "ro'yhatga olish raqami", hfRegistryNumber));
     }
 
     @Override
@@ -280,7 +275,8 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         parameters.put("extraArea", dto.getExtraArea() != null ? dto.getExtraArea() : "-");
         parameters.put("hazardousSubstance", dto.getHazardousSubstance() != null ? dto.getHazardousSubstance() : "-");
 
-        String content, folderPath;
+        String content;
+        String folderPath;
         if (RegistrationMode.UNOFFICIAL.equals(appeal.getMode())) {
             content = templateService.getByType(TemplateType.UNOFFICIAL_REGISTRY_HF.name()).getContent();
             folderPath = "reestr/hf/unofficial";
@@ -307,10 +303,85 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         return repository.countStatusByDateAndRegionId(date, regionId);
     }
 
+    @Override
+    public void exportExcel(User user, HfParams params, HttpServletResponse response) {
+        // Check by Role
+        checkByRole(user, params);
+
+        // Search
+        Specification<HazardousFacility> hasSearch = hfSpecification.hasSearch(params.getSearch());
+
+        // Mode
+        Specification<HazardousFacility> hasMode = hfSpecification.hasMode(params.getMode());
+
+        // Region
+        Specification<HazardousFacility> hasRegion = hfSpecification.hasRegionId(params.getRegionId());
+
+        // Region
+        Specification<HazardousFacility> hasDistrict = hfSpecification.hasDistrictId(params.getDistrictId());
+
+        List<HazardousFacility> hfList = repository.findAll(
+                where(hasSearch).and(hasMode).and(hasRegion).and(hasDistrict).and(hfSpecification.fetchHfType()),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        List<String> headers = List.of(
+                "Raqami",
+                "Nomi",
+                "Turi",
+                "Manzili",
+                "Registratsiya vaqti",
+                "STIR",
+                "Tashkilot nomi",
+                "Tashkilot manzili",
+                "Yuqori tashkilot",
+                "Sohalari",
+                "Xavfli moddalar nomi va miqdori",
+                "Holati",
+                "Yaratilish usuli",
+                "Ro'yhatdan chiqarilgan sana"
+        );
+
+        List<Function<HazardousFacility, Object>> mappers = List.of(
+                HazardousFacility::getRegistryNumber,
+                HazardousFacility::getName,
+                hf -> hf.getHfType() != null ? hf.getHfType().getName() : "",
+                HazardousFacility::getAddress,
+                hf -> hf.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+                HazardousFacility::getLegalTin,
+                HazardousFacility::getLegalName,
+                HazardousFacility::getLegalAddress,
+                HazardousFacility::getUpperOrganization,
+                hf -> hf.getSpheres().stream().map(HFSphere::getLabel).toList(),
+                HazardousFacility::getHazardousSubstance,
+                hf -> hf.isActive() ? "faol" : "faol emas",
+                hf -> hf.getMode().getLabel(),
+                HazardousFacility::getDeactivationDate
+        );
+
+        genericExcelExporter.exportToExcel(response, "xicho", headers, hfList, mappers);
+    }
+
     protected HazardousFacility findById(UUID id) {
         return repository
                 .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Xicho", "ID", id));
+                .orElseThrow(() -> new ResourceNotFoundException("XICHO", "ID", id));
+    }
+
+    private void checkByRole(User user, HfParams params) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+
+        // check by role
+        if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
+
+            Office office = officeService.findById(profile.getOfficeId());
+            if (params.getRegionId() != null && !params.getRegionId().equals(office.getRegionId())) {
+                throw new CustomException("Sizga bu viloyat ma'lumotlarini ko'rish uchun ruxsat berilmagan");
+            }
+
+            params.setRegionId(office.getRegionId());
+        } else if (user.getRole().equals(Role.LEGAL) || user.getRole().equals(Role.INDIVIDUAL)) {
+            params.setSearch(profile.getIdentity().toString());
+        }
     }
 
     private String makeRegistryNumber(Appeal appeal, Long maxOrderNumber) {

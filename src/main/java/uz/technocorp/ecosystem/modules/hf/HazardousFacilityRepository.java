@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.hf;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import uz.technocorp.ecosystem.modules.hf.view.HfCountByStatusView;
 import uz.technocorp.ecosystem.modules.hf.view.HfPageView;
@@ -20,7 +21,7 @@ import java.util.UUID;
  * @created 04.03.2025
  * @since v1.0
  */
-public interface HazardousFacilityRepository extends JpaRepository<HazardousFacility, UUID>, HfRepo {
+public interface HazardousFacilityRepository extends JpaRepository<HazardousFacility, UUID>, HfRepo, JpaSpecificationExecutor<HazardousFacility> {
 
     @Query("SELECT h.orderNumber FROM HazardousFacility h where h.orderNumber is not null ORDER BY h.orderNumber DESC LIMIT 1")
     Optional<Long> findMaxOrderNumber();
