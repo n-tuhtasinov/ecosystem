@@ -1,9 +1,12 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import uz.technocorp.ecosystem.exceptions.CustomException;
 import uz.technocorp.ecosystem.exceptions.ResourceNotFoundException;
@@ -16,6 +19,8 @@ import uz.technocorp.ecosystem.modules.district.DistrictService;
 import uz.technocorp.ecosystem.modules.equipment.dto.*;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentParameter;
 import uz.technocorp.ecosystem.modules.equipment.enums.EquipmentType;
+import uz.technocorp.ecosystem.modules.equipment.enums.RiskLevel;
+import uz.technocorp.ecosystem.modules.equipment.enums.Sphere;
 import uz.technocorp.ecosystem.modules.equipment.view.*;
 import uz.technocorp.ecosystem.modules.equipmentappeal.deregister.dto.DeregisterEquipmentDto;
 import uz.technocorp.ecosystem.modules.equipmentappeal.reregister.dto.ReRegisterEquipmentDto;
@@ -29,14 +34,15 @@ import uz.technocorp.ecosystem.modules.template.TemplateType;
 import uz.technocorp.ecosystem.modules.user.User;
 import uz.technocorp.ecosystem.modules.user.enums.Role;
 import uz.technocorp.ecosystem.shared.enums.RegistrationMode;
+import uz.technocorp.ecosystem.utils.GenericExcelExporter;
 import uz.technocorp.ecosystem.utils.JsonParser;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
+
+import static org.springframework.data.jpa.domain.Specification.where;
 
 /**
  * @author Nurmuhammad Tuhtasinov
@@ -48,6 +54,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EquipmentServiceImpl implements EquipmentService {
 
+    private final ChildEquipmentService childEquipmentService;
+    private final EquipmentSpecification specification;
     private final AttachmentService attachmentService;
     private final TemplateService templateService;
     private final DistrictService districtService;
@@ -55,7 +63,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     private final ProfileService profileService;
     private final RegionService regionService;
     private final OfficeService officeService;
-    private final ChildEquipmentService childEquipmentService;
+    private final GenericExcelExporter genericExcelExporter;
 
     @Override
     public void create(Appeal appeal) {
@@ -126,24 +134,8 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public Page<EquipmentView> getAll(User user, EquipmentParams params) {
-
-        Profile profile = profileService.getProfile(user.getProfileId());
-
-        // check by role
-        if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
-            Office office = officeService.findById(profile.getOfficeId());
-            if (params.getRegionId() != null) {
-                if (!params.getRegionId().equals(office.getRegionId())) {
-                    throw new RuntimeException("Sizga bu viloyat ma'lumotlarini ko'rish uchun ruxsat berilmagan");
-                }
-            }
-            params.setRegionId(office.getRegionId());
-        } else if (user.getRole().equals(Role.LEGAL) || user.getRole().equals(Role.INDIVIDUAL)) {
-            params.setSearch(profile.getIdentity().toString());
-        } else {
-            //TODO zaruriyat bo'lsa boshqa rollar uchun logika yozish kerak
-        }
-
+        // Check by role
+        checkByRole(user, params);
         return repository.getAllByParams(user, params);
     }
 
@@ -185,49 +177,54 @@ public class EquipmentServiceImpl implements EquipmentService {
         Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize());
         Role role = dto.getUser().getRole();
 
-        if (role == Role.REGIONAL) {
-            Profile profile = profileService.getProfile(dto.getUser().getProfileId());
-            Office office = officeService.findById(profile.getOfficeId());
-            Integer regionId = office.getRegionId();
-            if (dto.getIsAssigned()) {
+        switch (role) {
+            case Role.REGIONAL -> {
+                Profile profile = profileService.getProfile(dto.getUser().getProfileId());
+                Office office = officeService.findById(profile.getOfficeId());
+                Integer regionId = office.getRegionId();
+                if (Boolean.TRUE.equals(dto.getIsAssigned())) {
+                    if (dto.getRegistryNumber() != null)
+                        return repository.getAllByRegistryNumberAndInterval(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name());
+                    if (dto.getLegalTin() != null)
+                        return repository.getAllByLegalTinAndInterval(pageable, dto.getLegalTin(), dto.getIntervalId(), dto.getEquipmentType().name());
+                    else
+                        return repository.getAllByRegionAndInterval(pageable, regionId, dto.getIntervalId(), dto.getEquipmentType().name());
+                } else {
+                    if (dto.getLegalTin() != null)
+                        return repository.getAllByLegalTin(pageable, dto.getLegalTin(), dto.getEquipmentType().name(), dto.getIntervalId());
+                    if (dto.getRegistryNumber() != null)
+                        return repository.getAllByRegistryNumber(pageable, dto.getRegistryNumber(), dto.getEquipmentType().name(), dto.getIntervalId());
+                    else
+                        return repository.getAllByRegion(pageable, regionId, dto.getEquipmentType().name(), dto.getIntervalId());
+                }
+
+            }
+            case Role.INSPECTOR -> {
+                if (dto.getRegistryNumber() != null)
+                    return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name(), dto.getUser().getId());
+                if (dto.getLegalTin() != null)
+                    return repository
+                            .getAllByLegalTinAndIntervalAndInspectorId(pageable, dto.getLegalTin(), dto.getIntervalId(), dto.getEquipmentType().name(), dto.getUser().getId());
+                else
+                    return repository.getAllByInspectorIdAndInterval(pageable, dto.getUser().getId(), dto.getIntervalId(), dto.getEquipmentType().name());
+
+            }
+            case Role.CHAIRMAN, Role.MANAGER -> {
+                if (dto.getRegistryNumber() != null)
+                    return repository.getAllByRegistryNumberAndIntervalAndOwnerType(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name(), OwnerType.LEGAL.name());
+                if (dto.getLegalTin() != null)
+                    return repository
+                            .getAllByLegalTinAndIntervalAndOwnerType(pageable, dto.getLegalTin(), dto.getIntervalId(), dto.getEquipmentType().name(), OwnerType.LEGAL.name());
+                else
+                    return repository.getAllByIntervalAndOwnerType(pageable, dto.getIntervalId(), dto.getEquipmentType().name(), OwnerType.LEGAL.name());
+
+            }
+            default -> {
                 if (dto.getRegistryNumber() != null)
                     return repository.getAllByRegistryNumberAndInterval(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name());
-                if (dto.getLegalTin() != null)
-                    return repository.getAllByLegalTinAndInterval(pageable, dto.getLegalTin(), dto.getIntervalId(), dto.getEquipmentType().name());
-                else
-                    return repository.getAllByRegionAndInterval(pageable, regionId, dto.getIntervalId(), dto.getEquipmentType().name());
-            } else {
-                if (dto.getLegalTin() != null)
-                    return repository.getAllByLegalTin(pageable, dto.getLegalTin(), dto.getEquipmentType().name(), dto.getIntervalId());
-                if (dto.getRegistryNumber() != null)
-                    return repository.getAllByRegistryNumber(pageable, dto.getRegistryNumber(), dto.getEquipmentType().name(), dto.getIntervalId());
-                else
-                    return repository.getAllByRegion(pageable, regionId, dto.getEquipmentType().name(), dto.getIntervalId());
+                Profile profile = profileService.getProfile(dto.getUser().getProfileId());
+                return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), dto.getIntervalId(), dto.getEquipmentType().name());
             }
-
-        } else if (role == Role.INSPECTOR) {
-            if (dto.getRegistryNumber() != null)
-                return repository.getAllByRegistryNumberAndIntervalAndInspectorId(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name(), dto.getUser().getId());
-            if (dto.getLegalTin() != null)
-                return repository
-                        .getAllByLegalTinAndIntervalAndInspectorId(pageable, dto.getLegalTin(), dto.getIntervalId(), dto.getEquipmentType().name(), dto.getUser().getId());
-            else
-                return repository.getAllByInspectorIdAndInterval(pageable, dto.getUser().getId(), dto.getIntervalId(), dto.getEquipmentType().name());
-
-        } else if (role == Role.CHAIRMAN || role == Role.MANAGER) {
-            if (dto.getRegistryNumber() != null)
-                return repository.getAllByRegistryNumberAndIntervalAndOwnerType(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name(), OwnerType.LEGAL.name());
-            if (dto.getLegalTin() != null)
-                return repository
-                        .getAllByLegalTinAndIntervalAndOwnerType(pageable, dto.getLegalTin(), dto.getIntervalId(), dto.getEquipmentType().name(), OwnerType.LEGAL.name());
-            else
-                return repository.getAllByIntervalAndOwnerType(pageable, dto.getIntervalId(), dto.getEquipmentType().name(), OwnerType.LEGAL.name());
-
-        } else {
-            if (dto.getRegistryNumber() != null)
-                return repository.getAllByRegistryNumberAndInterval(pageable, dto.getRegistryNumber(), dto.getIntervalId(), dto.getEquipmentType().name());
-            Profile profile = profileService.getProfile(dto.getUser().getProfileId());
-            return repository.getAllByLegalTinAndInterval(pageable, profile.getIdentity(), dto.getIntervalId(), dto.getEquipmentType().name());
         }
     }
 
@@ -333,6 +330,138 @@ public class EquipmentServiceImpl implements EquipmentService {
         return repository.countStatusByPeriodAndRegionId(date, regionId);
     }
 
+    @Override
+    public void exportExcel(User user, EquipmentParams params, HttpServletResponse response) {
+        // Check by role
+        checkByRole(user, params);
+
+        // Type
+        Specification<Equipment> hasType = specification.hasType(params.getType());
+
+        // Search
+        Specification<Equipment> hasSearch = specification.hasSearch(params.getSearch());
+
+        // Region
+        Specification<Equipment> hasRegion = specification.hasRegionId(params.getRegionId());
+
+        // District
+        Specification<Equipment> hasDistrict = specification.hasDistrictId(params.getDistrictId());
+
+        // Active
+        Specification<Equipment> isActive = specification.isActive(params.getIsActive());
+
+        // Mode
+        Specification<Equipment> hasMode = specification.hasMode(params.getMode());
+
+        // Get all Equipment by filter and sort
+        List<Equipment> equipmentList = repository.findAll(
+                where(hasType).and(hasSearch).and(hasRegion).and(hasDistrict).and(isActive).and(hasMode)
+                        .and(specification.fetch("childEquipment"))
+                        .and(specification.fetch("hazardousFacility")),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        if (equipmentList.isEmpty()) {
+            throw new CustomException("Yuklash uchun ma'lumotlar mavjud emas");
+        }
+
+        // Make header for Excel
+        List<String> headers = new ArrayList<>(Arrays.asList(
+                "Qurilma",
+                "Qurilma turi",
+                "Registratsiya raqami",
+                "Registratsiya vaqti",
+                "Egalik turi",
+                "STIR/JSHSHIR",
+                "Tashkilot nomi/FIO",
+                "Tashkilot manzili",
+                "XICHO nomi",
+                "Zavod nomi",
+                "Zavod raqami",
+                "Model",
+                "Ishlab chiqarilgan sana",
+                "Qisman/Tashqi va ichki tex.k.s",
+                "To'liq/Gidrosinov tex.k.s",
+                "Eski registratsiya raqami",
+                "Manzili",
+                "Ro'yhatga olgan inspektor",
+                "Yaratilish usuli",
+                "Holati",
+                "Ro'yhatdan chiqqan sanasi"
+        ));
+
+        // Make mapper
+        List<Function<Equipment, Object>> mappers = new ArrayList<>(Arrays.asList(
+                eq -> EquipmentType.valueOf(eq.getType().name()).value,
+                eq -> eq.getChildEquipment() != null ? eq.getChildEquipment().getName() : "",
+                Equipment::getRegistryNumber,
+                Equipment::getRegistrationDate,
+                eq -> OwnerType.valueOf(eq.getOwnerType().name()).getLabel(),
+                Equipment::getOwnerIdentity,
+                Equipment::getOwnerName,
+                Equipment::getOwnerAddress,
+                eq -> eq.getHazardousFacility() != null ? eq.getHazardousFacility().getName() : "",
+                Equipment::getFactory,
+                Equipment::getFactoryNumber,
+                Equipment::getModel,
+                Equipment::getManufacturedAt,
+                Equipment::getPartialCheckDate,
+                Equipment::getFullCheckDate,
+                Equipment::getOldRegistryNumber,
+                Equipment::getAddress,
+                Equipment::getInspectorName,
+                eq -> RegistrationMode.valueOf(eq.getMode().name()).getLabel(),
+                eq -> Boolean.TRUE.equals(eq.getIsActive()) ? "faol" : "faol emas",
+                Equipment::getDeactivationDate
+        ));
+
+        // Add dynamic parameters
+        Map<String, String> firstParams = equipmentList.getFirst().getParameters();
+        List<String> parameterKeys = (firstParams != null) ? new ArrayList<>(firstParams.keySet()) : new ArrayList<>();
+
+        if (!parameterKeys.isEmpty()) {
+            List<String> parameterHeaders = parameterKeys.stream()
+                    .map(EquipmentParameter::nameWithUnit)
+                    .toList();
+            headers.addAll(parameterHeaders);
+
+            List<Function<Equipment, Object>> parameterMappers = parameterKeys.stream()
+                    .map(key -> (Function<Equipment, Object>) eq -> {
+                        Map<String, String> paramsMap = eq.getParameters();
+                        return (paramsMap != null) ? paramsMap.getOrDefault(key, "") : "";
+                    })
+                    .toList();
+            mappers.addAll(parameterMappers);
+        }
+
+        // Add parameters for unusual equipments
+        switch (params.getType()) {
+            case EquipmentType.ELEVATOR -> {
+                headers.add("Sohasi");
+                mappers.add(eq -> eq.getSphere() != null ? Sphere.valueOf(eq.getSphere().name()).getLabel() : "");
+            }
+            case EquipmentType.ATTRACTION -> {
+                headers.addAll(List.of("Attraksion nomi", "Attraksion tipi", "Davlat nomi", "Yuqori turuvchi tashkilot nomi"));
+                mappers.addAll(
+                        List.of(
+                                Equipment::getAttractionName,
+                                eq -> eq.getChildEquipmentSort() != null ? eq.getChildEquipmentSort().getName() : "",
+                                Equipment::getCountry,
+                                Equipment::getParentOrganization
+                        ));
+            }
+            case EquipmentType.ATTRACTION_PASSPORT -> {
+                headers.addAll(List.of("Foydalanishga qabul qilingan sana", "Xizmat muddati", "Xavf darajasi"));
+                mappers.addAll(
+                        List.of(
+                                Equipment::getAcceptedAt,
+                                Equipment::getServicePeriod,
+                                eq -> eq.getRiskLevel() != null ? RiskLevel.valueOf(eq.getRiskLevel().name()).value : ""
+                        ));
+            }
+        }
+        genericExcelExporter.exportToExcel(response, "qurilma", headers, equipmentList, mappers);
+    }
+
     // HELPER
     protected EquipmentInfoDto getEquipmentInfoByAppealType(AppealType appealType, RegistrationMode mode) {
         return switch (appealType) {
@@ -350,16 +479,32 @@ public class EquipmentServiceImpl implements EquipmentService {
             case REGISTER_CHEMICAL_CONTAINER, RE_REGISTER_CHEMICAL_CONTAINER ->
                     getInfo(EquipmentType.CHEMICAL_CONTAINER, "XA", mode);
             case REGISTER_HEAT_PIPELINE, RE_REGISTER_HEAT_PIPELINE -> getInfo(EquipmentType.HEAT_PIPELINE, "PAX", mode);
-            case REGISTER_BOILER_UTILIZER, RE_REGISTER_BOILER_UTILIZER -> getInfo(EquipmentType.BOILER_UTILIZER, "KC", mode);
+            case REGISTER_BOILER_UTILIZER, RE_REGISTER_BOILER_UTILIZER ->
+                    getInfo(EquipmentType.BOILER_UTILIZER, "KC", mode);
             case REGISTER_LPG_CONTAINER, RE_REGISTER_LPG_CONTAINER -> getInfo(EquipmentType.LPG_CONTAINER, "AG", mode);
             case REGISTER_LPG_POWERED, RE_REGISTER_LPG_POWERED -> getInfo(EquipmentType.LPG_POWERED, "TG", mode);
-            default -> throw new RuntimeException("Ariza turi hech bir qurilma turiga mos kelmadi");
+            default -> throw new CustomException("Ariza turi hech bir qurilma turiga mos kelmadi");
         };
+    }
+
+    private void checkByRole(User user, EquipmentParams params) {
+        Profile profile = profileService.getProfile(user.getProfileId());
+
+        // check by role
+        if (user.getRole() == Role.INSPECTOR || user.getRole() == Role.REGIONAL) {
+            Office office = officeService.findById(profile.getOfficeId());
+            if (params.getRegionId() != null && !params.getRegionId().equals(office.getRegionId())) {
+                throw new CustomException("Sizga bu viloyat ma'lumotlarini ko'rish uchun ruxsat berilmagan");
+            }
+            params.setRegionId(office.getRegionId());
+        } else if (user.getRole().equals(Role.LEGAL) || user.getRole().equals(Role.INDIVIDUAL)) {
+            params.setSearch(profile.getIdentity().toString());
+        }
     }
 
     private EquipmentInfoDto getInfo(EquipmentType equipmentType, String label, RegistrationMode mode) {
         long orderNumber = repository.getMax(equipmentType).orElse(0L) + 1;
-        String formatted = String.format("%06d%s", orderNumber, "S" + (RegistrationMode.OFFICIAL.equals(mode)? "" : "/nr")); // 'S' means that the number was given by system. '/nr' means that it is 'norasmiy'
+        String formatted = String.format("%06d%s", orderNumber, "S" + (RegistrationMode.OFFICIAL.equals(mode) ? "" : "/nr")); // 'S' means that the number was given by system. '/nr' means that it is 'norasmiy'
         return new EquipmentInfoDto(equipmentType, label + formatted, orderNumber);
     }
 
@@ -415,12 +560,12 @@ public class EquipmentServiceImpl implements EquipmentService {
         // get template by registration mode
         String content = getTemplateContent(
                 RegistrationMode.OFFICIAL.equals(appeal.getMode())
-                ? TemplateType.REGISTRY_EQUIPMENT
-                : TemplateType.UNOFFICIAL_REGISTRY_EQUIPMENT);
+                        ? TemplateType.REGISTRY_EQUIPMENT
+                        : TemplateType.UNOFFICIAL_REGISTRY_EQUIPMENT);
 
         return attachmentService.createPdfFromHtml(
                 content,
-                RegistrationMode.OFFICIAL.equals(appeal.getMode()) ? "reestr/equipment" :"reestr/equipment/unofficial",
+                RegistrationMode.OFFICIAL.equals(appeal.getMode()) ? "reestr/equipment" : "reestr/equipment/unofficial",
                 parameters,
                 false);
     }

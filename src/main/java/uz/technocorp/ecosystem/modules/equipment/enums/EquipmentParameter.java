@@ -2,6 +2,7 @@ package uz.technocorp.ecosystem.modules.equipment.enums;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.stream.Stream;
 
@@ -11,6 +12,7 @@ import java.util.stream.Stream;
  * @created 11.06.2025
  * @since v1.0
  */
+@Getter
 @AllArgsConstructor
 public enum EquipmentParameter {
 
@@ -31,9 +33,9 @@ public enum EquipmentParameter {
     TEMPERATURE("temperature", "Harorat", "°C"),
     THICKNESS("thickness", "Qalinlik", "mm");
 
-    public final String id;
-    public final String nameUz;
-    public final String unit;
+    private final String id;
+    private final String nameUz;
+    private final String unit;
 
     public static EquipmentParameter find(String id) {
         return Stream.of(EquipmentParameter.values())

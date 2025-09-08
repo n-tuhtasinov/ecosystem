@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EquipmentController {
 
-    private final EquipmentService equipmentService;
+    private final EquipmentService service;
 
     @GetMapping
     public ResponseEntity<?> getAll(@CurrentUser User user,
@@ -42,22 +43,23 @@ public class EquipmentController {
                                     @RequestParam(value = "districtId", required = false) Integer districtId,
                                     @RequestParam(value = "startDate", required = false) LocalDate startDate,
                                     @RequestParam(value = "endDate", required = false) LocalDate endDate,
-                                    @RequestParam(value = "isActive", required = false) Boolean isActive
+                                    @RequestParam(value = "isActive", required = false) Boolean isActive,
+                                    @RequestParam(value = "mode", required = false) String mode
     ) {
-        Page<EquipmentView> all = equipmentService.getAll(user, new EquipmentParams(type, page, size, search, regionId, districtId, startDate, endDate, isActive));
+        Page<EquipmentView> all = service.getAll(user, new EquipmentParams(type, page, size, search, regionId, districtId, startDate, endDate, isActive, mode));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 
 
     @GetMapping("/{equipmentId}")
     public ResponseEntity<?> getById(@PathVariable UUID equipmentId) {
-        EquipmentViewById byId = equipmentService.getById(equipmentId);
+        EquipmentViewById byId = service.getById(equipmentId);
         return ResponseEntity.ok(new ApiResponse(byId));
     }
 
     @GetMapping("/registry-number/{oldRegistryNumber}")
     public ResponseEntity<?> getByRegistryNumber(@PathVariable String oldRegistryNumber) {
-        EquipmentViewById byId = equipmentService.findByRegistryNumber(oldRegistryNumber);
+        EquipmentViewById byId = service.findByRegistryNumber(oldRegistryNumber);
         return ResponseEntity.ok(new ApiResponse(byId));
     }
 
@@ -71,7 +73,7 @@ public class EquipmentController {
                                                                 @RequestParam(value = "intervalId") Integer intervalId,
                                                                 @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
-        Page<EquipmentRiskView> all = equipmentService.getAllEquipmentRiskAssessment(
+        Page<EquipmentRiskView> all = service.getAllEquipmentRiskAssessment(
                 new EquipmentRiskParamsDto(EquipmentType.ATTRACTION, user, page, size, legalTin, registryNumber, isAssigned, intervalId));
         return ResponseEntity.ok(new ApiResponse(all));
     }
@@ -85,20 +87,25 @@ public class EquipmentController {
                                                               @RequestParam(value = "intervalId") Integer intervalId,
                                                               @RequestParam(value = "isAssigned", required = false) Boolean isAssigned
     ) {
-        Page<EquipmentRiskView> all = equipmentService.getAllEquipmentRiskAssessment(
+        Page<EquipmentRiskView> all = service.getAllEquipmentRiskAssessment(
                 new EquipmentRiskParamsDto(EquipmentType.ELEVATOR, user, page, size, legalTin, registryNumber, isAssigned, intervalId));
         return ResponseEntity.ok(new ApiResponse(all));
     }
 
     @GetMapping("/attraction-passport")
     public ResponseEntity<?> getAttractionPassportByRegistryNumber(@RequestParam String registryNumber) {
-        AttractionPassportView view = equipmentService.getAttractionPassportByRegistryNumber(registryNumber);
+        AttractionPassportView view = service.getAttractionPassportByRegistryNumber(registryNumber);
         return ResponseEntity.ok(new ApiResponse(view));
     }
 
     @GetMapping("/count")
     public ResponseEntity<?> getCount(@CurrentUser User user) {
-        Long count = equipmentService.getCount(user);
+        Long count = service.getCount(user);
         return ResponseEntity.ok(new ApiResponse(count));
+    }
+
+    @GetMapping("/export/excel")
+    public void export(@CurrentUser User user, EquipmentParams params, HttpServletResponse response) {
+        service.exportExcel(user, params, response);
     }
 }

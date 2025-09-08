@@ -1,5 +1,8 @@
 package uz.technocorp.ecosystem.modules.equipment.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * @author Nurmuhammad Tuhtasinov
  * @version 1.0
@@ -7,11 +10,15 @@ package uz.technocorp.ecosystem.modules.equipment.enums;
  * @since v1.0
  * @description the sphere for only lift
  */
+@Getter
+@AllArgsConstructor
 public enum Sphere {
-    RESIDENTIAL,     // Турар жой биноси
-    HOTEL,           // Мехмонхона
-    SOCIAL,          // Ижтимоий соҳа
-    INDUSTRIAL,      // Саноат корхонаси
-    SERVICE,         // Хизмат кўрсатиш объекти
-    OTHER            // Бошқа объектлар
+    RESIDENTIAL("Turar-joy binosi"),
+    HOTEL("Mehmonxona"),
+    SOCIAL("Ijtimoiy soha"),
+    INDUSTRIAL("Sanoat korxonasi"),
+    SERVICE("Xizmat ko'rsatish obyekti"),
+    OTHER("Boshqa obyektlar");
+
+    private final String label;
 }

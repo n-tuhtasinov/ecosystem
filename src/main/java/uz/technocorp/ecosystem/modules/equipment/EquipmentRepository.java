@@ -3,6 +3,7 @@ package uz.technocorp.ecosystem.modules.equipment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import java.util.UUID;
  * @created 28.04.2025
  * @since v1.0
  */
-public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, EquipmentRepo {
+public interface EquipmentRepository extends JpaRepository<Equipment, UUID>, EquipmentRepo, JpaSpecificationExecutor<Equipment> {
 
     @Query("select e.orderNumber from Equipment e where e.type = :equipmentType and e.orderNumber is not null order by e.orderNumber desc limit 1")
     Optional<Long> getMax(EquipmentType equipmentType);
