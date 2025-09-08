@@ -68,7 +68,7 @@ public class PreventionServiceImpl implements PreventionService {
                         : getAllWithoutPassedForInspector(user, params);
             }
             case Role.LEGAL -> {
-                return getAllByCitizen(user);
+                return getAllByCitizen(user.getProfileId());
             }
             default -> {
                 return Page.empty();
@@ -147,7 +147,6 @@ public class PreventionServiceImpl implements PreventionService {
 
     @Override
     public Page<ProfileView> getAllWithoutPassedForInspector(User user, PreventionParamsDto params) {
-        // Get inspector regionId by userProfileId and set it to params
         params.setRegionId(profileService.getProfile(user.getProfileId()).getRegionId());
 
         return profileService.getProfilesForPrevention(params);
@@ -211,8 +210,8 @@ public class PreventionServiceImpl implements PreventionService {
     }
 
     @Override
-    public Page<PreventionView> getAllByCitizen(User user) {
-        Long tin = getProfileTinById(user.getProfileId());
+    public Page<PreventionView> getAllByCitizen(UUID profileId) {
+        Long tin = getProfileTinById(profileId);
 
         List<Prevention> preventionList = repository.findAllByProfileTinOrderByYearDesc(tin);
         if (preventionList == null || preventionList.isEmpty()) {

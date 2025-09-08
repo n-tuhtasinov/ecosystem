@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.hf;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -72,7 +73,6 @@ public class HazardousFacilityController {
         return ResponseEntity.ok(new ApiResponse(all));
     }
 
-
     @GetMapping("/{hfId}")
     public ResponseEntity<?> getById(@PathVariable UUID hfId) {
         HfViewById byId = service.getById(hfId);
@@ -97,5 +97,10 @@ public class HazardousFacilityController {
     public ResponseEntity<?> getCount(@CurrentUser User user) {
         Long count = service.getCount(user);
         return ResponseEntity.ok(new ApiResponse(count));
+    }
+
+    @GetMapping("/export/excel")
+    public void export(@CurrentUser User user, HfParams params, HttpServletResponse response) {
+        service.exportExcel(user, params, response);
     }
 }
