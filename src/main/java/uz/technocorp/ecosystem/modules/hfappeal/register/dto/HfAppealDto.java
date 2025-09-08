@@ -74,8 +74,6 @@ public class HfAppealDto implements AppealDto {
     @SkipDb
     @NotBlank(message = "Identifikatsiya varag'i fayli biriktirilmadi!")
     private String identificationCardPath;
-    @SkipDb
-    private LocalDate identificationCardExpiryDate;
 
     @SkipDb
     @NotBlank(message = "XICHOni ro'yxatga olish uchun to'lov kvitansiyasi fayli biriktirilmadi!")
@@ -159,7 +157,7 @@ public class HfAppealDto implements AppealDto {
     }
 
     private void buildFiles() {
-        files.put("identificationCardPath", new FileDto(identificationCardPath, identificationCardExpiryDate));
+        files.put("identificationCardPath", new FileDto(identificationCardPath, null));
         files.put("receiptPath", new FileDto(receiptPath, null));
         files.put("expertOpinionPath", new FileDto(expertOpinionPath, expertOpinionExpiryDate));
         files.put("projectDocumentationPath", new FileDto(projectDocumentationPath, projectDocumentationExpiryDate));

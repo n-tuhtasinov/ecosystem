@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.hf;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.hf.dto.HfDto;
@@ -56,4 +57,6 @@ public interface HazardousFacilityService {
     HazardousFacility findByRegistryNumberAndLegalTinAndActive(String registryNumber, Long legalTin, Boolean active);
 
     HfCountByStatusView countHfStatusByDateAndRegionId(LocalDate date, Integer regionId);
+
+    void exportExcel(User user, HfParams params, HttpServletResponse response);
 }
