@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @created 29.01.2025
  * @since v1.0
  */
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class UserNotFoundException extends UsernameNotFoundException {
 
     public UserNotFoundException(String msg) {
