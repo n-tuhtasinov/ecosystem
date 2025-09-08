@@ -15,10 +15,11 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum OwnerType {
 
-    LEGAL(9),
-    INDIVIDUAL(14);
+    LEGAL(9, "Yuridik shaxs"),
+    INDIVIDUAL(14, "Jismoniy shaxs");
 
     private final Integer identityLength;
+    private final String label;
 
     public static OwnerType find(Integer identityLength) {
         return Stream.of(OwnerType.values())

@@ -146,10 +146,10 @@ public class Equipment extends BaseEntity {
     private String country; // ishlab chiqargan mamlakat (attraksion)
 
     @Column
-    private Integer servicePeriod; // hizmat muddati (attraksion pasporti)
+    private Integer servicePeriod; // xizmat muddati (attraksion pasporti)
 
     @Column
-    private RiskLevel riskLevel; // havf darajasi (attraksion pasporti)
+    private RiskLevel riskLevel; // xavf darajasi (attraksion pasporti)
 
     @Column
     private String parentOrganization; // yuqori turuvchi tashkilot (attraksion)

@@ -320,16 +320,18 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
         // Region
         Specification<HazardousFacility> hasDistrict = hfSpecification.hasDistrictId(params.getDistrictId());
 
+        // Get all HazardousFacility by filter and sort
         List<HazardousFacility> hfList = repository.findAll(
                 where(hasSearch).and(hasMode).and(hasRegion).and(hasDistrict).and(hfSpecification.fetchHfType()),
                 Sort.by(Sort.Direction.DESC, "createdAt"));
 
+        // Make header for Excel
         List<String> headers = List.of(
-                "Raqami",
+                "Registratsiya raqami",
+                "Registratsiya vaqti",
                 "Nomi",
                 "Turi",
                 "Manzili",
-                "Registratsiya vaqti",
                 "STIR",
                 "Tashkilot nomi",
                 "Tashkilot manzili",
@@ -338,15 +340,17 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 "Xavfli moddalar nomi va miqdori",
                 "Holati",
                 "Yaratilish usuli",
+                "Ro'yhatga olgan inspektor",
                 "Ro'yhatdan chiqarilgan sana"
         );
 
+        // Make mapper
         List<Function<HazardousFacility, Object>> mappers = List.of(
                 HazardousFacility::getRegistryNumber,
+                hf -> hf.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
                 HazardousFacility::getName,
                 hf -> hf.getHfType() != null ? hf.getHfType().getName() : "",
                 HazardousFacility::getAddress,
-                hf -> hf.getRegistrationDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
                 HazardousFacility::getLegalTin,
                 HazardousFacility::getLegalName,
                 HazardousFacility::getLegalAddress,
@@ -355,6 +359,7 @@ public class HazardousFacilityServiceImpl implements HazardousFacilityService {
                 HazardousFacility::getHazardousSubstance,
                 hf -> hf.isActive() ? "faol" : "faol emas",
                 hf -> hf.getMode().getLabel(),
+                HazardousFacility::getInspectorName,
                 HazardousFacility::getDeactivationDate
         );
 

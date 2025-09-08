@@ -51,7 +51,7 @@ public class GenericExcelExporter {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(headers.get(i));
 
-                // 3. Yaratilgan stilni har bir sarlavha yacheykasiga qo'llaymiz (YANGI QO'SHILDI)
+                // 3. Yaratilgan stilni har bir sarlavha yacheykasiga qo'llaymiz
                 cell.setCellStyle(headerStyle);
             }
 
@@ -74,9 +74,6 @@ public class GenericExcelExporter {
                     }
                 }
             }
-
-            // Ustun kengligini avtomatik sozlash (agar kerak bo'lsa va XSSFWorkbook ishlatilsa)
-            // Biz SXSSFWorkbook ishlatayotganimiz uchun bu qismni qo'shmaymiz.
 
             // Response'ga yozish
             try (OutputStream outputStream = response.getOutputStream()) {

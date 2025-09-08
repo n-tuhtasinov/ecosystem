@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EquipmentParams{
-    private EquipmentType type;
+    private EquipmentType type = EquipmentType.CRANE;
     private Integer page;
     private Integer size;
     private String search;
@@ -28,4 +28,5 @@ public class EquipmentParams{
     private LocalDate startDate;
     private LocalDate endDate;
     private Boolean isActive;
+    private String mode;
 }
