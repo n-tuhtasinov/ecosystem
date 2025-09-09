@@ -80,7 +80,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException e){
         logger.error(e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Login yoki parol xato!"));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("Login yoki parol xato!"));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
