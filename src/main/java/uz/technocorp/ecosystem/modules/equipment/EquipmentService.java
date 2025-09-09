@@ -1,5 +1,6 @@
 package uz.technocorp.ecosystem.modules.equipment;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import uz.technocorp.ecosystem.modules.appeal.Appeal;
 import uz.technocorp.ecosystem.modules.equipment.dto.EquipmentParams;
@@ -50,4 +51,6 @@ public interface EquipmentService {
     void reRegister(Appeal appeal);
 
     EquipmentCountByStatusView countEquipmentStatusByDateAndRegionId(LocalDate date, Integer regionId);
+
+    void exportExcel(User user, EquipmentParams params, HttpServletResponse response);
 }
